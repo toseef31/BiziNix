@@ -8,19 +8,39 @@
     <body class="h-full">
     ```
   -->
+   <Disclosure as="nav" class="bg-gray-900 hidden sm:block" v-slot="{ open }">
+   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+     <div class="relative flex items-center justify-between h-12">
+       <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+          <div class="hidden sm:block">
+            <div class="flex space-x-4">
+              <!--- Other links on left side -->
+            </div>
+          </div>
+        </div>
+      <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
+          <div class="hidden sm:block">
+            <div class="flex space-x-4">
+              <a v-for="item in topBarNavigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-normal']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
+            </div>
+          </div>
+        </div>
+     </div>
+   </div>
+   </Disclosure>
   <div class="min-h-full">
     <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+        <div class="flex items-center justify-between h-24">
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <img class="w-32" src="../assets/logo.png" alt="Workflow" />
             </div>
-            <div class="hidden md:block">
+          </div>
+          <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
                 <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
               </div>
-            </div>
           </div>
           <div class="hidden md:block">
             <div class="ml-4 flex items-center md:ml-6">
@@ -63,6 +83,9 @@
           <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block px-3 py-2 rounded-md text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
         </div>
         <div class="pt-4 pb-3 border-t border-gray-700">
+          <DisclosureButton v-for="item in topBarNavigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block px-3 py-2 rounded-md text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
+        </div>
+        <div class="pt-4 pb-3 border-t border-gray-700">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
               <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
@@ -90,7 +113,7 @@
 
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
+import { BellIcon, MenuIcon , XIcon, LinkIcon } from '@heroicons/vue/outline'
 
 const user = {
   name: 'Tom Cook',
@@ -98,16 +121,22 @@ const user = {
   imageUrl:
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
+
+const topBarNavigation = [
+  { name: 'Podpora', href: '#', current: false },
+  { name: 'Kontakt', href: '#', current: false },
+  { name: 'Prihlásiť sa', href: '#', current: false }
+]
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
   { name: 'Team', href: '#', current: false },
   { name: 'Projects', href: '#', current: false },
   { name: 'Calendar', href: '#', current: false },
-  { name: 'Reports', href: '#', current: false },
+  { name: 'Reports', href: '#', current: false }
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
   { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
+  { name: 'Sign out', href: '#' }
 ]
 </script>
