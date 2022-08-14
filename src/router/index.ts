@@ -4,7 +4,6 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import CompanyEdit from "../views/CompanyEdit.vue"
-import HomePage from "../views/HomePage.vue"
 import Contact from "../views/Contact.vue"
 import Support from "../views/Support.vue"
 import store from "@/store";
@@ -14,19 +13,21 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: "/home",
+      component: Login
+    },
+    {
+      path: "/dashboard",
       component: DefaultLayout,
+      meta: { requiresAuth: true },
       children: [
-        { path: '/home', name: "Home", component: HomePage },
         { path: '/contact', name: "Contact", component: Contact },
         { path: '/support', name: "Support", component: Support },
-        { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
-        { path: '/edit-company', name: "CompanyEdit", component: CompanyEdit, meta: { requiresAuth: true } }
+        { path: '/dashboard', name: "Dashboard", component: Dashboard },
+        { path: '/edit-company', name: "CompanyEdit", component: CompanyEdit }
       ],
     },
     {
       path: '/auth',
-      component: DefaultLayout,
       redirect: "/login",
       name: "Auth",
       meta: { isGuest: true },
