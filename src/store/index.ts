@@ -4,12 +4,7 @@ import axiosClient from "@/axios";
 export const store = createStore({
     state: {
         user: {
-            data: {
-                name: '',
-                email: '',
-                imageUrl:
-                  '',
-            },
+            data: {},
             token: sessionStorage.getItem("TOKEN"),
         }
     },
@@ -29,12 +24,19 @@ export const store = createStore({
                     return data;
                 })
         },
+        logoutUser({commit}){
+            return axiosClient.post("/users/logout")
+                .then(response => {
+                    commit('logoutUser');
+                    return response;
+                })
+        }
+
     },
     mutations:{
-        logout: (state) => {
-            state.user.data.name = "",
-            state.user.data.email = "",
-            state.user.data.imageUrl = "",
+        logoutUser: (state) => {
+            state.user.token = null
+            state.user.data = {},
             sessionStorage.removeItem("TOKEN");
         },
         setUser: (state, userData) => { // userData from res from action

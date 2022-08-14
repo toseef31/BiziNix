@@ -47,7 +47,7 @@
                 <div>
                   <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                     <span class="sr-only">Open user menu</span>
-                    <span class="text-white">Open profile menu</span>
+                     <div class="font-bold text-gray-700 rounded-full bg-white flex items-center justify-center font-mono h-8 w-8 text-lg">B</div>
                     <!-- <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" /> -->
                   </MenuButton>
                 </div>
@@ -57,7 +57,7 @@
                       <a :href="item.href" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">{{ item.name }}</a>
                     </MenuItem>
                     <MenuItem v-on:click="logout" v-for="item in userNavigationLogOut" :key="item.name" v-slot="{ active }">
-                      <a :href="item.href" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">{{ item.name }}</a>
+                      <a class="cursor-pointer" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">{{ item.name }}</a>
                     </MenuItem>
                   </MenuItems>
                 </transition>
@@ -85,7 +85,7 @@
         <div class="pt-4 pb-3 border-t border-gray-700">
           <div class="flex items-center px-5">
             <div class="flex-shrink-0">
-              <span class="text-white">Profile menu</span>
+              <div class="font-bold text-gray-700 rounded-full bg-white flex items-center justify-center font-mono h-8 w-8 text-lg">B</div>
               <!-- <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" /> -->
             </div>
             <div class="ml-3">
@@ -143,11 +143,13 @@ const store = useStore();
 const router = useRouter();
 
 function logout(){
-  store.commit('logout');
-  router.push({
-    name: 'Login'
-  })
-}
+  store.dispatch('logoutUser') // action in store
+    .then(() => {
+      router.push({
+      name: 'Login'
+    });
+    });
+}   
 
 const user = computed(() => store.state.user.data);
 
