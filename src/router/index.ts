@@ -21,7 +21,7 @@ const router = createRouter({
         { path: '/contact', name: "Contact", component: Contact },
         { path: '/support', name: "Support", component: Support },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
-        { path: '/edit-company', name: "CompanyEdit", component: CompanyEdit, meta: { requiresAuth: true } }
+        { path: '/edit-company', name: "Úprava firmy", component: CompanyEdit, meta: { requiresAuth: true } }
       ],
     },
     {
