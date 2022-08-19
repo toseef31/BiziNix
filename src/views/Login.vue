@@ -42,7 +42,7 @@
             </div>
 
             <div class="text-sm">
-              <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500"> Zabudli ste heslo? </a>
+              <router-link :to="{ name: 'Forgot Password' }" class="font-medium text-indigo-600 hover:text-indigo-500"> Zabudli ste heslo? </router-link>
             </div>
           </div>
 

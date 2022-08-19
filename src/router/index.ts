@@ -7,6 +7,7 @@ import CompanyEdit from "../views/CompanyEdit.vue"
 import HomePage from "../views/HomePage.vue"
 import Contact from "../views/Contact.vue"
 import Support from "../views/Support.vue"
+import ForgotPassword from "../views/ForgotPassword.vue"
 import store from "@/store";
 
 const router = createRouter({
@@ -20,8 +21,9 @@ const router = createRouter({
         { path: '/home', name: "Home", component: HomePage },
         { path: '/contact', name: "Contact", component: Contact },
         { path: '/support', name: "Support", component: Support },
+        { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
-        { path: '/edit-company', name: "Úprava firmy", component: CompanyEdit, meta: { requiresAuth: true } }
+        { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } }
       ],
     },
     {

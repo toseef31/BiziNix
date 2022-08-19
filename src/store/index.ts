@@ -13,14 +13,14 @@ export const store = createStore({
         registerUser({ commit }, user) { // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
             return axiosClient.post("/users/register", user)
             .then(({data}) => {
-                commit('setUser', data) // setuser here us muttation for store
+                commit('setUser', data) // setuser is defined as muttation below
                 return data;
             })
         },
         loginUser({ commit }, user) { // loginUser is dispatch from Login view or component user second argument for login
             return axiosClient.post("/users/login", user)
                 .then(({data}) => {
-                    commit('setUser', data) // setuser here us muttation for store
+                    commit('setUser', data) // setuser is defined as muttation below
                     return data;
                 })
         },
@@ -30,6 +30,12 @@ export const store = createStore({
                     commit('logoutUser');
                     return response;
                 })
+        },
+        forgotPasswordSendEmmail({commit}, user){
+            return axiosClient.post("/password/create", user)
+            .then(response => {
+                return response;
+            })
         }
 
     },

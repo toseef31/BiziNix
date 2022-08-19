@@ -124,7 +124,7 @@ const topBarNavigation = [
 ]
 const navigation = [
   { name: 'Nástenka', to: { name: 'Dashboard' },},
-  { name: 'Úprava firmy', to: { name: 'Úprava firmy' },},
+  { name: 'Úprava firmy', to: { name: 'Edit Company' },},
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
