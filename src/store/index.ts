@@ -36,8 +36,13 @@ export const store = createStore({
             .then(response => {
                 return response;
             })
+        },
+        forgotPasswordSetNewPassword({commit}, newPassword){
+            return axiosClient.post("/password/reset", newPassword)
+            .then(response => {
+                return response;
+            })
         }
-
     },
     mutations:{
         logoutUser: (state) => {

@@ -3,11 +3,12 @@ import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
-import CompanyEdit from "../views/CompanyEdit.vue"
-import HomePage from "../views/HomePage.vue"
-import Contact from "../views/Contact.vue"
-import Support from "../views/Support.vue"
-import ForgotPassword from "../views/ForgotPassword.vue"
+import CompanyEdit from "../views/CompanyEdit.vue";
+import HomePage from "../views/HomePage.vue";
+import Contact from "../views/Contact.vue";
+import Support from "../views/Support.vue";
+import ForgotPassword from "../views/ForgotPassword.vue";
+import ForgotPasswordSetNewPassword from "../views/ForgotPasswordSetNewPassword.vue";
 import store from "@/store";
 
 const router = createRouter({
@@ -22,6 +23,7 @@ const router = createRouter({
         { path: '/contact', name: "Contact", component: Contact },
         { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
+        { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } }
       ],
