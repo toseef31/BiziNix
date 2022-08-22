@@ -52,9 +52,10 @@
 </template>
 
 <script setup lang="ts">
+
 import store from '@/store';
 import { useRouter, useRoute } from 'vue-router';
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import axiosClient from "@/axios";
 import axios from 'axios';
 
@@ -71,8 +72,7 @@ const newPassword = {
 let errorMsg = ref();
 let SetNewPassword = ref();
 
-
-onMounted(() => {
+onBeforeMount(() => {
 
   const token = route.params.token
 
