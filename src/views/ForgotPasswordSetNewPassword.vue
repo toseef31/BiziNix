@@ -1,5 +1,4 @@
 <template>
-
   <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Obnova hesla</h2>
@@ -51,57 +50,62 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 
 import store from '@/store';
 import { useRouter, useRoute } from 'vue-router';
-import { onBeforeMount, ref } from 'vue';
-import axiosClient from "@/axios";
+import { ref, defineComponent, onMounted } from 'vue';
 import axios from 'axios';
 
 const router = useRouter();
 const route = useRoute();
 
-const newPassword = {
-  email: '',
-  password: '',
-  password_confirmation: '',
-  token: ''
-}
-
 let errorMsg = ref();
 let SetNewPassword = ref();
 
-onBeforeMount(() => {
-
-  const token = route.params.token
-
-  return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
-  .then(response => {
-    //console.log(response);
-    newPassword.email = response.data.email
-    newPassword.token = response.data.token
-    return response;
-  })
-
+export default defineComponent({
+  data() {
+    return {
+      newPassword: {
+                email: "",
+        password: "",
+        password_confirmation: "",
+        token: "",
+      },
+      errorMsg,
+      SetNewPassword,
+      router,
+      route
+    }
+  },
+  methods: {
+    forgotPasswordSetNewPassword(){
+      store
+        .dispatch('forgotPasswordSetNewPassword', this.newPassword)
+        .then(res => {
+            console.log(res.data)
+            console.log(this.newPassword);
+            errorMsg.value = null
+            SetNewPassword.value = res.data.message
+        })
+        .catch(err => {
+            console.log(err)
+            console.log(this.newPassword)
+            SetNewPassword.value = null
+            errorMsg.value = err.response.data.message // response data is from store actions
+        })
+    }
+  },
+  mounted(){    
+    const token = this.$route.params.token
+    return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
+    .then(response => {
+      console.log(response);
+      this.newPassword.email = response.data.email
+      this.newPassword.token = response.data.token
+      return response;
+    })
+  }
 })
-
-function forgotPasswordSetNewPassword(){
-  store
-    .dispatch('forgotPasswordSetNewPassword', newPassword)
-    .then(res => {
-        console.log(res.data)
-        console.log(newPassword);
-        errorMsg.value = null
-        SetNewPassword.value = res.data.message
-    })
-    .catch(err => {
-        console.log(err)
-        console.log(newPassword)
-        SetNewPassword.value = null
-        errorMsg.value = err.response.data.message // response data is from store actions
-    })
-
-}
 
 </script>
