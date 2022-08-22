@@ -16,9 +16,9 @@
             </svg>
           </span>
         </div>
-        <div v-if="emailWithPasswordWasSend" class="flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
-          {{ emailWithPasswordWasSend }}
-          <span @click="emailWithPasswordWasSend=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+        <div v-if="SetNewPassword" class="flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
+          {{ SetNewPassword }}
+          <span @click="SetNewPassword=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -69,7 +69,7 @@ const newPassword = {
 }
 
 let errorMsg = ref();
-let emailWithPasswordWasSend = ref();
+let SetNewPassword = ref();
 
 
 onMounted(() => {
@@ -78,9 +78,12 @@ onMounted(() => {
 
   return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
   .then(response => {
-    console.log(response);
+    //console.log(response);
+    newPassword.email = response.data.email
+    newPassword.token = response.data.token
     return response;
   })
+
 })
 
 function forgotPasswordSetNewPassword(){
@@ -88,12 +91,14 @@ function forgotPasswordSetNewPassword(){
     .dispatch('forgotPasswordSetNewPassword', newPassword)
     .then(res => {
         console.log(res.data)
+        console.log(newPassword);
         errorMsg.value = null
-        emailWithPasswordWasSend.value = res.data.message
+        SetNewPassword.value = res.data.message
     })
     .catch(err => {
         console.log(err)
-        emailWithPasswordWasSend.value = null
+        console.log(newPassword)
+        SetNewPassword.value = null
         errorMsg.value = err.response.data.message // response data is from store actions
     })
 
