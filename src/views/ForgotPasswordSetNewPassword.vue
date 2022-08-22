@@ -53,11 +53,13 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import axiosClient from "@/axios";
+import axios from 'axios';
 
 const router = useRouter();
+const route = useRoute();
 
 const newPassword = {
   email: '',
@@ -71,7 +73,10 @@ let emailWithPasswordWasSend = ref();
 
 
 onMounted(() => {
-  return axiosClient.get("/password/find")
+
+  const token = route.params.token
+
+  return axios.get(`https://fe-app-v9bho.ondigitalocean.app/password/find/${token}`)
   .then(response => {
     console.log(response);
     return response;
