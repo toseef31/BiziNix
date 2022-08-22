@@ -76,7 +76,7 @@ onMounted(() => {
 
   const token = route.params.token
 
-  return axios.get(`https://fe-app-v9bho.ondigitalocean.app/password/find/${token}`)
+  return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
   .then(response => {
     console.log(response);
     return response;
