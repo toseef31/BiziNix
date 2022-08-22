@@ -1,4 +1,5 @@
 <template>
+
   <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Obnova hesla</h2>
@@ -15,9 +16,9 @@
             </svg>
           </span>
         </div>
-        <div v-if="SetNewPassword" class="flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
-          {{ SetNewPassword }}
-          <span @click="SetNewPassword=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+        <div v-if="setNewPassword" class="flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
+          {{ setNewPassword }}
+          <span @click="setNewPassword=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -26,7 +27,7 @@
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700"> E-mail použitý pri registrácii </label>
             <div class="mt-1">
-              <input readonly v-model="newPassword.email" id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+              <input disabled readonly v-model="newPassword.email" id="email" name="email" type="email" autocomplete="email" required class="cursor-not-allowed bg appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             </div>
           </div>
           <div>
@@ -50,62 +51,62 @@
   </div>
 </template>
 
-<script lang="ts">
-
+<script setup lang="ts">
 import store from '@/store';
 import { useRouter, useRoute } from 'vue-router';
-import { ref, defineComponent, onMounted } from 'vue';
+import { onMounted, reactive, ref, shallowRef, toRaw } from 'vue';
+import type { Ref } from 'vue'
+import axiosClient from "@/axios";
 import axios from 'axios';
 
 const router = useRouter();
 const route = useRoute();
 
-let errorMsg = ref();
-let SetNewPassword = ref();
-
-export default defineComponent({
-  data() {
-    return {
-      newPassword: {
-                email: "",
-        password: "",
-        password_confirmation: "",
-        token: "",
-      },
-      errorMsg,
-      SetNewPassword,
-      router,
-      route
-    }
-  },
-  methods: {
-    forgotPasswordSetNewPassword(){
-      store
-        .dispatch('forgotPasswordSetNewPassword', this.newPassword)
-        .then(res => {
-            console.log(res.data)
-            console.log(this.newPassword);
-            errorMsg.value = null
-            SetNewPassword.value = res.data.message
-        })
-        .catch(err => {
-            console.log(err)
-            console.log(this.newPassword)
-            SetNewPassword.value = null
-            errorMsg.value = err.response.data.message // response data is from store actions
-        })
-    }
-  },
-  mounted(){    
-    const token = this.$route.params.token
-    return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
-    .then(response => {
-      console.log(response);
-      this.newPassword.email = response.data.email
-      this.newPassword.token = response.data.token
-      return response;
-    })
-  }
+const newPassword = reactive( {
+  email: '',
+  password: '',
+  password_confirmation: '',
+  token: ''
 })
+
+let errorMsg = ref();
+let setNewPassword = ref();
+
+
+onMounted(() => {
+  const token = route.params.token
+
+  return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
+  .then(response => {
+    console.log(response);
+    newPassword.email = response.data.email
+    newPassword.token = response.data.token
+    return response;
+  })
+  .catch(err => {
+    errorMsg.value = err.response.data.message // response data is from store actions
+  })
+
+})
+
+function forgotPasswordSetNewPassword(){
+  store
+    .dispatch('forgotPasswordSetNewPassword', newPassword)
+    .then(res => {
+        // console.log(res.data)
+        errorMsg.value = null
+        setNewPassword.value = "Heslo úspešne zmenené. Budete presmerovaný na prihlásenie."
+        setTimeout(() => {
+          router.push({
+            name: 'Login'
+          })
+        }, 3000);
+    })
+    .catch(err => {
+        console.log(err)
+        setNewPassword.value = null
+        errorMsg.value = err.response.data.message // response data is from store actions
+    })
+}
 
 </script>
