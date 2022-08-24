@@ -9,6 +9,7 @@ import Contact from "../views/Contact.vue";
 import Support from "../views/Support.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import ForgotPasswordSetNewPassword from "../views/ForgotPasswordSetNewPassword.vue";
+import UserProfile from "../views/Profile.vue";
 import store from "@/store";
 
 const router = createRouter({
@@ -24,6 +25,7 @@ const router = createRouter({
         { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
+        { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } }
       ],

@@ -8,7 +8,11 @@ export const store = createStore({
             token: sessionStorage.getItem("TOKEN"),
         }
     },
-    getters: {},
+    getters: {
+        getUser: (state)  => {
+            return state.user.data;
+        }
+    },
     actions: {
         registerUser({ commit }, user) { // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
             return axiosClient.post("/users/register", user)
@@ -25,7 +29,7 @@ export const store = createStore({
                 })
         },
         logoutUser({commit}){
-            return axiosClient.post("/users/logout")
+            return axiosClient.get("/users/logout")
                 .then(response => {
                     commit('logoutUser');
                     return response;
@@ -51,8 +55,9 @@ export const store = createStore({
             sessionStorage.removeItem("TOKEN");
         },
         setUser: (state, userData) => { // userData from res from action
+            console.log("SetUserData: " + userData.token);
             state.user.token = userData.token;
-            state.user.data = userData.user;
+            // state.user.data = userData[0];
             sessionStorage.setItem("TOKEN", userData.token);
         }
     },

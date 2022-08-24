@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -12,9 +8,21 @@
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Replace with your content -->
         <div class="px-4 py-6 sm:px-0">
-          Content goes here
+          Content goes here {{ user.email }}<br>
+          {{ userEmail }}
         </div>
         <!-- /End replace -->
       </div>
     </main>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex'
+
+const store = useStore();
+
+const user = computed(() => store.state.user.data);
+const userEmail = store.state.user.data.email
+
+</script>

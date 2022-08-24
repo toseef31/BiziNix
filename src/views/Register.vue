@@ -43,8 +43,7 @@
                         <label for="title_before" class="block text-sm font-medium text-gray-700"> Titul pred menom </label>
                         <div class="mt-1">
                             <input v-model="user.title_before" id="title_before" name="title_before" type="text"
-                                autocomplete="title_before" required
-                                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                autocomplete="title_before" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                         </div>
                     </div>
                     
@@ -52,8 +51,7 @@
                         <label for="title_after" class="block text-sm font-medium text-gray-700"> Titul za menom </label>
                         <div class="mt-1">
                             <input v-model="user.title_after" id="title_after" name="title_after" type="text"
-                                autocomplete="title_after" required
-                                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                autocomplete="title_after" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                         </div>
                     </div>
                     

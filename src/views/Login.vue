@@ -75,7 +75,8 @@ let errorMsg = ref();
 function login(){
   store
     .dispatch('loginUser', user)
-    .then(() => {
+    .then((res) => {
+      console.log(res)
       router.push({
         name: 'Dashboard'
       })

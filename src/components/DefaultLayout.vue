@@ -89,7 +89,7 @@
               <!-- <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" /> -->
             </div>
             <div class="ml-3">
-              <div class="text-base font-medium leading-none text-white">{{ user.name }}</div>
+              <div class="text-base font-medium leading-none text-white">{{ user.first_name }}</div>
               <div class="text-sm font-medium leading-none text-gray-400">{{ user.email }}</div>
             </div>
             <button type="button" class="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
@@ -113,8 +113,8 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { BellIcon, MenuIcon , XIcon, LinkIcon } from '@heroicons/vue/outline'
 import { useStore } from 'vuex'
-import { computed, defineComponent } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const topBarNavigation = [
   { name: 'Podpora', to: { name: 'Support' }, },
