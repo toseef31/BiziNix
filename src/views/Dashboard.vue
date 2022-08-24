@@ -8,8 +8,7 @@
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Replace with your content -->
         <div class="px-4 py-6 sm:px-0">
-          Content goes here {{ user.email }}<br>
-          {{ userEmail }}
+          Content goes here
         </div>
         <!-- /End replace -->
       </div>
@@ -17,12 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { onMounted } from 'vue';
 import { useStore } from 'vuex'
+import axiosClient from '@/axios';
 
 const store = useStore();
 
-const user = computed(() => store.state.user.data);
-const userEmail = store.state.user.data.email
+onMounted(() => {
+  store
+    .dispatch('setUserDataAfterLogin')
+})
 
 </script>

@@ -61,6 +61,7 @@ import store from '@/store';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
+
 const router = useRouter();
 
 const user = {
@@ -78,13 +79,12 @@ function login(){
     .then((res) => {
       console.log(res)
       router.push({
-        name: 'Dashboard'
+        name: 'Dashboard',  
       })
     })
     .catch(err => {
       errorMsg.value = err.response.data.error // response data is from store actions
     })
-
 }
 
 </script>

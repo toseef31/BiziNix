@@ -5,6 +5,8 @@ export const store = createStore({
     state: {
         user: {
             data: {},
+            userId: sessionStorage.getItem("USER_ID"),
+            firstName: sessionStorage.getItem("FIRST_NAME"),
             token: sessionStorage.getItem("TOKEN"),
         }
     },
@@ -25,6 +27,13 @@ export const store = createStore({
             return axiosClient.post("/users/login", user)
                 .then(({data}) => {
                     commit('setUser', data) // setuser is defined as muttation below
+                    return data;
+                })
+        },
+        setUserDataAfterLogin({commit}, userData) {
+            return axiosClient.get("/users/profile", userData)
+                .then(({data}) => {
+                    commit('setUserData', data)
                     return data;
                 })
         },
@@ -51,14 +60,22 @@ export const store = createStore({
     mutations:{
         logoutUser: (state) => {
             state.user.token = null
+            state.user.userId = null
             state.user.data = {},
+            sessionStorage.removeItem("USER_ID");
+            sessionStorage.removeItem("FIRST_NAME");
             sessionStorage.removeItem("TOKEN");
         },
         setUser: (state, userData) => { // userData from res from action
-            console.log("SetUserData: " + userData.token);
+            //console.log("User Data from Login: " + userData);
             state.user.token = userData.token;
-            // state.user.data = userData[0];
+            state.user.userId = userData.id;
+            sessionStorage.setItem("USER_ID", userData.id);
             sessionStorage.setItem("TOKEN", userData.token);
+        },
+        setUserData: (state, userData) => {
+            state.user.data = userData.user
+            sessionStorage.setItem("FIRST_NAME", userData.user.first_name)
         }
     },
     modules: {},

@@ -100,7 +100,7 @@ function forgotPasswordSetNewPassword(){
           router.push({
             name: 'Login'
           })
-        }, 3000);
+        }, 5000);
     })
     .catch(err => {
         console.log(err)

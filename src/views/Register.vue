@@ -21,6 +21,16 @@
                         </svg>
                     </span>
                     </div>
+
+        <div v-if="sucessMsg" class="flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
+          {{ sucessMsg }}
+          <span @click="sucessMsg=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+        </div>
+
                     <div>
                         <label for="first_name" class="block text-sm font-medium text-gray-700"> Krstné meno </label>
                         <div class="mt-1">
@@ -151,19 +161,22 @@ const user = {
 }
 
 let errorMsg = ref();
+let sucessMsg = ref();
 
 function registerUser() {
     store
         .dispatch('registerUser', user) // dispatch -> register action in store
         .then((res) => {
+            sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
+            setTimeout(() => {
             router.push({
-                name: 'Dashboard'
+                name: 'Login'
             })
+            }, 1200);
         })
     .catch(err => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
-
 }
 
 </script>
