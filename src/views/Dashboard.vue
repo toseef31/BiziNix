@@ -18,7 +18,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStore } from 'vuex'
-import axiosClient from '@/axios';
 
 const store = useStore();
 

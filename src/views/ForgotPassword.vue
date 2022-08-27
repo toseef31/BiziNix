@@ -27,11 +27,11 @@
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700"> E-mail použitý pri registrácii </label>
             <div class="mt-1">
-              <input v-model="user.email" id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+              <input v-model="user.email" id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
             </div>
           </div>
           <div>
-            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Odoslať</button>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">Odoslať</button>
           </div>
         </form>
       </div>
@@ -41,11 +41,7 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import { stringLiteral } from '@babel/types';
-
-const router = useRouter();
 
 const user = {
   email: '',

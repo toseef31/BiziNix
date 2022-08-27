@@ -62,7 +62,7 @@ import axios from 'axios';
 const router = useRouter();
 const route = useRoute();
 
-const newPassword = reactive( {
+const newPassword = reactive({
   email: '',
   password: '',
   password_confirmation: '',

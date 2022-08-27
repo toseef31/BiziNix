@@ -47,7 +47,7 @@
                 <div>
                   <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                     <span class="sr-only">Open user menu</span>
-                     <div v-if="user.firstName" class="font-bold text-gray-700 rounded-full bg-white flex items-center justify-center font-mono h-8 w-8 text-lg">{{ user.firstName[0] }}</div>
+                     <div v-if="user.data.first_name" class="font-bold text-gray-700 rounded-full bg-white flex items-center justify-center font-mono h-8 w-8 text-lg">{{ user.data.first_name[0] }}</div>
                     <!-- <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" /> -->
                   </MenuButton>
                 </div>
@@ -89,7 +89,7 @@
               <!-- <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" /> -->
             </div>
             <div class="ml-3">
-              <div v-if="user.firstName" class="text-base font-medium leading-none text-white">{{ user.firstName }}</div>
+              <div v-if="user.data.first_name" class="text-base font-medium leading-none text-white">{{ user.data.first_name }}</div>
               <!-- <div class="text-sm font-medium leading-none text-gray-400">{{ user.email }}</div> -->
             </div>
             <button type="button" class="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">

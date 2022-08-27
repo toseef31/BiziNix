@@ -25,6 +25,7 @@ const router = createRouter({
         { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
+        { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } }

@@ -6,13 +6,12 @@ export const store = createStore({
         user: {
             data: {},
             userId: sessionStorage.getItem("USER_ID"),
-            firstName: sessionStorage.getItem("FIRST_NAME"),
             token: sessionStorage.getItem("TOKEN"),
         }
     },
     getters: {
         getUser: (state)  => {
-            return state.user.data;
+            return state.user;
         }
     },
     actions: {
@@ -55,6 +54,18 @@ export const store = createStore({
             .then(response => {
                 return response;
             })
+        },
+        updateUser({commit, dispatch}, userProfile){
+            let response;
+            if(userProfile.id){
+                response = axiosClient
+                .put(`/users/${userProfile.id}/update`, userProfile)
+                .then((res) => {
+                    console.log("Res from userProfile: " + JSON.stringify(res.data.user))
+                    commit('setCurrentUserProfile', res.data)
+                    return res;
+                })
+            }
         }
     },
     mutations:{
@@ -63,7 +74,6 @@ export const store = createStore({
             state.user.userId = null
             state.user.data = {},
             sessionStorage.removeItem("USER_ID");
-            sessionStorage.removeItem("FIRST_NAME");
             sessionStorage.removeItem("TOKEN");
         },
         setUser: (state, userData) => { // userData from res from action
@@ -75,7 +85,10 @@ export const store = createStore({
         },
         setUserData: (state, userData) => {
             state.user.data = userData.user
-            sessionStorage.setItem("FIRST_NAME", userData.user.first_name)
+        },
+        setCurrentUserProfile: (state, userProfile) => {
+            console.log("Mutations: " + JSON.stringify(userProfile))
+            state.user.data = userProfile.user
         }
     },
     modules: {},
