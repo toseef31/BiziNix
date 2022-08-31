@@ -1,6 +1,6 @@
 <template>
-<h1>{{ userProfile }}</h1>
-
+<!-- <p>{{ userProfile }}</p>
+<p>{{ userAddress }}</p> -->
     <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900">Uživatelský profil</h1>
@@ -53,7 +53,7 @@
 
                 <div class="col-span-6">
                   <label for="email-address" class="block text-sm font-medium text-gray-700">Emailová adresa</label>
-                  <input type="text" v-model="userProfile.email" readonly disabled name="email-address" id="email-address" autocomplete="email" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <input type="text" v-model="userProfile.email" readonly disabled name="email-address" id="email-address" autocomplete="email" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <p class="mt-2 text-sm text-gray-500">Ak si žiadate zmeniť email prosím kontaktujte nás.</p>
                 </div>
 
@@ -64,7 +64,7 @@
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="rodne_cislo" class="block text-sm font-medium text-gray-700">Rodné číslo</label>
-                  <input disabled readonly type="text" v-model="userProfile.rodne_cislo" name="rodne_cislo" id="rodne_cislo" autocomplete="off" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <input disabled readonly type="text" v-model="userProfile.rodne_cislo" name="rodne_cislo" id="rodne_cislo" autocomplete="off" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <p class="mt-2 text-sm text-gray-500">Ak si žiadate zmeniť rodné číslo prosím kontaktujte nás.</p>
                 </div>
 
@@ -112,29 +112,57 @@
         </div>
       </div>
       <div class="mt-5 md:mt-0 md:col-span-2">
-        <form action="#" method="POST">
+        <form @submit.prevent="updateUserAddress">
+
+          <div v-if="errorMsgAddress" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+          {{ errorMsgAddress }}
+          <span @click="errorMsgAddress=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+        </div>
+        <div v-if="sucessMsgAddress" class="mb-4 flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
+          {{ sucessMsgAddress }}
+          <span @click="sucessMsgAddress=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+        </div>
+
           <div class="shadow overflow-hidden sm:rounded-md">
             <div class="px-4 py-5 bg-white sm:p-6">
               <div class="grid grid-cols-6 gap-6">
 
-                <div class="col-span-6">
-                  <label for="street-address" class="block text-sm font-medium text-gray-700">Ulica a číslo</label>
-                  <input type="text" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                  <label for="street-address" class="block text-sm font-medium text-gray-700">Ulica</label>
+                  <input type="text" v-model="userAddress.street" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                </div>
+
+                <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                  <label for="street-address" class="block text-sm font-medium text-gray-700">Súpisné číslo</label>
+                  <input type="text" v-model="userAddress.street_number" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                </div>
+
+                <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                  <label for="street-address" class="block text-sm font-medium text-gray-700">Orientačné číslo</label>
+                  <input type="text" v-model="userAddress.street_number2" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                   <label for="city" class="block text-sm font-medium text-gray-700">Mesto</label>
-                  <input type="text" name="city" id="city" autocomplete="city" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <input type="text" v-model="userAddress.city" name="city" id="city" autocomplete="city" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                   <label for="country" class="block text-sm font-medium text-gray-700">Krajina</label>
-                  <input type="text" name="country" id="country" autocomplete="country" class="mt-1 focus:ring-green-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <input type="text" v-model="userAddress.country" name="country" id="country" autocomplete="country" class="mt-1 focus:ring-green-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                   <label for="postal-code" class="block text-sm font-medium text-gray-700">PSČ</label>
-                  <input type="text" name="postal-code" id="postal-code" autocomplete="postal-code" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <input type="text" v-model="userAddress.psc" name="postal-code" id="postal-code" autocomplete="postal-code" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
               </div>
             </div>
@@ -154,12 +182,16 @@
 </template>
 
 <script setup lang="ts">
-import axiosClient from '@/axios';
 import store from '@/store';
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 let errorMsg = ref();
 let sucessMsg = ref();
+let errorMsgAddress = ref();
+let sucessMsgAddress = ref();
+
+store.dispatch("setUserDataAfterLogin")
+store.dispatch("userAddress")
 
 let userProfile = ref({
   first_name: "",
@@ -173,34 +205,59 @@ let userProfile = ref({
   rodne_cislo: "",  
 });
 
+let userAddress = ref({
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+})
+
+
 watch(
   () => store.state.user.data,
-  (newVal, oldVal) => {
-    console.log("NewVal is: " +  JSON.stringify(newVal))
+  (newValUserProfile, oldValUserProfile) => {
     userProfile.value = {
-      ...JSON.parse(JSON.stringify(newVal))
+      ...JSON.parse(JSON.stringify(newValUserProfile))
+    }
+  }
+)
+
+watch(
+  () => store.state.user.address,
+  (newValUserAddres, oldValUserAddres) => {
+    userAddress.value = {
+      ...JSON.parse(JSON.stringify(newValUserAddres))
     } 
   }
 )
 
-store.dispatch("setUserDataAfterLogin")
-
-//const userProfile = computed( () => store.state.user.data)
-
 function updateUser(){
-
   store
-    .dispatch("updateUser", {...userProfile.value})
-    .then((res) => {
-      console.log(userProfile)
-      console.log("Ja som sucess masage" + res.sucess)
-      sucessMsg.value = "Údaje úspešne zmenené"
+  .dispatch("updateUser", {...userProfile.value})
+  .then(res => {  
+      errorMsg.value = false
+      sucessMsg.value = "Osobné informácie úspešne zmenené."
     })
     .catch(err => {
-    console.log("Ja som error masage: " + err)
-    errorMsg.value = err // response data is from store actions
-  })
-  
+    sucessMsg.value = false
+    errorMsg.value = err.response.data.errors // response data is from store actions
+  })  
 }
+
+function updateUserAddress(){
+  store.dispatch("updateUserAddress", {...userAddress.value})
+  .then(res => {
+    errorMsgAddress.value = false
+    sucessMsgAddress.value = "Adresa úspešne zmenená."
+  })
+  .catch(err => {
+    sucessMsgAddress.value = false
+    errorMsgAddress.value = err.response.data.errors // response data is from store actions
+  })  
+}
+
+
 
 </script>

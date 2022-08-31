@@ -55,12 +55,10 @@ function forgotPasswordSendEmmail(){
   store
     .dispatch('forgotPasswordSendEmmail', user)
     .then(res => {
-        // console.log(res.data)
         errorMsg.value = null
         emailWithPasswordWasSend.value = res.data.message
     })
     .catch(err => {
-        // console.log(err)
         emailWithPasswordWasSend.value = null
         errorMsg.value = err.response.data.message // response data is from store actions
     })

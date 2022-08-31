@@ -78,7 +78,7 @@ onMounted(() => {
 
   return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
   .then(response => {
-    console.log(response);
+    // console.log(response);
     newPassword.email = response.data.email
     newPassword.token = response.data.token
     return response;
@@ -103,7 +103,7 @@ function forgotPasswordSetNewPassword(){
         }, 5000);
     })
     .catch(err => {
-        console.log(err)
+        // console.log(err)
         setNewPassword.value = null
         errorMsg.value = err.response.data.message // response data is from store actions
     })

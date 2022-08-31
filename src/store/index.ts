@@ -5,6 +5,7 @@ export const store = createStore({
     state: {
         user: {
             data: {},
+            address: {},
             userId: sessionStorage.getItem("USER_ID"),
             token: sessionStorage.getItem("TOKEN"),
         }
@@ -56,17 +57,37 @@ export const store = createStore({
             })
         },
         updateUser({commit, dispatch}, userProfile){
-            let response;
             if(userProfile.id){
-                response = axiosClient
+                return axiosClient
                 .put(`/users/${userProfile.id}/update`, userProfile)
-                .then((res) => {
-                    console.log("Res from userProfile: " + JSON.stringify(res.data.user))
+                .then(res => {
+                    // console.log("Res from userProfile: " + JSON.stringify(res))
                     commit('setCurrentUserProfile', res.data)
                     return res;
                 })
             }
-        }
+        },
+        userAddress({commit, dispatch}, userAddress ) {
+            let response;
+            if(this.state.user.userId){
+                response = axiosClient
+                .get(`/address/${this.state.user.userId}/get`)
+                .then((res) => {
+                    commit("setUserAddress", res.data)
+                    return res
+                })
+            }
+        },
+        updateUserAddress({commit, dispatch}, userAddress){
+            if(userAddress.id){
+                return axiosClient
+                .put(`/address/${userAddress.id}/update`, userAddress)
+                .then(res => {
+                    commit('setUserAddressAfterUpdate', res.data)
+                    return res;
+                })
+            }
+        },
     },
     mutations:{
         logoutUser: (state) => {
@@ -77,7 +98,7 @@ export const store = createStore({
             sessionStorage.removeItem("TOKEN");
         },
         setUser: (state, userData) => { // userData from res from action
-            //console.log("User Data from Login: " + userData);
+            // console.log("User Data from Login: " + userData);
             state.user.token = userData.token;
             state.user.userId = userData.id;
             sessionStorage.setItem("USER_ID", userData.id);
@@ -87,8 +108,14 @@ export const store = createStore({
             state.user.data = userData.user
         },
         setCurrentUserProfile: (state, userProfile) => {
-            console.log("Mutations: " + JSON.stringify(userProfile))
+            // console.log("Mutations: " + JSON.stringify(userProfile))
             state.user.data = userProfile.user
+        },
+        setUserAddress: (state, userAddress) => {
+            state.user.address = userAddress.data
+        },
+        setUserAddressAfterUpdate: (state, userAddress) => {
+            state.user.address = userAddress.address
         }
     },
     modules: {},

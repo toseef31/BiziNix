@@ -77,7 +77,7 @@ function login(){
   store
     .dispatch('loginUser', user)
     .then((res) => {
-      console.log(res)
+      // console.log(res)
       router.push({
         name: 'Dashboard',  
       })
