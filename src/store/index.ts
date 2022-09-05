@@ -23,6 +23,12 @@ export const store = createStore({
                 return data;
             })
         },
+        registerAddress({commit}, userAddress){
+            return axiosClient.post("/address/add", userAddress)
+            .then(({data}) => {
+                return data
+            })
+        },
         loginUser({ commit }, user) { // loginUser is dispatch from Login view or component user second argument for login
             return axiosClient.post("/users/login", user)
                 .then(({data}) => {
