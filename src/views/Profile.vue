@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="mt-5 md:mt-0 md:col-span-2">
-        <form @submit.prevent="updateUser">
+        <Form @submit="updateUser">
 
           <div v-if="errorMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
           {{ errorMsg }}
@@ -43,39 +43,45 @@
               <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-3">
                   <label for="first-name" class="block text-sm font-medium text-gray-700">Krstné meno</label>
-                  <input type="text" v-model="userProfile.first_name" name="first-name" id="first-name" autocomplete="given-name" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userProfile.first_name" name="first-name" id="first-name" autocomplete="given-name" rules="required|minLength:2"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="first-name" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="last-name" class="block text-sm font-medium text-gray-700">Priezvisko</label>
-                  <input type="text" v-model="userProfile.last_name" name="last-name" id="last-name" autocomplete="family-name" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userProfile.last_name" name="last-name" id="last-name" autocomplete="family-name" rules="required|minLength:2"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="last-name" />
                 </div>
 
                 <div class="col-span-6">
                   <label for="email-address" class="block text-sm font-medium text-gray-700">Emailová adresa</label>
-                  <input type="text" v-model="userProfile.email" readonly disabled name="email-address" id="email-address" autocomplete="email" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="email" v-model="userProfile.email" readonly disabled name="email-address" id="email-address" autocomplete="email" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <p class="mt-2 text-sm text-gray-500">Ak si žiadate zmeniť email prosím kontaktujte nás.</p>
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="telephone" class="block text-sm font-medium text-gray-700">Telefonné číslo</label>
-                  <input type="text" v-model="userProfile.phone" name="telephone" id="telephone" autocomplete="telephone" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userProfile.phone" name="telephone" id="telephone" autocomplete="telephone" rules="required|minLength:9" 
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="telephone" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="rodne_cislo" class="block text-sm font-medium text-gray-700">Rodné číslo</label>
-                  <input disabled readonly type="text" v-model="userProfile.rodne_cislo" name="rodne_cislo" id="rodne_cislo" autocomplete="off" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field readonly type="text" v-model="userProfile.rodne_cislo" name="rodne_cislo" id="rodne_cislo" autocomplete="off" class="bg-gray-100 mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <p class="mt-2 text-sm text-gray-500">Ak si žiadate zmeniť rodné číslo prosím kontaktujte nás.</p>
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="title_before" class="block text-sm font-medium text-gray-700">Titul pred menom</label>
-                  <input type="text" v-model="userProfile.title_before" name="title_before" id="title_before" autocomplete="off" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userProfile.title_before" name="title_before" id="title_before" autocomplete="off" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3">
                   <label for="title_after" class="block text-sm font-medium text-gray-700">Titul za menom</label>
-                  <input type="text" v-model="userProfile.title_after" name="title_after" id="title_after" autocomplete="off" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userProfile.title_after" name="title_after" id="title_after" autocomplete="off" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
 
                 <!-- <div class="col-span-6 sm:col-span-3">
@@ -92,7 +98,7 @@
               <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">Uložiť</button>
             </div>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   </div>
@@ -112,7 +118,7 @@
         </div>
       </div>
       <div class="mt-5 md:mt-0 md:col-span-2">
-        <form @submit.prevent="updateUserAddress">
+        <Form @submit="updateUserAddress">
 
           <div v-if="errorMsgAddress" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
           {{ errorMsgAddress }}
@@ -137,32 +143,44 @@
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                   <label for="street-address" class="block text-sm font-medium text-gray-700">Ulica</label>
-                  <input type="text" v-model="userAddress.street" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userAddress.street" name="street-address" id="street-address" autocomplete="street-address" rules="required"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="street-address" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
-                  <label for="street-address" class="block text-sm font-medium text-gray-700">Súpisné číslo</label>
-                  <input type="text" v-model="userAddress.street_number" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <label for="street-number-1" class="block text-sm font-medium text-gray-700">Súpisné číslo</label>
+                  <Field type="text" v-model="userAddress.street_number" name="street-number-1" id="street-number-1" autocomplete="street-number-1" rules="required"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="street-number-1" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
-                  <label for="street-address" class="block text-sm font-medium text-gray-700">Orientačné číslo</label>
-                  <input type="text" v-model="userAddress.street_number2" name="street-address" id="street-address" autocomplete="street-address" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <label for="street-number-2" class="block text-sm font-medium text-gray-700">Orientačné číslo</label>
+                  <Field type="text" v-model="userAddress.street_number2" name="street-number-2" id="street-number-2" autocomplete="street-number-2" rules="required"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="street-number-2" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                   <label for="city" class="block text-sm font-medium text-gray-700">Mesto</label>
-                  <input type="text" v-model="userAddress.city" name="city" id="city" autocomplete="city" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userAddress.city" name="city" id="city" autocomplete="city" rules="required"
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="city" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                   <label for="country" class="block text-sm font-medium text-gray-700">Krajina</label>
-                  <input type="text" v-model="userAddress.country" name="country" id="country" autocomplete="country" class="mt-1 focus:ring-green-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userAddress.country" name="country" id="country" autocomplete="country" rules="required" 
+                  class="mt-1 focus:ring-green-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="country" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                   <label for="postal-code" class="block text-sm font-medium text-gray-700">PSČ</label>
-                  <input type="text" v-model="userAddress.psc" name="postal-code" id="postal-code" autocomplete="postal-code" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" v-model="userAddress.psc" name="postal-code" id="postal-code" autocomplete="postal-code" rules="required" 
+                  class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <ErrorMessage name="postal-code" />
                 </div>
               </div>
             </div>
@@ -170,7 +188,7 @@
               <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">Uložiť</button>
             </div>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   </div>
@@ -184,6 +202,7 @@
 <script setup lang="ts">
 import store from '@/store';
 import { ref, watch } from 'vue';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 
 let errorMsg = ref();
 let sucessMsg = ref();

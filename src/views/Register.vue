@@ -46,7 +46,7 @@
                         <label for="first_name" class="block text-sm font-medium text-gray-700"> Krstné meno </label>
                         <div class="mt-1">
                             <Field v-model="user.first_name" id="first_name" name="first_name" type="text"
-                                autocomplete="first_name" rules="required|minLength: 2"
+                                autocomplete="first_name" rules="required|minLength:2"
                                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                                 <ErrorMessage name="first_name" />
                         </div>
@@ -55,7 +55,7 @@
                     <div>
                         <label for="last_name" class="block text-sm font-medium text-gray-700"> Priezvisko </label>
                         <div class="mt-1">
-                            <Field v-model="user.last_name" id="last_name" name="last_name" type="text" rules="required|minLength: 2"
+                            <Field v-model="user.last_name" id="last_name" name="last_name" type="text" rules="required|minLength:2"
                                 autocomplete="last_name"
                                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
                                 <ErrorMessage name="last_name" />
@@ -237,7 +237,7 @@
 import store from '@/store';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Field, Form, ErrorMessage, defineRule } from 'vee-validate';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 
 const router = useRouter();
 
@@ -264,31 +264,6 @@ const userAddress = {
   psc: '',
   country: '',
 }
-
-defineRule('required', (value: any) => {
-  if (!value || !value.length) {
-    return 'Povinné pole.';
-  }
-  return true;
-});
-
-defineRule('minLength', (value: any, [limit]: any) => {
-  // The field is empty so it should pass
-  if (!value || !value.length) {
-    return true;
-  }
-  if (value.length < limit) {
-    return `Toto pole musí mať minimálne ${limit} znakov.`;
-  }
-  return true;
-});
-
-defineRule('confirmed', (value: any, [target]: any, ctx) => {
-  if (value === ctx.form[target]) {
-    return true;
-  }
-  return 'Heslá sa musia zhodovať.';
-});
 
 let errorMsg = ref();
 let sucessMsg = ref();
