@@ -74,6 +74,7 @@ let setNewPassword = ref();
 
 
 onMounted(() => {
+  
   const token = route.params.token
 
   return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
