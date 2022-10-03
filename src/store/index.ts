@@ -7,7 +7,7 @@ export const store = createStore({
             data: {},
             address: {},
             userId: sessionStorage.getItem("USER_ID"),
-            addressId: {},
+            addressId: null,
             token: sessionStorage.getItem("TOKEN"),
         }
     },
@@ -100,7 +100,9 @@ export const store = createStore({
         logoutUser: (state) => {
             state.user.token = null
             state.user.userId = null
+            state.user.addressId = null
             state.user.data = {},
+            state.user.address = {},
             sessionStorage.removeItem("USER_ID");
             sessionStorage.removeItem("TOKEN");
         },
