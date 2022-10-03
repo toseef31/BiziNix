@@ -7,6 +7,7 @@ export const store = createStore({
             data: {},
             address: {},
             userId: sessionStorage.getItem("USER_ID"),
+            addressId: {},
             token: sessionStorage.getItem("TOKEN"),
         }
     },
@@ -77,7 +78,7 @@ export const store = createStore({
             let response;
             if(this.state.user.userId){
                 response = axiosClient
-                .get(`/address/${this.state.user.userId}/get`)
+                .get(`/address/${this.state.user.addressId}/get`)
                 .then((res) => {
                     commit("setUserAddress", res.data)
                     return res
@@ -111,6 +112,7 @@ export const store = createStore({
             sessionStorage.setItem("TOKEN", userData.token);
         },
         setUserData: (state, userData) => {
+            state.user.addressId = userData.user.address_id
             state.user.data = userData.user
         },
         setCurrentUserProfile: (state, userProfile) => {

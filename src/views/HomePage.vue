@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-      <div class="mt-10 w-full max-w-xs">
+      <div class="mt-10 w-full max-w-lg">
         <img src="../assets/robot.png">
       </div>
     </div>
