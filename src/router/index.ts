@@ -6,6 +6,8 @@ import DefaultLayout from "../components/DefaultLayout.vue";
 import CompanyEdit from "../views/CompanyEdit.vue";
 import HomePage from "../views/HomePage.vue";
 import Contact from "../views/Contact.vue";
+import ZalozenieZivnosti from "../views/ZalozenieZivnosti.vue";
+import ZalozenieFirmy from "../views/ZalozenieFirmy.vue";
 import Support from "../views/Support.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import ActiveUser from "../views/ActiveUser.vue";
@@ -23,6 +25,8 @@ const router = createRouter({
       children: [
         { path: '/home', name: "Home", component: HomePage },
         { path: '/contact', name: "Contact", component: Contact },
+        { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
+        { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
         { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
