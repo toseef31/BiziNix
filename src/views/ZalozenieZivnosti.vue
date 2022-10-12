@@ -20,8 +20,28 @@
       </div>
     </div>
   </div>
+  <div class="py-6 bg-gray-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
+      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+      <StepForm class="md:w-1/2 mx-auto rounded-2xl">
+        <div class="container">
+          <Stepper></Stepper>
+        </div>
+        <StepperControler></StepperControler>
+      </StepForm>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import Stepper from "../components/Stepper.vue";
+import StepperControler from "../components/StepperControler.vue";
+import Account from "../components/Steps/Account.vue"
+
+const stepsDescreption = [
+  "Account Info",
+  "Personal Details",
+  "Complete"
+]
 
 </script>

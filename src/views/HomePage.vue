@@ -30,26 +30,33 @@
       <div class="hidden md:block md:max-w-xs lg:max-w-md">
         <img src="../assets/robot.png">
       </div>
+      <FormKit
+        label="Username"
+        type="text"
+        help="Pick a new username"
+        validation="required|matches:/^@[a-zA-Z]+$/|length:5"
+        value="@useFormKit"
+        />
     </div>
   </div>
   <!-- After slider -->
-  <div class="pt-6 pb-6 bg-gray-800 text-white">
-  <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 bg-gray-800">
-    <h1 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Všetko, čo potrebuje vaše podnikanie</h1>
-    <div class="flex gap-14 mt-14 flex-col md:flex-row">
-    <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
-      <h2 class="font-bold text-3xl">Zakladanie a zmeny vo firmách</h2>
-      <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+  <div class="py-6 bg-gray-800 text-white">
+    <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 bg-gray-800">
+      <h1 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Všetko, čo potrebuje vaše podnikanie</h1>
+      <div class="flex gap-14 mt-14 flex-col md:flex-row">
+      <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
+        <h2 class="font-bold text-3xl">Zakladanie a zmeny vo firmách</h2>
+        <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+      </div>
+      <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
+        <h2 class="font-bold text-3xl">Vytváranie a správa Vašich dokumentov</h2>
+        <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+      </div>
+      <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
+        <h2 class="font-bold text-3xl">Odborné rady a konzultácie</h2>
+        <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+      </div>
     </div>
-    <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
-      <h2 class="font-bold text-3xl">Vytváranie a správa Vašich dokumentov</h2>
-      <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-    </div>
-    <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
-      <h2 class="font-bold text-3xl">Odborné rady a konzultácie</h2>
-      <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-    </div>
-  </div>
   </div>
 </div>
 </template>
