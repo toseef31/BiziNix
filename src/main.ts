@@ -11,7 +11,6 @@ import { generateClasses } from "@formkit/themes";
 
 //extend defaultConfig
 const config = defaultConfig({
-  //theme: 'genesis',
   config: {
     classes: generateClasses({
       text: {
@@ -31,7 +30,7 @@ const app = createApp(App);
 app.use(store);
 app.use(createPinia());
 app.use(router);
-app.use(plugin, defaultConfig);
+app.use(plugin, defaultConfig(config));
 
 app.mount("#app");
 

@@ -30,13 +30,6 @@
       <div class="hidden md:block md:max-w-xs lg:max-w-md">
         <img src="../assets/robot.png">
       </div>
-      <FormKit
-        label="Username"
-        type="text"
-        help="Pick a new username"
-        validation="required|matches:/^@[a-zA-Z]+$/|length:5"
-        value="@useFormKit"
-        />
     </div>
   </div>
   <!-- After slider -->
