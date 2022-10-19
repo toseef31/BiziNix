@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.multiselect-option {
+    color: black !important;
+}
+
+.multiselect-tags-search {
+    color: black;
+}
+
 .step {
     display: flex;
     align-items: center;
@@ -45,4 +53,42 @@
     background-color: #ff4949;
     color: #fff;
     z-index: 100;
+}
+
+.step-nav {
+    display: flex;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    justify-content: space-between;
+  }
+
+  .formkit-outer[data-type="submit"] .formkit-wrapper {
+    display: flex;
+  }
+
+  /* Multi step form on mobile */
+@media (max-width: 438px) {
+    .steps {
+      flex-direction: column;
+    }
+    .step {
+      border-bottom: 1px solid var(--gray);
+      border-right: none;
+    }
+    .step:last-child {
+      border-bottom: none;
+    }
+    .form-body {
+      padding: 1em;
+    }
+    .formkit-outer[data-type="submit"] .formkit-wrapper {
+      padding: 0 1em 1em 1em;
+      display: flex;
+    }
+    .formkit-form > .formkit-messages {
+      padding: 0 1em 0em 1em;
+    }
+    .formkit-form > .formkit-messages:last-child {
+      padding: 0 1em 1em 1em;
+    }
 }

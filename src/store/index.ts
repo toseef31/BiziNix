@@ -95,6 +95,12 @@ export const store = createStore({
                 })
             }
         },
+        getAllSubjectOfBusiness(){
+            return axiosClient.get("/subjectOfBusiness/getAllSubjectsOfBusiness")
+            .then(response => {
+                return response;
+            })
+        }
     },
     mutations:{
         logoutUser: (state) => {

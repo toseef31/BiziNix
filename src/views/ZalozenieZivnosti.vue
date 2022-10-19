@@ -22,7 +22,7 @@
   </div>
   <div class="py-6 bg-gray-800 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
-      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>      
       <FormKit type="form"
         #default="{ value, state: { valid } }"
         :plugins="[stepPlugin]"
@@ -48,9 +48,14 @@
           <section v-show="activeStep === 'Predmet podnikania'">
             <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
             <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
-            <FormKit type="group" id="Predmet podnikania" name="Predmet podnikania">
-              <FormKit type="text" label="Predmet podnikania" validation="required" />
+
+            <FormKit type="group" id="Predmet podnikania" name="Predmet podnikania">            
+              <FormKit :type="multiSelVueForm" name="predmety_podikania" label="Predmet podnikania"
+                :items="businessCategori"
+                placeholder="Example placeholder"
+                validation="required"/>
             </FormKit>
+
           </section>
           <!-- Podnikatelské údaje -->
           <section v-show="activeStep === 'Podnikatelské údaje'">
@@ -58,7 +63,7 @@
             <div class="my-2">Na tomto mieste zadajte prosím vaše údje.</div>
             <div class="flex space-x-4">
             <FormKit class="" type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
-              <FormKit type="text" label="Meno" validation="required" />
+              <FormKit type="text" name="meno" label="Meno" validation="required" />
               <FormKit type="text" label="Priezvisko" validation="required" />
             </FormKit>
             </div>
@@ -85,19 +90,57 @@
             </div>
 
         <FormKit type="submit" label="Submit Application" :disabled="!valid" />
+
+        <pre wrap>{{ value }}</pre>
+
       </FormKit>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+
+import store from "@/store";
+import { ref, onBeforeMount } from "vue";
 import useSteps from "../components/forms/useStep";
+import { createInput } from '@formkit/vue'
+import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 
 const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
+
+const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
+  props: ['items'],
+})
 
 const checkStepValidity = (stepName: any) => {
   return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
 }
+
+let businessCategori = ref([
+  { label: '' as string, value: '' as string },
+])
+
+onBeforeMount( () => {  
+
+  store.dispatch("getAllSubjectOfBusiness")
+  .then(res => {
+    res.data.data.forEach((element: any) => {
+      businessCategori.value.push({
+        label: element.title,
+        value: element.id
+      })
+    })
+
+    businessCategori.value.shift()
+    businessCategori.value = [ ...businessCategori.value ]
+
+  })
+    .catch(err => {
+    // sucessMsg.value = false
+    // errorMsg.value = err.response.data.errors // response data is from store actions
+  })
+})
 
 const submitApp = async (formData: any, node: any) => {
   console.log(formData)
@@ -109,7 +152,6 @@ const submitApp = async (formData: any, node: any) => {
     node.setErrors(err.formErrors, err.fieldErrors)
   }
 }
-
 
 // This is just a mock of an actual axios instance.
 const axios = {
