@@ -23,7 +23,7 @@
   <div class="py-6 bg-gray-800 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
       <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>      
-      <FormKit type="form"
+      <FormKit type="form" id="zalZivForm"
         #default="{ value, state: { valid } }"
         :plugins="[stepPlugin]"
         @submit="submitApp"
@@ -39,23 +39,24 @@
                 class="step--errors"
                 v-text="step.errorCount + step.blockingCount"
               />
-              {{ stepName }}
+              {{ camel2title(stepName.toString()) }}
             </li>
           </ul>
         </div>
         <div class="form-body my-6">
           <!-- Predmet podnikania -->
-          <section v-show="activeStep === 'Predmet podnikania'">
+          <section v-show="activeStep === 'PredmetPodnikania'">
             <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
             <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
-
-            <FormKit type="group" id="Predmet podnikania" name="Predmet podnikania">            
-              <FormKit :type="multiSelVueForm" name="predmety_podikania" label="Predmet podnikania"
+            <FormKit type="group" id="PredmetPodnikania" name="PredmetPodnikania">            
+              <FormKit :type="multiSelVueForm" id="subjects_of_business" name="subjects_of_business" label="Predmet podnikania"
                 :items="businessCategori"
+                @input="priceForBusinessOfcategories"
                 placeholder="Example placeholder"
+                help="Môžete vybrať aj viac predmetov podnikania"
                 validation="required"/>
             </FormKit>
-
+            <div>Cena za zavolené predmety podnikania: {{abc}}</div>
           </section>
           <!-- Podnikatelské údaje -->
           <section v-show="activeStep === 'Podnikatelské údaje'">
@@ -64,7 +65,7 @@
             <div class="flex space-x-4">
             <FormKit class="" type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
               <FormKit type="text" name="meno" label="Meno" validation="required" />
-              <FormKit type="text" label="Priezvisko" validation="required" />
+              <FormKit type="text" label="Priezvisko" help="Môžete vybrať aj viac predmetov podnikania" validation="required" />
             </FormKit>
             </div>
           </section>
@@ -85,7 +86,7 @@
 
             <!-- NEW: Adds Next / Previous navigation buttons. -->
             <div class="step-nav">
-              <FormKit type="button" :disabled="activeStep == 'Predmet podnikania'" @click="setStep(-1)" v-text="'Previous step'" />
+              <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Previous step'" />
               <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
             </div>
 
@@ -102,10 +103,16 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onMounted, watchEffect } from "vue";
 import useSteps from "../components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
+import { getNode } from "@formkit/core";
+
+const camel2title = (str: string) => str
+  .replace(/([A-Z])/g, (match) => ` ${match}`)
+  .replace(/^./, (match) => match.toUpperCase())
+  .trim()
 
 const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
 
@@ -118,7 +125,10 @@ const checkStepValidity = (stepName: any) => {
 }
 
 let businessCategori = ref([
-  { label: '' as string, value: '' as string },
+  {
+  label: '' as string,
+  value: '' as string
+  }
 ])
 
 onBeforeMount( () => {  
@@ -128,7 +138,7 @@ onBeforeMount( () => {
     res.data.data.forEach((element: any) => {
       businessCategori.value.push({
         label: element.title,
-        value: element.id
+        value: element
       })
     })
 
@@ -141,6 +151,19 @@ onBeforeMount( () => {
     // errorMsg.value = err.response.data.errors // response data is from store actions
   })
 })
+
+let abc = ref(0);
+function priceForBusinessOfcategories(){
+  let val: any = getNode("PredmetPodnikania")?.value;
+  let total = 0;
+  if(val.subjects_of_business){
+    val.subjects_of_business.forEach((element: any) => {
+      total = total + element.price;
+      console.log(element.price)
+    });
+  }
+  abc.value = total
+}
 
 const submitApp = async (formData: any, node: any) => {
   console.log(formData)

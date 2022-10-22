@@ -10,6 +10,10 @@
     color: black;
 }
 
+#help-input_1 {
+  padding-top: 5px;
+}
+
 .step {
     display: flex;
     align-items: center;

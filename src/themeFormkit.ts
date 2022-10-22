@@ -37,7 +37,7 @@ const textClassification = {
     // the global key will apply to all inputs
     global: {
       outer: 'mb-5 formkit-disabled:opacity-50',
-      help: 'text-xs text-gray-500',
+      help: 'text-xs text-gray-400',
       messages: 'list-none p-0 mt-1 mb-0',
       message: 'text-red-500 mb-1 text-xs',
     },
