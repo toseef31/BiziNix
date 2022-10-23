@@ -22,7 +22,7 @@ const textClassification = {
     help: 'mb-2',
     input:
       'form-check-input appearance-none h-5 w-5 mr-2 border border-gray-500 rounded-sm bg-white checked:bg-blue-500 focus:outline-none focus:ring-0 transition duration-200',
-    label: 'text-sm text-gray-700 mt-1',
+    label: 'text-sm text-gray-400 mt-1',
   }
   const buttonClassification = {
     wrapper: 'mb-1',

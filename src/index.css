@@ -59,16 +59,9 @@
     z-index: 100;
 }
 
-.step-nav {
-    display: flex;
-    margin-top: 2em;
-    margin-bottom: 1em;
-    justify-content: space-between;
-  }
-
-  .formkit-outer[data-type="submit"] .formkit-wrapper {
-    display: flex;
-  }
+.formkit-outer[data-type="submit"] .formkit-wrapper {
+  display: flex;
+}
 
   /* Multi step form on mobile */
 @media (max-width: 438px) {

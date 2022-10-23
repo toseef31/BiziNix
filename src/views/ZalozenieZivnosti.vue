@@ -31,8 +31,8 @@
       >
         <!-- Zoznam krokov list steps -->
         <div class="flex items-center justify-center">
-          <ul class="steps mt-8 list-disc list-inside flex space-x-8 cursor-pointer">
-            <li v-for="(step, stepName) in steps" :class="['step px-4 py-5', { 'has-errors': checkStepValidity(stepName) }]" @click="activeStep = stepName.toString()"
+          <ul class="steps m-8 list-none flex flex-col md:flex-row space-x-8 cursor-pointer">
+            <li v-for="(step, stepName) in steps" :class="['step px-4 py-5 my-1', { 'has-errors': checkStepValidity(stepName) }]" @click="activeStep = stepName.toString()"
             :data-step-valid="step.valid && step.errorCount === 0" :data-step-active="activeStep === stepName.toString()">
               <span
                 v-if="checkStepValidity(stepName)"
@@ -49,49 +49,83 @@
             <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
             <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
             <FormKit type="group" id="PredmetPodnikania" name="PredmetPodnikania">            
-              <FormKit :type="multiSelVueForm" id="subjects_of_business" name="subjects_of_business" label="Predmet podnikania"
+              <FormKit :type="multiSelVueForm" id="subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
                 :items="businessCategori"
                 @input="priceForBusinessOfcategories"
                 placeholder="Example placeholder"
-                help="Môžete vybrať aj viac predmetov podnikania"
+                help="Môžete vybrať aj viac predmetov podnikania."
                 validation="required"/>
             </FormKit>
-            <div>Cena za zavolené predmety podnikania: {{abc}}</div>
+            <div>Cena za zavolené predmety podnikania: {{priceForBusinessCategories}}</div>
           </section>
           <!-- Podnikatelské údaje -->
           <section v-show="activeStep === 'Podnikatelské údaje'">
             <div class="text-4xl font-bold">Vaše osobné a podnikatelské údaje</div>
             <div class="my-2">Na tomto mieste zadajte prosím vaše údje.</div>
-            <div class="flex space-x-4">
-            <FormKit class="" type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
-              <FormKit type="text" name="meno" label="Meno" validation="required" />
-              <FormKit type="text" label="Priezvisko" help="Môžete vybrať aj viac predmetov podnikania" validation="required" />
-            </FormKit>
+            <div>
+              <FormKit type="group" v-model="user" id="Podnikatelské údaje" name="Podnikatelské údaje">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                  <FormKit type="text" name="first_name" label="Krstné meno" validation="required" />
+                  <FormKit type="text" name="last_name" label="Priezvisko" validation="required" />
+                  <FormKit type="select" label="Pohlavie" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                  <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
+                  <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
+                    <FormKit type="text" name="title_before" label="Titul pred menom" />
+                    <FormKit type="text" name="title_after" label="Titul za menom" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FormKit type="text" name="phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
+                  <FormKit type="date" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
+                  <FormKit type="text" name="rodne_cislo" label="Rodné číslo" validation="required|length:10" />
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FormKit type="text" name="street" label="Ulica" validation="required" />
+                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required" />
+                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required" />
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FormKit type="email" name="email" label="Email" validation="required|email" help="Email ktorý budete používať aj na prihlasenie do účtu." />
+                  <FormKit type="password" autocomplete="new-password" name="password" label="Heslo" validation="required|length:8" />
+                  <FormKit type="password" autocomplete="new-password" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
+                </div>
+              </FormKit>
             </div>
           </section>
           <!-- Fakturačné údaje -->
           <section v-show="activeStep === 'Fakturačné údaje'">
             <div class="text-4xl font-bold">Fakturačné údaje</div>
             <div class="my-2">Na nasledujúce údaje vám budeme odosielať faktúri.</div>
-            <div class="flex space-x-4">
-            <FormKit class="" type="group" id="Fakturačné údaje" name="Fakturačné údaje">
-              <FormKit type="text" label="Meno" validation="required" />
-              <FormKit type="text" label="Priezvisko" validation="required" />
-              <FormKit type="text" label="Ulica" validation="required" />
-              <FormKit type="text" label="Psč" validation="required" />
-            </FormKit>
+            <div>
+              <FormKit class="" type="group" v-model="fakturacne_udaje" id="Fakturačné údaje" name="Fakturačné údaje">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                <FormKit type="text" name="first_name" label="Meno" validation="required" />
+                <FormKit type="text" name="last_name" label="Priezvisko" validation="required" />
+                <FormKit type="checkbox" v-model="invoiceAddressIsSame" :ignore="true" :disabled="true" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
+                </div>
+                <div class="w-fit">
+                  <FormKit type="checkbox" v-model="orderingAsCompany" :ignore="true" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
+                </div>
+                <div v-show="orderingAsCompany" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <FormKit type="text" name="name" label="Názov firmy" />
+                    <FormKit type="text" name="ico" label="IČO" />
+                    <FormKit type="text" name="dic" label="DIČ" />
+                    <FormKit type="text" name="ic_dph" label="IČ DPH" />
+                </div>
+              </FormKit>
             </div>
           </section>
         </div>
 
-            <!-- NEW: Adds Next / Previous navigation buttons. -->
-            <div class="step-nav">
-              <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Previous step'" />
-              <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
-            </div>
+        <div class="flex my-2 justify-center space-x-4">
+          <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Previous step'" />
+          <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
+        </div>
 
-        <FormKit type="submit" label="Submit Application" :disabled="!valid" />
-
+        <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
+        <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button>
         <pre wrap>{{ value }}</pre>
 
       </FormKit>
@@ -109,27 +143,56 @@ import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import { getNode } from "@formkit/core";
 
+const hasTitle = ref(false);
+const invoiceAddressIsSame = ref(true);
+const orderingAsCompany = ref(false);
+
 const camel2title = (str: string) => str
   .replace(/([A-Z])/g, (match) => ` ${match}`)
   .replace(/^./, (match) => match.toUpperCase())
   .trim()
-
 const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
-
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
   props: ['items'],
 })
-
 const checkStepValidity = (stepName: any) => {
   return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
 }
-
 let businessCategori = ref([
   {
-  label: '' as string,
-  value: '' as string
+    label: '' as string,
+    value: ''
   }
 ])
+
+let fakturacne_udaje = ref({
+  first_name: '',
+  last_name: '',
+  name: '',
+  ico: '',
+  dic: '',
+  ic_dph: '',
+  address_id: ''
+})
+
+let user = {
+    address_id: null, // address should be created first and save to store
+    first_name: '',
+    last_name: '',
+    title_before: '',
+    title_after: '',
+    gender: '',
+    phone: '',
+    date_of_birth: '',
+    rodne_cislo: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+}
+
+function logujData(){
+  console.log(fakturacne_udaje.value)
+}
 
 onBeforeMount( () => {  
 
@@ -152,7 +215,7 @@ onBeforeMount( () => {
   })
 })
 
-let abc = ref(0);
+let priceForBusinessCategories = ref(0);
 function priceForBusinessOfcategories(){
   let val: any = getNode("PredmetPodnikania")?.value;
   let total = 0;
@@ -162,7 +225,7 @@ function priceForBusinessOfcategories(){
       console.log(element.price)
     });
   }
-  abc.value = total
+  priceForBusinessCategories.value = total
 }
 
 const submitApp = async (formData: any, node: any) => {
