@@ -1,9 +1,8 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     class="relative z-0 h-full w-full max-h-full"
-    style="
-      height: calc(75vh);
-      background: url('../src/assets/pozadie.png') 0% 0% / cover no-repeat fixed;
+    style="height: calc(75vh); background: url('../src/assets/pozadie.png') 0% 0% / cover no-repeat fixed;
     "
   >
     <div
@@ -96,7 +95,7 @@ import store from "@/store";
 import { onBeforeMount, computed } from "vue";
 import "animate.css";
 
-const reviews = computed(() => {
+const reviews: any = computed(() => {
   return store.state.reviews;
 });
 let currentIndex = 0;
@@ -156,7 +155,7 @@ function onPrevious() {
 onBeforeMount(async () => {
   await store.dispatch("reviews");
 
-  reviews.value.forEach((_, index) => {
+  reviews.value.forEach((_: any, index: any) => {
     if (index != currentIndex) {
       const element = document.querySelector(`[data-index="${index}"`);
       if (element != null) element.classList.add("hidden");

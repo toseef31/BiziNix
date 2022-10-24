@@ -243,12 +243,12 @@ import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 
-const faqs = computed(() => {
-  return store.state.faqs
+const faqs: any = computed(() => {
+  return store.state.faqs;
 });
 
-const posts = computed(() => {
-  return store.state.posts
+const posts: any = computed(() => {
+  return store.state.posts;
 });
 
 const router = useRouter();
@@ -303,5 +303,5 @@ function redirectToPost(id: any) {
 onMounted(() => {
   store.dispatch("faqs");
   store.dispatch("posts");
-})
+});
 </script>

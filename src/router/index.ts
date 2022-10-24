@@ -37,6 +37,7 @@ const router = createRouter({
         { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
+        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
       ],
     },
