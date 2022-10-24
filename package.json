@@ -15,6 +15,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.6.7",
     "@heroicons/vue": "^1.0.6",
+    "animate.css": "^4.1.1",
     "axios": "^0.27.2",
     "pinia": "^2.0.16",
     "vee-validate": "^4.6.7",
