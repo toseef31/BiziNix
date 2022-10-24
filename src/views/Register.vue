@@ -241,7 +241,7 @@ import { Field, Form, ErrorMessage } from 'vee-validate';
 
 const router = useRouter();
 
-const user = {
+let user = {
     address_id: 0, // address should be created first and save to store
     first_name: '',
     last_name: '',
@@ -256,7 +256,7 @@ const user = {
     password_confirmation: ''
 }
 
-const userAddress = {
+let userAddress = {
   street: '',
   street_number: '',
   street_number2: '',

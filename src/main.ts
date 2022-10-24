@@ -6,11 +6,22 @@ import './index.css'
 import router from "./router";
 import store from "./store";
 import { defineRule } from 'vee-validate';
+import { plugin, defaultConfig } from '@formkit/vue'
+import { generateClasses } from "@formkit/themes";
+import themeFormkit from "./themeFormkit";
+
+//extend defaultConfig for formkit
+const config = defaultConfig({
+  config: {
+    classes: generateClasses(themeFormkit)
+  }
+})
 
 const app = createApp(App);
 app.use(store);
 app.use(createPinia());
 app.use(router);
+app.use(plugin, defaultConfig(config));
 
 app.mount("#app");
 

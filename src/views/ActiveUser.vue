@@ -90,10 +90,13 @@ onMounted(() => {
 
   return axios.get(`https://be-app-aials.ondigitalocean.app/api/users/activate/${token}`)
   .then(response => {
+    errorMsg.value = null
+    sucessMessage.value = "Účet úspešne aktivovaný. Môžete sa prihlásiť."
     // console.log(response);
     return response;
   })
   .catch(err => {
+    sucessMessage.value = null
     errorMsg.value = err.response.data.message // response data is from store actions
   })
 
@@ -105,7 +108,6 @@ function login(){
     .dispatch('loginUser', user)
     .then((res) => {
       errorMsg.value = null
-      sucessMessage.value = "Účet úspešne aktivovaný. Môžete sa prihlásiť."
       // console.log(res)
       router.push({
         name: 'Dashboard',  
