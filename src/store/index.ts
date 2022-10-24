@@ -83,27 +83,27 @@ export const store = createStore({
           });
       }
     },
-    userAddress({ commit, dispatch }, userAddress) {
+    userAddress({commit, dispatch}, userAddress ) {
       let response;
-      if (this.state.user.userId) {
-        response = axiosClient
-          .get(`/address/${this.state.user.userId}/get`)
+      if(this.state.user.userId){
+          response = axiosClient
+          .get(`/address/${this.state.user.addressId}/get`)
           .then((res) => {
-            commit("setUserAddress", res.data);
-            return res;
-          });
+              commit("setUserAddress", res.data)
+              return res
+          })
       }
-    },
-    updateUserAddress({ commit, dispatch }, userAddress) {
-      if (userAddress.id) {
-        return axiosClient
+  },
+  updateUserAddress({commit, dispatch}, userAddress){
+      if(userAddress.id){
+          return axiosClient
           .put(`/address/${userAddress.id}/update`, userAddress)
-          .then((res) => {
-            commit("setUserAddressAfterUpdate", res.data);
-            return res;
-          });
+          .then(res => {
+              commit('setUserAddressAfterUpdate', res.data)
+              return res;
+          })
       }
-    },
+  },
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
@@ -130,8 +130,7 @@ export const store = createStore({
       sessionStorage.removeItem("USER_ID");
       sessionStorage.removeItem("TOKEN");
     },
-    setUser: (state, userData) => {
-      // userData from res from action
+    setUser: (state, userData) => { // userData from res from action
       // console.log("User Data from Login: " + userData);
       state.user.token = userData.token;
       state.user.userId = userData.id;
@@ -139,17 +138,18 @@ export const store = createStore({
       sessionStorage.setItem("TOKEN", userData.token);
     },
     setUserData: (state, userData) => {
-      state.user.data = userData.user;
+        state.user.addressId = userData.user.address_id
+        state.user.data = userData.user
     },
     setCurrentUserProfile: (state, userProfile) => {
-      // console.log("Mutations: " + JSON.stringify(userProfile))
-      state.user.data = userProfile.user;
+        // console.log("Mutations: " + JSON.stringify(userProfile))
+        state.user.data = userProfile.user
     },
     setUserAddress: (state, userAddress) => {
-      state.user.address = userAddress.data;
+        state.user.address = userAddress.data
     },
     setUserAddressAfterUpdate: (state, userAddress) => {
-      state.user.address = userAddress.address;
+        state.user.address = userAddress.address
     },
     setReviews: (state, data) => {
       state.reviews = data.data;
