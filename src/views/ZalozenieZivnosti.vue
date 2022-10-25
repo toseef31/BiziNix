@@ -49,7 +49,7 @@
             <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
             <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
             <FormKit type="group" id="PredmetPodnikania" name="PredmetPodnikania">            
-              <FormKit :type="multiSelVueForm" id="subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
+              <FormKit :type="multiSelVueForm" id="subjects_of_business" v-model="companyOrZivnostModel.subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
                 :items="businessCategori"
                 @input="priceForBusinessOfcategories"
                 placeholder="Example placeholder"
@@ -63,33 +63,41 @@
             <div class="text-4xl font-bold">Vaše osobné a podnikatelské údaje</div>
             <div class="my-2">Na tomto mieste zadajte prosím vaše údje.</div>
             <div>
-              <FormKit type="group" v-model="user" id="Podnikatelské údaje" name="Podnikatelské údaje">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-                  <FormKit type="text" name="first_name" label="Krstné meno" validation="required" />
-                  <FormKit type="text" name="last_name" label="Priezvisko" validation="required" />
-                  <FormKit type="select" label="Pohlavie" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
+              <FormKit type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                  <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required" />
+                  <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required" />
+                  <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Dodatok k názvu živnosti" />
+                  <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                   <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
                   <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
-                    <FormKit type="text" name="title_before" label="Titul pred menom" />
-                    <FormKit type="text" name="title_after" label="Titul za menom" />
+                    <FormKit type="text" name="title_before" v-model="user.title_before" label="Titul pred menom" />
+                    <FormKit type="text" name="title_after" v-model="user.title_after" label="Titul za menom" />
                   </div>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="text" name="phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
-                  <FormKit type="date" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
-                  <FormKit type="text" name="rodne_cislo" label="Rodné číslo" validation="required|length:10" />
+                  <FormKit type="text" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
+                  <FormKit type="date" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
+                  <FormKit type="text" name="rodne_cislo" v-model="user.rodne_cislo" label="Rodné číslo" validation="required|length:10" />
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                  <FormKit type="text" name="city" v-model="userAddress.city" label="Mesto" validation="required" />
+                  <FormKit type="text" name="country" v-model="userAddress.country" label="Krajina" validation="required" />
+                  <FormKit type="text" name="psc" v-model="userAddress.psc" label="PSČ" validation="required" />
+                  <FormKit type="text" name="street" v-model="userAddress.street" label="Ulica" validation="required" />
+                  <FormKit type="text" name="street_number" v-model="userAddress.street_number" label="Súpisne číslo" validation="required" />
+                  <FormKit type="text" name="street_number2" v-model="userAddress.street_number2" label="Orientačné číslo" validation="required" />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="text" name="street" label="Ulica" validation="required" />
-                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required" />
-                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required" />
+                  <FormKit type="email" name="email" v-model="user.email" label="Email" validation="required|email" help="Email ktorý budete používať aj na prihlasenie do účtu." />
+                  <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
+                  <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="email" name="email" label="Email" validation="required|email" help="Email ktorý budete používať aj na prihlasenie do účtu." />
-                  <FormKit type="password" autocomplete="new-password" name="password" label="Heslo" validation="required|length:8" />
-                  <FormKit type="password" autocomplete="new-password" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
+                <div class="grid grid-cols-1 gap-4">
+                  <div>Miesto podnikania?</div>
+                  <FormKit type="checkbox" v-model="placeOfBusinness" :ignore="true" :disabled="true" label="Totožné s trvalým bydliskom?" name="placeOfBusinness" />
                 </div>
               </FormKit>
             </div>
@@ -99,7 +107,7 @@
             <div class="text-4xl font-bold">Fakturačné údaje</div>
             <div class="my-2">Na nasledujúce údaje vám budeme odosielať faktúri.</div>
             <div>
-              <FormKit class="" type="group" v-model="fakturacne_udaje" id="Fakturačné údaje" name="Fakturačné údaje">
+              <FormKit type="group" v-model="fakturacne_udaje" id="Fakturačné údaje" name="Fakturačné údaje">
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
                 <FormKit type="text" name="first_name" label="Meno" validation="required" />
                 <FormKit type="text" name="last_name" label="Priezvisko" validation="required" />
@@ -145,26 +153,29 @@ import { getNode } from "@formkit/core";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
+const placeOfBusinness = ref(true);
 const orderingAsCompany = ref(false);
 
 const camel2title = (str: string) => str
   .replace(/([A-Z])/g, (match) => ` ${match}`)
   .replace(/^./, (match) => match.toUpperCase())
   .trim()
-const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
+
+ const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
   props: ['items'],
 })
 const checkStepValidity = (stepName: any) => {
   return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
 }
+
 let businessCategori = ref([
   {
     label: '' as string,
     value: ''
   }
 ])
-
+let priceForBusinessCategories = ref(0);
 let fakturacne_udaje = ref({
   first_name: '',
   last_name: '',
@@ -174,8 +185,11 @@ let fakturacne_udaje = ref({
   ic_dph: '',
   address_id: ''
 })
-
-let user = {
+let companyOrZivnostModel = ref({
+  subjects_of_business: [],
+  name: ''
+})
+let user = ref({
     address_id: null, // address should be created first and save to store
     first_name: '',
     last_name: '',
@@ -188,16 +202,28 @@ let user = {
     email: '',
     password: '',
     password_confirmation: ''
-}
+})
+let userAddress = ref({
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+})
 
 function logujData(){
+  console.log(companyOrZivnostModel.value)
+  console.log(user.value)
+  console.log(userAddress.value)
   console.log(fakturacne_udaje.value)
+
 }
 
 onBeforeMount( () => {  
-
   store.dispatch("getAllSubjectOfBusiness")
   .then(res => {
+    businessCategori.value.shift()
     res.data.data.forEach((element: any) => {
       businessCategori.value.push({
         label: element.title,
@@ -205,8 +231,8 @@ onBeforeMount( () => {
       })
     })
 
-    businessCategori.value.shift()
-    businessCategori.value = [ ...businessCategori.value ]
+    //businessCategori.value.shift()
+    //businessCategori.value = [ ...businessCategori.value ]
 
   })
     .catch(err => {
@@ -215,14 +241,13 @@ onBeforeMount( () => {
   })
 })
 
-let priceForBusinessCategories = ref(0);
 function priceForBusinessOfcategories(){
-  let val: any = getNode("PredmetPodnikania")?.value;
-  let total = 0;
-  if(val.subjects_of_business){
-    val.subjects_of_business.forEach((element: any) => {
-      total = total + element.price;
-      console.log(element.price)
+  //let val: any = getNode("PredmetPodnikania")?.value;
+  let total = 0;  
+  if(companyOrZivnostModel.value.subjects_of_business){
+    companyOrZivnostModel.value.subjects_of_business.forEach((element: any) => {
+      total = total + element.category_id;
+      console.log(element.category_id)
     });
   }
   priceForBusinessCategories.value = total
