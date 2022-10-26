@@ -15,9 +15,6 @@ export const store = createStore({
     faqs: [],
   },
   getters: {
-    getUser: (state) => {
-      return state.user;
-    },
     getReviews: (state) => {
       return state.reviews;
     },
@@ -93,17 +90,21 @@ export const store = createStore({
               return res
           })
       }
-  },
-  updateUserAddress({commit, dispatch}, userAddress){
-      if(userAddress.id){
-          return axiosClient
-          .put(`/address/${userAddress.id}/update`, userAddress)
-          .then(res => {
-              commit('setUserAddressAfterUpdate', res.data)
-              return res;
-          })
-      }
-  },
+    },
+    updateUserAddress({commit, dispatch}, userAddress){
+        if(userAddress.id){
+            return axiosClient
+            .put(`/address/${userAddress.id}/update`, userAddress)
+            .then(res => {
+                commit('setUserAddressAfterUpdate', res.data)
+                return res;
+            })
+        }
+    },
+    async getAllSubjectOfBusiness(){
+      const response = await axiosClient.get("/subjectOfBusiness/getAllSubjectsOfBusiness");
+      return response;
+    },
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
@@ -119,7 +120,7 @@ export const store = createStore({
         commit("setFaqs", data);
       });
     },
-  },
+},
   mutations: {
     logoutUser: (state) => {
       state.user.token = null

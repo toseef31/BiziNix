@@ -161,7 +161,7 @@ const camel2title = (str: string) => str
   .replace(/^./, (match) => match.toUpperCase())
   .trim()
 
- const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
+const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
   props: ['items'],
 })
@@ -212,15 +212,7 @@ let userAddress = ref({
   country: '',
 })
 
-function logujData(){
-  console.log(companyOrZivnostModel.value)
-  console.log(user.value)
-  console.log(userAddress.value)
-  console.log(fakturacne_udaje.value)
-
-}
-
-onBeforeMount( () => {  
+onBeforeMount( () => {
   store.dispatch("getAllSubjectOfBusiness")
   .then(res => {
     businessCategori.value.shift()
@@ -241,13 +233,20 @@ onBeforeMount( () => {
   })
 })
 
+function logujData(){
+  console.log(companyOrZivnostModel.value)
+  console.log(user.value)
+  console.log(userAddress.value)
+  console.log(fakturacne_udaje.value)
+}
+
 function priceForBusinessOfcategories(){
   //let val: any = getNode("PredmetPodnikania")?.value;
   let total = 0;  
   if(companyOrZivnostModel.value.subjects_of_business){
     companyOrZivnostModel.value.subjects_of_business.forEach((element: any) => {
-      total = total + element.category_id;
-      console.log(element.category_id)
+      total = total + element.price;
+      console.log(element.price)
     });
   }
   priceForBusinessCategories.value = total
