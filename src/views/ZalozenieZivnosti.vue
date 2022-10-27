@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(36,36,39,0.9332107843137255) 40%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/zalozenie-fimy-bg.png'); ">
+  <div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(36,36,39,0.9332107843137255) 40%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/zalozenie-fimy-bg.png') ">
     <div class="max-w-7xl flex h-[80vh] items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
       <div class="max-w-full">
         <h2 class="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Jednoduché založenie<br>živnosti za 49 €</h2>
@@ -22,7 +22,26 @@
   </div>
   <div class="py-6 bg-gray-800 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
-      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>      
+      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+      <div>
+        <div v-if="errorMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+          {{ errorMsg }}
+          <span @click="errorMsg=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </span>
+        </div>
+        <div v-if="sucessMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-green-500 text-white rounded">
+          {{ sucessMsg }}
+          <span @click="sucessMsg=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </span>
+        </div>
+      </div>
+
       <FormKit type="form" id="zalZivForm"
         #default="{ value, state: { valid } }"
         :plugins="[stepPlugin]"
@@ -70,7 +89,7 @@
                   <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Dodatok k názvu živnosti" />
                   <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <div class="flex flex-col md:flex-row md:space-x-4">
                   <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
                   <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
                     <FormKit type="text" name="title_before" v-model="user.title_before" label="Titul pred menom" />
@@ -96,8 +115,16 @@
                   <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
                 </div>
                 <div class="grid grid-cols-1 gap-4">
-                  <div>Miesto podnikania?</div>
+                  <div class="font-bold">Miesto podnikania?</div>
                   <FormKit type="checkbox" v-model="placeOfBusinness" :ignore="true" :disabled="true" label="Totožné s trvalým bydliskom?" name="placeOfBusinness" />
+                </div>
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                  <FormKit type="radio" v-model="companyRegDateCheckboxValue" :ignore="true" label="Registrácia živnosti ku dňu?"
+                  :options="companyRegDateCheckbox" name="companyRegDateCheckbox"
+                  validation="required" />
+                  <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
+                    <FormKit type="date" name="registration_date" v-model="companyOrZivnostModel.registration_date" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
+                  </div>
                 </div>
               </FormKit>
             </div>
@@ -145,16 +172,21 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount, onMounted, watchEffect } from "vue";
+import { ref, onBeforeMount, onMounted } from "vue";
 import useSteps from "../components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
-import { getNode } from "@formkit/core";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
 const placeOfBusinness = ref(true);
+const dateOfRegisterCompany = ref(true);
 const orderingAsCompany = ref(false);
+let errorMsg = ref('');
+let errorMsgHq = ref('');
+let errorMsgCompany = ref('');
+let sucessMsg = ref('');
+let addressFromResponse: any, userFromResponse, hqFromResponse, companyFomResponse;
 
 const camel2title = (str: string) => str
   .replace(/([A-Z])/g, (match) => ` ${match}`)
@@ -175,6 +207,10 @@ let businessCategori = ref([
     value: ''
   }
 ])
+
+let companyRegDateCheckbox = ["Nezáleží", "Podľa dátumu"]
+let companyRegDateCheckboxValue = ref("")
+
 let priceForBusinessCategories = ref(0);
 let fakturacne_udaje = ref({
   first_name: '',
@@ -186,11 +222,34 @@ let fakturacne_udaje = ref({
   address_id: ''
 })
 let companyOrZivnostModel = ref({
+  name: '',
+  headquarters_id: 0,
+  type: 2, // type 1 sro, type 2 živnosť
+  status: 2, // Zakladanie spoločnosti je v priebehu
+  ičo: '',
+  dič: '',
+  icdph: '',
+  is_dph: false,
+  registration_date: '',
+  owner: 0,
   subjects_of_business: [],
-  name: ''
+})
+let headquarter = ref({
+  name: '',
+  description: 'test',
+  headquarters_type: 1, // 1 Nebytový priestor, 2 Byt, 3 iná budova, 4 rod dom, 5 Samost stoj garaž
+  owner_name: '',
+  price: 0,
+  registry: false,
+  forwarding: false,
+  scanning: false,
+  shredding: false,
+  is_virtual: false,
+  img: 'test',
+  address_id: 0
 })
 let user = ref({
-    address_id: null, // address should be created first and save to store
+    address_id: 0, // address should be created first and save to store
     first_name: '',
     last_name: '',
     title_before: '',
@@ -234,9 +293,11 @@ onBeforeMount( () => {
 })
 
 function logujData(){
-  console.log(companyOrZivnostModel.value)
-  console.log(user.value)
+  console.log(companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddress.value)
+  console.log(user.value)
+  console.log(headquarter.value)
+  console.log(companyOrZivnostModel.value)
   console.log(fakturacne_udaje.value)
 }
 
@@ -252,10 +313,99 @@ function priceForBusinessOfcategories(){
   priceForBusinessCategories.value = total
 }
 
+/* Submiting form and Api calls */
+
+function registerUser() {
+  return store.dispatch('registerUser', user.value) // dispatch -> register action in store
+      .then((res) => {
+          sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
+          userFromResponse = res
+          return userFromResponse
+      })
+  .catch(err => {
+    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+  })
+}
+
+function registerAddress() {
+  return store.dispatch('registerAddress', userAddress.value)
+    .then((res) => {
+      console.log("Response addressId: " + res.address_id)
+      addressFromResponse = res
+      console.log("Ja som Adresa variable v thene: " + addressFromResponse)
+      return addressFromResponse
+    })
+    .catch(err => {
+      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+    })
+}
+
+function registerUserWithAddress(){  
+  // To do if pass fine due to address id must passed to head
+    registerAddress().then((address: any) => {
+        user.value.address_id = Number(address.address_id)
+        registerUser()
+    })
+}
+
+function addHeadquarter (){
+
+  console.log("Začínam addHeadquarter")
+  headquarter.value.owner_name = user.value.first_name + " " + user.value.last_name
+
+  if(placeOfBusinness.value){
+    headquarter.value.name = 'Rovnaký názov ako moja trvalá adresa'
+  }
+  else {
+    headquarter.value.name = 'Iný názov'
+  }
+
+  console.log("Address id za ifom je: " + JSON.stringify(addressFromResponse.address_id))
+  headquarter.value.address_id = addressFromResponse.address_id
+
+  console.log("Za ifom")
+
+  return store.dispatch('addHeadquarter', headquarter.value)
+  .then((res) => {
+    console.log("Za then")
+    console.log("Address id za THEN je: " + JSON.stringify(addressFromResponse.address_id))
+    console.log(res)
+    hqFromResponse = res
+    return hqFromResponse
+  })
+  .catch(err => {
+    console.log("V catch")
+    console.log(err.response.data.errors)
+    errorMsg.value = JSON.stringify(err.response.data.errors);
+  })
+}
+
+function addCompany(){
+  console.log("Začínam addCompany")
+  // TO DO GET USER ID AND HEADQ ID
+  let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name
+  companyOrZivnostModel.value.owner = 7
+  companyOrZivnostModel.value.headquarters_id = 9
+  companyOrZivnostModel.value.name = user.value.first_name + " " + user.value.last_name + " " + dodatokNazvuZivnosti
+
+  return store.dispatch('addCompany', companyOrZivnostModel.value)
+  .then((res) => {
+    console.log(res.data)
+    return res
+  }).catch( err => {
+    console.log(err)
+  })
+}
+
 const submitApp = async (formData: any, node: any) => {
   console.log(formData)
-  try {
-    const res = await axios.post(formData)
+  try {    
+    registerAddress().then((address: any) => {
+        user.value.address_id = Number(address.address_id)
+        registerUser()
+        addHeadquarter()
+        addCompany()
+    })
     node.clearErrors()
     alert('Your application was submitted successfully!')
   } catch (err: any) {
@@ -263,29 +413,29 @@ const submitApp = async (formData: any, node: any) => {
   }
 }
 
-// This is just a mock of an actual axios instance.
-const axios = {
-  post: (formData: any) => {
-    return new Promise((resolve, reject) => {
-      let response = { status: 200, formErrors: {} , fieldErrors: {} }
-      if (formData.organizationInfo.org_name.toLowerCase().trim() !== 'formkit') {
-        response = {
-          status: 400,
-          formErrors: ['There was an error in this form, please correct and re-submit to validate.'],
-          fieldErrors: {
-              'organizationInfo.org_name': 'Organization Name must be "FormKit", we tricked you!'
-          }
-        }
-      }
-      setTimeout(() => {
-        if (response.status === 200) {
-          resolve(response)
-        } else {
-          reject(response)
-        }
-      }, 1500)
-    })
+// // This is just a mock of an actual axios instance.
+// const axios = {
+//   post: (formData: any) => {
+//     return new Promise((resolve, reject) => {
+//       let response = { status: 200, formErrors: {} , fieldErrors: {} }
+//       if (formData.organizationInfo.org_name.toLowerCase().trim() !== 'formkit') {
+//         response = {
+//           status: 400,
+//           formErrors: ['There was an error in this form, please correct and re-submit to validate.'],
+//           fieldErrors: {
+//               'organizationInfo.org_name': 'Organization Name must be "FormKit", we tricked you!'
+//           }
+//         }
+//       }
+//       setTimeout(() => {
+//         if (response.status === 200) {
+//           resolve(response)
+//         } else {
+//           reject(response)
+//         }
+//       }, 1500)
+//     })
     
-  }
-}
+//   }
+// }
 </script>

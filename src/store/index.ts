@@ -13,6 +13,8 @@ export const store = createStore({
     reviews: [],
     posts: [],
     faqs: [],
+    company: {},
+    headquarter: {}
   },
   getters: {
     getReviews: (state) => {
@@ -101,10 +103,22 @@ export const store = createStore({
             })
         }
     },
+//#region Company actions
     async getAllSubjectOfBusiness(){
       const response = await axiosClient.get("/subjectOfBusiness/getAllSubjectsOfBusiness");
       return response;
     },
+    async addCompany({ commit }, company) {
+      const { data } = await axiosClient.post("/companies/add", company);
+      commit("setCompany", data); // setCompany is defined as muttation below
+      return data;
+    },
+    async addHeadquarter({ commit }, headquarter) {
+      const { data } = await axiosClient.post("/headquarters/add", headquarter);
+      commit("setHeadquarter", data); // setCompany is defined as muttation below
+      return data;
+    },
+//#endregion    
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
@@ -161,6 +175,12 @@ export const store = createStore({
     setFaqs: (state, data) => {
       state.faqs = data.data;
     },
+    setCompany: (state, data) => {
+      state.company = data.data
+    },
+    setHeadquarter: (state, data) => {
+      state.headquarter = data.data
+    }
   },
   modules: {},
 });
