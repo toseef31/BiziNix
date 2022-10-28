@@ -176,6 +176,7 @@ import { ref, onBeforeMount, onMounted } from "vue";
 import useSteps from "../components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
+import { date } from "@formkit/i18n";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -186,7 +187,7 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let addressFromResponse: any, userFromResponse, hqFromResponse, companyFomResponse;
+let addressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
 const camel2title = (str: string) => str
   .replace(/([A-Z])/g, (match) => ` ${match}`)
@@ -219,7 +220,30 @@ let fakturacne_udaje = ref({
   ico: '',
   dic: '',
   ic_dph: '',
-  address_id: ''
+  address_id: 12
+  // to do address id
+})
+let userAddress = ref({
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+})
+let user = ref({
+    address_id: 0, // address should be created first and save to store
+    first_name: '',
+    last_name: '',
+    title_before: '',
+    title_after: '',
+    gender: '',
+    phone: '',
+    date_of_birth: '',
+    rodne_cislo: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
 })
 let companyOrZivnostModel = ref({
   name: '',
@@ -248,27 +272,35 @@ let headquarter = ref({
   img: 'test',
   address_id: 0
 })
-let user = ref({
-    address_id: 0, // address should be created first and save to store
-    first_name: '',
-    last_name: '',
-    title_before: '',
-    title_after: '',
-    gender: '',
-    phone: '',
-    date_of_birth: '',
-    rodne_cislo: '',
-    email: '',
-    password: '',
-    password_confirmation: ''
-})
-let userAddress = ref({
-  street: '',
-  street_number: '',
-  street_number2: '',
-  city: '',
-  psc: '',
-  country: '',
+
+let order = ref({
+  payment_date: '' as any,
+  payment_method: 'iban',
+  description: 'test',
+  amount: 10,
+  amount_vat: 12,
+  is_paid: false,
+  address_id: 0,
+  user_id: 0,
+  company_id: 0,
+  is_tos_accepted: true,
+  is_advocate_requested: true,
+  items: [
+    {
+      description: "Založenie živnosti",
+      price: 10,
+      price_vat: 12
+    }
+  ],
+  fakturacne_udaje: [{
+    first_name: "Milko",
+    last_name: "Kilko",
+    name: "MilkoTe s.r.o.",
+    ico: "546546",
+    dic: "54656",
+    ic_dph: "SK13",
+    address_id: 12
+  }]
 })
 
 onBeforeMount( () => {
@@ -293,6 +325,7 @@ onBeforeMount( () => {
 })
 
 function logujData(){
+  addOrder()
   console.log(companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddress.value)
   console.log(user.value)
@@ -315,29 +348,29 @@ function priceForBusinessOfcategories(){
 
 /* Submiting form and Api calls */
 
-function registerUser() {
-  return store.dispatch('registerUser', user.value) // dispatch -> register action in store
-      .then((res) => {
-          sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
-          userFromResponse = res
-          return userFromResponse
-      })
-  .catch(err => {
-    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-  })
-}
-
 function registerAddress() {
   return store.dispatch('registerAddress', userAddress.value)
     .then((res) => {
-      console.log("Response addressId: " + res.address_id)
+      console.log("Registering address: " + JSON.stringify(res))
       addressFromResponse = res
-      console.log("Ja som Adresa variable v thene: " + addressFromResponse)
       return addressFromResponse
     })
     .catch(err => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
+}
+
+function registerUser() {
+  return store.dispatch('registerUser', user.value) // dispatch -> register action in store
+      .then((res) => {
+          sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
+          userFromResponse = res
+          console.log("Registering user: " + JSON.stringify(res))
+          return userFromResponse
+      })
+  .catch(err => {
+    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+  })
 }
 
 function registerUserWithAddress(){  
@@ -349,8 +382,6 @@ function registerUserWithAddress(){
 }
 
 function addHeadquarter (){
-
-  console.log("Začínam addHeadquarter")
   headquarter.value.owner_name = user.value.first_name + " " + user.value.last_name
 
   if(placeOfBusinness.value){
@@ -360,57 +391,74 @@ function addHeadquarter (){
     headquarter.value.name = 'Iný názov'
   }
 
-  console.log("Address id za ifom je: " + JSON.stringify(addressFromResponse.address_id))
   headquarter.value.address_id = addressFromResponse.address_id
-
-  console.log("Za ifom")
 
   return store.dispatch('addHeadquarter', headquarter.value)
   .then((res) => {
-    console.log("Za then")
-    console.log("Address id za THEN je: " + JSON.stringify(addressFromResponse.address_id))
-    console.log(res)
-    hqFromResponse = res
+    console.log("Adding hq: " + JSON.stringify(res))
+    hqFromResponse = res.headquarters
     return hqFromResponse
   })
   .catch(err => {
-    console.log("V catch")
     console.log(err.response.data.errors)
     errorMsg.value = JSON.stringify(err.response.data.errors);
   })
 }
 
 function addCompany(){
-  console.log("Začínam addCompany")
-  // TO DO GET USER ID AND HEADQ ID
-  let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name
-  companyOrZivnostModel.value.owner = 7
-  companyOrZivnostModel.value.headquarters_id = 9
+
+  let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name // Dodatok k nazvu živnosti
+  companyOrZivnostModel.value.owner = userFromResponse.user_id
+  companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
   companyOrZivnostModel.value.name = user.value.first_name + " " + user.value.last_name + " " + dodatokNazvuZivnosti
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
-    console.log(res.data)
-    return res
+    console.log("Adding company: " + JSON.stringify(res))
+    companyFomResponse = res
+    return companyFomResponse
   }).catch( err => {
     console.log(err)
+  })
+}
+
+function addOrder(){
+  order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  order.value.company_id = companyFomResponse.id
+  order.value.user_id = userFromResponse.user_id
+  order.value.address_id = addressFromResponse.address_id
+
+  return store.dispatch('addOrder', order.value)
+  .then((res) => {
+    console.log("Adding order: " + JSON.stringify(res))
+    orderFromRes = res
+    return orderFromRes
+  })
+  .catch( err => {
+    console.log(err.response.data )
   })
 }
 
 const submitApp = async (formData: any, node: any) => {
   console.log(formData)
   try {    
+
     registerAddress().then((address: any) => {
         user.value.address_id = Number(address.address_id)
-        registerUser()
-        addHeadquarter()
-        addCompany()
+        registerUser().then(() => {
+          addHeadquarter().then(() => {
+            addCompany()
+          })
+        })
     })
+
     node.clearErrors()
-    alert('Your application was submitted successfully!')
+    // alert('Your application was submitted successfully!')
+
   } catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors)
   }
+
 }
 
 // // This is just a mock of an actual axios instance.

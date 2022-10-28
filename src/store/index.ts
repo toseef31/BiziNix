@@ -14,7 +14,8 @@ export const store = createStore({
     posts: [],
     faqs: [],
     company: {},
-    headquarter: {}
+    headquarter: {},
+    order: {}
   },
   getters: {
     getReviews: (state) => {
@@ -119,6 +120,13 @@ export const store = createStore({
       return data;
     },
 //#endregion    
+//#region orders
+  async addOrder({ commit }, order) {
+    const { data } = await axiosClient.post("/orders/add", order);
+    commit("setOrder", data); // setCompany is defined as muttation below
+    return data;
+  },
+//#endregion
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
@@ -157,7 +165,6 @@ export const store = createStore({
         state.user.data = userData.user
     },
     setCurrentUserProfile: (state, userProfile) => {
-        // console.log("Mutations: " + JSON.stringify(userProfile))
         state.user.data = userProfile.user
     },
     setUserAddress: (state, userAddress) => {
@@ -180,6 +187,9 @@ export const store = createStore({
     },
     setHeadquarter: (state, data) => {
       state.headquarter = data.data
+    },
+    setOrder: (state, data) => {
+      state.order = data.data
     }
   },
   modules: {},
