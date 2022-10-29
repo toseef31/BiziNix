@@ -84,8 +84,8 @@
             <div>
               <FormKit type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-                  <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required" />
-                  <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required" />
+                  <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
+                  <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required|length:2" />
                   <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Dodatok k názvu živnosti" />
                   <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
                 </div>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <FormKit type="text" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
-                  <FormKit type="date" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
+                  <FormKit type="date" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
                   <FormKit type="text" name="rodne_cislo" v-model="user.rodne_cislo" label="Rodné číslo" validation="required|length:10" />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -160,8 +160,8 @@
         </div>
 
         <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
-        <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button>
-        <pre wrap>{{ value }}</pre>
+        <!-- <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button>
+        <pre wrap>{{ value }}</pre> -->
 
       </FormKit>
 
@@ -277,8 +277,8 @@ let order = ref({
   payment_date: '' as any,
   payment_method: 'iban',
   description: 'test',
-  amount: 10,
-  amount_vat: 12,
+  amount: 12, // final cena s dph
+  amount_vat: 2, // vat je čisto len dph
   is_paid: false,
   address_id: 0,
   user_id: 0,
@@ -288,18 +288,18 @@ let order = ref({
   items: [
     {
       description: "Založenie živnosti",
-      price: 10,
-      price_vat: 12
+      price: 12, // finalna cena za polozku s dph
+      price_vat: 2 // toto je len dph
     }
   ],
   fakturacne_udaje: [{
-    first_name: "Milko",
-    last_name: "Kilko",
-    name: "MilkoTe s.r.o.",
-    ico: "546546",
-    dic: "54656",
-    ic_dph: "SK13",
-    address_id: 12
+    first_name: '',
+    last_name: '',
+    name: '',
+    ico: '',
+    dic: '',
+    ic_dph: '',
+    address_id: ''
   }]
 })
 
@@ -348,7 +348,7 @@ function priceForBusinessOfcategories(){
 
 /* Submiting form and Api calls */
 
-function registerAddress() {
+function registerAddress(): Promise<Response>  {
   return store.dispatch('registerAddress', userAddress.value)
     .then((res) => {
       console.log("Registering address: " + JSON.stringify(res))
@@ -360,7 +360,10 @@ function registerAddress() {
     })
 }
 
-function registerUser() {
+function registerUser(): Promise<Response>  {
+
+  user.value.address_id = addressFromResponse.address_id
+
   return store.dispatch('registerUser', user.value) // dispatch -> register action in store
       .then((res) => {
           sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
@@ -373,15 +376,7 @@ function registerUser() {
   })
 }
 
-function registerUserWithAddress(){  
-  // To do if pass fine due to address id must passed to head
-    registerAddress().then((address: any) => {
-        user.value.address_id = Number(address.address_id)
-        registerUser()
-    })
-}
-
-function addHeadquarter (){
+function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = user.value.first_name + " " + user.value.last_name
 
   if(placeOfBusinness.value){
@@ -405,7 +400,7 @@ function addHeadquarter (){
   })
 }
 
-function addCompany(){
+function addCompany(): Promise<Response> {
 
   let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name // Dodatok k nazvu živnosti
   companyOrZivnostModel.value.owner = userFromResponse.user_id
@@ -416,17 +411,27 @@ function addCompany(){
   .then((res) => {
     console.log("Adding company: " + JSON.stringify(res))
     companyFomResponse = res
+    console.log("Company from Res " + JSON.stringify(companyFomResponse))
     return companyFomResponse
   }).catch( err => {
     console.log(err)
   })
 }
 
-function addOrder(){
+function addOrder(): Promise<Response> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  order.value.company_id = companyFomResponse.id
+  order.value.company_id = companyFomResponse.company.id
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id
+
+  order.value.fakturacne_udaje[0].first_name = fakturacne_udaje.value.first_name
+  order.value.fakturacne_udaje[0].last_name = fakturacne_udaje.value.last_name
+  order.value.fakturacne_udaje[0].dic = fakturacne_udaje.value.dic
+  order.value.fakturacne_udaje[0].ic_dph = fakturacne_udaje.value.ic_dph
+  order.value.fakturacne_udaje[0].ico = fakturacne_udaje.value.ico
+  if(invoiceAddressIsSame.value){
+    order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+  }
 
   return store.dispatch('addOrder', order.value)
   .then((res) => {
@@ -440,22 +445,31 @@ function addOrder(){
 }
 
 const submitApp = async (formData: any, node: any) => {
+
   console.log(formData)
   try {    
-
-    registerAddress().then((address: any) => {
-        user.value.address_id = Number(address.address_id)
+    registerAddress().then(() => {
         registerUser().then(() => {
-          addHeadquarter().then(() => {
-            addCompany()
-          })
+          if(userFromResponse){
+            addHeadquarter().then(() => {
+              addCompany().then(() => {
+                addOrder().then(() => {
+                  userFromResponse = null
+                  hqFromResponse = null
+                  companyOrZivnostModel.value.owner = 0
+                  companyOrZivnostModel.value.headquarters_id = 0
+                  console.log("SUPER!")
+                })
+              })
+            })
+          }
         })
     })
-
     node.clearErrors()
     // alert('Your application was submitted successfully!')
 
-  } catch (err: any) {
+  }
+  catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors)
   }
 
