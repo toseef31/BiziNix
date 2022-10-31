@@ -229,7 +229,6 @@
       </div>
     </div>
 
-    <CounselingCenter></CounselingCenter>
     <Reviews></Reviews>
     <FooterLayout></FooterLayout>
   </div>

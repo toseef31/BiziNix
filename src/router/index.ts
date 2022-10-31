@@ -16,6 +16,7 @@ import UserProfile from "../views/Profile.vue";
 import CounselingCenterPageVue from "@/views/CounselingCenterPage.vue";
 import store from "@/store";
 import PostPageVue from "@/views/PostPage.vue";
+import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,7 @@ const router = createRouter({
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
         { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
+        { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
       ],
     },
     {
