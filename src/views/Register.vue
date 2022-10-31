@@ -299,7 +299,7 @@ function registerAddress() {
 }
 
 function registerUserWithAddress(){
-
+    
     registerAddress().then((value) => {
         user.address_id = Number(value)
         registerUser()

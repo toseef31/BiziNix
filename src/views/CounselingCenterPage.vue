@@ -7,30 +7,36 @@
         background-image: url('../src/assets/5.png');
       "
     >
-      <img
-        src="../assets/robot.png"
-        class="absolute bottom-[-82px] right-0"
-        style="height: calc(100vh - 260px)"
-      />
       <div
-        class="w-full w-full flex h-full"
+        class="w-full flex h-full"
         style="background-color: rgba(0, 0, 0, 0.75)"
       >
         <div class="container flex-col justify-center mx-auto flex h-full">
-          <div class="text-5xl text-white leading-normal font-bold">
-            Poradíme,<br />
-            vysvetlíme a <br />
-            vyrešime
+          <div class="flex flex-row justify-between">
+            <div class="flex basis-1/2">
+              <div class="flex flex-col">
+                <div class="text-5xl text-white font-bold">
+                  Poradíme,<br />
+                  vysvetlíme a <br />
+                  vyrešime
+                </div>
+                <div class="text-base text-white mt-4 mb-4">
+                  Vyhľadajte odpoveď podľa kľúčových slov
+                </div>
+              </div>
+            </div>
+            <div class="flex basis-1/2 relative">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                <img class="max-h-[480px]" src="../assets/robot-mobile.png" />
+              </div>
+            </div>
           </div>
-          <div class="text-base text-white mt-4">
-            Vyhladajte odpoveď podľa kľúčových slov
-          </div>
-          <div class="w-[420px]">
+          <div>
             <div class="flex w-full relative">
               <input
                 v-model="searchQuery"
                 placeholder="Ako funguje DPH ?"
-                class="h-10 w-full shadow px-1 rounded border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
+                class="h-12 w-full shadow px-1 rounded border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
               />
               <div
                 class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none"
@@ -160,69 +166,42 @@
         <div class="text-base text-center text-white mt-4">
           Spojte sa s nami
         </div>
-        <div class="flex text-center mt-20 w-full">
-          <div class="flex-1 py-10">
-            <div class="flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-20 h-20 text-teal-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
-                />
-              </svg>
+        <div class="flex mt-20 w-full">
+          <div class="flex-1 flex flex-col py-10 items-center justify-center">
+            <div class="text-3xl font-bold text-teal-500">
+              Zákaznícka<br />
+              podpora
             </div>
             <div class="text-white text-base mt-4 text-grey-800">
               <a href="tel:+421908478270">+421 908 478 270</a>
             </div>
-          </div>
-          <div class="flex-1 py-10 border-r border-gray-600 border-l">
-            <div class="flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-20 h-20 text-teal-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
-                />
-              </svg>
-            </div>
-            <div class="text-white text-base mt-4 text-grey-800">
-              <button class="chat-button" v-on:click="openLiveChat()">
-                Spustiť LiveChat
-              </button>
-            </div>
-          </div>
-          <div class="flex-1 py-10">
-            <div class="flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-20 h-20 text-teal-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25"
-                />
-              </svg>
-            </div>
             <div class="text-white text-base mt-4 text-grey-800">
               <a href="mailto:support@bizinix.sk">support@bizinix.sk</a>
+            </div>
+          </div>
+          <div class="flex-1 py-10 bg-gray-900 rounded-xl">
+            <div class="px-6 flex flex-row justify-between">
+              <div class="flex basis-1/2">
+                <div class="flex flex-col">
+                  <div class="text-3xl font-bold text-teal-500">LiveChat</div>
+                  <div class="text-base text-white mt-4">
+                    Pokecajme si hneď teraz online
+                  </div>
+                  <div class="pt-6">
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 text-gray-900 font-bold py-2 px-4 rounded"
+                      v-on:click="openLiveChat()"
+                    >
+                      Spustiť
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex basis-1/2 relative">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                  <img class="max-h-[360px]" src="../assets/robot-head.png" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
