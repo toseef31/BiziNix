@@ -181,7 +181,7 @@
           </div>
           <div class="flex-1 py-10 bg-gray-900 rounded-xl">
             <div class="px-6 flex flex-row justify-between">
-              <div class="flex basis-1/2">
+              <div class="flex basis-1/4">
                 <div class="flex flex-col">
                   <div class="text-3xl font-bold text-teal-500">LiveChat</div>
                   <div class="text-base text-white mt-4">
@@ -197,8 +197,8 @@
                   </div>
                 </div>
               </div>
-              <div class="flex basis-1/2 relative">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+              <div class="flex basis-3/4 relative">
+                <div class="absolute inset-y-0 right-0 flex items-center">
                   <img class="max-h-[360px]" src="../assets/robot-head.png" />
                 </div>
               </div>
