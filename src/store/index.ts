@@ -15,7 +15,8 @@ export const store = createStore({
     faqs: [],
     company: {},
     headquarter: {},
-    order: {}
+    order: {},
+    vhqs: []
   },
   getters: {
     getReviews: (state) => {
@@ -142,6 +143,11 @@ export const store = createStore({
         commit("setFaqs", data);
       });
     },
+    async vhqs({ commit }) {
+      await axiosClient.get("/headquarters/getAllVirtualHeadquarters").then(({ data }) => {
+          commit("setVhqs", data);
+        });
+    },
 },
   mutations: {
     logoutUser: (state) => {
@@ -190,7 +196,10 @@ export const store = createStore({
     },
     setOrder: (state, data) => {
       state.order = data.data
-    }
+    },
+    setVhqs: (state, data) => {
+      state.vhqs = data.data
+    },
   },
   modules: {},
 });
