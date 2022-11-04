@@ -27,19 +27,14 @@
             </div>
             <div class="flex basis-1/2 relative">
               <div class="absolute inset-y-0 right-0 flex items-center pr-4">
-                <img class="max-h-[480px]" src="../assets/robot-mobile.png" />
+                <img class="max-h-[480px] z-0" src="../assets/robot-mobile.png" />
               </div>
             </div>
           </div>
-          <div>
-            <div class="flex w-full relative">
-              <input
-                v-model="searchQuery"
-                placeholder="Ako funguje DPH ?"
-                class="h-12 w-full shadow px-1 rounded border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
-              />
+          <div class="flex w-full flex-row">
+            <div class="flex grow relative">
               <div
-                class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none"
+                class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -56,6 +51,20 @@
                   ></path>
                 </svg>
               </div>
+              <input
+                id="searchInput"
+                v-model="searchQuery"
+                placeholder="napr. Ako funguje DPH ?"
+                class="h-12 pl-8 w-full shadow px-1 rounded-l border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
+              />
+            </div>
+            <div class="flex">
+              <button
+                class="bg-teal-500 hover:bg-teal-700 h-12 px-8 rounded-r z-10"
+                v-on:click="search()"
+              >
+                Hľadať
+              </button>
             </div>
           </div>
         </div>
@@ -65,7 +74,10 @@
       <div class="container mx-auto">
         <div class="flex">
           <div class="flex-1 pr-20">
-            <div class="text-5xl text-white leading-normal font-bold">
+            <div
+              class="text-5xl text-white leading-normal font-bold"
+              id="faqsDiv"
+            >
               Často kladené <br />
               otázky
             </div>
@@ -275,6 +287,46 @@ function redirectToPost(id: any) {
   return router.push({
     name: "Post",
     params: { id: id },
+  });
+}
+
+function search() {
+  doScrolling("#faqsDiv", 1000);
+}
+
+function getElementY(query: any) {
+  return (
+    window.pageYOffset +
+    document.querySelector(query).getBoundingClientRect().top
+  );
+}
+
+function doScrolling(element: any, duration: any) {
+  const startingY = window.pageYOffset;
+  const elementY = getElementY(element);
+  const targetY =
+    document.body.scrollHeight - elementY < window.innerHeight
+      ? document.body.scrollHeight - window.innerHeight
+      : elementY;
+  const diff = targetY - startingY;
+  const easing = function (t: any) {
+    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+  };
+  let start: any;
+
+  if (!diff) return;
+
+  window.requestAnimationFrame(function step(timestamp) {
+    if (!start) start = timestamp;
+    const time = timestamp - start;
+    let percent = Math.min(time / duration, 1);
+    percent = easing(percent);
+
+    window.scrollTo(0, startingY + diff * percent);
+
+    if (time < duration) {
+      window.requestAnimationFrame(step);
+    }
   });
 }
 
