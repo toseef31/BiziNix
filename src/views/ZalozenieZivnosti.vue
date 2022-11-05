@@ -177,6 +177,7 @@ import useSteps from "../components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import { date } from "@formkit/i18n";
+import router from "@/router";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -436,7 +437,7 @@ function addOrder(): Promise<Response> {
   return store.dispatch('addOrder', order.value)
   .then((res) => {
     console.log("Adding order: " + JSON.stringify(res))
-    orderFromRes = res
+    orderFromRes = res.order
     return orderFromRes
   })
   .catch( err => {
@@ -459,6 +460,12 @@ const submitApp = async (formData: any, node: any) => {
                   companyOrZivnostModel.value.owner = 0
                   companyOrZivnostModel.value.headquarters_id = 0
                   console.log("SUPER!")
+                  router.push({
+                    name:"Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    }
+                  })
                 })
               })
             })

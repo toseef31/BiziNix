@@ -16,6 +16,8 @@ import UserProfile from "../views/Profile.vue";
 import CounselingCenterPageVue from "@/views/CounselingCenterPage.vue";
 import store from "@/store";
 import PostPageVue from "@/views/PostPage.vue";
+import ThanksYouNewOrderVue from "@/views/ThanksYouNewOrder.vue";
+import CompanyDetailsVue from "@/views/CompanyDetails.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,16 +31,19 @@ const router = createRouter({
         { path: '/contact', name: "Contact", component: Contact },
         { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
+        { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
+        { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
         { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/activate/:token', name: "Active User", component: ActiveUser },
+        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
+        { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
-        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
-        { path: "/post/:id", name: "Post", component: PostPageVue },
+        { path: '/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
       ],
     },
     {

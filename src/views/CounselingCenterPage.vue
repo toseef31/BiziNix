@@ -13,7 +13,7 @@
         style="height: calc(100vh - 260px)"
       />
       <div
-        class="w-full w-full flex h-full"
+        class="w-full flex h-full"
         style="background-color: rgba(0, 0, 0, 0.75)"
       >
         <div class="container flex-col justify-center mx-auto flex h-full">

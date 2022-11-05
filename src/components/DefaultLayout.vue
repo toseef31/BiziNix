@@ -240,9 +240,9 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/vue";
-import { BellIcon, MenuIcon, XIcon, LinkIcon } from "@heroicons/vue/outline";
+import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 const topBarNavigation = [

@@ -1,0 +1,38 @@
+<template>
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">Detail spoločnosti</h1>
+      </div>
+    </header>
+    <main>
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Replace with your content -->
+        <div class="px-4 py-6 sm:px-0">
+          <h1 class="mb-4 text-2xl font-bold text-gray-900">{{ company.name }}</h1>
+        </div>
+        <!-- /End replace -->
+      </div>
+    </main>    
+</template>
+
+<script setup lang="ts">
+
+import store from '@/store';
+import { onBeforeMount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+const route = useRoute()
+let company = ref('') as any;
+
+
+onBeforeMount(() => {
+
+    let companyId = Number(route.params.id)
+    store.dispatch("getCompanyById", companyId)
+    .then((response) => {
+        console.log(response)
+        company.value = response.data
+    })
+
+})
+
+</script>

@@ -14,8 +14,9 @@ export const store = createStore({
     posts: [],
     faqs: [],
     company: {},
+    myCompanies: [],
     headquarter: {},
-    order: {}
+    order: [{}]
   },
   getters: {
     getReviews: (state) => {
@@ -27,6 +28,9 @@ export const store = createStore({
     getFaqs: (state) => {
       return state.faqs;
     },
+    getOrder: (state) => (id: any) => {
+      return state.order.find((order: any) => order.id === id )
+    }
   },
   actions: {
     registerUser({ commit }, user) {
@@ -119,6 +123,16 @@ export const store = createStore({
       commit("setHeadquarter", data); // setCompany is defined as muttation below
       return data;
     },
+    async getAllCompaniesByUserId({commit} , userId){
+     const { data } = await axiosClient.get(`/companies/${userId}/getAll`)
+     commit("setMyCompanies", data)
+     return data
+    },
+    async getCompanyById({commit} , companyId){
+     const { data } = await axiosClient.get(`/companies/${companyId}/get`)
+     commit("setCompany", data)
+     return data
+    },
 //#endregion    
 //#region orders
   async addOrder({ commit }, order) {
@@ -189,7 +203,10 @@ export const store = createStore({
       state.headquarter = data.data
     },
     setOrder: (state, data) => {
-      state.order = data.data
+      state.order.push(data.order)
+    },
+    setMyCompanies: (state, data) => {
+      state.myCompanies = data.data
     }
   },
   modules: {},
