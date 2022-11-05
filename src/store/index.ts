@@ -16,12 +16,8 @@ export const store = createStore({
     company: {},
     myCompanies: [],
     headquarter: {},
-<<<<<<< HEAD
-    order: [{}]
-=======
-    order: {},
+    order: [{}],
     vhqs: []
->>>>>>> 4a7653ef5d1e55aad267135dc7e98a239d6d4c6c
   },
   getters: {
     getReviews: (state) => {
@@ -213,19 +209,14 @@ export const store = createStore({
       state.headquarter = data.data
     },
     setOrder: (state, data) => {
-<<<<<<< HEAD
       state.order.push(data.order)
     },
     setMyCompanies: (state, data) => {
       state.myCompanies = data.data
-    }
-=======
-      state.order = data.data
     },
     setVhqs: (state, data) => {
       state.vhqs = data.data
     },
->>>>>>> 4a7653ef5d1e55aad267135dc7e98a239d6d4c6c
   },
   modules: {},
 });
