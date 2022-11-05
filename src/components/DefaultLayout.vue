@@ -255,6 +255,7 @@ const navigation = [
   { name: "Nástenka", to: { name: "Dashboard" } },
   { name: "Úprava firmy", to: { name: "Edit Company" } },
   { name: "Centrum poradenstva", to: { name: "Counseling center" } },
+  { name: "Virtuálne sídlo", to: { name: "Virtual hq" } },
 ];
 const userNavigation = [
   { name: "Váš profil", to: { name: "User Profil" } },

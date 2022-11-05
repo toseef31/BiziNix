@@ -16,8 +16,12 @@ import UserProfile from "../views/Profile.vue";
 import CounselingCenterPageVue from "@/views/CounselingCenterPage.vue";
 import store from "@/store";
 import PostPageVue from "@/views/PostPage.vue";
+<<<<<<< HEAD
 import ThanksYouNewOrderVue from "@/views/ThanksYouNewOrder.vue";
 import CompanyDetailsVue from "@/views/CompanyDetails.vue";
+=======
+import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
+>>>>>>> 4a7653ef5d1e55aad267135dc7e98a239d6d4c6c
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,7 +47,13 @@ const router = createRouter({
         { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
+<<<<<<< HEAD
         { path: '/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
+=======
+        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
+        { path: "/post/:id", name: "Post", component: PostPageVue },
+        { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
+>>>>>>> 4a7653ef5d1e55aad267135dc7e98a239d6d4c6c
       ],
     },
     {

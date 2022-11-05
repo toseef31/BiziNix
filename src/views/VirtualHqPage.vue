@@ -1,0 +1,529 @@
+<template>
+  <div>
+    <div
+      class="relative z-0 h-full w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
+      style="
+        height: calc(100vh - 200px);
+        background-image: url('../src/assets/6.png');
+      "
+    >
+      <img
+        src="../assets/robot_stripes.png"
+        class="absolute bottom-[-82px] right-0"
+        style="height: calc(100vh - 260px)"
+      />
+      <div
+        class="w-full flex h-full"
+        style="background-color: rgba(0, 0, 0, 0.75)"
+      >
+        <div class="container flex-col justify-center mx-auto flex h-full">
+          <div class="text-5xl text-white leading-normal font-bold">
+            Najlepšie <br />
+            virtuálne sídlo
+          </div>
+          <div class="text-base text-white my-4">
+            <div class="flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-2 h-2 text-white"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>
+                Ukladanie všetkých doručených listín na jednom mieste, v
+                digitálnej podobe
+              </span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-2 h-2 text-white"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span> Expresné preposielanie originálov </span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-2 h-2 text-white"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Preberanie pošty z úradov</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="w-2 h-2 text-white"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.5 7.5a3 3 0 013-3h9a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Emailové notifikácie o prijatej pošte</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-900 py-14">
+      <div
+        class="flex container mx-auto mt-28 items-center justify-between space-x-20 w-full"
+      >
+        <div class="flex-1">
+          <div class="text-5xl text-white font-bold leading-normal">
+            Vieme, čo <br />s potrebujete
+          </div>
+          <div class="text-white text-base mt-4">
+            DUMMY TEXT Všetka korešpondencia prichádzajúca na sídlo <br />
+            firmy (virtuálne sídlo firmy) sa uchováva. Následne sa z virtuálneho
+            <br />
+            sídla firmy preposiela na dohodnutú korešpondenčnú adresu. <br />
+            Preposielanie z virtuálneho sídla firmy je štandardne 1x za mesiac
+            <br />
+            (do 3 pracovných dní nasledujúceho mesiaca).
+          </div>
+        </div>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/JdNw6DmRMDQ?controls=0"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        ></iframe>
+      </div>
+    </div>
+    <div
+      class="flex py-20 w-full h-full bg-cover bg-no-repeat bg-center bg-local relative"
+      style="
+        background-image: linear-gradient(to top,rgba(17, 24, 39, 1) 0%,rgba(17, 24, 39, 1) 40%,rgba(31, 41, 55, 1) 40%,rgba(31, 41, 55, 1) 100%);"
+    >
+      <div class="absolute bottom-[-60px] left-5 w-full">
+        <img src="../assets/dots_h.png" class="max-h-[330px]" />
+      </div>
+      <div class="container mx-auto text-left">
+        <div class="w-full">
+          <div class="text-5xl mt-4 text-white font-bold leading-normal">
+            Vyberte si z lukratívne sídlo
+          </div>
+          <div class="text-white text-base mt-4">
+            Základná cena obsahuje zriadenie sídla označenie schránky a email
+            notifikácie o prijatej <br />
+            pošte. V prípade záujmu k sídlu doplnte ďalšie služby (napríklad
+            preberanie pošty, <br />
+            ich scanovanie).
+          </div>
+          <div class="flex mt-10">
+            <div class="w-[30px] mt-12">
+              <button v-on:click="onPrevious()">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-12 h-12 text-teal-500"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="w-full flex justify-around">
+              <!---->
+              <div class="w-[250px] mt-4 rounded relative">
+                <div
+                  class="w-[110px] py-1 text-sm bg-gray-800/75 mx-auto rounded-b-lg text-white text-center absolute top-0 left-0 right-0"
+                >
+                  2€ / mesiac
+                </div>
+                <div
+                  class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute top-[200px] left-0 right-0"
+                >
+                  Vybrať
+                </div>
+                <img
+                  src="../assets/vcompany.jpg"
+                  class="w-full rounded h-auto w-[250px]"
+                />
+                <div class="font-medium px-2 my-2 text-white text-lg">
+                  Skypark
+                </div>
+                <div class="text-white px-2 mb-2 text-sm">
+                  Jurkovičova Tepláreň, 811 09 Bratislava
+                </div>
+              </div>
+              <!---->
+              <div class="w-[250px] mt-4 rounded relative">
+                <div
+                  class="w-[110px] py-1 text-sm bg-gray-800/75 mx-auto rounded-b-lg text-white text-center absolute top-0 left-0 right-0"
+                >
+                  7€ / mesiac
+                </div>
+                <div
+                  class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute top-[200px] left-0 right-0"
+                >
+                  Vybrať
+                </div>
+                <img
+                  src="../assets/vcompany.jpg"
+                  class="w-full rounded h-auto w-[250px]"
+                />
+                <div class="font-medium px-2 my-2 text-white text-lg">
+                  Panorama
+                </div>
+                <div class="text-white px-2 mb-2 text-sm">
+                  Landererova 6068, 811 09 Bratislava
+                </div>
+              </div>
+              <!---->
+              <div class="w-[250px] mt-4 rounded relative">
+                <div
+                  class="w-[110px] py-1 text-sm bg-gray-800/75 mx-auto rounded-b-lg text-white text-center absolute top-0 left-0 right-0"
+                >
+                  5€ / mesiac
+                </div>
+                <div
+                  class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute top-[200px] left-0 right-0"
+                >
+                  Vybrať
+                </div>
+                <img
+                  src="../assets/vcompany.jpg"
+                  class="w-full rounded h-auto w-[250px]"
+                />
+                <div class="font-medium px-2 my-2 text-white text-lg">Hrad</div>
+                <div class="text-white px-2 mb-2 text-sm">
+                  Hradny vršok 1, 811 09 Bratislava
+                </div>
+              </div>
+              <!---->
+            </div>
+            <div class="w-[30px] mt-12">
+              <button v-on:click="onNext()">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-12 h-12 text-teal-500"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-900 pt-14 z-1 text-white">
+    <div class="flex w-full">
+      <div class="flex flex-col items-end w-full relative">
+        <img
+          src="../assets/robot_left.png"
+          class="absolute bottom-0 left-[-90px] z-0 max-h-[720px]"
+        />
+        <img
+          src="../assets/dots_h.png"
+          class="absolute bottom-5 right-5 z-0 max-h-[330px]"
+        />
+        <div class="text-white text-2xl mt-4 mx-40">
+          Chcete na sídlo prijímať poštu a <br />
+          mať všetko prehľadne uložené online?
+        </div>
+        <div class="text-5xl text-white font-bold leading-normal mx-40">
+          Doplňte si ďalšie služby
+        </div>
+        <div class="flex flex-row rounded max-w-5xl py-12 mx-40 z-10">
+          <div class="flex flex-col py-5 px-10 bg-gray-900/95 pr-20">
+            <div class="relative w-64">
+              <select
+                id="type"
+                name="type"
+                class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+              >
+                >
+                <option
+                  v-for="option in options"
+                  :value="option.value"
+                  :key="option.id"
+                >
+                  {{ option.text }}
+                </option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
+              >
+                <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+              </div>
+            </div>
+            <div class="text-base shrink pt-5">
+              Základná cena <span class="text-teal-500">7€/mesiac</span> obsahuje zriadenie sídla a označenie
+              schránky a email notifikácie o prijatej pošte.
+            </div>
+            <div class="text-2xl font-bold py-5">
+              V prípade záujmu si k sídlu doplňte ďalšie služby
+            </div>
+            <!------>
+            <div class="flex flex-row py-5 justify-between">
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+                <span class="shrink pr-10"
+                  >Preberanie a online evidencia zásielok</span
+                >
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                />
+                <label for="checkbox" class="pl-2">4€/mesiac</label>
+              </div>
+            </div>
+            <!------>
+            <div class="flex flex-row py-5 justify-between">
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+                <span class="shrink pr-10">Preposlanie pošty</span>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                />
+                <label for="checkbox" class="pl-2">1€/mesiac</label>
+              </div>
+            </div>
+            <!------>
+            <div class="flex flex-row py-5 justify-between">
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+                <span class="shrink pr-10">Skenovanie zásielok</span>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                />
+                <label for="checkbox" class="pl-2">5€/mesiac</label>
+              </div>
+            </div>
+            <!------>
+            <div class="flex flex-row py-5 justify-between">
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+                <span class="shrink pr-10">Skartácia na požiadanie</span>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                />
+                <label for="checkbox" class="pl-2">2€/mesiac</label>
+              </div>
+            </div>
+            <!------>
+          </div>
+          <!---->
+          <div
+            class="flex basis-1/4 flex-col items-center text-center bg-gray-800"
+          >
+            <img src="../assets/vcompany.jpg" class="h-auto w-full" />
+            <div class="px-3 py-2 shrink text-sm">
+              SKYPARK, Jurkovičova Tepláreň, 811 09 Bratislava
+            </div>
+            <div class="pt-10 text-xm">Výsledná cena</div>
+            <div class="px-3 py-2 text-2xl font-bold">7 €/mesiac</div>
+            <div class="py-5">
+              <button
+                class="px-6 py-2 hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 hover:border hover:border-teal-500 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center"
+              >
+                Vybrať
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-800 text-white">
+    <CounselingCenter></CounselingCenter>
+    <Reviews></Reviews>
+    <FooterLayout></FooterLayout>
+  </div>
+</template>
+
+<script setup lang="ts">
+import store from "@/store";
+import { ref, computed, onBeforeMount } from "vue";
+import FooterLayout from "../components/FooterLayout.vue";
+import CounselingCenter from "@/components/CounselingCenter.vue";
+import Reviews from "@/components/Reviews.vue";
+import { ChevronDownIcon } from "@heroicons/vue/outline";
+import { useRouter } from "vue-router";
+
+const vhqs: any = computed(() => {
+  return store.state.vhqs;
+});
+let currentIndex = 0;
+
+const options = ref([
+  { id: 1, text: "Skypark", value: "skypark" },
+  { id: 2, text: "Hrad", value: "hrad" },
+]);
+
+function animate(element: any, animation: any, onAnimationEnd: any) {
+  const plainClassList = Array.prototype.slice.call(element.classList);
+  const animationsToRemove = plainClassList.filter((className) =>
+    className.includes("animate__")
+  );
+  element.classList.remove("hidden", ...animationsToRemove);
+  element.classList.add("animate__animated", animation);
+  if (onAnimationEnd) {
+    element.addEventListener("animationend", onAnimationEnd, { once: true });
+  }
+}
+
+function getNextSlideIndex() {
+  if (currentIndex + 1 < vhqs.value.length) {
+    return currentIndex + 1;
+  }
+  return 0;
+}
+
+function getPreviousSlideIndex() {
+  if (currentIndex > 0) {
+    return currentIndex - 1;
+  }
+  return vhqs.value.length - 1;
+}
+
+function onNext() {
+  const element = document.querySelector(`[data-index="${currentIndex}"]`);
+  animate(element, "animate__fadeOut", () => {
+    if (element != null) element.classList.add("hidden");
+  });
+  const nextSlideIndex = getNextSlideIndex();
+  const nextElement = document.querySelector(
+    `[data-index="${nextSlideIndex}"]`
+  );
+  animate(nextElement, "animate__fadeIn", null);
+  currentIndex = nextSlideIndex;
+}
+
+function onPrevious() {
+  const element = document.querySelector(`[data-index="${currentIndex}"]`);
+  animate(element, "animate__fadeOut", () => {
+    if (element != null) element.classList.add("hidden");
+  });
+  const previousSlideIndex = getPreviousSlideIndex();
+  const previousElement = document.querySelector(
+    `[data-index="${previousSlideIndex}"]`
+  );
+  animate(previousElement, "animate__fadeIn", null);
+  currentIndex = previousSlideIndex;
+}
+
+onBeforeMount(async () => {
+  await store.dispatch("vhqs");
+
+  vhqs.value.forEach((_: any, index: any) => {
+    if (index != currentIndex) {
+      const element = document.querySelector(`[data-index="${index}"`);
+      if (element != null) element.classList.add("hidden");
+    }
+  });
+});
+</script>
