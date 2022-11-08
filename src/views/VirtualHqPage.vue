@@ -296,7 +296,7 @@
                   :checked="preberanie"
                   type="checkbox"
                   id="checkbox"
-                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                   @change="preberanieChanged($event)"
                 />
                 <label for="checkbox" class="pl-2">4€/mesiac</label>
@@ -327,7 +327,7 @@
                   type="checkbox"
                   id="checkbox"
                   @change="preposielanieChanged($event)"
-                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
                 <label for="checkbox" class="pl-2">1€/mesiac</label>
               </div>
@@ -357,7 +357,7 @@
                   type="checkbox"
                   id="checkbox"
                   @change="scanovanieChanged($event)"
-                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
                 <label for="checkbox" class="pl-2">5€/mesiac</label>
               </div>
@@ -387,7 +387,7 @@
                   type="checkbox"
                   id="checkbox"
                   @change="skartovanieChanged($event)"
-                  class="focus:ring-teal-500 focus:border-teal-500 accent-teal-500"
+                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
                 <label for="checkbox" class="pl-2">2€/mesiac</label>
               </div>
