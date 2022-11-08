@@ -19,6 +19,7 @@ import PostPageVue from "@/views/PostPage.vue";
 import ThanksYouNewOrderVue from "@/views/ThanksYouNewOrder.vue";
 import CompanyDetailsVue from "@/views/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
+import HqAndMailPageVue from "@/views/HqAndMailPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,6 +49,7 @@ const router = createRouter({
         { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
+        { path: '/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
       ],
     },
     {
