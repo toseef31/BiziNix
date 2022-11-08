@@ -293,7 +293,6 @@
               </div>
               <div>
                 <input
-                  v-model="preberanie"
                   :checked="preberanie"
                   type="checkbox"
                   id="checkbox"
@@ -324,7 +323,6 @@
               </div>
               <div>
                 <input
-                  v-model="preposlanie"
                   :checked="preposlanie"
                   type="checkbox"
                   id="checkbox"
@@ -355,7 +353,6 @@
               </div>
               <div>
                 <input
-                  v-model="scanovanie"
                   :checked="scanovanie"
                   type="checkbox"
                   id="checkbox"
@@ -386,7 +383,6 @@
               </div>
               <div>
                 <input
-                  v-model="skartovanie"
                   :checked="skartovanie"
                   type="checkbox"
                   id="checkbox"
