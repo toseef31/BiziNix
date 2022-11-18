@@ -134,6 +134,10 @@ export const store = createStore({
      commit("setCompany", data)
      return data
     },
+    async isEmailAlreadyRegistered({commit} , email: string){
+     const { data } = await axiosClient.get(`/users/${email}/check`)
+     return data
+    },
 //#endregion    
 //#region orders
   async addOrder({ commit }, order) {

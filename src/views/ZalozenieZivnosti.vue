@@ -110,7 +110,15 @@
                   <FormKit type="text" name="street_number2" v-model="userAddress.street_number2" label="Orientačné číslo" validation="required" />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="email" name="email" v-model="user.email" label="Email" validation="required|email" help="Email ktorý budete používať aj na prihlasenie do účtu." />
+                  <FormKit type="email" name="email"
+                    v-model="user.email"
+                    label="Email"
+                    :validation-rules="{ emailIsUnique }"
+                    validation="required|email|emailIsUnique"
+                    :validation-messages="{ emailIsUnique: 'E-mail sa už používa!'}"
+                    validation-visibility="live"                  
+                    help="Email ktorý budete používať aj na prihlasenie do účtu."
+                  />
                   <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
                   <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
                 </div>
@@ -176,7 +184,6 @@ import { ref, onBeforeMount, onMounted } from "vue";
 import useSteps from "../components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
-import { date } from "@formkit/i18n";
 import router from "@/router";
 
 const hasTitle = ref(false);
@@ -444,6 +451,23 @@ function addOrder(): Promise<Response> {
     console.log(err.response.data )
   })
 }
+
+async function isEmailAlreadyRegistered(node: any) {
+  try {
+    const res = await store.dispatch("isEmailAlreadyRegistered", node);
+    console.log(res);
+    return true;
+  }
+  catch (error) {
+    return false;
+  }
+}
+
+async function emailIsUnique(node: any){
+  const result = await isEmailAlreadyRegistered(node.value)
+  return result
+}
+
 
 const submitApp = async (formData: any, node: any) => {
 
