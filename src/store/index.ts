@@ -114,6 +114,10 @@ export const store = createStore({
       const response = await axiosClient.get("/subjectOfBusiness/getAllSubjectsOfBusiness");
       return response;
     },
+    async getHeadquartersTypes(){
+      const response = await axiosClient.get("/headquarters/getHeadquartersTypes");
+      return response;
+    },
     async addCompany({ commit }, company) {
       const { data } = await axiosClient.post("/companies/add", company);
       commit("setCompany", data); // setCompany is defined as muttation below

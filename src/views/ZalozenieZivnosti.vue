@@ -128,7 +128,7 @@
                 </div>
                 <div class="flex flex-col md:flex-row md:space-x-4">
                   <FormKit type="radio" v-model="companyRegDateCheckboxValue" :ignore="true" label="Registrácia živnosti ku dňu?"
-                  :options="companyRegDateCheckbox" name="companyRegDateCheckbox"
+                  :options="[{ value: 'Nezáleží', label: 'Nezáleží' }, { value: 'Podľa dátumu', label: 'Podľa dátumu' }]" name="companyRegDateCheckbox"
                   validation="required" />
                   <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
                     <FormKit type="date" name="registration_date" v-model="companyOrZivnostModel.registration_date" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
@@ -157,6 +157,17 @@
                     <FormKit type="text" name="dic" label="DIČ" />
                     <FormKit type="text" name="ic_dph" label="IČ DPH" />
                 </div>
+
+                <div class="w-full">
+                  <FormKit type="radio" v-model="paymentOptions" label="Spôsob platby?" name="payment_method"
+                  :options="
+                  [
+                    { value: 'iban', label: 'Priamy vklad na účet', help: 'Pošlite vašu platbu priamo na náš bankový účet, ktorý nájdete na ďakovnej stránke po dokončení objednávky.' },
+                    { value: 'stripe', label: 'Online kartou', help: 'Platba prostredníctvom platobnej brány Stripe.' }
+                  ]"
+                  validation="required" />
+                </div>
+
               </FormKit>
             </div>
           </section>
@@ -168,8 +179,8 @@
         </div>
 
         <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
-        <!-- <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button>
-        <pre wrap>{{ value }}</pre> -->
+        <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
+        <pre wrap>{{ value }}</pre>
 
       </FormKit>
 
@@ -217,8 +228,8 @@ let businessCategori = ref([
   }
 ])
 
-let companyRegDateCheckbox = ["Nezáleží", "Podľa dátumu"]
 let companyRegDateCheckboxValue = ref("")
+let paymentOptions = ref("")
 
 let priceForBusinessCategories = ref(0);
 let fakturacne_udaje = ref({
@@ -283,7 +294,7 @@ let headquarter = ref({
 
 let order = ref({
   payment_date: '' as any,
-  payment_method: 'iban',
+  payment_method: paymentOptions.value,
   description: 'test',
   amount: 12, // final cena s dph
   amount_vat: 2, // vat je čisto len dph
@@ -333,13 +344,13 @@ onBeforeMount( () => {
 })
 
 function logujData(){
-  addOrder()
   console.log(companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddress.value)
   console.log(user.value)
   console.log(headquarter.value)
   console.log(companyOrZivnostModel.value)
   console.log(fakturacne_udaje.value)
+  console.log(paymentOptions.value)
 }
 
 function priceForBusinessOfcategories(){

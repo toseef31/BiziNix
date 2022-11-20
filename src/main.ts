@@ -7,14 +7,17 @@ import router from "./router";
 import store from "./store";
 import { defineRule } from "vee-validate";
 import { plugin, defaultConfig } from "@formkit/vue";
+import { createProPlugin, inputs } from '@formkit/pro'
 import { generateClasses } from "@formkit/themes";
 import themeFormkit from "./themeFormkit";
 
+const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
 const config = defaultConfig({
+  plugins: [ pro ],
   config: {
     classes: generateClasses(themeFormkit),
-  },
+  }
 });
 
 const app = createApp(App);
