@@ -393,6 +393,36 @@
               </div>
             </div>
             <!------>
+            <hr class="my-8 h-px bg-gray-200 border-0 dark:bg-gray-700">
+            <div class="flex flex-row py-5 justify-between">
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+                <span class="shrink pr-10">Založiť novú firmu</span>
+              </div>
+              <div>
+                <input
+                  :checked="newCompany"
+                  type="checkbox"
+                  id="checkbox"
+                  @change="newCompanyChanged($event)"
+                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
+                />
+              </div>
+            </div>
+            <!------>
           </div>
           <!---->
           <div
@@ -411,6 +441,7 @@
             </div>
             <div class="py-5">
               <button
+                v-on:click="createNewOrder()"
                 class="px-6 py-2 hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 hover:border hover:border-teal-500 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center"
               >
                 Vybrať
@@ -438,6 +469,8 @@ import Reviews from "@/components/Reviews.vue";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";
+
+const router = useRouter()
 
 const vhqs: any = computed(() => {
   return store.state.vhqs;
@@ -475,17 +508,19 @@ const currentVhq = ref({
   address_id: 0,
 });
 
-const final_price = ref();
-const preberanie = ref();
-const preposlanie = ref();
-const scanovanie = ref();
-const skartovanie = ref();
+const final_price = ref(0);
+const preberanie = ref(false);
+const preposlanie = ref(false);
+const scanovanie = ref(false);
+const skartovanie = ref(false);
+const newCompany = ref(false);
 
 function switchSelect(event: any) {
   preberanie.value = false;
   preposlanie.value = false;
   scanovanie.value = false;
   skartovanie.value = false;
+  newCompany.value = false;
 
   currentVhq.value = vhqs.value.find(
     (item: any) => item.id == event.target.value
@@ -507,6 +542,7 @@ function doScrolling(element: any, duration: any, id: any) {
   preposlanie.value = false;
   scanovanie.value = false;
   skartovanie.value = false;
+  newCompany.value = false;
 
   const startingY = window.pageYOffset;
   const elementY = getElementY(element);
@@ -574,6 +610,30 @@ function skartovanieChanged(event: any) {
     skartovanie.value = false;
     final_price.value -= 2;
   }
+}
+
+function newCompanyChanged(event: any) {
+  if (event.target.checked) {
+    newCompany.value = true;
+  } else {
+    newCompany.value = false;
+  }
+}
+
+function createNewOrder() {
+    const data = {
+      createCompany: newCompany.value,
+      skartovanie: skartovanie.value,
+      preposlanie: preposlanie.value,
+      scanovanie: scanovanie.value,
+      preberanie: preberanie.value,
+      price: final_price.value,
+      vhq: currentVhq.value
+    };
+    return router.push({
+    name: "Order vhq",
+    params: { data: JSON.stringify(data) },
+  });
 }
 
 onBeforeMount(async () => {

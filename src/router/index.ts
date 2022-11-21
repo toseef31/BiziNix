@@ -19,6 +19,7 @@ import PostPageVue from "@/views/PostPage.vue";
 import ThanksYouNewOrderVue from "@/views/ThanksYouNewOrder.vue";
 import CompanyDetailsVue from "@/views/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
+import OrderVirtualHqPageVue from "@/views/OrderVirtualHqPage.vue";
 import HqAndMailPageVue from "@/views/HqAndMailPage.vue";
 
 const router = createRouter({
@@ -49,6 +50,7 @@ const router = createRouter({
         { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
+        { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },
         { path: '/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
       ],
     },
@@ -64,6 +66,10 @@ const router = createRouter({
       ],
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // always scroll to top
+    return { top: 0 }
+  },
 });
 
 router.beforeEach((to, from, next) => {
