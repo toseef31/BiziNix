@@ -371,6 +371,11 @@ import { createInput } from "@formkit/vue";
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
 
+const camel2title = (str: string) => str
+  .replace(/([A-Z])/g, (match) => ` ${match}`)
+  .replace(/^./, (match) => match.toUpperCase())
+  .trim()
+
 const props = defineProps({
   data: {
     type: String,
