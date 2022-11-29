@@ -129,7 +129,7 @@
               class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
             >
               <div
-                v-for="mail in filteredMailsByDates"
+                v-for="mail in paginatedItems"
                 :key="mail.id"
                 class="bg-white border-b rounded-xl dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 flex flex-row my-2"
               >
@@ -328,7 +328,7 @@ const filteredMailsByDates: any = computed(() => {
 const pagination: any = computed(() => {
   return reactive({
     currentPage: 1,
-    perPage: 10,
+    perPage: 5,
     totalPages: computed(() =>
       Math.ceil(mails.value.length / pagination.value.perPage)
     ),
@@ -336,9 +336,8 @@ const pagination: any = computed(() => {
 });
 
 const paginatedItems: any = computed(() => {
-  const { currentPage, perPage } = pagination;
-  const start = (currentPage - 1) * perPage;
-  const stop = start + perPage;
+  const start = (pagination.value.currentPage - 1) * pagination.value.perPage;
+  const stop = start + pagination.value.perPage;
   return filteredMailsByDates.value.slice(start, stop);
 });
 
@@ -347,7 +346,6 @@ function sendMails() {
   filteredMails.forEach(function (value: any) {
     value.forward_requested = 1;
   }); 
-  console.log(filteredMails);
   store
     .dispatch("updateMultipleMails", filteredMails)
     .then((res) => {
