@@ -345,11 +345,11 @@ const paginatedItems: any = computed(() => {
 function sendMails() {
   const filteredMails = filteredMailsByDates.value;
   filteredMails.forEach(function (value: any) {
-    value.forward_requested = true;
+    value.forward_requested = 1;
   }); 
   console.log(filteredMails);
   store
-    .dispatch("updateMultipleMails", { filteredMails })
+    .dispatch("updateMultipleMails", filteredMails)
     .then((res) => {
       console.log("Zásielky úspešne zmenené.");
     })
@@ -361,7 +361,7 @@ function sendMails() {
 function sendSingleMail(id: any) {
   const mail = mails.value.find((item: any) => item.id == id);
   if (mail) {
-    mail.forward_requested = true;
+    mail.forward_requested = 1;
     store
       .dispatch("updateMail", mail)
       .then((res) => {

@@ -212,10 +212,13 @@ export const store = createStore({
       }
     },
     updateMultipleMails({ commit, dispatch }, mails) {
-      return axiosClient.put(`/mails/updateMultiple`, { mails: mails }).then((res) => {
-        commit("setMailsAfterUpdate", res.data);
-        return res;
-      });
+      console.log(mails);
+      return axiosClient
+        .put(`/mails/updateMultiple`, { mails: mails })
+        .then((res) => {
+          commit("setMailsAfterUpdate", res.data);
+          return res;
+        });
     },
   },
   mutations: {
