@@ -359,7 +359,7 @@ function sendMails() {
 function sendSingleMail(id: any) {
   const mail = mails.value.find((item: any) => item.id == id);
   if (mail) {
-    mail.forward_requested = 1;
+    mail.forward_requested = true;
     store
       .dispatch("updateMail", mail)
       .then((res) => {
