@@ -89,3 +89,62 @@
       padding: 0 1em 1em 1em;
     }
 }
+
+/* style for repeater  input */ 
+[data-type="repeater"]>.formkit-fieldset {
+  max-width: none;
+  padding: 1.25em;
+}
+
+.formkit-fieldset {
+  padding: 1.25em;
+  border-radius: 3px;
+  border: 1px solid #384a63;
+}
+
+.formkit-item {
+  border: 1px solid #263344;
+  border-radius: 0.25em;
+  margin-bottom: 0.5em;
+  display: flex;
+}
+
+.formkit-content {
+  flex-grow: 1;
+  padding: calc(0.25em * 3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.formkit-outer {
+  margin: var(--fk-margin-outer);
+}
+
+.formkit-controls {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: calc(0.25em * 3);
+  background-color: #212d3b;
+  border-radius: 0 var(--fk-border-radius-tr) var(--fk-border-radius-br) 0;
+}
+
+.formkit-controls>li {
+  flex: 0 0 1.25em;
+  margin: 0.5em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formkit-controls>li>button:disabled {
+  color: #3d536b;
+  cursor: not-allowed;
+}
