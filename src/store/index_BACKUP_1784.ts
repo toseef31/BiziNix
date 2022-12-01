@@ -164,10 +164,20 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/users/${email}/check`);
       return data;
     },
+<<<<<<< HEAD
     async addMultipleCompanyMembers({ commit }, members) {
       const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
       return data;
     },
+//#endregion    
+//#region orders
+  async addOrder({ commit }, order) {
+    const { data } = await axiosClient.post("/orders/add", order);
+    commit("setOrder", data); // setCompany is defined as muttation below
+    return data;
+  },
+//#endregion
+=======
     //#endregion
     //#region orders
     async addOrder({ commit }, order) {
@@ -176,6 +186,7 @@ export const store = createStore({
       return data;
     },
     //#endregion
+>>>>>>> fe9056d474aa4ed842a5222550be6f92fd91c05c
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);

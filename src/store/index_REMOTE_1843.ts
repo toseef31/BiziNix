@@ -147,7 +147,7 @@ export const store = createStore({
     },
     async addHeadquarter({ commit }, headquarter) {
       const { data } = await axiosClient.post("/headquarters/add", headquarter);
-      commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
+      commit("setHeadquarter", data); // setCompany is defined as muttation below
       return data;
     },
     async getAllCompaniesByUserId({ commit }, userId) {
@@ -162,10 +162,6 @@ export const store = createStore({
     },
     async isEmailAlreadyRegistered({ commit }, email: string) {
       const { data } = await axiosClient.get(`/users/${email}/check`);
-      return data;
-    },
-    async addMultipleCompanyMembers({ commit }, members) {
-      const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
       return data;
     },
     //#endregion

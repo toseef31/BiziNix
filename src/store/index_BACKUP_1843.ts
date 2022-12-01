@@ -168,6 +168,10 @@ export const store = createStore({
       const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
       return data;
     },
+    async addMultipleCompanyMembers({ commit }, members) {
+      const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
+      return data;
+    },
     //#endregion
     //#region orders
     async addOrder({ commit }, order) {

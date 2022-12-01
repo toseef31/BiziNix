@@ -5,7 +5,7 @@ import Register from "../views/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
 import CompanyEdit from "../views/CompanyEdit.vue";
 import HomePage from "../views/HomePage.vue";
-import Contact from "../views/Contact.vue";
+import Contact from "../views/ContactPage.vue";
 import ZalozenieZivnosti from "../views/ZalozenieZivnosti.vue";
 import ZalozenieFirmy from "../views/ZalozenieFirmy.vue";
 import Support from "../views/Support.vue";
@@ -21,6 +21,12 @@ import CompanyDetailsVue from "@/views/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
 import OrderVirtualHqPageVue from "@/views/OrderVirtualHqPage.vue";
 import HqAndMailPageVue from "@/views/HqAndMailPage.vue";
+import ContactPageVue from "../views/ContactPage.vue";
+import GdprPageVue from "@/views/GdprPage.vue";
+import PricelistPageVue from "@/views/PricelistPage.vue";
+import ObchodnePodmienkyPageVue from "@/views/ObchodnePodmienkyPage.vue";
+import AboutUsPageVue from "@/views/AboutUsPage.vue";
+import PostsPageVue from "@/views/PostsPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +37,11 @@ const router = createRouter({
       component: DefaultLayout,
       children: [
         { path: '/home', name: "Home", component: HomePage },
-        { path: '/contact', name: "Contact", component: Contact },
+        { path: '/contact', name: "Contact", component: ContactPageVue },
+        { path: '/gdpr', name: "Gdpr", component: GdprPageVue },
+        { path: '/pricelist', name: "Pricelist", component: PricelistPageVue },
+        { path: '/obchodne-podmienky', name: "Obchodne podmienky", component: ObchodnePodmienkyPageVue },
+        { path: '/o-nas', name: "About us", component: AboutUsPageVue },
         { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
@@ -48,6 +58,7 @@ const router = createRouter({
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
         { path: '/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
         { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
+        { path: "/posts", name: "Posts", component: PostsPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
         { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },

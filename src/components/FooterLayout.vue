@@ -14,37 +14,37 @@
             dokumenty
           </div>
           <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
-            Centrum poradenstva
+            <a href="/counseling-center">Centrum poradenstva</a>
           </div>
         </div>
         <div class="flex-1 text-white text-base">
           <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
-            Podpora
+            <a href="/support">Podpora</a>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            Kontakt
+            <a href="/contact">Kontakt</a>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            O firme
+            <a href="/o-nas">O firme</a>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            Cenník
+            <a href="/pricelist">Cenník</a>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            Prihlásenie
+            <a href="/login">Prihlásenie</a>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            Články
+            <a href="/posts">Články</a>
           </div>
         </div>
         <div class="flex-1 relative">
@@ -88,12 +88,12 @@
               <div
                 class="hover:cursor-pointer hover:opacity-75 hover:underline"
               >
-                Obchodné podmienky
+                <a href="/obchodne-podmienky">Obchodné podmienky</a>
               </div>
               <div
                 class="hover:cursor-pointer hover:opacity-75 hover:underline"
               >
-                Ochrana osobných údajov
+                <a href="/gdpr">Ochrana osobných údajov</a>
               </div>
             </div>
             <img src="../assets/logo-small.png" class="w-12 h-auto" />

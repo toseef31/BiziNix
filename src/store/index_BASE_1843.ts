@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
 import axiosClient from "@/axios";
-import type Mail from "@/@types/Mail";
 
 export const store = createStore({
   state: {
@@ -18,11 +17,7 @@ export const store = createStore({
     myCompanies: [],
     headquarter: {},
     order: [{}],
-    vhqs: [],
-    selectedCompany: {},
-    mails: [] as Mail[],
-    hq: {},
-    hqAddress: {},
+    vhqs: []
   },
   getters: {
     getReviews: (state) => {
@@ -35,17 +30,8 @@ export const store = createStore({
       return state.faqs;
     },
     getOrder: (state) => (id: any) => {
-      return state.order.find((order: any) => order.id === id);
-    },
-    getHeadquartersById: (state) => (id: any) => {
-      return state.hq;
-    },
-    getHqAddress: (state) => (id: any) => {
-      return state.hqAddress;
-    },
-    getMails: (state) => (id: any) => {
-      return state.mails;
-    },
+      return state.order.find((order: any) => order.id === id )
+    }
   },
   actions: {
     registerUser({ commit }, user) {
@@ -102,43 +88,35 @@ export const store = createStore({
           });
       }
     },
-    userAddress({ commit, dispatch }, userAddress) {
+    userAddress({commit, dispatch}, userAddress ) {
       let response;
-      if (this.state.user.userId) {
-        response = axiosClient
+      if(this.state.user.userId){
+          response = axiosClient
           .get(`/address/${this.state.user.addressId}/get`)
           .then((res) => {
-            commit("setUserAddress", res.data);
-            return res;
-          });
+              commit("setUserAddress", res.data)
+              return res
+          })
       }
     },
-    updateUserAddress({ commit, dispatch }, userAddress) {
-      if (userAddress.id) {
-        return axiosClient
-          .put(`/address/${userAddress.id}/update`, userAddress)
-          .then((res) => {
-            commit("setUserAddressAfterUpdate", res.data);
-            return res;
-          });
-      }
+    updateUserAddress({commit, dispatch}, userAddress){
+        if(userAddress.id){
+            return axiosClient
+            .put(`/address/${userAddress.id}/update`, userAddress)
+            .then(res => {
+                commit('setUserAddressAfterUpdate', res.data)
+                return res;
+            })
+        }
     },
-    //#region Company actions
-    async getAllSubjectOfBusiness() {
-      const response = await axiosClient.get(
-        "/subjectOfBusiness/getAllSubjectsOfBusiness"
-      );
+//#region Company actions
+    async getAllSubjectOfBusiness(){
+      const response = await axiosClient.get("/subjectOfBusiness/getAllSubjectsOfBusiness");
       return response;
     },
-    async getHeadquartersTypes() {
-      const response = await axiosClient.get(
-        "/headquarters/getHeadquartersTypes"
-      );
+    async getHeadquartersTypes(){
+      const response = await axiosClient.get("/headquarters/getHeadquartersTypes");
       return response;
-    },
-    async getHeadquartersById({ commit }, hqId) {
-      const { data } = await axiosClient.get(`/headquarters/${hqId}/get`);
-      return data;
     },
     async addCompany({ commit }, company) {
       const { data } = await axiosClient.post("/companies/add", company);
@@ -147,35 +125,31 @@ export const store = createStore({
     },
     async addHeadquarter({ commit }, headquarter) {
       const { data } = await axiosClient.post("/headquarters/add", headquarter);
-      commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
+      commit("setHeadquarter", data); // setCompany is defined as muttation below
       return data;
     },
-    async getAllCompaniesByUserId({ commit }, userId) {
-      const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
-      commit("setMyCompanies", data);
-      return data;
+    async getAllCompaniesByUserId({commit} , userId){
+     const { data } = await axiosClient.get(`/companies/${userId}/getAll`)
+     commit("setMyCompanies", data)
+     return data
     },
-    async getCompanyById({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/companies/${companyId}/get`);
-      commit("setCompany", data);
-      return data;
+    async getCompanyById({commit} , companyId){
+     const { data } = await axiosClient.get(`/companies/${companyId}/get`)
+     commit("setCompany", data)
+     return data
     },
-    async isEmailAlreadyRegistered({ commit }, email: string) {
-      const { data } = await axiosClient.get(`/users/${email}/check`);
-      return data;
+    async isEmailAlreadyRegistered({commit} , email: string){
+     const { data } = await axiosClient.get(`/users/${email}/check`)
+     return data
     },
-    async addMultipleCompanyMembers({ commit }, members) {
-      const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
-      return data;
-    },
-    //#endregion
-    //#region orders
-    async addOrder({ commit }, order) {
-      const { data } = await axiosClient.post("/orders/add", order);
-      commit("setOrder", data); // setCompany is defined as muttation below
-      return data;
-    },
-    //#endregion
+//#endregion    
+//#region orders
+  async addOrder({ commit }, order) {
+    const { data } = await axiosClient.post("/orders/add", order);
+    commit("setOrder", data); // setCompany is defined as muttation below
+    return data;
+  },
+//#endregion
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
@@ -192,51 +166,22 @@ export const store = createStore({
       });
     },
     async vhqs({ commit }) {
-      await axiosClient
-        .get("/headquarters/getAllVirtualHeadquarters")
-        .then(({ data }) => {
+      await axiosClient.get("/headquarters/getAllVirtualHeadquarters").then(({ data }) => {
           commit("setVhqs", data);
         });
     },
-    async getAddressById({ commit }, address_id) {
-      const { data } = await axiosClient.get(`/address/${address_id}/get`);
-      return data;
-    },
-    async getAllMailsForCompany({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/mails/${companyId}/getAll`);
-      commit("setMails", data);
-      return data;
-    },
-    updateMail({ commit, dispatch }, mail) {
-      if (mail.id) {
-        return axiosClient.put(`/mails/${mail.id}/update`, mail).then((res) => {
-          commit("setMailsAfterUpdate", res.data);
-          return res;
-        });
-      }
-    },
-    updateMultipleMails({ commit, dispatch }, mails) {
-      console.log(mails);
-      return axiosClient
-        .put(`/mails/updateMultiple`, { mails: mails })
-        .then((res) => {
-          commit("setMailsAfterUpdate", res.data);
-          return res;
-        });
-    },
-  },
+},
   mutations: {
     logoutUser: (state) => {
-      state.user.token = null;
-      state.user.userId = null;
-      state.user.addressId = null;
-      (state.user.data = {}),
-        (state.user.address = {}),
-        sessionStorage.removeItem("USER_ID");
+      state.user.token = null
+      state.user.userId = null
+      state.user.addressId = null
+      state.user.data = {},
+      state.user.address = {},
+      sessionStorage.removeItem("USER_ID");
       sessionStorage.removeItem("TOKEN");
     },
-    setUser: (state, userData) => {
-      // userData from res from action
+    setUser: (state, userData) => { // userData from res from action
       // console.log("User Data from Login: " + userData);
       state.user.token = userData.token;
       state.user.userId = userData.id;
@@ -244,20 +189,17 @@ export const store = createStore({
       sessionStorage.setItem("TOKEN", userData.token);
     },
     setUserData: (state, userData) => {
-      state.user.addressId = userData.user.address_id;
-      state.user.data = userData.user;
+        state.user.addressId = userData.user.address_id
+        state.user.data = userData.user
     },
     setCurrentUserProfile: (state, userProfile) => {
-      state.user.data = userProfile.user;
+        state.user.data = userProfile.user
     },
     setUserAddress: (state, userAddress) => {
-      state.user.address = userAddress.data;
+        state.user.address = userAddress.data
     },
     setUserAddressAfterUpdate: (state, userAddress) => {
-      state.user.address = userAddress.address;
-    },
-    setMailsAfterUpdate: (state, mails) => {
-      state.mails = mails;
+        state.user.address = userAddress.address
     },
     setReviews: (state, data) => {
       state.reviews = data.data;
@@ -269,22 +211,19 @@ export const store = createStore({
       state.faqs = data.data;
     },
     setCompany: (state, data) => {
-      state.company = data.data;
+      state.company = data.data
     },
     setHeadquarter: (state, data) => {
-      state.headquarter = data.data;
+      state.headquarter = data.data
     },
     setOrder: (state, data) => {
-      state.order.push(data.order);
+      state.order.push(data.order)
     },
     setMyCompanies: (state, data) => {
-      state.myCompanies = data.data;
+      state.myCompanies = data.data
     },
     setVhqs: (state, data) => {
-      state.vhqs = data.data;
-    },
-    setMails: (state, data) => {
-      state.mails = data.data;
+      state.vhqs = data.data
     },
   },
   modules: {},
