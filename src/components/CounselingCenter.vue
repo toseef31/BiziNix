@@ -3,7 +3,7 @@
     <div class="container justify-center flex mx-auto">
       <div class="w-full xl:w-2/3 relative">
         <img
-          src="../assets/robot-call.png"
+          src="@/assets/robot-call.png"
           class="h-[520px] shrink-0 z-10 w-auto absolute right-[-12px] top-[-150px]"
         />
         <div class="text-5xl text-white font-bold">
@@ -45,7 +45,7 @@ import {
   ChevronDownIcon,
   ChevronDoubleRightIcon,
 } from "@heroicons/vue/outline";
-import FooterLayout from "../components/FooterLayout.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";

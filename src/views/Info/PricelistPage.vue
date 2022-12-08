@@ -410,7 +410,7 @@
 </template>
 
 <script setup lang="ts">
-import FooterLayout from "../components/FooterLayout.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 </script>

@@ -1,32 +1,30 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
-import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
+import Dashboard from "../views/Backoffice/Dashboard.vue";
+import Login from "../views/User/Login.vue";
+import Register from "../views/User/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
-import CompanyEdit from "../views/CompanyEdit.vue";
-import HomePage from "../views/HomePage.vue";
-import Contact from "../views/ContactPage.vue";
-import ZalozenieZivnosti from "../views/ZalozenieZivnosti.vue";
-import ZalozenieFirmy from "../views/ZalozenieFirmy.vue";
-import Support from "../views/Support.vue";
-import ForgotPassword from "../views/ForgotPassword.vue";
-import ActiveUser from "../views/ActiveUser.vue";
-import ForgotPasswordSetNewPassword from "../views/ForgotPasswordSetNewPassword.vue";
-import UserProfile from "../views/Profile.vue";
-import CounselingCenterPageVue from "@/views/CounselingCenterPage.vue";
+import CompanyEdit from "../views/Company/CompanyEdit.vue";
+import HomePage from "../views/Common/HomePage.vue";
+import ZalozenieZivnosti from "../views/Company/ZalozenieZivnosti.vue";
+import ZalozenieFirmy from "../views/Company/ZalozenieFirmy.vue";
+import ForgotPassword from "../views/User/ForgotPassword.vue";
+import ActiveUser from "../views/User/ActiveUser.vue";
+import ForgotPasswordSetNewPassword from "../views/User/ForgotPasswordSetNewPassword.vue";
+import UserProfile from "../views/User/Profile.vue";
+import CounselingCenterPageVue from "@/views/Common/CounselingCenterPage.vue";
 import store from "@/store";
-import PostPageVue from "@/views/PostPage.vue";
-import ThanksYouNewOrderVue from "@/views/ThanksYouNewOrder.vue";
-import CompanyDetailsVue from "@/views/CompanyDetails.vue";
-import VirtualHqPageVue from "@/views/VirtualHqPage.vue";
-import OrderVirtualHqPageVue from "@/views/OrderVirtualHqPage.vue";
-import HqAndMailPageVue from "@/views/HqAndMailPage.vue";
-import ContactPageVue from "../views/ContactPage.vue";
-import GdprPageVue from "@/views/GdprPage.vue";
-import PricelistPageVue from "@/views/PricelistPage.vue";
-import ObchodnePodmienkyPageVue from "@/views/ObchodnePodmienkyPage.vue";
-import AboutUsPageVue from "@/views/AboutUsPage.vue";
-import PostsPageVue from "@/views/PostsPage.vue";
+import PostPageVue from "@/views/Info/PostPage.vue";
+import ThanksYouNewOrderVue from "@/views/Common/ThanksYouNewOrder.vue";
+import CompanyDetailsVue from "@/views/Backoffice/CompanyDetails.vue";
+import VirtualHqPageVue from "@/views/VirtualHQ/VirtualHqPage.vue";
+import OrderVirtualHqPageVue from "@/views/VirtualHQ/OrderVirtualHqPage.vue";
+import HqAndMailPageVue from "@/views/VirtualHQ/HqAndMailPage.vue";
+import ContactPageVue from "../views/Info/ContactPage.vue";
+import GdprPageVue from "@/views/Info/GdprPage.vue";
+import PricelistPageVue from "@/views/Info/PricelistPage.vue";
+import ObchodnePodmienkyPageVue from "@/views/Info/ObchodnePodmienkyPage.vue";
+import AboutUsPageVue from "@/views/Info/AboutUsPage.vue";
+import PostsPageVue from "@/views/Info/PostsPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,7 +44,6 @@ const router = createRouter({
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
-        { path: '/support', name: "Support", component: Support },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
