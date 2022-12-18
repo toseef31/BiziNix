@@ -246,7 +246,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 const topBarNavigation = [
-  { name: "Podpora", to: { name: "Support" } },
+  { name: "Podpora", to: { name: "Counseling center" } },
   { name: "Kontakt", to: { name: "Contact" } },
   { name: "Prihlásiť sa", to: { name: "Login" } },
   { name: "Zaregistrovať sa", to: { name: "Register" } },

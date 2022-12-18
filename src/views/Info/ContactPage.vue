@@ -61,7 +61,7 @@
             </div>
             <div class="flex basis-3/4 relative">
               <div class="absolute inset-y-0 right-0 flex items-center">
-                <img class="max-h-[360px]" src="../assets/robot-head.png" />
+                <img class="max-h-[360px]" src="@/assets/robot-head.png" />
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import FooterLayout from "../components/FooterLayout.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 

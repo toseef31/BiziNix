@@ -27,7 +27,7 @@
             </div>
             <div class="flex basis-1/2 relative">
               <div class="absolute inset-y-0 right-0 flex items-center pr-4">
-                <img class="max-h-[480px] z-0" src="../assets/robot-mobile.png" />
+                <img class="max-h-[480px] z-0" src="@/assets/robot-mobile.png" />
               </div>
             </div>
           </div>
@@ -152,7 +152,7 @@
                 v-on:click="redirectToPost(post.id)"
               >
                 <img
-                  src="../assets/blog-exaple-1.png"
+                  src="@/assets/blog-exaple-1.png"
                   class="w-full rounded-t-lg h-auto"
                 />
                 <div
@@ -211,7 +211,7 @@
               </div>
               <div class="flex basis-3/4 relative">
                 <div class="absolute inset-y-0 right-0 flex items-center">
-                  <img class="max-h-[360px]" src="../assets/robot-head.png" />
+                  <img class="max-h-[360px]" src="@/assets/robot-head.png" />
                 </div>
               </div>
             </div>
@@ -228,7 +228,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import { onMounted, ref, computed } from "vue";
-import FooterLayout from "../components/FooterLayout.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";

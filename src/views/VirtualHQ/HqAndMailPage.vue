@@ -113,7 +113,7 @@
                 {{ address.street }} {{ address.street_number }}, <br />
                 {{ address.psc }} {{ address.city }}
               </div>
-              <img src="../assets/company.png" />
+              <img src="@/assets/company.png" />
             </div>
           </div>
         </div>

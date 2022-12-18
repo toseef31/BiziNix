@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="hidden md:block md:max-w-xs lg:max-w-md">
-        <img src="../assets/robot.png">
+        <img src="@/assets/robot.png">
       </div>
     </div>
   </div>
@@ -54,6 +54,11 @@
       </div>
     </div>
   </div>
+  <div class="bg-gray-800 text-white">
+    <CounselingCenter></CounselingCenter>
+    <Reviews></Reviews>
+    <FooterLayout></FooterLayout>
+  </div>
 
 </template>
 
@@ -61,6 +66,9 @@
 import router from '@/router';
 import { ChevronDownIcon, ChevronDoubleRightIcon } from '@heroicons/vue/outline'
 import { ref } from 'vue';
+import FooterLayout from "@/components/FooterLayout.vue";
+import CounselingCenter from "@/components/CounselingCenter.vue";
+import Reviews from "@/components/Reviews.vue";
 
 const compamyType = ref('živnosť')
 const options = ref([

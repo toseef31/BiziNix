@@ -45,9 +45,9 @@
 <script setup lang="ts">
 import store from "@/store";
 import { ref, onBeforeMount } from "vue";
-import VhqNewCompany from "../components/forms/VhqNewCompany.vue";
-import VhqExistingCompany from "../components/forms/VhqExistingCompany.vue";
-import FooterLayout from "../components/FooterLayout.vue";
+import VhqNewCompany from "../../components/forms/VhqNewCompany.vue";
+import VhqExistingCompany from "../../components/forms/VhqExistingCompany.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { useRoute } from "vue-router";

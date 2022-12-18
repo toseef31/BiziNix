@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="hidden md:block md:max-w-xs lg:max-w-md">
-        <img src="../assets/robot.png">
+        <img src="@/assets/robot.png">
       </div>
     </div>
   </div>
@@ -192,7 +192,7 @@
 
 import store from "@/store";
 import { ref, onBeforeMount, onMounted } from "vue";
-import useSteps from "../components/forms/useStep";
+import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";

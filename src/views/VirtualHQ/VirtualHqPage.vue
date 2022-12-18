@@ -7,7 +7,7 @@
     "
   >
     <img
-      src="../assets/robot_stripes.png"
+      src="@/assets/robot_stripes.png"
       class="absolute bottom-[-82px] right-0"
       style="height: calc(100vh - 260px)"
     />
@@ -122,7 +122,7 @@
       background-image: linear-gradient(to top,rgba(17, 24, 39, 1) 0%,rgba(17, 24, 39, 1) 40%,rgba(31, 41, 55, 1) 40%,rgba(31, 41, 55, 1) 100%);"
   >
     <div class="absolute bottom-[-5px] left-5">
-      <img src="../assets/dots_h.png" class="max-h-[330px]" />
+      <img src="@/assets/dots_h.png" class="max-h-[330px]" />
     </div>
     <div class="container mx-auto text-left">
       <div class="w-full">
@@ -221,11 +221,11 @@
     <div class="flex w-full">
       <div class="flex flex-col items-end w-full relative">
         <img
-          src="../assets/robot_left.png"
+          src="@/assets/robot_left.png"
           class="absolute bottom-0 left-[-90px] z-0 max-h-[720px]"
         />
         <img
-          src="../assets/dots_h.png"
+          src="@/assets/dots_h.png"
           class="absolute bottom-5 right-5 z-0 max-h-[330px]"
         />
         <div class="text-white text-2xl mt-4 mx-40 text-right">
@@ -463,7 +463,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import { ref, computed, onBeforeMount, reactive } from "vue";
-import FooterLayout from "../components/FooterLayout.vue";
+import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
