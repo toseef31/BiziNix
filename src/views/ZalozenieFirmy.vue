@@ -119,7 +119,8 @@
             <div class="text-4xl font-bold">Vyplnte udaje o spoločnosti</div>
             <div class="mt-2 mb-6">vyplnte zakladne udaje a pridajte zakladatelov (spoločnikov) a konatelov.</div>
             <FormKit type="group" id="Údaje o spoločnosti" name="Údaje o spoločnosti">
-              <h2 class="text-xl">Základné imanie </h2>
+              <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" />
+              <h2 class="text-xl my-4">Základné imanie </h2>
               <div class="grid grid-cols-2 gap-4 my-4">
                 <FormKit type="number" name="vyska" label="Výška €" validation="required"
                 help="Od 1.1.2016 finančné prostriedky do výšky 5000 eur nemusia byť vkladané ná účet v banke. Minimálna výška základného imania pri s.r.o. je podľa zákona 5000,- Eur. Môžete zadať aj viac."
@@ -176,7 +177,7 @@
               </FormKit>
               <!-- Konatelia -->
               <FormKit id="repeater_konatelia" name="members_konatelia" type="repeater" label="Konatelia"
-                v-model="konateliaEmptyModel"
+                v-model="konatelia.members"
                 add-label="Pridať konateľa +" :down-control="false" :up-control="false"
               >
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -186,10 +187,6 @@
                   <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
                     :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
                   />
-                  <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" placeholder="Vyberte typ dokladu ttožnosti"
-                    :options="['Občiansky preukaz','Cestovný pas','Vodičský preukaz']" validation="required" validation-visibility="dirty"
-                  />
-                  <FormKit type="text" name="cislo_dokladu_totoznosti" label="Číslo dokladu totožnosti" validation="required|length:5" />
                   <FormKit type="text" name="title_before" label="Titul pred menom" />
                   <FormKit type="text" name="title_after" label="Titul za menom" />
                   <FormKit type="text" name="rodne_cislo" label="Rodné číslo" validation="required|length:10" />
@@ -243,7 +240,6 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                   <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
                   <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required|length:2" />
-                  <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" />
                   <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
                 </div>
                 <div class="flex flex-col md:flex-row md:space-x-4">
@@ -400,11 +396,10 @@ let paymentOptions = ref("")
 let obchodneSidlo = ref("")
 
 let priceForBusinessCategories = ref(0);
-let konateliaEmptyModel = ref({});
 
 let zakladateliaSpolocnici = ref({
   members: [{
-    company_id: 0.,
+    company_id: 0,
     obchodne_meno: '',
     ico: '',
     typ_zakladatela: 0, // 1 Fyz Osoba, 2 Prav Osoba
@@ -429,6 +424,26 @@ let zakladateliaSpolocnici = ref({
     je_spravca_vkladu: true,
     je_zakladatel: false,
     je_konatel: false
+  }]
+})
+
+let konatelia = ref({
+  members: [{
+    company_id: 0,
+    first_name: '',
+    last_name: '',
+    title_before: '',
+    title_after: '',
+    gender: '',
+    date_of_birth: '',
+    rodne_cislo: '',
+    street: '',
+    street_number: '',
+    street_number2: '',
+    city: '',
+    psc: '',
+    country: '',
+    je_konatel: true
   }]
 })
 
@@ -505,7 +520,7 @@ let headquarter = ref({
 
 let order = ref({
   payment_date: '' as any,
-  payment_method: paymentOptions.value,
+  payment_method: '',
   description: 'test',
   amount: 20, // final cena s dph
   amount_vat: 3.33, // vat je čisto len dph
@@ -566,7 +581,6 @@ onBeforeMount( () => {
 })
 
 function logujData(){
-  //addMultipleCompanyMembers()
   console.log(companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddress.value)
   console.log(user.value)
@@ -574,7 +588,8 @@ function logujData(){
   console.log(companyOrZivnostModel.value)
   console.log(fakturacne_udaje.value)
   console.log(paymentOptions.value)
-   console.log(zakladateliaSpolocnici.value)
+  console.log(zakladateliaSpolocnici.value)
+  console.log(konatelia.value)
 }
 
 function priceForBusinessOfcategories(){
@@ -659,31 +674,47 @@ function addCompany(): Promise<Response> {
   })
 }
 
-function addMultipleCompanyMembers(): Promise<Response> {
-  
-zakladateliaSpolocnici.value.members.forEach((item, index: any) => {
-  zakladateliaSpolocnici.value.members[index].company_id = 3
-})
+function addMultipleCompanyMembersSpolocnici(): Promise<Response> {
 
-// zakladateliaSpolocnici.value.company_id =  companyFomResponse.company.id
+  zakladateliaSpolocnici.value.members.forEach((item, index: any) => {
+    zakladateliaSpolocnici.value.members[index].company_id = companyFomResponse.company.id
+  })
 
-return store.dispatch('addMultipleCompanyMembers', zakladateliaSpolocnici.value)
-.then((res) => {
-  console.log("Adding Multiple Company Members: " + JSON.stringify(res))
-  let multipleCompanyMembersFromResponse = res
-  console.log("Multiple Company Members from Res " + JSON.stringify(multipleCompanyMembersFromResponse))
-  return multipleCompanyMembersFromResponse
-}).catch( err => {
-  console.log(err)
-})
+  return store.dispatch('addMultipleCompanyMembers', zakladateliaSpolocnici.value)
+  .then((res) => {
+    console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
+    let multipleCompanyMembersFromResponse = res
+    console.log("Multiple Company Members Spolocnici from response  " + JSON.stringify(multipleCompanyMembersFromResponse))
+    return multipleCompanyMembersFromResponse
+  }).catch( err => {
+    console.log(err)
+    })
+}
 
+function addMultipleCompanyMembersKonatelia(): Promise<Response> {
+
+  konatelia.value.members.forEach((item, index: any) => {
+    konatelia.value.members[index].company_id = companyFomResponse.company.id
+  })
+
+  return store.dispatch('addMultipleCompanyMembers', konatelia.value)
+  .then((res) => {
+    console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
+    let multipleCompanyMembersFromResponse = res
+    console.log("Multiple Company Members Konatelia from response  " + JSON.stringify(multipleCompanyMembersFromResponse))
+    return multipleCompanyMembersFromResponse
+  }).catch( err => {
+    console.log(err)
+    })
 }
 
 function addOrder(): Promise<Response> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  order.value.payment_method = paymentOptions.value
   order.value.company_id = companyFomResponse.company.id
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id
+
 
   order.value.fakturacne_udaje[0].first_name = fakturacne_udaje.value.first_name
   order.value.fakturacne_udaje[0].last_name = fakturacne_udaje.value.last_name
@@ -731,7 +762,8 @@ const submitApp = async (formData: any, node: any) => {
           if(userFromResponse){
             addHeadquarter().then(() => {
               addCompany().then(() => {
-                addMultipleCompanyMembers().then(() => {
+                addMultipleCompanyMembersSpolocnici().then(() => {
+                  addMultipleCompanyMembersKonatelia()
                   addOrder().then(() => {
                     userFromResponse = null
                     hqFromResponse = null
