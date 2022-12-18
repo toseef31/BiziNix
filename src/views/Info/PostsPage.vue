@@ -50,7 +50,7 @@
             v-on:click="redirectToPost(post.id)"
           >
             <img
-              src="../assets/blog-exaple-1.png"
+              src="@/assets/blog-exaple-1.png"
               class="w-full rounded-t-lg h-auto"
             />
             <div

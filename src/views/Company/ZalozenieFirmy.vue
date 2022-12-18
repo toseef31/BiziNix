@@ -351,6 +351,7 @@ import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
+import type User from "@/@types/User";
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);
@@ -487,7 +488,7 @@ let user = ref({
     email: '',
     password: '',
     password_confirmation: ''
-})
+} as User)
 let companyOrZivnostModel = ref({
   name: '',
   headquarters_id: 0,

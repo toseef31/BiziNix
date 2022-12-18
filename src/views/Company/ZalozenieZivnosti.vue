@@ -196,6 +196,7 @@ import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
+import type User from "@/@types/User";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -262,8 +263,8 @@ let user = ref({
     rodne_cislo: '',
     email: '',
     password: '',
-    password_confirmation: ''
-})
+    password_confirmation: '',
+} as User)
 let companyOrZivnostModel = ref({
   name: '',
   headquarters_id: 0,
@@ -294,7 +295,7 @@ let headquarter = ref({
 
 let order = ref({
   payment_date: '' as any,
-  payment_method: paymentOptions.value,
+  payment_method: '',
   description: 'test',
   amount: 12, // final cena s dph
   amount_vat: 2, // vat je čisto len dph
@@ -439,6 +440,7 @@ function addCompany(): Promise<Response> {
 
 function addOrder(): Promise<Response> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  order.value.payment_method = paymentOptions.value
   order.value.company_id = companyFomResponse.company.id
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id

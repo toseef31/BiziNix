@@ -10,6 +10,7 @@ export default interface User {
   status: number
   gender: string
   password: string
+  password_confirmation: string
   date_of_birth: string
   rodne_cislo: string
   address_id: number
