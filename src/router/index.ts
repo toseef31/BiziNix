@@ -54,7 +54,6 @@ const router = createRouter({
         { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
         { path: '/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
-        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
         { path: "/posts", name: "Posts", component: PostsPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
