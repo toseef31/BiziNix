@@ -1,4 +1,5 @@
 <template>
+  {{ props.myEmails }}
   <div
     class="min-h-screen bg-cover bg-no-repeat bg-fixed bg-center"
     style="background-image: url('../src/assets/6.png')"
@@ -9,28 +10,7 @@
     >
       <div class="flex flex-col container mx-auto h-full text-white">
         <!--toto bude treba potom premiestnit do menu-->
-        <div class="relative w-64">
-          <select
-            id="companies"
-            name="companies"
-            class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
-            @change="switchSelect($event)"
-          >
-            <option
-              v-for="company in companies"
-              :value="company.id"
-              :key="company.id"
-              :selected="company.id == currentCompany.id"
-            >
-              {{ company.name }}
-            </option>
-          </select>
-          <div
-            class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
-          >
-            <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
-          </div>
-        </div>
+        <CompanySelectorInHeader @myEmails="processMyEmails" @addresses="processMyAddresses"></CompanySelectorInHeader>
         <!---->
         <div
           class="flex flex-row px-4 py-4 sm:px-0 font-bold text-5xl justify-center"
@@ -239,11 +219,12 @@
 </template>
 
 <script setup lang="ts">
+import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue"
 import type Mail from "@/@types/Mail";
 import store from "@/store";
 import { search } from "@formkit/inputs";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
-import { ref, onBeforeMount, computed, reactive } from "vue";
+import { ref, onBeforeMount, computed, reactive, inject, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
 
@@ -421,32 +402,14 @@ function downloadScanFile(id: any) {
   }
 }
 
-function switchSelect(event: any) {
-  currentCompany.value = companies.value.find(
-    (item: any) => item.id == event.target.value
-  );
+const props = defineProps({
+    myEmails:{},
+    addressess: {}
+  })
 
-  mails.value = [];
-
-  //aktualizovat adresu
-  store
-    .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
-    .then((response) => {
-      headquarter.value = response.data;
-      store
-        .dispatch("getAddressById", headquarter.value.address_id)
-        .then((response) => {
-          address.value = response.data;
-        });
-    });
-
-  //vyhladat postu
-  store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
-    .then((response) => {
-      mails.value = response.data;
-    });
-}
+  watch(() => props.myEmails, (first, second) => {
+    console.log("Watch: " + first, second)
+  })
 
 onBeforeMount(async () => {
   await store
@@ -474,7 +437,18 @@ onBeforeMount(async () => {
     .then((response) => {
       mails.value = response.data;
     });
+
 });
+
+
+function processMyEmails(childObj: any){
+  mails.value = childObj
+}
+
+function processMyAddresses(childObj: any){
+  address.value = childObj
+}
+
 </script>
 
 <style scoped>
