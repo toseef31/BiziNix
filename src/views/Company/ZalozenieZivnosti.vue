@@ -75,7 +75,6 @@
                 help="Môžete vybrať aj viac predmetov podnikania."
                 validation="required"/>
             </FormKit>
-            <div>Cena za zavolené predmety podnikania: {{priceForBusinessCategories}}</div>
           </section>
           <!-- Podnikatelské údaje -->
           <section v-show="activeStep === 'Podnikatelské údaje'">
@@ -178,6 +177,11 @@
           <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
         </div>
 
+        <div class="my-4">
+          <div>Cena za zavolené predmety podnikania: {{ priceForBusinessCategories }}</div>
+          <div>Celkom k úhrade: {{ totalForPay }}</div>
+        </div>
+
         <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
         <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
         <pre wrap>{{ value }}</pre>
@@ -191,7 +195,7 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
@@ -231,7 +235,6 @@ let businessCategori = ref([
 
 let companyRegDateCheckboxValue = ref("")
 let paymentOptions = ref("")
-
 let priceForBusinessCategories = ref(0);
 let fakturacne_udaje = ref({
   first_name: '',
@@ -276,7 +279,13 @@ let companyOrZivnostModel = ref({
   is_dph: false,
   registration_date: '',
   owner: 0,
-  subjects_of_business: [],
+  subjects_of_business: [{
+    id: '',
+    title: '',
+    price: 0,
+    description: '',
+    category_id: 0
+  }]
 })
 let headquarter = ref({
   name: '',
@@ -305,13 +314,11 @@ let order = ref({
   company_id: 0,
   is_tos_accepted: true,
   is_advocate_requested: true,
-  items: [
-    {
+  items: [{
       description: "Založenie živnosti",
       price: 12, // finalna cena za polozku s dph
       price_vat: 2 // toto je len dph
-    }
-  ],
+    }],
   fakturacne_udaje: [{
     first_name: '',
     last_name: '',
@@ -323,7 +330,12 @@ let order = ref({
   }]
 })
 
+let totalForPay = computed(() => priceForBusinessCategories.value + order.value.items[0].price)
+
 onBeforeMount( () => {
+
+  companyOrZivnostModel.value.subjects_of_business.pop()
+
   store.dispatch("getAllSubjectOfBusiness")
   .then(res => {
     businessCategori.value.shift()
@@ -352,6 +364,7 @@ function logujData(){
   console.log(companyOrZivnostModel.value)
   console.log(fakturacne_udaje.value)
   console.log(paymentOptions.value)
+  console.log(order.value)
 }
 
 function priceForBusinessOfcategories(){
@@ -445,6 +458,14 @@ function addOrder(): Promise<Response> {
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id
 
+  companyOrZivnostModel.value.subjects_of_business.forEach(element => {
+    order.value.items.push({
+      description: element.title,
+      price: element.price,
+      price_vat: element.price * 0.2
+    })
+  });
+
   order.value.fakturacne_udaje[0].first_name = fakturacne_udaje.value.first_name
   order.value.fakturacne_udaje[0].last_name = fakturacne_udaje.value.last_name
   order.value.fakturacne_udaje[0].dic = fakturacne_udaje.value.dic
@@ -480,7 +501,6 @@ async function emailIsUnique(node: any){
   const result = await isEmailAlreadyRegistered(node.value)
   return result
 }
-
 
 const submitApp = async (formData: any, node: any) => {
 

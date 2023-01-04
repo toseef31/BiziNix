@@ -77,7 +77,6 @@
                 help="Môžete vybrať aj viac predmetov podnikania."
                 validation="required"/>
             </FormKit>
-            <div>Cena za zavolené predmety podnikania: {{priceForBusinessCategories}}</div>
           </section>
           <section v-show="activeStep === 'ObchodnéSídlo'">
             <div class="text-4xl font-bold">Vyberte si sídlo spoločnosti</div>
@@ -333,6 +332,11 @@
           <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
         </div>
 
+        <div class="my-4">
+          <div>Cena za zavolené predmety podnikania: {{ priceForBusinessCategories }}</div>
+          <div>Celkom k úhrade: {{ totalForPay }}</div>
+        </div>
+
         <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
         <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
         <pre wrap>{{ value }}</pre>
@@ -346,7 +350,7 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
@@ -502,7 +506,13 @@ let companyOrZivnostModel = ref({
   owner: 0,
   konecny_uzivatelia_vyhod: 0,
   sposob_konania_konatelov: 0,
-  subjects_of_business: [],
+  subjects_of_business: [{
+    id: '',
+    title: '',
+    price: 0,
+    description: '',
+    category_id: 0
+  }]
 })
 let headquarter = ref({
   name: '',
@@ -549,7 +559,12 @@ let order = ref({
   }]
 })
 
+let totalForPay = computed(() => priceForBusinessCategories.value + order.value.items[0].price)
+
 onBeforeMount( () => {
+
+  companyOrZivnostModel.value.subjects_of_business.pop()
+
   store.dispatch("getAllSubjectOfBusiness")
   .then(res => {
     businessCategori.value.shift()
@@ -716,6 +731,13 @@ function addOrder(): Promise<Response> {
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id
 
+  companyOrZivnostModel.value.subjects_of_business.forEach(element => {
+    order.value.items.push({
+      description: element.title,
+      price: element.price,
+      price_vat: element.price * 0.2
+    })
+  });
 
   order.value.fakturacne_udaje[0].first_name = fakturacne_udaje.value.first_name
   order.value.fakturacne_udaje[0].last_name = fakturacne_udaje.value.last_name
