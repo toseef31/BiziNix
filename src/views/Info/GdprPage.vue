@@ -1,30 +1,60 @@
 <template>
   <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
     <h1 class="text-3xl font-bold text-gray-900 text-center">
-      PODMIENKY OCHRANY OSOBNÝCH ÚDAJOV
+      Politika ochrany osobných údajov <br />
+      obchodnej spoločnosti SONGOKU s.r.o.
     </h1>
   </div>
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Replace with your content -->
     <div class="px-4 py-6 sm:px-0">
-      <p class="text-center py-2 font-bold">I .Ochrana osobných údajov</p>
       <p>
-        1.1. Odoslaním objednávky z internetového objednávkového formulára na
-        dodávku služieb, alebo uvedením svojej emailovej adresy pre získanie
-        konkrétnych informácií do poľa na to určeného užívateľ potvrdzuje, že je
-        oboznámený s podmienkami ochrany osobných údajov, že vyjadruje svoj
-        súhlas s ich znením, a že ich v celom rozsahu akceptuje.
+        1. Poskytovateľ – spoločnosť SONGOKU s.r.o., so sídlom Ružinovská
+        18186/44, 821 03 Bratislava – mestská časť Ružinov, IČO: 52 703 363,
+        zapísaná v Obchodnom registri Okresného súdu Bratislava I, Oddiel: Sro,
+        Vložka č: 141046/B, ako prevádzkovateľ (ďalej len „prevádzkovateľ“),
+        spracúva osobné údaje fyzických osôb v rámci predzmluvného a zmluvného
+        vzťahu s Objednávateľom za účelom Objednávky a následného poskytnutia
+        Služby podľa Všeobecných obchodných podmienok prevádzkovateľa v súlade s
+        nariadením č. 2016/679 o ochrane fyzických osôb pri spracúvaní osobných
+        údajov a o voľnom pohybe takýchto údajov (ďalej len „GDPR“) a zákonom č.
+        18/2018 Z. z. o ochrane osobných údajov a o zmene a doplnení niektorých
+        zákonov v znení neskorších predpisov (ďalej len „zákon o ochrane
+        osobných údajov“).
       </p>
       <p>
-        1.2 Poskytovateľ je správcom osobných údajov užívateľov podľa čl. 4 bod
-        7) nar. Európskeho parlamentu a Rady (EU) 2016/679 o ochrane fyzických
-        osôb v súvislosti so spracovávaním osobných údajov a o voľnom pohybe
-        týchto údajov a o zrušení smernice 95/46/ES (ďalej len: “GDPR”).
-        Poskytovateľ sa zaväzuje zapracovávať osobné údaje v súlade s právnymi
-        predpismi, najmä GDPR.
+        2. Pre účely tejto Politiky ochrany osobných údajov obchodnej
+        spoločnosti SONGOKU s.r.o. sa pojmy použité vo Všeobecných obchodných
+        podmienok prevádzkovateľa začínajúce veľkým písmenom vykladajú rovnako
+        ako sú zadefinované vo Všeobecných obchodných podmienok prevádzkovateľa.
       </p>
       <p>
-        1.3. Osobnými údajmi sú akékoľvek informácie o identifikovanej alebo
+        3. Objednávateľ odoslaním Objednávky prostredníctvom Portálu, alebo
+        uvedením svojej emailovej adresy pre získanie konkrétnych informácií do
+        poľa na to určeného potvrdzuje, že je oboznámený s podmienkami ochrany
+        osobných údajov prevádzkovateľa, že vyjadruje svoj súhlas s ich znením,
+        a že ich v celom rozsahu akceptuje.
+      </p>
+      <p>
+        4. Poskytovateľ je prevádzkovateľom osobných údajov užívateľov podľa čl.
+        4 bod 7) GDPR. Poskytovateľ sa zaväzuje zapracovávať osobné údaje v
+        súlade s právnymi predpismi, najmä GDPR a zákonom o ochrane osobných
+        údajov.
+      </p>
+      <p>
+        5. Poskytovateľ spracúva osobné údaje Objednávateľa, spoločníkov, členov
+        orgánov a iných osôb, poskytnutých Objednávateľom prostredníctvom
+        Portálu v rozsahu nevyhnutnom k poskytnutiu Služby, ktorý zodpovedá
+        zákonným požiadavkám podľa platných a účinných všeobecne záväzných
+        právnych predpisov k poskytnutiu Služby. Objednávateľ je povinný
+        poskytnúť Poskytovateľovi správne a aktuálne osobné údaje, spolu s
+        písomným súhlasom dotknutých osôb, ktorých osobné údaje Objednávateľ
+        poskytuje Poskytovateľovi za účelom poskytnutia Služby v súlade s § 78
+        ods. 6 zákona o ochrane osobných údajov. Osobné údaje sa uchovávajú po
+        dobu trvania účelu spracúvania.
+      </p>
+      <p>
+        6. Osobnými údajmi sú akékoľvek informácie o identifikovanej alebo
         identifikovateľnej fyzickej osobe; identifikovateľnou fyzickou osobou je
         fyzická osoba, ktorú je možné priamo alebo nepriamo identifikovať, najmä
         s odkazom na určitý identifikátor, napríklad meno, identifikačné číslo,
@@ -33,139 +63,71 @@
         ekonomickej, kultúrnej alebo spoločenskej identity tejto fyzickej osoby.
       </p>
       <p>
-        1.4 Pri objednávke alebo zasielaní informácií na základe emailu so
-        súhlasom klienta sa vyžadujú osobné údaje, ktoré sú nutné pre úspešné
-        vybavenie žiadosť alebo objednávky (meno a adresa, kontakt). Účelom
-        spracovania osobných údajov je vybavenie objednávky užívateľa a výkon
-        práv a povinností vyplývajúcich zo zmluvného vzťahu medzi Poskytovateľom
-        a Užívateľom. Účelom spracovania osobných údajov je ďalej zasielanie
-        obchodných informácií a ďalšie marketingové aktivity. Zákonným dôvodom
-        pre spracovanie osobných údajov je plnenie zmluvy podľa čl. 6 ods. 1
-        písm. b) GDPR, plnenie právnej povinnosti správcu podľa čl. 6 ods. 1
-        písm. c) GDPR a oprávnený záujem Poskytovateľa podľa čl. 6 ods. 1 písm.
-        f) GDPR. Oprávneným záujmom Poskytovateľa je spracovanie osobných údajov
-        pre účely priameho marketingu.
+        7. Pri Objednávke alebo zasielaní informácií na základe emailu sa
+        vyžadujú osobné údaje, ktoré sú nutné pre úspešné vybavenie Objednávky
+        (meno a adresa, kontakt). Účelom spracovania osobných údajov je
+        vybavenie Objednávky Objednávateľa a výkon práv a povinností
+        vyplývajúcich zo zmluvného vzťahu medzi Poskytovateľom a Objednávateľom.
+        Zákonným dôvodom pre spracovanie osobných údajov je plnenie zmluvy podľa
+        čl. 6 ods. 1 písm. b) GDPR.
       </p>
       <p>
-        1.5 Poskytovateľ pre plnenie licenčnej zmluvy používa služby
-        subdodávateľov, najmä poskytovateľov emailingových služieb (osobné údaje
-        môžu byť uložené v 3. krajinách) a poskytovateľov webhostingu.
-        Subdodávatelia sú preverení z hľadiska bezpečného spracovania osobných
-        údajov. Poskytovateľ a subdodávateľ webhostingu uzavreli zmluvu o
-        spracovaní osobných údajov, podľa ktorej subdodávateľ zodpovedá za
-        riadne zabezpečenie fyzického, hardwarového a softwarového perimetra, a
-        teda nesie voči užívateľovi priamu zodpovednosť za akékoľvek narušenie
-        osobných údajov.
+        8. Osobné údaje Poskytovateľ poskytuje tretím osobám, ktorými môžu byť
+        výlučne advokáti, resp. advokátske kancelárie, ktoré Poskytovateľovi v
+        súlade so zákonom č. 586/2003 Z. z. o advokácii v znení neskorších
+        predpisov poskytujú právne služby a zabezpečujú právne podania smerom k
+        štátnym orgánom príslušným pre registráciu a pre vydanie potrebných
+        oprávnení, ktoré sú nevyhnutné k poskytnutiu Služby.
       </p>
       <p>
-        1.6 Poskytovateľ ukladá osobné údaje užívateľa po dobu nevyhnutnú k
+        9. Poskytnutie osobných údajov je zmluvnou požiadavkou; v prípade
+        neposkytnutia osobných údajov by nemohlo dôjsť k uzatvoreniu zmluvného
+        vzťahu a poskytnutiu Služby. Súhlas dotknutej osoby sa získava len
+        vtedy, ak sa neuplatňuje iný právny dôvod na spracúvanie osobných údajov
+        bez súhlasu alebo ak súhlas vyžaduje zákon. Udelenie súhlasu je v
+        takomto prípade dobrovoľné. Ak sa osobné údaje spracúvajú na základe
+        súhlasu, dotknutá osoba má právo kedykoľvek svoj súhlas so spracúvaním
+        osobných údajov odvolať. Odvolanie súhlasu nemá vplyv na zákonnosť
+        spracúvania osobných údajov založeného na súhlase udelenom pred jeho
+        odvolaním.
+      </p>
+      <p>
+        10. V súlade s čl. 15 až 22 GDPR a § 19 až 29 zákona o ochrane osobných
+        údajov je dotknutá osoba, ktorej osobné údaje sú predmetom spracúvania,
+        oprávnená uplatniť si právo na prístup k osobným údajom, právo na opravu
+        a vymazanie osobných údajov, právo na obmedzenie spracúvania a právo na
+        prenosnosť osobných údajov v súlade s podmienkami stanovenými uvedenými
+        právnymi predpismi. Dotknutá osoba má zároveň právo podať na Úrad na
+        ochranu osobných údajov Slovenskej republiky sťažnosť, resp. návrh na
+        začatie konania, ak sa domnieva, že pri spracúvaní osobných údajov boli
+        porušené jej práva chránené GDPR a/alebo zákonom o ochrane osobných
+        údajov.
+      </p>
+      <p>
+        11. Poskytovateľ sa zaväzuje zachovávať mlčanlivosť o osobných údajoch
+        Objednávateľa a ďalších osôb, ktoré mu boli zverené prostredníctvom
+        Portálu alebo iným spôsobom. Poskytovateľ je taktiež povinný zachovávať
+        mlčanlivosť o všetkých skutočnostiach, ktoré mu boli sprístupnené v
+        súvislosti s poskytnutím Služieb, s výnimkou použitia pre účely plnenia
+        svojich záväzkov pri poskytovaní Služby.
+      </p>
+      <p>
+        12. Poskytovateľ ukladá osobné údaje užívateľa po dobu nevyhnutnú k
         výkonu práv a povinností vyplývajúcich zo zmluvného vzťahu medzi
-        poskytovateľom a užívateľom a uplatňovanie nárokov z týchto zmluvných
-        vzťahov (po dobu 15 rokov od ukončení zmluvného vzťahu).
+        Poskytovateľom a Objednávateľom a uplatňovanie nárokov z týchto
+        zmluvných vzťahov.
       </p>
       <p>
-        1.7 Užívateľ má právo požadovať od poskytovateľa prístup k svojim
-        osobným údajom podľa čl. 15 GDPR, opravu osobných údajov podľa čl. 16
-        GDPR, prípadne obmedzenie spracovania podľa čl. 18 GDPR. Užívateľ má
-        právo na výmaz osobných údajov podľa čl. 17 ods. 1 písm. a), a c) až f)
-        GDPR. Ďalej má užívateľ právo vzniesť námietku proti spracovaniu podľa
-        čl. 21 GDPR a právo na prenesenie údajov podľa čl. 20 GDPR.
-      </p>
-      <p>
-        1.8 Užívateľ má právo podať sťažnosť na Úrad pre ochranu osobných údajov
-        v prípade, keď sa domnieva, že bolo porušené jeho právo na ochranu
-        osobných údajov.
-      </p>
-      <p>
-        1.9 Užívateľ nemá povinnosť osobné údaje poskytnúť. Poskytnutie osobných
-        údajov je však nutná požiadavka na uzavretie a plnenie zmluvy a bez
-        poskytnutia osobných údajov nie je možné zmluvu uzavrieť alebo ju zo
-        strany poskytovateľa plniť.
-      </p>
-      <p>
-        1.10 Zo strany poskytovateľa nedochádza k automatickému individuálnemu
-        rozhodovaniu v zmysle č. 22 GDPR.
-      </p>
-      <p>
-        1.11 Záujemca o vužívanie služieb poskytovateľa vyplnením kontaktného
-        formulára:
-      </p>
-      súhlasí s použitím svojich osobných údajov na účely elektronického
-      zasielania obchodných ponúk, reklamných materiálov, priameho predaja,
-      prieskumov trhu a priamych ponúk produktov zo strany poskytovateľa a
-      tretích strán, nie však častejšie ako 1x týždenne a zároveň prehlasuje, že
-      zasielanie informácií podľa bodu 1.11.1 nepovažuje za nevyžiadanú reklamu,
-      keďže užívateľ so zasielaním informácií podľa bodu 1.11.1 výslovne
-      súhlasí. Súhlas podľa tohto odstavca môže užívateľ kedykoľvek písomne
-      odvolať na bizinix@bizinix.sk.
-
-      <p>
-        1.12 Poskytovateľ používa v rámci zvyšovania kvality služieb,
-        personalizovaniu ponuky, zberu anonymných dát a pre analytické účely vo
-        svojej prezentácií takzvané súbory cookie. Používaním webu užívateľ
-        súhlasí s použitím spomínanej technológie. Nevyhnutné cookies – Cookies
-        nevyhnutne potrebné na zaistenie chodu webových stránok a internetových
-        služieb. Pre použitie týchto cookies nie je potrebný súhlas. Analytické
-        a marketingové cookies – pre použitie ostatných súborov cookies je
-        potrebný súhlas. Cookies spadajúce do tejto kategórie sú využívané
-        hlavne na anonymné sledovanie návštevnosti a činnosti užívateľov na
-        našich webových stránkach. Vďaka tomu môžeme sledovať, čo sa zákazníkom
-        páči a zlepšovať naše služby.
-      </p>
-      <p>
-        1.12.1 Konkrétne používame cookies: Nevyhnutné cookies Analytické
-        cookies Marketingové cookies Poskytovateľ týmto prehlasuje, že ochrana
-        osobných údajov podlieha interným bezpečnostným predpisom poskytovateľa.
-        K osobným údajom budú mať prístup iba oprávnené osoby poskytovateľa a
-        subdodávateľov podľa čl. 2.8 týchto podmienok, ktoré budú mať
-        poskytovateľom stanovené podmienky a rozsah spracovania údajov a každá
-        taká osoba bude pristupovať k osobným údajom pod svojím jednoznačným
-        identifikátorom. Oprávnené osoby poskytovateľa, ktoré spracovávajú
-        osobné údaje podľa týchto podmienok, sú povinné zachovávať mlčanlivosť o
-        osobných údajoch a o bezpečnostných opatreniach, ktorých zverejnenie by
-        ohrozilo ich zabezpečenie. Poskytovateľ zaistí ich preukázateľné
-        zaviazanie k tejto povinnosti. Poskytovateľ zaistí, že táto povinnosť
-        pre poskytovateľa i oprávnené osoby bude trvať aj po skončení
-        pracovnoprávneho alebo iného vzťahu k poskytovateľovi. Poskytovateľ bude
-        užívateľovi nápomocný prostredníctvom vhodných technických a
-        organizačných opatrení, pokiaľ je to možné, pre splnenie užívateľovej
-        povinnosti reagovať na žiadosť o výkon práv subjektu údajov stanovených
-        v GDPR; rovnako tak pri zabezpečení súladu s povinnosťami podľa čl. 32
-        až 36 GDPR, a to pri zohľadnení povahy spracovania a informácií, ktoré
-        má poskytovateľ k dispozícií.
-      </p>
-
-      <p class="text-center py-2 font-bold">II. Záverečné ustanovenia</p>
-
-      <p>
-        2.1 Tieto podmienky nadobúdajú účinnosť uplynutím doby uvedenej v čl.
-        1.6 týchto podmienok
+        13. Poskytovateľ si vyhradzuje právo na jednostrannú zmenu Politiky
+        ochrany osobných údajov obchodnej spoločnosti SONGOKU s.r.o. Po zmene je
+        Poskytovateľ povinný bez zbytočného odkladu zverejniť zmenenú Politiku
+        ochrany osobných údajov obchodnej spoločnosti SONGOKU s.r.o. na Portáli.
       </p>
 
       <p>
-        2.2 Užívateľ súhlasí s týmito podmienkami zaškrtnutím súhlasu
-        prostredníctvom internetového formulára alebo zadania svojej emailovej
-        adresy, na ktorú požaduje zaslať informácie. Týmto vyjadruje užívateľ,
-        že si tieto podmienky prečítal, že s nimi vyjadruje svoj súhlas a že ich
-        v celom rozsahu akceptuje.
+        14. Politiky ochrany osobných údajov obchodnej spoločnosti SONGOKU
+        s.r.o. nadobúda účinnosť dňom zverejnenie na Portáli, t. j. dňom /*/.
       </p>
-      <p>
-        2.3 Poskytovateľ je oprávnený tieto podmienky zmeniť. Poskytovateľ je
-        povinný bez zbytočného odkladu zverejniť novú verziu podmienok na
-        svojich internetových stránkach, poprípade zašle novú verziu užívateľovi
-        na jeho e-mailovú adresu.
-      </p>
-      <p>
-        2.4. Kontaktné údaje poskytovateľa vo veciach týkajúcich sa týchto
-        podmienok: +421255567773, bizinix@bizinix.sk.
-      </p>
-
-      <p>
-        2.5 Vzťahy týmito podmienkami výslovne neupravené sa riadia GDPR a
-        právnym poriadkom Slovenskej republiky.
-      </p>
-
-      <p>Tieto podmienky nadobúdajú účinnosť dňom 1.5.2018.</p>
     </div>
     <!-- /End replace -->
   </div>
