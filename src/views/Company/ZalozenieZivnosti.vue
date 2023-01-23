@@ -365,6 +365,8 @@ function logujData(){
   console.log(fakturacne_udaje.value)
   console.log(paymentOptions.value)
   console.log(order.value)
+  /* For testing */
+  payForOrder(totalForPay.value)
 }
 
 function priceForBusinessOfcategories(){
@@ -502,6 +504,23 @@ async function emailIsUnique(node: any){
   return result
 }
 
+async function payForOrder(amount: any){
+  
+  const payment = {
+    amount: amount * 100
+  }
+
+  return store.dispatch('pay', payment)
+  .then((res) => {
+    console.log("Payment: " + JSON.stringify(res))
+    return res
+  })
+  .catch( err => {
+    console.log(err.response.data)
+  })
+
+}
+
 const submitApp = async (formData: any, node: any) => {
 
   console.log(formData)
@@ -517,6 +536,7 @@ const submitApp = async (formData: any, node: any) => {
                   companyOrZivnostModel.value.owner = 0
                   companyOrZivnostModel.value.headquarters_id = 0
                   console.log("SUPER!")
+                  payForOrder(totalForPay.value)
                   router.push({
                     name:"Thanks You New Order",
                     params: {

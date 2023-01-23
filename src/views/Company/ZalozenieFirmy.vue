@@ -793,12 +793,14 @@ const submitApp = async (formData: any, node: any) => {
                     companyOrZivnostModel.value.owner = 0
                     companyOrZivnostModel.value.headquarters_id = 0
                     console.log("SUPER!")
+
                     router.push({
                       name:"Thanks You New Order",
                       params: {
                         orderId: orderFromRes.id,
                       }
                     })
+                    
                   })
                 })
               })

@@ -176,6 +176,12 @@ export const store = createStore({
       return data;
     },
     //#endregion
+    //#region payments
+    async pay({ commit }, amount) {
+      const { data } = await axiosClient.post("/payments/pay", amount);
+      return data;
+    },
+    //#endregion
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
         commit("setReviews", data);
