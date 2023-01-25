@@ -180,6 +180,23 @@
         <div class="my-4">
           <div>Cena za zavolené predmety podnikania: {{ priceForBusinessCategories }}</div>
           <div>Celkom k úhrade: {{ totalForPay }}</div>
+          <div class="platba">
+            <StripeElements
+              v-if="stripeLoaded"
+              v-slot="{ elements, instance }"
+              ref="elms"
+              :stripe-key="stripeKey"
+              :instance-options="instanceOptions"
+              :elements-options="elementsOptions"
+            >
+            <StripeElement
+              ref="card"
+              :elements="elements"
+              :options="cardOptions"
+            />
+            </StripeElements>
+            <button class="bg-indigo-500 p-2 rounded-md" type="button" @click="pay">Pay</button>
+          </div>
         </div>
 
         <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
@@ -201,6 +218,96 @@ import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
 import type User from "@/@types/User";
+import { StripeElements, StripeElement } from 'vue-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+
+const stripeKey = ref('pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi') // test key
+let clientSecret = ''
+
+const instanceOptions = ref({
+      // https://stripe.com/docs/js/initializing#init_stripe_js-options
+    })
+    const elementsOptions = ref({
+      locale: 'sk'
+      // https://stripe.com/docs/js/elements_object/create#stripe_elements-options
+    })
+    const cardOptions = ref({
+      // https://stripe.com/docs/stripe.js#element-options
+      // value: {
+      //   postalCode: '12345',
+      // },
+      style: {
+        base: {
+          iconColor: '#c4f0ff',
+          color: '#fff',
+          fontWeight: '500',
+          fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+          fontSize: '18px',
+          fontSmoothing: 'antialiased',
+          ':-webkit-autofill': {
+            color: '#fce883',
+          },
+          '::placeholder': {
+            color: '#87BBFD',
+          },
+        },
+        invalid: {
+          iconColor: '#FFC7EE',
+          color: '#FFC7EE',
+        },
+      },
+      hidePostalCode: true
+    })
+    const stripeLoaded = ref(false)
+    const card = ref()
+    const elms = ref()
+
+    onBeforeMount(() => {
+      const stripePromise = loadStripe(stripeKey.value)
+      stripePromise.then(() => {
+        stripeLoaded.value = true
+      })
+    })
+
+    const pay = () => {
+
+      // Get stripe element
+      const cardElement = card.value.stripeElement
+      const v = elms.value!
+
+      // Access instance methods, e.g. createToken()
+      elms.value.instance.createToken(cardElement).then((result: object) => {
+        // Handle result.error or result.token
+        console.log(result)
+      })
+
+      /* For testing */
+      payForOrder(1200).then(() => {
+        console.log("Ja som client secreet: " + clientSecret)
+        elms.value.instance.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement
+          },
+          return_url: 'https://example.com/return_url',
+        }).then(() => {
+          elms.value.instance.retrievePaymentIntent(clientSecret).then((result: any) => {
+            if (result.error) {
+          // PaymentIntent client secret was invalid
+        } else {
+          if (result.paymentIntent.status === 'succeeded') {
+            console.log("Super platba prešla!")
+            // Show your customer that the payment has succeeded
+          } else if (result.paymentIntent.status === 'requires_payment_method') {
+            // Authentication failed, prompt the customer to enter another payment method
+          }
+        }
+          })
+        }),
+        {
+          handleActions: false,
+        }
+      })
+    };
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -365,8 +472,6 @@ function logujData(){
   console.log(fakturacne_udaje.value)
   console.log(paymentOptions.value)
   console.log(order.value)
-  /* For testing */
-  payForOrder(totalForPay.value)
 }
 
 function priceForBusinessOfcategories(){
@@ -513,6 +618,7 @@ async function payForOrder(amount: any){
   return store.dispatch('pay', payment)
   .then((res) => {
     console.log("Payment: " + JSON.stringify(res))
+    clientSecret = res.client_secret
     return res
   })
   .catch( err => {
