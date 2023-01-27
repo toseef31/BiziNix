@@ -165,6 +165,25 @@
                     { value: 'stripe', label: 'Online kartou', help: 'Platba prostredníctvom platobnej brány Stripe.' }
                   ]"
                   validation="required" />
+
+                  <div v-if="paymentOptions == 'stripe'" class="platba bg-gray-900 mt-4 p-4">
+                    <StripeElements
+                      v-if="stripeLoaded"
+                      v-slot="{ elements, instance }"
+                      ref="elms"
+                      :stripe-key="stripeKey"
+                      :instance-options="instanceOptions"
+                      :elements-options="elementsOptions"
+                    >
+                      <StripeElement
+                        ref="card"
+                        :elements="elements"
+                        :options="cardOptions"
+                      />
+                    </StripeElements>
+                  <!-- <button class="bg-indigo-500 p-2 rounded-md" type="button" @click="pay">Pay</button> -->
+                </div>
+
                 </div>
 
               </FormKit>
@@ -173,35 +192,19 @@
         </div>
 
         <div class="flex my-2 justify-center space-x-4">
-          <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Previous step'" />
-          <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Next step'"/>
+          <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Predchádzajúci krok'" />
+          <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Ďalši krok'"/>
         </div>
 
-        <div class="my-4">
+        <div class="my-4 text-center text-lg">
           <div>Cena za zavolené predmety podnikania: {{ priceForBusinessCategories }}</div>
-          <div>Celkom k úhrade: {{ totalForPay }}</div>
-          <div class="platba">
-            <StripeElements
-              v-if="stripeLoaded"
-              v-slot="{ elements, instance }"
-              ref="elms"
-              :stripe-key="stripeKey"
-              :instance-options="instanceOptions"
-              :elements-options="elementsOptions"
-            >
-            <StripeElement
-              ref="card"
-              :elements="elements"
-              :options="cardOptions"
-            />
-            </StripeElements>
-            <button class="bg-indigo-500 p-2 rounded-md" type="button" @click="pay">Pay</button>
-          </div>
+          <div>Celkom k úhrade: {{ totalForPay }} €</div>
         </div>
-
-        <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
-        <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
-        <pre wrap>{{ value }}</pre>
+        <div class="flex flex-col items-center justify-center">
+          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
+        </div>
+        <!-- <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
+        <pre wrap>{{ value }}</pre> -->
 
       </FormKit>
 
@@ -220,6 +223,7 @@ import router from "@/router";
 import type User from "@/@types/User";
 import { StripeElements, StripeElement } from 'vue-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
+import { toast } from 'vue3-toastify';
 
 const stripeKey = ref('pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi') // test key
 let clientSecret = ''
@@ -267,13 +271,32 @@ const instanceOptions = ref({
       stripePromise.then(() => {
         stripeLoaded.value = true
       })
+          
+      companyOrZivnostModel.value.subjects_of_business.pop()
+      store.dispatch("getAllSubjectOfBusiness")
+      .then(res => {
+        businessCategori.value.shift()
+        res.data.data.forEach((element: any) => {
+          businessCategori.value.push({
+            label: element.title,
+            value: element
+          })
+        })
+
+        //businessCategori.value.shift()
+        //businessCategori.value = [ ...businessCategori.value ]
+
+      })
+        .catch(err => {
+        // sucessMsg.value = false
+        // errorMsg.value = err.response.data.errors // response data is from store actions
+      })
+
     })
 
     const pay = () => {
-
       // Get stripe element
       const cardElement = card.value.stripeElement
-      const v = elms.value!
 
       // Access instance methods, e.g. createToken()
       elms.value.instance.createToken(cardElement).then((result: object) => {
@@ -282,7 +305,7 @@ const instanceOptions = ref({
       })
 
       /* For testing */
-      payForOrder(1200).then(() => {
+      payForOrder(totalForPay.value).then(() => {
         console.log("Ja som client secreet: " + clientSecret)
         elms.value.instance.confirmCardPayment(clientSecret, {
           payment_method: {
@@ -292,12 +315,19 @@ const instanceOptions = ref({
         }).then(() => {
           elms.value.instance.retrievePaymentIntent(clientSecret).then((result: any) => {
             if (result.error) {
-          // PaymentIntent client secret was invalid
+              toast.error("Platba neprešla, skúste znova zaplatiť, ak sa problem zopakuje prosím kontaktujte nás.")
         } else {
           if (result.paymentIntent.status === 'succeeded') {
-            console.log("Super platba prešla!")
+            toast.success("Platba bola úspešna.")
+            router.push({
+              name:"Thanks You New Order",
+              params: {
+                orderId: orderFromRes.id,
+              }
+            })
             // Show your customer that the payment has succeeded
           } else if (result.paymentIntent.status === 'requires_payment_method') {
+            toast.warning("Overenie platby neprešlo, prosím skúste znova zaplatiť a overiť správne platbu.")
             // Authentication failed, prompt the customer to enter another payment method
           }
         }
@@ -438,30 +468,6 @@ let order = ref({
 })
 
 let totalForPay = computed(() => priceForBusinessCategories.value + order.value.items[0].price)
-
-onBeforeMount( () => {
-
-  companyOrZivnostModel.value.subjects_of_business.pop()
-
-  store.dispatch("getAllSubjectOfBusiness")
-  .then(res => {
-    businessCategori.value.shift()
-    res.data.data.forEach((element: any) => {
-      businessCategori.value.push({
-        label: element.title,
-        value: element
-      })
-    })
-
-    //businessCategori.value.shift()
-    //businessCategori.value = [ ...businessCategori.value ]
-
-  })
-    .catch(err => {
-    // sucessMsg.value = false
-    // errorMsg.value = err.response.data.errors // response data is from store actions
-  })
-})
 
 function logujData(){
   console.log(companyOrZivnostModel.value.subjects_of_business)
@@ -628,7 +634,6 @@ async function payForOrder(amount: any){
 }
 
 const submitApp = async (formData: any, node: any) => {
-
   console.log(formData)
   try {    
     registerAddress().then(() => {
@@ -642,13 +647,7 @@ const submitApp = async (formData: any, node: any) => {
                   companyOrZivnostModel.value.owner = 0
                   companyOrZivnostModel.value.headquarters_id = 0
                   console.log("SUPER!")
-                  payForOrder(totalForPay.value)
-                  router.push({
-                    name:"Thanks You New Order",
-                    params: {
-                      orderId: orderFromRes.id,
-                    }
-                  })
+                  pay()
                 })
               })
             })
@@ -657,12 +656,10 @@ const submitApp = async (formData: any, node: any) => {
     })
     node.clearErrors()
     // alert('Your application was submitted successfully!')
-
   }
   catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors)
   }
-
 }
 
 // // This is just a mock of an actual axios instance.

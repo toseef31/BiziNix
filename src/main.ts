@@ -10,6 +10,8 @@ import { plugin, defaultConfig } from "@formkit/vue";
 import { createProPlugin, inputs } from '@formkit/pro'
 import { generateClasses } from "@formkit/themes";
 import themeFormkit from "./themeFormkit";
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
@@ -25,6 +27,10 @@ app.use(store);
 app.use(createPinia());
 app.use(router);
 app.use(plugin, defaultConfig(config));
+app.use(Vue3Toastify, {
+  autoclose: 3000,
+  position: "bottom-center",
+} as ToastContainerOptions);
 
 app.mount("#app");
 
