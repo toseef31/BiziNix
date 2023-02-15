@@ -18,9 +18,6 @@
           </div>
         </div>
         <div class="flex-1 text-white text-base">
-          <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
-            <a href="/support">Podpora</a>
-          </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
