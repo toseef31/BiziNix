@@ -18,13 +18,18 @@ import ThanksYouNewOrderVue from "@/views/Common/ThanksYouNewOrder.vue";
 import CompanyDetailsVue from "@/views/Backoffice/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHQ/VirtualHqPage.vue";
 import OrderVirtualHqPageVue from "@/views/VirtualHQ/OrderVirtualHqPage.vue";
-import HqAndMailPageVue from "@/views/VirtualHQ/HqAndMailPage.vue";
+import HqAndMailPageVue from "@/views/Backoffice/HqAndMailPage.vue";
 import ContactPageVue from "../views/Info/ContactPage.vue";
 import GdprPageVue from "@/views/Info/GdprPage.vue";
 import PricelistPageVue from "@/views/Info/PricelistPage.vue";
 import ObchodnePodmienkyPageVue from "@/views/Info/ObchodnePodmienkyPage.vue";
 import AboutUsPageVue from "@/views/Info/AboutUsPage.vue";
 import PostsPageVue from "@/views/Info/PostsPage.vue";
+import DocumentsPageVue from "@/views/Documents/DocumentsPage.vue";
+import AddDocumentPageVue from "@/views/Backoffice/AddDocumentPage.vue";
+import DocumentDetailsVue from "@/views/Backoffice/DocumentDetails.vue";
+import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
+import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +64,11 @@ const router = createRouter({
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
         { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },
         { path: '/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
+        { path: '/documents', name: "Documents", component: DocumentsPageVue },
+        { path: '/add-document', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true } },
+        { path: '/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
+        { path: '/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
+        { path: '/my-documents/:id', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
       ],
     },
     {

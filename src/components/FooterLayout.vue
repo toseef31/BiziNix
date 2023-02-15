@@ -10,8 +10,10 @@
           <div
             class="hover:cursor-pointer hover:opacity-75 my-4 hover:underline"
           >
-            Faktúry, zmluvy a iné <br />
-            dokumenty
+            <a href="/documents"
+              >Faktúry, zmluvy a iné <br />
+              dokumenty</a
+            >
           </div>
           <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
             <a href="/counseling-center">Centrum poradenstva</a>
