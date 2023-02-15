@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import axiosClient from "@/axios";
 import type Mail from "@/@types/Mail";
+import type Company from "@/@types/Company";
 
 export const store = createStore({
   state: {
@@ -19,10 +20,12 @@ export const store = createStore({
     headquarter: {},
     order: [{}],
     vhqs: [],
-    selectedCompany: {},
+    selectedCompany: {} as Company,
     mails: [] as Mail[],
     hq: {},
     hqAddress: {},
+    selectedCompanyMails: [],
+    selectedCompanyAddress: {},
   },
   getters: {
     getReviews: (state) => {
@@ -45,6 +48,15 @@ export const store = createStore({
     },
     getMails: (state) => (id: any) => {
       return state.mails;
+    },
+    getSelectedCompany: (state) => {
+      return state.selectedCompany;
+    },
+    getSelectedCompanyMails: (state) => {
+      return state.selectedCompanyMails;
+    },
+    getSelectedCompanyAddress: (state) => {
+      return state.selectedCompanyAddress;
     },
   },
   actions: {
@@ -158,6 +170,10 @@ export const store = createStore({
     async getCompanyById({ commit }, companyId) {
       const { data } = await axiosClient.get(`/companies/${companyId}/get`);
       commit("setCompany", data);
+      return data;
+    },
+    async getSelectedCompany({ commit }, companyId) {
+      const { data } = await axiosClient.get(`/companies/${companyId}/get`);
       return data;
     },
     async isEmailAlreadyRegistered({ commit }, email: string) {
@@ -291,6 +307,15 @@ export const store = createStore({
     },
     setMails: (state, data) => {
       state.mails = data.data;
+    },
+    setSelectedCompany: (state, data) => {
+      state.selectedCompany = data.data;
+    },
+    setSelectedCompanyMails: (state, data) => {
+      state.selectedCompanyMails = data.data;
+    },
+    setSelectedCompanyAddress: (state, data) => {
+      state.selectedCompanyAddress = data.data;
     },
   },
   modules: {},

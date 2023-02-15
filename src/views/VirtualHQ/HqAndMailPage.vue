@@ -1,5 +1,4 @@
 <template>
-  {{ props.myEmails }}
   <div
     class="min-h-screen bg-cover bg-no-repeat bg-fixed bg-center"
     style="background-image: url('../src/assets/6.png')"
@@ -9,9 +8,6 @@
       style="background-color: rgba(0, 0, 0, 0.75)"
     >
       <div class="flex flex-col container mx-auto h-full text-white">
-        <!--toto bude treba potom premiestnit do menu-->
-        <CompanySelectorInHeader @myEmails="processMyEmails" @addresses="processMyAddresses"></CompanySelectorInHeader>
-        <!---->
         <div
           class="flex flex-row px-4 py-4 sm:px-0 font-bold text-5xl justify-center"
         >
@@ -219,12 +215,12 @@
 </template>
 
 <script setup lang="ts">
-import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue"
+import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue";
 import type Mail from "@/@types/Mail";
 import store from "@/store";
 import { search } from "@formkit/inputs";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
-import { ref, onBeforeMount, computed, reactive, inject, watch } from "vue";
+import { ref, onBeforeMount, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
 
@@ -247,32 +243,15 @@ const headquarter = ref({
   address_id: 0,
 });
 
-const companies = ref([""] as any);
+const selectedCompany = ref();
 const mails = ref([] as Mail[]);
-const currentCompany = ref({
-  created_at: "",
-  dic: "",
-  fakturacia_zaplatene_do: "",
-  headquarters_id: 0,
-  icdph: "",
-  ico: "",
-  id: 0,
-  imanie_splatene: 0,
-  imanie_vyska: 0,
-  is_dph: 0,
-  konecny_uzivatelia_vyhod: 1,
-  last_step: 0,
-  name: "name",
-  note: null,
-  owner: 0,
-  registration_date: "",
-  sidlo_zaplatene_do: "",
-  sposob_konania_konatelov: 1,
-  status: 1,
-  subjects_of_business: null,
-  type: 1,
-  updated_at: "",
-});
+
+watch(
+  () => store.getters.getSelectedCompany,
+  function () {
+    refreshData();
+  }
+);
 
 const filteredMailsBySearch: any = computed(() => {
   return mails.value.filter((mail: any) => {
@@ -326,7 +305,7 @@ function sendMails() {
   const filteredMails = filteredMailsByDates.value;
   filteredMails.forEach(function (value: any) {
     value.forward_requested = 1;
-  }); 
+  });
   store
     .dispatch("updateMultipleMails", filteredMails)
     .then((res) => {
@@ -402,26 +381,16 @@ function downloadScanFile(id: any) {
   }
 }
 
-const props = defineProps({
-    myEmails:{},
-    addressess: {}
-  })
-
-  watch(() => props.myEmails, (first, second) => {
-    console.log("Watch: " + first, second)
-  })
-
-onBeforeMount(async () => {
+async function refreshData() {
   await store
-    .dispatch("getAllCompaniesByUserId", store.state.user.userId)
+    .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then((response) => {
-      companies.value = response.data;
-      currentCompany.value = companies.value.at(0);
+      selectedCompany.value = response.data;
     });
 
   //aktualizovat adresu
   await store
-    .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
+    .dispatch("getHeadquartersById", selectedCompany.value.headquarters_id)
     .then((response) => {
       headquarter.value = response.data;
       store
@@ -433,22 +402,15 @@ onBeforeMount(async () => {
 
   //vyhladat postu
   await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .dispatch("getAllMailsForCompany", selectedCompany.value.id)
     .then((response) => {
       mails.value = response.data;
     });
+}
 
+onBeforeMount(async () => {
+  refreshData();
 });
-
-
-function processMyEmails(childObj: any){
-  mails.value = childObj
-}
-
-function processMyAddresses(childObj: any){
-  address.value = childObj
-}
-
 </script>
 
 <style scoped>
