@@ -552,13 +552,15 @@ const topBarNavigation = [
 const navigation = [
   { name: "Firmy a ich úprava", to: { name: "Dashboard" } },
   { name: "Živnosti a ich úprava", to: { name: "Edit Company" } },
-  { name: "Faktúry, zmluvy a iné dokumenty", to: { name: "Edit Company" } },
+  { name: "Faktúry, zmluvy a iné dokumenty", to: { name: "Documents" } },
   { name: "Centrum poradenstva", to: { name: "Counseling center" } },
   { name: "Virtuálne sídlo", to: { name: "Virtual hq" } },
 ];
 const userNavigation = [
   { name: "Nástenka", to: { name: "Dashboard" } },
   { name: "Sídlo a pošta", to: { name: "Hq and mail" } },
+  { name: "Dokumenty", to: { name: "My documents" } },
+  { name: "Dizajn dokumentov", to: { name: "Document designs" } },
   { name: "Úprava firmy", to: { name: "Edit Company" } },
   { name: "Váš profil", to: { name: "User Profil" } },
   { name: "Zmena hesla", to: { name: "User Profil" } },
