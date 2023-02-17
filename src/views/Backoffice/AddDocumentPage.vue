@@ -9,7 +9,6 @@
     >
       <form
         class=""
-        novalidate="novalidate"
         enctype="multipart/form-data"
         action="#"
         method="post"
@@ -1051,8 +1050,7 @@
                   id="invoice__issue-date"
                   name="data[Invoice][created]"
                   class=""
-                  readonly="readonly"
-                />
+                  />
                 </div>
                 <div class="flex flex-col basis-1/3">
                     <label for="invoice__due-in" class="text-white"
@@ -1066,7 +1064,7 @@
                   <option value="0">Dátum vystavenia</option>
                   <option value="1">1 deň</option>
                   <option value="7">7 dní</option>
-                  <option value="14" selected="selected">14 dní</option>
+                  <option value="14">14 dní</option>
                   <option value="30">30 dní</option>
                   <option value="60">60 dní</option>
                   <option value="-1">Iné</option>
@@ -1081,7 +1079,6 @@
                         id="invoice__delivery-date"
                         name="data[Invoice][delivery]"
                         class=""
-                        readonly="readonly"
                       />
                 </div>
             </div>
@@ -1166,7 +1163,6 @@
                       value="EUR"
                       class=""
                       data-abbr="eu"
-                      selected="selected"
                     >
                       €
                     </option>
