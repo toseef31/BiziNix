@@ -7,12 +7,7 @@
       class="w-full min-h-screen flex justify-center"
       style="background-image: linear-gradient(to top,rgba(17, 24, 39, 0.85) 0%,rgba(17, 24, 39, 1) 100%);"
     >
-      <form
-        class=""
-        enctype="multipart/form-data"
-        action="#"
-        method="post"
-      >
+      <form class="" enctype="multipart/form-data" action="#" method="post">
         <section>
           <h3 class="text-3xl font-bold text-center py-20 text-white">
             Vystavte si faktúru zadarmo

@@ -155,12 +155,12 @@
               <div>
                 <button
                   v-on:click="doScrolling('#detailsDiv', 1000, vhq.id)"
-                  class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute bottom-[100px] left-0 right-0"
+                  class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute bottom-[120px] left-0 right-0"
                 >
                   Vybrať
                 </button>
               </div>
-              <img v-bind:src="vhq.img" class="w-full rounded h-auto" />
+              <img v-bind:src="vhq.img" class="w-full rounded h-5/6" />
               <div class="font-medium px-2 my-2 text-white text-lg">
                 {{ vhq.name }}
               </div>
@@ -428,7 +428,7 @@
           <div
             class="flex basis-1/4 flex-col items-center text-center bg-gray-800"
           >
-            <img v-bind:src="currentVhq.img" class="h-auto w-full" />
+            <img v-bind:src="currentVhq.img" class="h-[300px] w-full" />
             <div class="px-3 py-2 shrink text-sm">
               {{ currentVhq.name }}, {{ currentVhq.address.street }}
               {{ currentVhq.address.street_number }},

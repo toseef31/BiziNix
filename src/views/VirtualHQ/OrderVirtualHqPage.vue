@@ -2,7 +2,7 @@
   <div class="bg-gray-900 text-white">
     <div class="container justify-center flex mx-auto">
       <div class="flex flex-col">
-        <div class="w-full bg-gray-800 flex flex-row rounded-l-xl m-10">
+        <div class="w-full bg-gray-800 flex flex-row rounded-l-xl my-10">
           <div class="flex flex-col basis-1/2 font-bold text-4xl p-4">
             Virtuálne sídlo pre
             <p v-if="data.createCompany" class="text-teal-500">
@@ -16,12 +16,12 @@
                 {{ data.vhq.name }}, {{ data.vhq.address.street }},
                 {{ data.vhq.address.psc }} {{ data.vhq.address.city }}
               </div>
-              <div class="flex font-bold text-2xl pr-4 self-end">
+              <div class="flex font-bold text-2xl pr-4 pb-1 self-end">
                 {{ data.price }}€/mesiac
               </div>
             </div>
             <div>
-              <img :src="data.vhq.img" class="max-h-[128px]" />
+              <img :src="data.vhq.img" class="max-h-[160px]" />
             </div>
           </div>
         </div>
