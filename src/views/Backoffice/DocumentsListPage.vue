@@ -52,19 +52,24 @@
                 class="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
               >
                 <li>
-                  <a
-                    href="#"
-                    class="block py-2 pl-3 pr-4 text-white bg-teal-700 rounded md:bg-transparent md:text-teal-500 md:p-0"
-                    aria-current="page"
-                    >Účtovné</a
-                  >
+                  <button
+                    @click="currentTab(1)"
+                    :class="[
+                      activeTab == 1 ? 'text-teal-500' : 'text-gray-400',
+                      'font-bold block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0 md:dark:hover:text-white  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700',
+                    ]">
+                    Účtovné
+                  </button>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                    >Obchodné</a
-                  >
+                  <button
+                    @click="currentTab(2)"
+                    :class="[
+                      activeTab == 2 ? 'text-teal-500' : 'text-gray-400',
+                      'font-bold block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0 md:dark:hover:text-white  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700',
+                    ]">
+                    Obchodné
+                  </button>
                 </li>
               </ul>
             </div>
@@ -80,70 +85,55 @@
           id="tabs-tab"
           role="tablist"
         >
-          <li class="nav-item" role="presentation">
-            <a
-              href="#tabs-faktury"
-              class="text-gray-800 nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 mx-6 hover:border-transparent hover:bg-teal-300 focus:border-transparent active"
-              id="tabs-home-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#tabs-home"
-              role="tab"
-              aria-controls="tabs-home"
-              aria-selected="true"
-              >Faktúry</a
-            >
+          <li class="nav-item" role="presentation" v-if="tab === 1">
+            <button
+              @click="currentDocTab(1)"
+              :class="[
+                activeDocTab == 1 ? 'bg-teal-600' : '',
+                'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 ml-6 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
+              ]">
+              Faktúry
+            </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <a
-              href="#tabs-zalohove"
-              class="text-gray-800 nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-teal-300 focus:border-transparent"
-              id="tabs-profile-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#tabs-profile"
-              role="tab"
-              aria-controls="tabs-profile"
-              aria-selected="false"
-              >Zálohové faktúry</a
-            >
+          <li class="nav-item" role="presentation" v-if="tab === 1">
+            <button
+              @click="currentDocTab(2)"
+              :class="[
+                activeDocTab == 2 ? 'bg-teal-600' : '',
+                'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
+              ]">
+              Zálohové faktúry
+            </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <a
-              href="#tabs-dobropisy"
-              class="text-gray-800 nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-teal-300 focus:border-transparent"
-              id="tabs-messages-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#tabs-messages"
-              role="tab"
-              aria-controls="tabs-messages"
-              aria-selected="false"
-              >Dobropisy</a
-            >
+          <li class="nav-item" role="presentation" v-if="tab === 1">
+            <button
+              @click="currentDocTab(3)"
+              :class="[
+                activeDocTab == 3 ? 'bg-teal-600' : '',
+                'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
+              ]">
+              Dobropisy
+            </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <a
-              href="#tabs-ponuka"
-              class="text-gray-800 nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-teal-300 focus:border-transparent"
-              id="tabs-messages-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#tabs-messages"
-              role="tab"
-              aria-controls="tabs-messages"
-              aria-selected="false"
-              >Cenová ponuka</a
-            >
+          <li class="nav-item" role="presentation" v-if="tab === 2">
+            <button
+              @click="currentDocTab(4)"
+              :class="[
+                activeDocTab == 4 ? 'bg-teal-600' : '',
+                'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 ml-6 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
+              ]">
+              Cenová ponuka
+            </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <a
-              href="#tabs-objednavka"
-              class="text-gray-800 nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-teal-300 focus:border-transparent"
-              id="tabs-messages-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#tabs-messages"
-              role="tab"
-              aria-controls="tabs-messages"
-              aria-selected="false"
-              >Objednávka</a
-            >
+          <li class="nav-item" role="presentation" v-if="tab === 2">
+            <button
+              @click="currentDocTab(5)"
+              :class="[
+                activeDocTab == 5 ? 'bg-teal-600' : '',
+                'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
+              ]">
+              Objednávka
+            </button>
           </li>
         </ul>
       </div>
@@ -163,6 +153,9 @@
               >
             </label>
           </div>
+          <div class="flex flex-col items-center w-full py-8 px-10">
+            <DocumentsListTable></DocumentsListTable>
+          </div>  
           <div class="flex flex-col items-center">
             <button
               class="p-0 w-12 h-12 bg-teal-600 rounded-full hover:bg-teal-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
@@ -193,11 +186,27 @@
 import store from "@/store";
 import { onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import DocumentsListTable from "@/components/DocumentsListTable.vue";
 const router = useRouter();
+const tab = ref(1);
+const activeTab = ref(1);
+const docTab = ref(1);
+const activeDocTab = ref(1);
+
+function currentTab(tabNumber: any) {
+  tab.value = tabNumber;
+  activeTab.value = tabNumber;
+}
+
+function currentDocTab(tabNumber: any) {
+  docTab.value = tabNumber;
+  activeDocTab.value = tabNumber;
+}
 
 function redirect() {
   return router.push({
     name: "Add document",
   });
 }
+
 </script>
