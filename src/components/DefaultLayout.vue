@@ -542,8 +542,14 @@ import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
+
+let user: any;
+
+onBeforeMount( () => {
+  user = computed(() => store.state.user);
+})
 
 const topBarNavigation = [
   { name: "Podpora", to: { name: "Counseling center" } },
@@ -657,5 +663,6 @@ function logout() {
     });
 }
 
-const user = computed(() => store.state.user);
+user = computed(() => store.state.user);
+
 </script>

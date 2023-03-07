@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import axiosClient from "@/axios";
 import type Mail from "@/@types/Mail";
 import type Company from "@/@types/Company";
+import axios from "axios";
 
 export const store = createStore({
   state: {
@@ -152,15 +153,17 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/headquarters/${hqId}/get`);
       return data;
     },
-    async addCompany({ commit }, company) {
-      const { data } = await axiosClient.post("/companies/add", company);
+    addCompany({ commit }, company) {
+     return axiosClient.post("/companies/add", company).then(({ data }) => {
       commit("setCompany", data); // setCompany is defined as muttation below
       return data;
+     });
     },
-    async addHeadquarter({ commit }, headquarter) {
-      const { data } = await axiosClient.post("/headquarters/add", headquarter);
-      commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
-      return data;
+    addHeadquarter({ commit }, headquarter) {
+      return axiosClient.post("/headquarters/add", headquarter).then(({ data }) => {
+        commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
+        return data;
+      });
     },
     async getAllCompaniesByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
@@ -186,16 +189,18 @@ export const store = createStore({
     },
     //#endregion
     //#region orders
-    async addOrder({ commit }, order) {
-      const { data } = await axiosClient.post("/orders/add", order);
-      commit("setOrder", data); // setCompany is defined as muttation below
-      return data;
+    addOrder({ commit }, order) {
+      return axiosClient.post("/orders/add", order).then(({ data }) => {
+        commit("setOrder", data); // setOrder is defined as muttation below
+        return data;
+      });
     },
     //#endregion
     //#region payments
     async pay({ commit }, amount) {
-      const { data } = await axiosClient.post("/payments/pay", amount);
-      return data;
+      return axiosClient.post("/payments/pay", amount).then(({data}) => {
+        return data;
+      });
     },
     //#endregion
     async reviews({ commit }) {
