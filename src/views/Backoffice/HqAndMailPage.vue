@@ -124,7 +124,7 @@
                   <input
                     v-model="filteredMails"
                     v-bind:value="mail"
-                    @change="checkSingle(mail.id)"
+                    @change="checkSingle(mail)"
                     type="checkbox"
                     class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
@@ -303,7 +303,7 @@ const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
 
-const filteredMails = ref([]);
+const filteredMails = ref([] as Mail[]);
 const isCheckAll = ref(false);
 
 const setModal = useModal({
@@ -487,17 +487,16 @@ function checkAll() {
   }
 }
 
-function checkSingle(id: any) {
+function checkSingle(mail: any) {
   if (filteredMails.value.length == filteredMailsByDates.value.length) {
     isCheckAll.value = true;
   } else {
     isCheckAll.value = false;
   }
 
-  if(filteredMails.value.find((item: any) => item.id == id)) {
-    filteredMails.value.filter((item: any) => item.id !== id)
+  if(filteredMails.value.find((item: any) => item.id == mail.id)) {
+    filteredMails.value.filter((item: any) => item.id !== mail.id)
   } else {
-    const mail = mails.value.find((item: any) => item.id == id);
     filteredMails.value.push(mail);
   }  
 }
