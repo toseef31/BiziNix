@@ -104,18 +104,38 @@
             <div
               class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
             >
+              <div class="flex py-4 px-4">
+                <input
+                  v-model="isCheckAll"
+                  @change="checkAll()"
+                  type="checkbox"
+                  class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label class="px-4 text-white font-bold text-sm"
+                  >Označiť všetky</label
+                >
+              </div>
               <div
                 v-for="mail in paginatedItems"
                 :key="mail.id"
                 class="bg-white border-b rounded-xl dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 flex flex-row my-2"
               >
+                <div class="flex py-4 px-4">
+                  <input
+                    v-model="filteredMails"
+                    v-bind:value="mail"
+                    @change="checkSingle(mail.id)"
+                    type="checkbox"
+                    class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
                 <div
                   class="flex-1 py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white text-xl"
                 >
                   {{ mail.sender }}
                 </div>
                 <div class="flex-1 py-4 px-6 text-right">
-                  {{ mail.distribution_date }}
+                  {{ formatDate(mail.distribution_date.toString()) }}
                 </div>
                 <div class="flex-1 py-4 px-6 text-right">
                   <button
@@ -138,7 +158,7 @@
                 </div>
                 <div
                   class="flex-1 py-4 px-6 text-right"
-                  v-if="mail.scan_requested"
+                  v-if="mail.scan_requested && mail.scan != null"
                 >
                   <button
                     class="font-medium text-white hover:underline"
@@ -147,14 +167,66 @@
                     Pozrieť scan
                   </button>
                 </div>
-                <div class="flex-1 py-4 px-6 text-right">
+                <div
+                  class="flex-1 py-4 px-6 text-right"
+                  v-if="mail.scan_requested && mail.scan == null"
+                >
+                  <button class="font-medium text-white" disabled>
+                    Čaká sa na scan
+                  </button>
+                </div>
+                <div
+                  class="flex-1 py-4 px-6 text-right"
+                  v-if="!mail.shred_requested"
+                >
                   <button
                     class="font-medium text-white hover:underline"
-                    v-on:click="shredSingleMail(mail.id)"
+                    @click="showModal()"
                   >
                     Skartovať
                   </button>
                 </div>
+                <div
+                  class="flex-1 py-4 px-6 text-right"
+                  v-if="mail.shred_requested"
+                >
+                  <button class="font-medium text-white" disabled>
+                    Skartované
+                  </button>
+                </div>
+                <Modal
+                  name="m1"
+                  v-model:visible="isVisible"
+                  :type="'clean'"
+                  :closable="false"
+                  title="Skartovanie pošty"
+                >
+                  <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+                    <div
+                      class="flex flex-row justify-start py-4 px-4 text-white font-bold"
+                    >
+                      Prosím potvrdte skartovanie zásielky od {{ mail.sender }}
+                    </div>
+                    <div class="flex flex-row justify-end py-2 px-4">
+                      <div class="flex flex-1/4 px-4">
+                        <button
+                          class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                          v-on:click="shredSingleMail(mail.id)"
+                        >
+                          Skartovať
+                        </button>
+                      </div>
+                      <div class="flex flex-1/4">
+                        <button
+                          class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                          v-on:click="closeModal()"
+                        >
+                          Zrušiť
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
               </div>
             </div>
             <div class="flex py-4 justify-end">
@@ -223,11 +295,32 @@ import { ChevronDownIcon } from "@heroicons/vue/outline";
 import { ref, onBeforeMount, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
+import dayjs from "dayjs";
+import { useModal, Modal } from "usemodal-vue3";
 
 const route = useRoute();
 const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
+
+const filteredMails = ref([]);
+const isCheckAll = ref(false);
+
+const setModal = useModal({
+  m1: 1,
+});
+
+let isVisible = reactive({});
+
+isVisible = setModal("m1", false);
+
+function showModal() {
+  isVisible = setModal("m1", true);
+}
+
+function closeModal() {
+  isVisible = setModal("m1", false);
+}
 
 const address = ref({
   id: 0,
@@ -302,8 +395,7 @@ const paginatedItems: any = computed(() => {
 });
 
 function sendMails() {
-  const filteredMails = filteredMailsByDates.value;
-  filteredMails.forEach(function (value: any) {
+  filteredMails.value.forEach(function (value: any) {
     value.forward_requested = 1;
   });
   store
@@ -314,6 +406,11 @@ function sendMails() {
     .catch((err) => {
       console.log(err);
     });
+}
+
+function formatDate(dateString: string) {
+  const date = dayjs(dateString);
+  return date.format("DD.MM.YYYY");
 }
 
 function sendSingleMail(id: any) {
@@ -339,6 +436,7 @@ function shredSingleMail(id: any) {
       .dispatch("updateMail", mail)
       .then((res) => {
         console.log("Zásielka úspešne zmenená.");
+        isVisible = setModal("m1", false);
       })
       .catch((err) => {
         console.log(err);
@@ -381,6 +479,29 @@ function downloadScanFile(id: any) {
   }
 }
 
+function checkAll() {
+  isCheckAll.value = !isCheckAll.value;
+  filteredMails.value = [];
+  if (isCheckAll.value) {
+    filteredMails.value = filteredMailsByDates.value
+  }
+}
+
+function checkSingle(id: any) {
+  if (filteredMails.value.length == filteredMailsByDates.value.length) {
+    isCheckAll.value = true;
+  } else {
+    isCheckAll.value = false;
+  }
+
+  if(filteredMails.value.find((item: any) => item.id == id)) {
+    filteredMails.value.filter((item: any) => item.id !== id)
+  } else {
+    const mail = mails.value.find((item: any) => item.id == id);
+    filteredMails.value.push(mail);
+  }  
+}
+
 async function refreshData() {
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
@@ -416,5 +537,8 @@ onBeforeMount(async () => {
 <style scoped>
 ::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+.modal-vue3-footer {
+  display: none !important;
 }
 </style>
