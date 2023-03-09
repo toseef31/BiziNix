@@ -70,7 +70,7 @@
             <FormKit type="group" id="PredmetPodnikania" name="PredmetPodnikania">            
               <FormKit :type="multiSelVueForm" id="subjects_of_business" v-model="companyOrZivnostModel.subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
                 :items="businessCategori"
-                @input="priceForBusinessOfcategories"
+                @input="calculatePriceForBusinessOfcategories"
                 placeholder="Example placeholder"
                 help="Môžete vybrať aj viac predmetov podnikania."
                 validation="required"/>
@@ -167,22 +167,8 @@
                   validation="required" />
 
                   <div v-if="paymentOptions == 'stripe'" class="platba bg-gray-900 mt-4 p-4">
-                    <StripeElements
-                      v-if="stripeLoaded"
-                      v-slot="{ elements, instance }"
-                      ref="elms"
-                      :stripe-key="stripeKey"
-                      :instance-options="instanceOptions"
-                      :elements-options="elementsOptions"
-                    >
-                      <StripeElement
-                        ref="card"
-                        :elements="elements"
-                        :options="cardOptions"
-                      />
-                    </StripeElements>
-                  <!-- <button class="bg-indigo-500 p-2 rounded-md" type="button" @click="pay">Pay</button> -->
-                </div>
+                    <stripePaymentComponent ref="childRefComponentForPay"></stripePaymentComponent>
+                  </div>
 
                 </div>
 
@@ -197,7 +183,7 @@
         </div>
 
         <div class="my-4 text-center text-lg">
-          <div>Cena za zavolené predmety podnikania: {{ priceForBusinessCategories }}</div>
+          <div>Cena za zavolené predmety podnikania: {{ finalPriceForBusinessCategori }}</div>
           <div>Celkom k úhrade: {{ totalForPay }} €</div>
         </div>
         <div class="flex flex-col items-center justify-center">
@@ -205,7 +191,6 @@
         </div>
         <!-- <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
         <pre wrap>{{ value }}</pre> -->
-
       </FormKit>
 
     </div>
@@ -221,123 +206,29 @@ import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
 import type User from "@/@types/User";
-import { StripeElements, StripeElement } from 'vue-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
 import { toast } from 'vue3-toastify';
+import useCalculatePriceForBusinessCategories from './Composables/CalculatePriceForBusinessCategories'
+import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 
-const stripeKey = ref('pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi') // test key
-let clientSecret = ''
-
-const instanceOptions = ref({
-      // https://stripe.com/docs/js/initializing#init_stripe_js-options
+onBeforeMount(() => {
+      
+  companyOrZivnostModel.value.subjects_of_business.pop()
+  store.dispatch("getAllSubjectOfBusiness")
+  .then(res => {
+    businessCategori.value.shift()
+    res.data.data.forEach((element: any) => {
+      businessCategori.value.push({
+        label: element.title,
+        value: element
+      })
     })
-    const elementsOptions = ref({
-      locale: 'sk'
-      // https://stripe.com/docs/js/elements_object/create#stripe_elements-options
-    })
-    const cardOptions = ref({
-      // https://stripe.com/docs/stripe.js#element-options
-      // value: {
-      //   postalCode: '12345',
-      // },
-      style: {
-        base: {
-          iconColor: '#c4f0ff',
-          color: '#fff',
-          fontWeight: '500',
-          fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-          fontSize: '18px',
-          fontSmoothing: 'antialiased',
-          ':-webkit-autofill': {
-            color: '#fce883',
-          },
-          '::placeholder': {
-            color: '#87BBFD',
-          },
-        },
-        invalid: {
-          iconColor: '#FFC7EE',
-          color: '#FFC7EE',
-        },
-      },
-      hidePostalCode: true
-    })
-    const stripeLoaded = ref(false)
-    const card = ref()
-    const elms = ref()
+  })
+    .catch(err => {
+    // sucessMsg.value = false
+    // errorMsg.value = err.response.data.errors // response data is from store actions
+  })
 
-    onBeforeMount(() => {
-      const stripePromise = loadStripe(stripeKey.value)
-      stripePromise.then(() => {
-        stripeLoaded.value = true
-      })
-          
-      companyOrZivnostModel.value.subjects_of_business.pop()
-      store.dispatch("getAllSubjectOfBusiness")
-      .then(res => {
-        businessCategori.value.shift()
-        res.data.data.forEach((element: any) => {
-          businessCategori.value.push({
-            label: element.title,
-            value: element
-          })
-        })
-
-        //businessCategori.value.shift()
-        //businessCategori.value = [ ...businessCategori.value ]
-
-      })
-        .catch(err => {
-        // sucessMsg.value = false
-        // errorMsg.value = err.response.data.errors // response data is from store actions
-      })
-
-    })
-
-    const pay = () => {
-      // Get stripe element
-      const cardElement = card.value.stripeElement
-
-      // Access instance methods, e.g. createToken()
-      elms.value.instance.createToken(cardElement).then((result: object) => {
-        // Handle result.error or result.token
-        console.log(result)
-      })
-
-      /* For testing */
-      payForOrder(totalForPay.value).then(() => {
-        console.log("Ja som client secreet: " + clientSecret)
-        elms.value.instance.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: cardElement
-          },
-          return_url: 'https://example.com/return_url',
-        }).then(() => {
-          elms.value.instance.retrievePaymentIntent(clientSecret).then((result: any) => {
-            if (result.error) {
-              toast.error("Platba neprešla, skúste znova zaplatiť, ak sa problem zopakuje prosím kontaktujte nás.")
-        } else {
-          if (result.paymentIntent.status === 'succeeded') {
-            toast.success("Platba bola úspešna.")
-            router.push({
-              name:"Thanks You New Order",
-              params: {
-                orderId: orderFromRes.id,
-              }
-            })
-            // Show your customer that the payment has succeeded
-          } else if (result.paymentIntent.status === 'requires_payment_method') {
-            toast.warning("Overenie platby neprešlo, prosím skúste znova zaplatiť a overiť správne platbu.")
-            // Authentication failed, prompt the customer to enter another payment method
-          }
-        }
-          })
-        }),
-        {
-          handleActions: false,
-        }
-      })
-    };
+})
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -372,7 +263,6 @@ let businessCategori = ref([
 
 let companyRegDateCheckboxValue = ref("")
 let paymentOptions = ref("")
-let priceForBusinessCategories = ref(0);
 let fakturacne_udaje = ref({
   first_name: '',
   last_name: '',
@@ -381,7 +271,7 @@ let fakturacne_udaje = ref({
   dic: '',
   ic_dph: '',
   address_id: 12
-  // to do address id
+  // TO DO ADDRESS ID
 })
 let userAddress = ref({
   street: '',
@@ -467,7 +357,9 @@ let order = ref({
   }]
 })
 
-let totalForPay = computed(() => priceForBusinessCategories.value + order.value.items[0].price)
+const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(companyOrZivnostModel.value.subjects_of_business)
+
+let totalForPay = computed(() => finalPriceForBusinessCategori.value + order.value.items[0].price)
 
 function logujData(){
   console.log(companyOrZivnostModel.value.subjects_of_business)
@@ -480,21 +372,9 @@ function logujData(){
   console.log(order.value)
 }
 
-function priceForBusinessOfcategories(){
-  //let val: any = getNode("PredmetPodnikania")?.value;
-  let total = 0;  
-  if(companyOrZivnostModel.value.subjects_of_business){
-    companyOrZivnostModel.value.subjects_of_business.forEach((element: any) => {
-      total = total + element.price;
-      console.log(element.price)
-    });
-  }
-  priceForBusinessCategories.value = total
-}
-
 /* Submiting form and Api calls */
 
-function registerAddress(): Promise<Response>  {
+async function registerAddress() {
   return store.dispatch('registerAddress', userAddress.value)
     .then((res) => {
       console.log("Registering address: " + JSON.stringify(res))
@@ -506,7 +386,7 @@ function registerAddress(): Promise<Response>  {
     })
 }
 
-function registerUser(): Promise<Response>  {
+async function registerUser() {
 
   user.value.address_id = addressFromResponse.address_id
 
@@ -522,7 +402,7 @@ function registerUser(): Promise<Response>  {
   })
 }
 
-function addHeadquarter(): Promise<Response> {
+async function addHeadquarter() {
   headquarter.value.owner_name = user.value.first_name + " " + user.value.last_name
 
   if(placeOfBusinness.value){
@@ -546,7 +426,7 @@ function addHeadquarter(): Promise<Response> {
   })
 }
 
-function addCompany(): Promise<Response> {
+async function addCompany() {
 
   let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name // Dodatok k nazvu živnosti
   companyOrZivnostModel.value.owner = userFromResponse.user_id
@@ -564,7 +444,7 @@ function addCompany(): Promise<Response> {
   })
 }
 
-function addOrder(): Promise<Response> {
+async function addOrder() {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = paymentOptions.value
   order.value.company_id = companyFomResponse.company.id
@@ -597,6 +477,7 @@ function addOrder(): Promise<Response> {
   .catch( err => {
     console.log(err.response.data )
   })
+  
 }
 
 async function isEmailAlreadyRegistered(node: any) {
@@ -615,27 +496,16 @@ async function emailIsUnique(node: any){
   return result
 }
 
-async function payForOrder(amount: any){
-  
-  const payment = {
-    amount: amount * 100
-  }
-
-  return store.dispatch('pay', payment)
-  .then((res) => {
-    console.log("Payment: " + JSON.stringify(res))
-    clientSecret = res.client_secret
-    return res
-  })
-  .catch( err => {
-    console.log(err.response.data)
-  })
-
+const childRefComponentForPay = ref()
+const callStripePayment = (totalForPay: number, orderId: any) => {
+    childRefComponentForPay.value.pay(totalForPay, orderId)
 }
 
 const submitApp = async (formData: any, node: any) => {
+
   console.log(formData)
-  try {    
+  
+  try {  
     registerAddress().then(() => {
         registerUser().then(() => {
           if(userFromResponse){
@@ -647,19 +517,34 @@ const submitApp = async (formData: any, node: any) => {
                   companyOrZivnostModel.value.owner = 0
                   companyOrZivnostModel.value.headquarters_id = 0
                   console.log("SUPER!")
-                  pay()
+
+                  if(paymentOptions.value == "stripe"){
+                    callStripePayment(totalForPay.value, orderFromRes.id)
+                  } else {
+                      router.push({
+                        name:"Thanks You New Order",
+                        params: {
+                          orderId: orderFromRes.id,
+                        }
+                    })
+                  }
+
                 })
               })
             })
           }
         })
     })
+
     node.clearErrors()
     // alert('Your application was submitted successfully!')
+
   }
   catch (err: any) {
+    console.log(err)
     node.setErrors(err.formErrors, err.fieldErrors)
   }
+
 }
 
 // // This is just a mock of an actual axios instance.
