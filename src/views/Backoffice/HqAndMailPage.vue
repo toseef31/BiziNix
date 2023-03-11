@@ -104,131 +104,196 @@
             <div
               class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
             >
-              <div class="flex py-4 px-4">
-                <input
-                  v-model="isCheckAll"
-                  @change="checkAll()"
-                  type="checkbox"
-                  class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label class="px-4 text-white font-bold text-sm"
-                  >Označiť všetky</label
-                >
-              </div>
-              <div
-                v-for="mail in paginatedItems"
-                :key="mail.id"
-                class="bg-white border-b rounded-xl dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 flex flex-row my-2"
-              >
-                <div class="flex py-4 px-4">
-                  <input
-                    v-model="filteredMails"
-                    v-bind:value="mail"
-                    @change="checkSingle(mail)"
-                    type="checkbox"
-                    class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white text-xl"
-                >
-                  {{ mail.sender }}
-                </div>
-                <div class="flex-1 py-4 px-6 text-right">
-                  {{ formatDate(mail.distribution_date.toString()) }}
-                </div>
-                <div class="flex-1 py-4 px-6 text-right">
-                  <button
-                    class="font-medium text-white hover:underline"
-                    v-on:click="sendSingleMail(mail.id)"
-                  >
-                    Preposlať originál
-                  </button>
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 text-right"
-                  v-if="!mail.scan_requested"
-                >
-                  <button
-                    class="font-medium text-white hover:underline"
-                    v-on:click="scanSingleMail(mail.id)"
-                  >
-                    Vyžiadať scan
-                  </button>
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 text-right"
-                  v-if="mail.scan_requested && mail.scan != null"
-                >
-                  <button
-                    class="font-medium text-white hover:underline"
-                    v-on:click="downloadScanFile(mail.id)"
-                  >
-                    Pozrieť scan
-                  </button>
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 text-right"
-                  v-if="mail.scan_requested && mail.scan == null"
-                >
-                  <button class="font-medium text-white" disabled>
-                    Čaká sa na scan
-                  </button>
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 text-right"
-                  v-if="!mail.shred_requested"
-                >
-                  <button
-                    class="font-medium text-white hover:underline"
-                    @click="showModal()"
-                  >
-                    Skartovať
-                  </button>
-                </div>
-                <div
-                  class="flex-1 py-4 px-6 text-right"
-                  v-if="mail.shred_requested"
-                >
-                  <button class="font-medium text-white" disabled>
-                    Skartované
-                  </button>
-                </div>
-                <Modal
-                  name="m1"
-                  v-model:visible="isVisible"
-                  :type="'clean'"
-                  :closable="false"
-                  title="Skartovanie pošty"
-                >
-                  <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
-                    <div
-                      class="flex flex-row justify-start py-4 px-4 text-white font-bold"
+              <table class="min-w-full table-fixed divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="relative w-12 px-6 sm:w-16 sm:px-8">
+                      <input
+                        type="checkbox"
+                        class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 sm:left-6"
+                        :checked="
+                          indeterminate ||
+                          checkedMails.length === filteredMailsByDates.length
+                        "
+                        :indeterminate="indeterminate"
+                        @change="
+                          checkedMails = $event.target.checked
+                            ? filteredMailsByDates.map((p) => p)
+                            : []
+                        "
+                      />
+                    </th>
+                    <th
+                      scope="col"
+                      class="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
                     >
-                      Prosím potvrdte skartovanie zásielky od {{ mail.sender }}
-                    </div>
-                    <div class="flex flex-row justify-end py-2 px-4">
-                      <div class="flex flex-1/4 px-4">
+                      Odosielateľ
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Dátum doručenia
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Preposlať
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Scanovať
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Skartovať
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <tr
+                    v-for="mail in paginatedItems"
+                    :key="mail.id"
+                    :class="[checkedMails.includes(mail) && 'bg-gray-50']"
+                  >
+                    <td class="relative w-12 px-6 sm:w-16 sm:px-8">
+                      <div
+                        v-if="checkedMails.includes(mail)"
+                        class="absolute inset-y-0 left-0 w-0.5 bg-teal-600"
+                      ></div>
+                      <input
+                        type="checkbox"
+                        class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 sm:left-6"
+                        :value="mail"
+                        v-model="checkedMails"
+                      />
+                    </td>
+                    <td
+                      :class="[
+                        'whitespace-nowrap py-4 pr-3 text-sm font-medium',
+                        checkedMails.includes(mail)
+                          ? 'text-teal-600'
+                          : 'text-gray-900',
+                      ]"
+                    >
+                      {{ mail.sender }}
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      {{ formatDate(mail.distribution_date.toString()) }}
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      <button
+                        class="font-medium text-gray-900 hover:underline"
+                        v-on:click="sendSingleMail(mail.id)"
+                      >
+                        Preposlať originál
+                      </button>
+                    </td>
+                    <td
+                      class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6"
+                    >
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="!mail.scan_requested"
+                      >
                         <button
-                          class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                          v-on:click="shredSingleMail(mail.id)"
+                          class="font-medium text-gray-900 hover:underline"
+                          v-on:click="scanSingleMail(mail.id)"
+                        >
+                          Vyžiadať scan
+                        </button>
+                      </div>
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="mail.scan_requested && mail.scan != null"
+                      >
+                        <button
+                          class="font-medium text-gray-900 hover:underline"
+                          v-on:click="downloadScanFile(mail.id)"
+                        >
+                          Pozrieť scan
+                        </button>
+                      </div>
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="mail.scan_requested && mail.scan == null"
+                      >
+                        <button class="font-medium text-gray-900" disabled>
+                          Čaká sa na scan
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="!mail.shred_requested"
+                      >
+                        <button
+                          class="font-medium text-gray-900 hover:underline"
+                          @click="showModal()"
                         >
                           Skartovať
                         </button>
                       </div>
-                      <div class="flex flex-1/4">
-                        <button
-                          class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                          v-on:click="closeModal()"
-                        >
-                          Zrušiť
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="mail.shred_requested"
+                      >
+                        <button class="font-medium text-gray-900" disabled>
+                          Skartované
                         </button>
                       </div>
-                    </div>
-                  </div>
-                </Modal>
-              </div>
+                      <Modal
+                        name="m1"
+                        v-model:visible="isVisible"
+                        :type="'clean'"
+                        :closable="false"
+                        title="Skartovanie zásielky"
+                      >
+                        <div
+                          class="bg-gray-600 rounded-lg border-gray-800 border-2"
+                        >
+                          <div
+                            class="flex flex-row justify-start py-4 px-4 text-white font-bold"
+                          >
+                            Prosím potvrdte skartovanie zásielky od
+                            {{ mail.sender }}
+                          </div>
+                          <div class="flex flex-row justify-end py-2 px-4">
+                            <div class="flex flex-1/4 px-4">
+                              <button
+                                class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                                v-on:click="shredSingleMail(mail.id)"
+                              >
+                                Skartovať
+                              </button>
+                            </div>
+                            <div class="flex flex-1/4">
+                              <button
+                                class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                                v-on:click="closeModal()"
+                              >
+                                Zrušiť
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
             <div class="flex py-4 justify-end">
               <nav
                 class="isolate inline-flex -space-x-px rounded-md shadow-sm"
@@ -303,8 +368,13 @@ const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
 
-const filteredMails = ref([] as Mail[]);
-const isCheckAll = ref(false);
+const checkedMails = ref([]);
+const checked = ref(false);
+const indeterminate = computed(
+  () =>
+    checkedMails.value.length > 0 &&
+    checkedMails.value.length < filteredMailsByDates.value.length
+);
 
 const setModal = useModal({
   m1: 1,
@@ -395,13 +465,14 @@ const paginatedItems: any = computed(() => {
 });
 
 function sendMails() {
-  filteredMails.value.forEach(function (value: any) {
+  checkedMails.value.forEach(function (value: any) {
     value.forward_requested = 1;
   });
   store
-    .dispatch("updateMultipleMails", filteredMails)
+    .dispatch("updateMultipleMails", checkedMails.value)
     .then((res) => {
       console.log("Zásielky úspešne zmenené.");
+      checkedMails.value = [];
     })
     .catch((err) => {
       console.log(err);
@@ -477,28 +548,6 @@ function downloadScanFile(id: any) {
         fileLink.click();
       });
   }
-}
-
-function checkAll() {
-  isCheckAll.value = !isCheckAll.value;
-  filteredMails.value = [];
-  if (isCheckAll.value) {
-    filteredMails.value = filteredMailsByDates.value
-  }
-}
-
-function checkSingle(mail: any) {
-  if (filteredMails.value.length == filteredMailsByDates.value.length) {
-    isCheckAll.value = true;
-  } else {
-    isCheckAll.value = false;
-  }
-
-  if(filteredMails.value.find((item: any) => item.id == mail.id)) {
-    filteredMails.value.filter((item: any) => item.id !== mail.id)
-  } else {
-    filteredMails.value.push(mail);
-  }  
 }
 
 async function refreshData() {
