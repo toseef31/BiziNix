@@ -1,0 +1,12 @@
+<template>
+    <FormKit
+      type="text"
+      label="Name"
+      validation="required"
+    />
+    <FormKit
+      type="email"
+      label="Email"
+      validation="required|email"
+    />
+  </template>

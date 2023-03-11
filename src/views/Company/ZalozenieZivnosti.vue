@@ -23,6 +23,34 @@
   <div class="py-6 bg-gray-800 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
       <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+
+      <!-- NOVY FORM -->
+      <div>
+        <FormKit type="form" :actions="false">
+          <FormKit type="multi-step" tab-style="tab">
+            <FormKit type="step" name="personalInfo">
+              <!-- component for example brevity. -->
+              <StepOne />
+            </FormKit>
+
+            <FormKit type="step" name="references">
+              <!-- component for example brevity. -->
+              <StepTwo />
+            </FormKit>
+
+            <FormKit type="step" name="Supplemental">
+            <!-- component for example brevity. -->
+            <StepThree />
+
+            <!-- using step slot for submit button-->
+            <template #stepNext>
+              <FormKit type="submit" />
+            </template>
+            </FormKit>
+          </FormKit>
+        </FormKit>
+      </div>
+
       <div>
         <div v-if="errorMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
           {{ errorMsg }}
@@ -209,6 +237,9 @@ import type User from "@/@types/User";
 import { toast } from 'vue3-toastify';
 import useCalculatePriceForBusinessCategories from './Composables/CalculatePriceForBusinessCategories'
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
+import StepOne from "@/components/forms/stepOne.vue";
+import StepTwo from "@/components/forms/stepTwo.vue";
+import StepThree from "@/components/forms/stepThree.vue";
 
 onBeforeMount(() => {
       

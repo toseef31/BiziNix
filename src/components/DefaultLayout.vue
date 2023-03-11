@@ -542,13 +542,19 @@ import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
-import { computed, onBeforeMount } from "vue";
+import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-let user: any;
+const store = useStore();
+const router = useRouter();
+let user = ref();
+user = computed(() => store.state.user);
 
-onBeforeMount( () => {
+onBeforeMount(async () => {
   user = computed(() => store.state.user);
+  if(user.value.userId){
+    await store.dispatch('setUserDataAfterLogin')
+   }
 })
 
 const topBarNavigation = [
@@ -650,9 +656,6 @@ const recentPosts = [
   { id: 3, name: "Improve your customer experience", href: "#" },
 ];
 
-const store = useStore();
-const router = useRouter();
-
 function logout() {
   store
     .dispatch("logoutUser") // action in store
@@ -662,7 +665,5 @@ function logout() {
       });
     });
 }
-
-user = computed(() => store.state.user);
 
 </script>

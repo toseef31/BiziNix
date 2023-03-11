@@ -19,12 +19,11 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import type { id } from '@formkit/i18n';
 import { onMounted, ref } from 'vue';
-let companies = ref([''] as any);
+let companies = ref({} as any);
 
-onMounted(() => {
-    store.dispatch("getAllCompaniesByUserId", store.state.user.userId )
+onMounted(async () => {
+    await store.dispatch("getAllCompaniesByUserId", store.state.user.userId )
     .then((response) => {
         console.log(response)
         companies.value = response.data
