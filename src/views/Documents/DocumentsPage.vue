@@ -85,7 +85,7 @@
   <div
     class="relative z-0 h-full w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
     style="
-      height: calc(100vh - 200px);
+      height: calc(85vh);
       background-image: url('../src/assets/3.png');
     "
   >
