@@ -22,7 +22,6 @@ export const store = createStore({
     order: [{}],
     vhqs: [],
     selectedCompany: {} as Company,
-    selectedCompanyBankDetails: {},
     mails: [] as Mail[],
     hq: {},
     hqAddress: {},
@@ -53,9 +52,6 @@ export const store = createStore({
     },
     getSelectedCompany: (state) => {
       return state.selectedCompany;
-    },
-    getSelectedCompanyBankDetials: (state) => {
-      return state.selectedCompanyBankDetails;
     },
     getSelectedCompanyMails: (state) => {
       return state.selectedCompanyMails;
@@ -185,7 +181,7 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/companies/${companyId}/get`);
       return data;
     },
-    async getSelectedCompanyBankDetails({ commit }, companyId) {
+    async getCompanyBankDetails({ commit }, companyId) {
       const { data } = await axiosClient.get(
         `/companies/${companyId}/getBankDetails`
       );
@@ -330,9 +326,6 @@ export const store = createStore({
     },
     setSelectedCompany: (state, data) => {
       state.selectedCompany = data.data;
-    },
-    setSelectedCompanyBankDetails: (state, data) => {
-      state.selectedCompanyBankDetails = data.data;
     },
     setSelectedCompanyMails: (state, data) => {
       state.selectedCompanyMails = data.data;

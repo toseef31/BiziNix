@@ -116,11 +116,7 @@
                           checkedMails.length === filteredMailsByDates.length
                         "
                         :indeterminate="indeterminate"
-                        @change="
-                          checkedMails = $event.target.checked
-                            ? filteredMailsByDates.map((p) => p)
-                            : []
-                        "
+                        @change="boxChecked($event)"
                       />
                     </th>
                     <th
@@ -368,7 +364,7 @@ const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
 
-const checkedMails = ref([]);
+const checkedMails = ref([] as any[]);
 const checked = ref(false);
 const indeterminate = computed(
   () =>
@@ -463,6 +459,12 @@ const paginatedItems: any = computed(() => {
   const stop = start + pagination.value.perPage;
   return filteredMailsByDates.value.slice(start, stop);
 });
+
+function boxChecked(event: any) {
+  checkedMails.value = event.target.checked
+    ? filteredMailsByDates.value.map((mail: Mail) => mail)
+    : [];
+}
 
 function sendMails() {
   checkedMails.value.forEach(function (value: any) {

@@ -1,0 +1,1 @@
+declare module 'usemodal-vue3'
