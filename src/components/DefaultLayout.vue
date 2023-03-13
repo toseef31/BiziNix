@@ -565,8 +565,8 @@ const navigation = [
 const userNavigation = [
   { name: "Nástenka", to: { name: "Dashboard" } },
   { name: "Sídlo a pošta", to: { name: "Hq and mail" } },
-  { name: "Dokumenty", to: { name: "My documents" } },
-  { name: "Dizajn dokumentov", to: { name: "Document designs" } },
+  { name: "Doklady", to: { name: "My documents" } },
+  { name: "Dizajn dokladov", to: { name: "Document designs" } },
   { name: "Úprava firmy", to: { name: "Edit Company" } },
   { name: "Váš profil", to: { name: "User Profil" } },
   { name: "Zmena hesla", to: { name: "User Profil" } },

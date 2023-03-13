@@ -22,6 +22,7 @@ export const store = createStore({
     order: [{}],
     vhqs: [],
     selectedCompany: {} as Company,
+    selectedCompanyBankDetails: {},
     mails: [] as Mail[],
     hq: {},
     hqAddress: {},
@@ -52,6 +53,9 @@ export const store = createStore({
     },
     getSelectedCompany: (state) => {
       return state.selectedCompany;
+    },
+    getSelectedCompanyBankDetials: (state) => {
+      return state.selectedCompanyBankDetails;
     },
     getSelectedCompanyMails: (state) => {
       return state.selectedCompanyMails;
@@ -154,16 +158,18 @@ export const store = createStore({
       return data;
     },
     addCompany({ commit }, company) {
-     return axiosClient.post("/companies/add", company).then(({ data }) => {
-      commit("setCompany", data); // setCompany is defined as muttation below
-      return data;
-     });
-    },
-    addHeadquarter({ commit }, headquarter) {
-      return axiosClient.post("/headquarters/add", headquarter).then(({ data }) => {
-        commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
+      return axiosClient.post("/companies/add", company).then(({ data }) => {
+        commit("setCompany", data); // setCompany is defined as muttation below
         return data;
       });
+    },
+    addHeadquarter({ commit }, headquarter) {
+      return axiosClient
+        .post("/headquarters/add", headquarter)
+        .then(({ data }) => {
+          commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
+          return data;
+        });
     },
     async getAllCompaniesByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
@@ -179,12 +185,21 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/companies/${companyId}/get`);
       return data;
     },
+    async getSelectedCompanyBankDetails({ commit }, companyId) {
+      const { data } = await axiosClient.get(
+        `/companies/${companyId}/getBankDetails`
+      );
+      return data;
+    },
     async isEmailAlreadyRegistered({ commit }, email: string) {
       const { data } = await axiosClient.get(`/users/${email}/check`);
       return data;
     },
     async addMultipleCompanyMembers({ commit }, members) {
-      const { data } = await axiosClient.post("/companyMembers/addMultiple", members);
+      const { data } = await axiosClient.post(
+        "/companyMembers/addMultiple",
+        members
+      );
       return data;
     },
     //#endregion
@@ -198,7 +213,7 @@ export const store = createStore({
     //#endregion
     //#region payments
     async pay({ commit }, amount) {
-      return axiosClient.post("/payments/pay", amount).then(({data}) => {
+      return axiosClient.post("/payments/pay", amount).then(({ data }) => {
         return data;
       });
     },
@@ -315,6 +330,9 @@ export const store = createStore({
     },
     setSelectedCompany: (state, data) => {
       state.selectedCompany = data.data;
+    },
+    setSelectedCompanyBankDetails: (state, data) => {
+      state.selectedCompanyBankDetails = data.data;
     },
     setSelectedCompanyMails: (state, data) => {
       state.selectedCompanyMails = data.data;

@@ -5,7 +5,7 @@ export default interface Company {
   status: string
   ico: string
   dic: string
-  icdhp: string
+  icdph: string
   imanie_vyska: number
   imanie_splatene: number
   headquarters_id: number

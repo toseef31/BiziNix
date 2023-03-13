@@ -1,14 +1,6 @@
 <template>
-  <div
-    class="min-h-screen bg-cover bg-no-repeat bg-fixed bg-center"
-    style="background-image: url('../src/assets/2.png')"
-  >
-    <div
-      class="w-full min-h-screen"
-      style="
-        background-image: linear-gradient(to top,rgba(17, 24, 39, 0.85) 0%,rgba(17, 24, 39, 1) 100%);
-      "
-    >
+  <div class="min-h-screen bg-gray-900">
+    <div class="w-full min-h-screen">
       <!--MENU-->
       <div>
         <nav
@@ -39,7 +31,7 @@
                   type="text"
                   id="search-navbar"
                   class="block w-full p-2 pl-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-                  placeholder="Vyhľadajte typ dokumentu"
+                  placeholder="Vyhľadajte doklad"
                 />
               </div>
             </div>
