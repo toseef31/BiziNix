@@ -4,16 +4,24 @@
       <FormKit
         type="form"
         id="add-document"
-        :form-class="submitted ? 'hide' : 'show'"
         submit-label="Vystaviť doklad"
         @submit="submitHandler()"
         :actions="false"
       >
         <div class="bg-gray-200 rounded-lg px-4 my-2">
           <section>
-            <h3 class="text-3xl font-bold text-center py-20 text-black">
-              Vystavujete doklad č. <br />
-              {{ serial_number }}
+            <div class="w-full p-4">
+              <FormKit
+                v-model="document.subtype"
+                type="select"
+                placeholder="Vyberte druh dokladu"
+                :options="documentSubtypes"
+                @change="documentSubtypeChanged()"
+              />
+            </div>
+            <h3 class="text-3xl font-bold text-center py-10 text-black">
+              Vystavujete {{ documentTypeStr }} č. <br />
+              {{ document.serial_number }}
             </h3>
 
             <div class="flex">
@@ -98,6 +106,7 @@
                   >
                   <div class="w-full">
                     <FormKit
+                      v-model="document.odberatel"
                       autocomplete="nope"
                       id="client-name"
                       name="data[Client][name]"
@@ -116,6 +125,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.address"
                         autocomplete="nope"
                         id="client-address"
                         name="data[Client][address]"
@@ -129,6 +139,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.psc"
                         autocomplete="nope"
                         id="client-zip"
                         name="data[Client][zip]"
@@ -142,6 +153,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.city"
                         autocomplete="nope"
                         id="client-city"
                         name="data[Client][city]"
@@ -157,6 +169,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.country"
                         type="select"
                         id="country"
                         name="country"
@@ -170,6 +183,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.ico"
                         autocomplete="nope"
                         id="client-ico"
                         name="data[Client][ico]"
@@ -184,6 +198,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.dic"
                         autocomplete="nope"
                         id="client-dic"
                         name="data[Client][dic]"
@@ -198,6 +213,7 @@
                     >
                     <div class="w-full">
                       <FormKit
+                        v-model="document.icdph"
                         autocomplete="nope"
                         id="client-icdph"
                         name="data[Client][ic_dph]"
@@ -221,11 +237,12 @@
                     >Číslo dokladu</label
                   >
                   <FormKit
+                    v-model="document.serial_number"
                     autocomplete="nope"
                     type="text"
                     id="number"
                     name="[invoice_no_formatted]"
-                    :value="serial_number"
+                    :value="document.serial_number"
                   />
                 </div>
                 <div
@@ -237,11 +254,12 @@
                     >Variabilný symbol</label
                   >
                   <FormKit
+                    v-model="document.variabilny"
                     autocomplete="nope"
                     type="text"
                     id="vs"
                     name="[variable]"
-                    :value="serial_number"
+                    :value="document.serial_number"
                   />
                 </div>
               </div>
@@ -280,7 +298,12 @@
                   <label for="comment__above" class="text-black"
                     >Poznámka nad položkami</label
                   >
-                  <FormKit type="textarea" rows="10" id="comment_above" />
+                  <FormKit
+                    type="textarea"
+                    rows="10"
+                    id="comment_above"
+                    v-model="document.note_above"
+                  />
                 </div>
               </div>
             </div>
@@ -294,24 +317,31 @@
                 </div>
                 <div class="text-teal-500 flex basis-2/12">Počet</div>
                 <div class="text-teal-500 flex basis-2/12">Jednotka</div>
-                <div class="text-teal-500 flex basis-2/12">Cena €</div>
-                <div class="text-teal-500 flex basis-2/12">DPH %</div>
+                <div class="text-teal-500 flex basis-2/12">
+                  Cena {{ document.currency }}
+                </div>
+                <div
+                  class="text-teal-500 flex basis-2/12"
+                  v-show="company.is_dph"
+                >
+                  DPH %
+                </div>
                 <div class="text-teal-500 flex basis-2/12 justify-end pr-4">
-                  Celkom €
+                  Celkom {{ document.currency }}
                 </div>
               </div>
 
-              <ul class="py-2">
-                <li>
+              <ul class="py-2" id="items_list">
+                <li v-for="(item, index) in items" :key="index">
                   <div class="flex flex-row gap-1">
                     <div class="flex basis-3/12">
                       <FormKit
                         autocomplete="nope"
                         class="flex"
-                        name="[name]"
                         id="name"
                         type="text"
                         placeholder="Zadajte názov položky"
+                        v-model="item.name"
                       />
                     </div>
                     <div class="flex basis-2/12">
@@ -319,40 +349,40 @@
                         autocomplete="nope"
                         type="text"
                         id="quantity"
-                        name="[quantity]"
                         class="flex"
-                        pattern="^([\d ]+([,.]\d+)?|[,.]?[\d ]+)$"
                         inputmode="decimal"
+                        v-model="item.quantity"
                       />
                     </div>
                     <div class="flex basis-2/12">
                       <FormKit
                         type="select"
                         id="unit"
-                        name="unit"
                         :options="units"
+                        v-model="item.unit"
                       />
                     </div>
                     <div class="flex basis-2/12">
                       <FormKit
                         autocomplete="nope"
                         type="text"
-                        name="[unit_price]"
                         class="flex"
                         id="unit-price"
-                        pattern="^-?(\d[\d ]*([,.]\d+)?|[,.]?\d[\d ]*)$"
                         inputmode="decimal"
+                        v-model="item.unit_price"
+                        @change="priceEntered(item)"
                       />
                     </div>
-                    <div class="flex basis-2/12">
+                    <div class="flex basis-2/12" v-show="company.is_dph">
                       <FormKit
                         autocomplete="nope"
                         type="text"
-                        name="[tax]"
                         class="flex"
                         id="vat"
-                        pattern="^(\d[\d ]*([,.]\d+)?|[,.]?\d[\d ]*)$"
                         inputmode="decimal"
+                        v-model="item.vat"
+                        novalidate
+                        @change="vatEntered($event)"
                       />
                     </div>
                     <div class="flex basis-2/12">
@@ -361,8 +391,9 @@
                         type="text"
                         class="flex"
                         id="total"
-                        pattern="^-?(\d[\d ]*([,.]\d+)?|[,.]?\d[\d ]*)$"
                         inputmode="decimal"
+                        v-model="item.total"
+                        disabled
                       />
                     </div>
                   </div>
@@ -375,6 +406,7 @@
                           rows="2"
                           id="desc"
                           placeholder="Detailný popis položky…"
+                          v-model="item.description"
                         />
                       </div>
                     </div>
@@ -383,7 +415,7 @@
                         type="button"
                         class="hover:bg-red-400 text-red-700 font-bold px-4 rounded-lg"
                         title="Vymazať položku"
-                        @on-click="removeItem()"
+                        v-on:click="removeItem(index)"
                       >
                         Vymazať položku
                       </button>
@@ -397,7 +429,7 @@
                 <button
                   type="button"
                   class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-                  @on-click="addItem()"
+                  v-on:click="addItem()"
                 >
                   Pridať ďalšiu položku
                 </button>
@@ -410,7 +442,12 @@
                   <label for="comment" class="text-black pb-2"
                     >Poznámka pod položkami</label
                   >
-                  <FormKit type="textarea" rows="10" id="comment_below" />
+                  <FormKit
+                    type="textarea"
+                    rows="10"
+                    id="comment_below"
+                    v-model="document.note_under"
+                  />
                 </div>
 
                 <div class="flex basis-1/3 flex-col justify-center">
@@ -419,15 +456,23 @@
                       <tbody>
                         <tr class="text-teal-500">
                           <th class="text-left pl-2">Celkom</th>
-                          <th class="text-right pr-2">0,00&nbsp;€</th>
+                          <th class="text-right pr-2">
+                            {{ totalPrice }}&nbsp;{{ document.currency }}
+                          </th>
                         </tr>
-                        <tr class="text-teal-500">
+                        <tr class="text-teal-500" v-show="company.is_dph">
                           <th class="text-left pl-2">DPH</th>
-                          <th class="text-right pr-2">0,00&nbsp;€</th>
+                          <th class="text-right pr-2">
+                            {{ totalPriceVat }}&nbsp;{{ document.currency }}
+                          </th>
                         </tr>
-                        <tr class="text-teal-500">
+                        <tr class="text-teal-500" v-show="company.is_dph">
                           <th class="text-left pl-2">Celková suma</th>
-                          <th class="text-right pr-2">0,00&nbsp;€</th>
+                          <th class="text-right pr-2">
+                            {{ totalPrice + totalPriceVat }}&nbsp;{{
+                              document.currency
+                            }}
+                          </th>
                         </tr>
                       </tbody>
                     </table>
@@ -445,8 +490,9 @@
                   <FormKit
                     type="date"
                     name="Dátum vystavenia"
-                    autocomplete="date_of_issue"
                     validation="required|length:10"
+                    v-model="document.date_of_issue"
+                    :value="today"
                   />
                 </div>
                 <div class="flex flex-col basis-1/3">
@@ -456,6 +502,7 @@
                     id="due-in"
                     name="due-in"
                     :options="dues"
+                    v-model="document.due_by"
                   />
                 </div>
                 <div class="flex flex-col basis-1/3">
@@ -465,8 +512,9 @@
                   <FormKit
                     type="date"
                     name="Dátum dodania"
-                    autocomplete="date_of_delivery"
                     validation="required|length:10"
+                    v-model="document.delivery_date"
+                    :value="today"
                   />
                 </div>
               </div>
@@ -480,6 +528,7 @@
                     id="delivery-type"
                     name="delivery-type"
                     :options="delivery_types"
+                    v-model="document.delivery_method"
                   />
                 </div>
                 <div class="flex flex-col basis-1/4">
@@ -491,6 +540,7 @@
                     id="payment_type"
                     name="payment_type"
                     :options="payment_types"
+                    v-model="document.payment_method"
                   />
                 </div>
                 <div class="flex flex-col basis-1/4">
@@ -502,6 +552,7 @@
                     type="text"
                     id="constant-symbol"
                     name="[constant]"
+                    v-model="document.konstantny"
                   />
                 </div>
                 <div class="flex flex-col basis-1/4">
@@ -512,6 +563,7 @@
                     autocomplete="nope"
                     type="text"
                     id="specific-symbol"
+                    v-model="document.specificky"
                   />
                 </div>
               </div>
@@ -523,6 +575,7 @@
                     id="currency"
                     name="currency"
                     :options="currencies"
+                    v-model="document.currency"
                   />
                 </div>
               </div>
@@ -540,18 +593,52 @@
       </FormKit>
     </div>
   </div>
+  <Modal
+    name="submitted1"
+    v-model:visible="isVisible"
+    :type="'clean'"
+    :closable="false"
+    title="Nahrávanie úspešné"
+  >
+    <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+      <div class="flex flex-row justify-start py-4 px-4 text-white font-bold">
+        Doklad bol úspešne nahraný, prajete si pridať ďalší?
+      </div>
+      <div class="flex flex-row justify-end py-2 px-4">
+        <div class="flex flex-1/4 px-4">
+          <button
+            class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-700"
+            v-on:click="addNew()"
+          >
+            Pridať ďalší
+          </button>
+        </div>
+        <div class="flex flex-1/4">
+          <button
+            class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="closeModal()"
+          >
+            Zoznam dokladov
+          </button>
+        </div>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import type Company from "@/@types/Company";
 import store from "@/store";
 import { ref, onBeforeMount, computed, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { createInput } from "@formkit/vue";
-import dayjs from "dayjs";
+import moment from "moment";
+import { templateElement } from "@babel/types";
+import { useModal, Modal } from "usemodal-vue3";
 
-const route = useRoute();
+const route = useRouter();
 const submitted = ref(false);
+const today = moment(new Date()).format("YYYY-MM-DD");
 
 const countries = [
   "Slovensko",
@@ -802,69 +889,79 @@ const countries = [
   "Croatia",
 ];
 const currencies = [
-  "€",
-  "Kč",
-  "USD",
-  "£",
-  "HUF",
-  "PLN",
-  "CHF",
-  "RUB",
-  "¥",
-  "SEK",
-  "AUD",
-  "NOK",
-  "CAD",
-  "RON",
-  "LKR",
-  "DKK",
-  "JPY",
-  "HRK",
-  "RSD",
-  "BGN",
-  "MXN",
+  { label: "€", value: "€" },
+  { label: "Kč", value: "Kč" },
+  { label: "USD", value: "USD" },
+  { label: "£", value: "£" },
+  { label: "HUF", value: "HUF" },
+  { label: "PLN", value: "PLN" },
+  { label: "CHF", value: "CHF" },
+  { label: "RUB", value: "RUB" },
+  { label: "¥", value: "¥" },
+  { label: "SEK", value: "SEK" },
+  { label: "AUD", value: "AUD" },
+  { label: "NOK", value: "NOK" },
+  { label: "CAD", value: "CAD" },
+  { label: "RON", value: "RON" },
+  { label: "LKR", value: "LKR" },
+  { label: "DKK", value: "DKK" },
+  { label: "JPY", value: "JPY" },
+  { label: "HRK", value: "HRK" },
+  { label: "RSD", value: "RSD" },
+  { label: "BGN", value: "BGN" },
+  { label: "MXN", value: "MXN" },
 ];
 const units = [
-  "ks.",
-  "hod.",
-  "m",
-  "km",
-  "bm",
-  "m2",
-  "m3",
-  "kg",
-  "mesiace",
-  "osoba",
+  { label: "ks.", value: "ks" },
+  { label: "hod.", value: "hod" },
+  { label: "m", value: "m" },
+  { label: "km", value: "km" },
+  { label: "bm", value: "bm" },
+  { label: "m2", value: "m2" },
+  { label: "m3", value: "m3" },
+  { label: "kg", value: "kg" },
+  { label: "mesiace", value: "mesiace" },
+  { label: "osoba", value: "osoba" },
 ];
 const payment_types = [
-  "Bankový prevod",
-  "Hotovosť",
-  "Paypal",
-  "Trustpay",
-  "Besteron",
-  "Kreditná karta",
-  "Debetná karta",
-  "Dobierka",
-  "Vzájomný zápočet",
-  "GoPay",
-  "Viamo",
-  "Poštový poukaz",
+  { label: "", value: "" },
+  { label: "Bankový prevod", value: "bankovy_prevod" },
+  { label: "Hotovosť", value: "hotovost" },
+  { label: "Paypal", value: "paypal" },
+  { label: "Trustpay", value: "trustpay" },
+  { label: "Besteron", value: "besteron" },
+  { label: "Kreditná karta", value: "kreditna_karta" },
+  { label: "Debetná karta", value: "debetna_karta" },
+  { label: "Dobierka", value: "dobierka" },
+  { label: "Vzájomný zápočet", value: "vzajomny_zapocet" },
+  { label: "GoPay", value: "gopay" },
+  { label: "Viamo", value: "viamo" },
+  { label: "Poštový poukaz", value: "postovy_poukaz" },
 ];
 const delivery_types = [
-  "Poštou",
-  "Kuriérom",
-  "Osobný odber",
-  "Nákladná doprava",
-  "Odberné miesto",
+  { label: "", value: "" },
+  { label: "Poštou", value: "posta" },
+  { label: "Kuriérom", value: "kurier" },
+  { label: "Osobný odber", value: "osobny" },
+  { label: "Nákladná doprava", value: "nakladna" },
+  { label: "Odberné miesto", value: "odberne_miesto" },
 ];
 const dues = [
-  "Dátum vystavenia",
-  "1 deň",
-  "7 dní",
-  "14 dní",
-  "30 dní",
-  "60 dní",
-  "Iné",
+  { label: "", value: "" },
+  { label: "Dátum vystavenia", value: "datum_vystavenia" },
+  { label: "1 deň", value: "1" },
+  { label: "7 dní", value: "7" },
+  { label: "14 dní", value: "14" },
+  { label: "30 dní", value: "30" },
+  { label: "60 dní", value: "60" },
+  { label: "Iné", value: "ine" },
+];
+const documentSubtypes = [
+  {value: 1, label: 'Faktúra'},
+  {value: 2, label: 'Zálohová faktúra'},
+  {value: 3, label: 'Dobropis'},
+  {value: 4, label: 'Cenová ponuka'},
+  {value: 5, label: 'Objednávka'}
 ];
 
 const company = ref({} as Company);
@@ -877,18 +974,67 @@ const address = ref({
   psc: "",
 });
 
+const items = ref([
+  {
+    name: "",
+    quantity: 0,
+    unit: "ks",
+    unit_price: 0.0,
+    vat: 0,
+    total: 0.0,
+    description: "",
+  },
+]);
+
+const totalPrice: any = computed(() => {
+  return items.value.reduce((acc, item) => acc + item.total, 0);
+});
+const totalPriceVat: any = computed(() => {
+  return totalPrice.value * 0.2;
+});
+
 const headquarter = ref({
   id: 0,
   address_id: 0,
 });
 
 const companyBankDetails = ref({
-  name: '',
-  iban: '',
-  swift: ''
+  name: "",
+  iban: "",
+  swift: "",
 });
 
-const serial_number = ref("123456789");
+const documentTypeStr = ref('faktúru');
+
+const document = ref({
+  type: 1,
+  subtype: 1,
+  company_id: company.value.id,
+  odberatel: "",
+  address: "",
+  psc: "",
+  city: "",
+  country: "Slovensko",
+  ico: "",
+  dic: "",
+  icdph: "",
+  serial_number: "20230001",
+  variabilny: "20230001",
+  konstantny: "",
+  specificky: "",
+  note_above: "",
+  items: JSON.stringify(items.value),
+  note_under: "",
+  date_of_issue: today,
+  due_by: "",
+  delivery_method: "",
+  delivery_date: today,
+  payment_method: "",
+  currency: "€",
+  pdf: "",
+  isIssued: true,
+  isPaid: false,
+});
 
 watch(
   () => store.getters.getSelectedCompany,
@@ -902,7 +1048,7 @@ async function refreshData() {
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then((response) => {
       company.value = response.data;
-
+      document.value.company_id = company.value.id;
       //aktualizovat adresu
       store
         .dispatch("getHeadquartersById", company.value.headquarters_id)
@@ -924,19 +1070,112 @@ async function refreshData() {
     });
 }
 
-function addItem() {
-  //prida item do zoznamu
+function priceEntered(item: any) {
+  if (item.vat > 0) {
+    item.total = item.quantity * item.unit_price;
+  } else {
+    item.total = item.quantity * item.unit_price;
+  }
 }
 
-function removeItem() {
-  //zmaze item do zoznamu
+function vatEntered(event: any) {
+  if (
+    event.target.value == 0 &&
+    !document.value.note_above.includes("Prenos daňovej povinnosti")
+  ) {
+    if (document.value.note_above == "") {
+      document.value.note_above = "Prenos daňovej povinnosti";
+    } else {
+      document.value.note_above += "\nPrenos daňovej povinnosti";
+    }
+  }
+  if (
+    event.target.value != 0 &&
+    document.value.note_above.includes("Prenos daňovej povinnosti")
+  ) {
+    document.value.note_above = document.value.note_above.replace(
+      "\nPrenos daňovej povinnosti",
+      ""
+    );
+  }
+}
+
+function documentSubtypeChanged() {
+  switch(document.value.subtype){
+    case 1: document.value.type = 1; documentTypeStr.value = 'fakúru'; break;
+    case 2: document.value.type = 1; documentTypeStr.value = 'zálohovú fakúru'; break;
+    case 3: document.value.type = 1; documentTypeStr.value = 'dobropis'; break;
+    case 4: document.value.type = 2; documentTypeStr.value = 'cenovú ponuku'; break;
+    case 5: document.value.type = 2; documentTypeStr.value = 'objednávku'; break;
+  }
+}
+
+function addItem() {
+  const item = {
+    name: "",
+    quantity: 0,
+    unit: "ks",
+    unit_price: 0.0,
+    vat: 0,
+    total: 0.0,
+    description: "",
+  };
+
+  items.value.push(item);
+}
+
+function removeItem(index: number) {
+  items.value.splice(index, 1);
 }
 
 function submitHandler() {
-  //odoslu sa data
+  submitted.value = true;
+  return store
+    .dispatch("addDocument", document.value)
+    .then((res) => {
+      const documentResponse = res;
+      console.log("Document from Res " + JSON.stringify(documentResponse));
+      showModal();
+      return documentResponse;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const setModal = useModal({
+  submitted1: 1,
+});
+
+let isVisible = reactive({});
+
+isVisible = setModal("submitted1", false);
+
+function showModal() {
+  isVisible = setModal("submitted1", true);
+}
+
+function addNew() {
+  isVisible = setModal("submitted1", false);
+  route.push({
+    name: "Add document",
+  });
+}
+
+function closeModal() {
+  isVisible = setModal("submitted1", false);
+  route.push({
+    name: "My documents",
+  });
 }
 
 onBeforeMount(async () => {
-  refreshData();
+  await refreshData();
 });
 </script>
+
+<style>
+.modal-vue3-footer {
+  display: none !important;
+}
+</style>

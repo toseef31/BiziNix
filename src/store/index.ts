@@ -199,6 +199,17 @@ export const store = createStore({
       return data;
     },
     //#endregion
+    //#region documents
+    addDocument({ commit }, document) {
+      return axiosClient.post("/documents/add", document).then(({ data }) => {
+        return data;
+      });
+    },
+    async getDocumentSubtypes() {
+      const { data } = await axiosClient.get(`/documents/getDocumentSubTypes`);
+      return data;
+    },
+    //#endregion
     //#region orders
     addOrder({ commit }, order) {
       return axiosClient.post("/orders/add", order).then(({ data }) => {
