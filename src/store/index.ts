@@ -200,6 +200,10 @@ export const store = createStore({
     },
     //#endregion
     //#region documents
+    async getAllDocumentsForCompany({ commit }, companyId) {
+      const { data } = await axiosClient.get(`/documents/${companyId}/getAll`);
+      return data;
+    },
     addDocument({ commit }, document) {
       return axiosClient.post("/documents/add", document).then(({ data }) => {
         return data;

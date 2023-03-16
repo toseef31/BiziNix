@@ -1,26 +1,13 @@
 <template>
-  <div
-    class="min-h-screen bg-cover bg-no-repeat bg-fixed bg-center"
-    style="background-image: url('../src/assets/6.png')"
-  >
-    <div
-      class="w-full min-h-screen"
-      style="background-color: rgba(0, 0, 0, 0.75)"
-    >
-      <div class="flex flex-col container mx-auto h-full text-white">
+  <div class="min-h-screen">
+    <div class="w-full min-h-screen">
+      <div class="flex flex-col container mx-auto h-full text-gray-800">
         <div
-          class="flex flex-row px-4 py-4 sm:px-0 font-bold text-5xl justify-center"
+          class="flex flex-row px-4 py-8 sm:px-0 font-bold text-5xl justify-center"
         >
           Doručená pošta
         </div>
-        <div class="flex flex-row justify-center">
-          <div><b>K dispozícii:</b> 15/15 scanov 15/15 skartov</div>
-          <div class="px-2 font-bold">|</div>
-          <div class="font-bold">
-            <a href="#" class="hover:underline">Upraviť balík</a>
-          </div>
-        </div>
-        <div class="flex flex-row justify-between py-6">
+        <div class="flex flex-row justify-between py-4">
           <div class="flex flex-1/4 flex-row">
             <div class="flex relative">
               <div
@@ -28,7 +15,7 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-gray-400"
+                  class="w-5 h-5 text-gray-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -45,7 +32,7 @@
                 id="searchInput"
                 v-model="searchQuery"
                 placeholder="Vyhľadajte poštu"
-                class="h-12 pl-8 w-full shadow px-1 rounded border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
+                class="h-12 pl-8 w-full shadow px-1 rounded-xl border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-gray-300 bg-gray-900"
               />
             </div>
           </div>
@@ -53,7 +40,7 @@
 
           <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
             <div class="flex relative">
-              <div class="self-center font-bold px-2">Od:</div>
+              <div class="self-center font-bold px-2 text-white">Od:</div>
               <input
                 id="searchInput"
                 type="date"
@@ -63,7 +50,7 @@
             </div>
             <div class="px-2 font-bold self-center text-2xl">|</div>
             <div class="flex relative">
-              <div class="self-center font-bold pr-2">Do:</div>
+              <div class="self-center font-bold pr-2 text-white">Do:</div>
               <input
                 id="searchInput"
                 type="date"
@@ -76,7 +63,7 @@
 
           <div class="flex flex-1/4">
             <button
-              class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10"
+              class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
               v-on:click="sendMails()"
             >
               Preposlať poštu

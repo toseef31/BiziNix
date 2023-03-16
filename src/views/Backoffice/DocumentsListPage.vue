@@ -1,11 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-900">
+  <div class="min-h-screen">
     <div class="w-full min-h-screen">
       <!--MENU-->
       <div>
-        <nav
-          class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900"
-        >
+        <nav class="bg-gray-900 border-gray-200 px-2 sm:px-4 py-2.5 rounde">
           <div class="container flex flex-wrap items-center mx-auto">
             <div class="flex md:order-2">
               <div class="relative hidden md:block">
@@ -49,7 +47,8 @@
                     :class="[
                       activeTab == 1 ? 'text-teal-500' : 'text-gray-400',
                       'font-bold block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0 md:dark:hover:text-white  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700',
-                    ]">
+                    ]"
+                  >
                     Účtovné
                   </button>
                 </li>
@@ -59,7 +58,8 @@
                     :class="[
                       activeTab == 2 ? 'text-teal-500' : 'text-gray-400',
                       'font-bold block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0 md:dark:hover:text-white  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700',
-                    ]">
+                    ]"
+                  >
                     Obchodné
                   </button>
                 </li>
@@ -73,7 +73,7 @@
       <!--TABY-->
       <div>
         <ul
-          class="nav nav-tabs flex flex-col md:flex-row flex-wrap list-none border-b-0 pl-0 mb-4 bg-teal-500"
+          class="nav nav-tabs flex flex-col md:flex-row flex-wrap list-none border-b-0 pl-0 bg-teal-500"
           id="tabs-tab"
           role="tablist"
         >
@@ -83,7 +83,8 @@
               :class="[
                 activeDocTab == 1 ? 'bg-teal-600' : '',
                 'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 ml-6 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
-              ]">
+              ]"
+            >
               Faktúry
             </button>
           </li>
@@ -93,7 +94,8 @@
               :class="[
                 activeDocTab == 2 ? 'bg-teal-600' : '',
                 'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
-              ]">
+              ]"
+            >
               Zálohové faktúry
             </button>
           </li>
@@ -103,7 +105,8 @@
               :class="[
                 activeDocTab == 3 ? 'bg-teal-600' : '',
                 'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
-              ]">
+              ]"
+            >
               Dobropisy
             </button>
           </li>
@@ -113,7 +116,8 @@
               :class="[
                 activeDocTab == 4 ? 'bg-teal-600' : '',
                 'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 ml-6 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
-              ]">
+              ]"
+            >
               Cenová ponuka
             </button>
           </li>
@@ -123,7 +127,8 @@
               :class="[
                 activeDocTab == 5 ? 'bg-teal-600' : '',
                 'nav-link block font-bold text-sm leading-tight border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 hover:border-transparent hover:bg-teal-300 focus:border-transparent h-full',
-              ]">
+              ]"
+            >
               Objednávka
             </button>
           </li>
@@ -131,26 +136,42 @@
       </div>
 
       <!--KONIEC TABOV-->
-      <div class="flex flex-col px-20 py-20">
+      <div class="flex justify-center">
+        <div
+          class="flex flex-row bg-gray-700 text-gray-300 rounded-b-lg font-bold"
+        >
+          <div class="py-6 pl-6">SPOLU {{ total }}€ bez DPH</div>
+          <div class="py-6 px-8">|</div>
+          <div class="py-6 pr-6">NEUHRADENÉ {{ totalToPay }}€ bez DPH</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col px-20 py-10">
         <div class="flex flex-row justify-between">
-          <div class="flex flex-col items-center">
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" value="" class="sr-only peer" />
-              <div
-                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"
-              ></div>
-              <span
-                class="text-center ml-3 font-bold text-gray-900 dark:text-gray-300"
-                >Vystavené</span
-              >
-            </label>
+          <div class="flex flex-col">
+            <FormKit
+              type="checkbox"
+              name="vystavene"
+              label="Vystavené"
+              validation-visibility="dirty"
+            />
+            <FormKit
+              type="checkbox"
+              name="prijate"
+              label="Prijaté"
+              validation-visibility="dirty"
+            />
+            <div>
+              Importujte prijaté doklady <br />
+              <b>TU</b>
+            </div>
           </div>
           <div class="flex flex-col items-center w-full py-8 px-10">
-            <DocumentsListTable></DocumentsListTable>
-          </div>  
+            <DocumentsListTable :data="documents"></DocumentsListTable>
+          </div>
           <div class="flex flex-col items-center">
             <button
-              class="p-0 w-12 h-12 bg-teal-600 rounded-full hover:bg-teal-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
+              class="p-0 w-12 h-12 bg-gray-800 rounded-full hover:bg-gray-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
               v-on:click="redirect()"
             >
               <svg
@@ -166,7 +187,7 @@
                 />
               </svg>
             </button>
-            <label class="text-white font-bold text-center">Nový doklad</label>
+            <label class="font-bold text-center">Nový doklad</label>
           </div>
         </div>
       </div>
@@ -176,14 +197,37 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
+import type Company from "@/@types/Company";
 const router = useRouter();
 const tab = ref(1);
 const activeTab = ref(1);
 const docTab = ref(1);
 const activeDocTab = ref(1);
+const company = ref({} as Company);
+const documents = ref([] as any[]);
+
+const items = ref([
+  {
+    name: "",
+    quantity: 0,
+    unit: "ks",
+    unit_price: 0.0,
+    vat: 0,
+    total: 0.0,
+    description: "",
+  },
+]);
+
+const total: any = computed(() => {
+  return items.value.reduce((acc, item) => acc + item.total, 0);
+});
+
+const totalToPay: any = computed(() => {
+  return items.value.reduce((acc, item) => acc + item.total, 0);
+});
 
 function currentTab(tabNumber: any) {
   tab.value = tabNumber;
@@ -201,4 +245,27 @@ function redirect() {
   });
 }
 
+watch(
+  () => store.getters.getSelectedCompany,
+  function () {
+    refreshData();
+  }
+);
+
+async function refreshData() {
+  await store
+    .dispatch("getSelectedCompany", store.state.selectedCompany.id)
+    .then((response) => {
+      company.value = response.data;
+      store
+        .dispatch("getAllDocumentsForCompany", company.value.id)
+        .then((response) => {
+          documents.value = response.data;
+        });
+    });
+}
+
+onBeforeMount(async () => {
+  await refreshData();
+});
 </script>
