@@ -15,7 +15,7 @@
                 v-model="document.subtype"
                 type="select"
                 placeholder="Vyberte druh dokladu"
-                :options="documentSubtypes"
+                :options="Constants.DOCUMENT_SUBTYPES"
                 @change="documentSubtypeChanged()"
               />
             </div>
@@ -173,7 +173,7 @@
                         type="select"
                         id="country"
                         name="country"
-                        :options="countries"
+                        :options="Constants.COUNTRIES"
                       />
                     </div>
                   </div>
@@ -358,7 +358,7 @@
                       <FormKit
                         type="select"
                         id="unit"
-                        :options="units"
+                        :options="Constants.UNITS"
                         v-model="item.unit"
                       />
                     </div>
@@ -501,7 +501,7 @@
                     type="select"
                     id="due-in"
                     name="due-in"
-                    :options="dues"
+                    :options="Constants.DUES"
                     v-model="document.due_by"
                   />
                 </div>
@@ -527,7 +527,7 @@
                     type="select"
                     id="delivery-type"
                     name="delivery-type"
-                    :options="delivery_types"
+                    :options="Constants.DELIVERY_TYPES"
                     v-model="document.delivery_method"
                   />
                 </div>
@@ -539,7 +539,7 @@
                     type="select"
                     id="payment_type"
                     name="payment_type"
-                    :options="payment_types"
+                    :options="Constants.PAYMENT_TYPES"
                     v-model="document.payment_method"
                   />
                 </div>
@@ -574,7 +574,7 @@
                     type="select"
                     id="currency"
                     name="currency"
-                    :options="currencies"
+                    :options="Constants.CURRENCIES"
                     v-model="document.currency"
                   />
                 </div>
@@ -631,338 +631,13 @@ import type Company from "@/@types/Company";
 import store from "@/store";
 import { ref, onBeforeMount, computed, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
-import { createInput } from "@formkit/vue";
 import moment from "moment";
-import { templateElement } from "@babel/types";
 import { useModal, Modal } from "usemodal-vue3";
+import Constants from "@/helpers/constants";
 
 const route = useRouter();
 const submitted = ref(false);
 const today = moment(new Date()).format("YYYY-MM-DD");
-
-const countries = [
-  "Slovensko",
-  "Česká republika",
-  "Afganistan",
-  "Albania",
-  "Algeria",
-  "American Samoa",
-  "Andorra",
-  "Angola",
-  "Anguilla",
-  "Antarctica",
-  "Antigua and Barbuda",
-  "Argentina",
-  "Armenia",
-  "Aruba",
-  "Australia",
-  "Austria",
-  "Azerbaijan",
-  "Bahamas",
-  "Bahrain",
-  "Bangladesh",
-  "Barbados",
-  "Belarus",
-  "Belgium",
-  "Belize",
-  "Benin",
-  "Bermuda",
-  "Bhutan",
-  "Bolivia",
-  "Bosnia and Herzegovina",
-  "Botswana",
-  "Bouvet Island",
-  "Brazil",
-  "British Indian Ocean Territory",
-  "Brunei Darussalam",
-  "Bulgaria",
-  "Burkina Faso",
-  "Burundi",
-  "Cambodia",
-  "Cameroon",
-  "Canada",
-  "Cape Verde",
-  "Cayman Islands",
-  "Central African Republic",
-  "Chad",
-  "Chile",
-  "China",
-  "Christmas Island",
-  "Cocos (Keeling) Islands",
-  "Colombia",
-  "Comoros",
-  "Congo",
-  "Cook Islands",
-  "Costa Rica",
-  "Cote d'Ivoire",
-  "Croatia (Hrvatska)",
-  "Cuba",
-  "Cyprus",
-  "Denmark",
-  "Djibouti",
-  "Dominica",
-  "Dominican Republic",
-  "East Timor",
-  "Ecuador",
-  "Egypt",
-  "El Salvador",
-  "Equatorial Guinea",
-  "Eritrea",
-  "Estonia",
-  "Ethiopia",
-  "Falkland Islands (Malvinas)",
-  "Faroe Islands",
-  "Fiji",
-  "Finland",
-  "France",
-  "France, Metropolitan",
-  "French Guiana",
-  "French Polynesia",
-  "French Southern Territories",
-  "Gabon",
-  "Gambia",
-  "Georgia",
-  "Germany",
-  "Ghana",
-  "Gibraltar",
-  "Greece",
-  "Greenland",
-  "Grenada",
-  "Guadeloupe",
-  "Guam",
-  "Guatemala",
-  "Guinea",
-  "Guinea-Bissau",
-  "Guyana",
-  "Haiti",
-  "Heard and Mc Donald Islands",
-  "Holy See (Vatican City State)",
-  "Honduras",
-  "Hong Kong",
-  "Hungary",
-  "Iceland",
-  "India",
-  "Indonesia",
-  "Iran (Islamic Republic of)",
-  "Iraq",
-  "Ireland",
-  "Israel",
-  "Italy",
-  "Jamaica",
-  "Japan",
-  "Jordan",
-  "Kazakhstan",
-  "Kenya",
-  "Kiribati",
-  "Korea, Democratic People's Republic of",
-  "Korea, Republic of",
-  "Kuwait",
-  "Kyrgyzstan",
-  "Lao People's Democratic Republic",
-  "Latvia",
-  "Lebanon",
-  "Lesotho",
-  "Liberia",
-  "Libyan Arab Jamahiriya",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Macau",
-  "Macedonia, The Former Yugoslav Republic of",
-  "Madagascar",
-  "Malawi",
-  "Malaysia",
-  "Maldives",
-  "Mali",
-  "Malta",
-  "Marshall Islands",
-  "Martinique",
-  "Mauritania",
-  "Mauritius",
-  "Mayotte",
-  "Mexico",
-  "Micronesia, Federated States of",
-  "Moldova, Republic of",
-  "Monaco",
-  "Mongolia",
-  "Montserrat",
-  "Morocco",
-  "Mozambique",
-  "Myanmar",
-  "Namibia",
-  "Nauru",
-  "Nepal",
-  "Netherlands",
-  "Netherlands Antilles",
-  "New Caledonia",
-  "New Zealand",
-  "Nicaragua",
-  "Niger",
-  "Nigeria",
-  "Niue",
-  "Norfolk Island",
-  "Northern Mariana Islands",
-  "Norway",
-  "Oman",
-  "Pakistan",
-  "Palau",
-  "Panama",
-  "Papua New Guinea",
-  "Paraguay",
-  "Peru",
-  "Philippines",
-  "Pitcairn",
-  "Poland",
-  "Portugal",
-  "Puerto Rico",
-  "Qatar",
-  "Reunion",
-  "Romania",
-  "Russian Federation",
-  "Rwanda",
-  "Saint Kitts and Nevis",
-  "Saint LUCIA",
-  "Saint Vincent and the Grenadines",
-  "Samoa",
-  "San Marino",
-  "Sao Tome and Principe",
-  "Saudi Arabia",
-  "Senegal",
-  "Seychelles",
-  "Sierra Leone",
-  "Singapore",
-  "Slovenia",
-  "Solomon Islands",
-  "Somalia",
-  "South Africa",
-  "South Georgia and the South Sandwich Islands",
-  "Spain",
-  "Sri Lanka",
-  "St. Helena",
-  "St. Pierre and Miquelon",
-  "Sudan",
-  "Suriname",
-  "Svalbard and Jan Mayen Islands",
-  "Swaziland",
-  "Sweden",
-  "Switzerland",
-  "Syrian Arab Republic",
-  "Taiwan",
-  "Tajikistan",
-  "Tanzania, United Republic of",
-  "Thailand",
-  "Togo",
-  "Tokelau",
-  "Tonga",
-  "Trinidad and Tobago",
-  "Tunisia",
-  "Turkey",
-  "Turkmenistan",
-  "Turks and Caicos Islands",
-  "Tuvalu",
-  "Uganda",
-  "Ukraine",
-  "United Arab Emirates",
-  "United Kingdom",
-  "United States",
-  "United States Minor Outlying Islands",
-  "Uruguay",
-  "Uzbekistan",
-  "Vanuatu",
-  "Venezuela",
-  "Viet Nam",
-  "Virgin Islands (British)",
-  "Virgin Islands (U.S.)",
-  "Wallis and Futuna Islands",
-  "Western Sahara",
-  "Yemen",
-  "Serbia",
-  "Zambia",
-  "Zimbabwe",
-  "Montenegro",
-  "St. Vincent and Grenadines",
-  "Curaçao",
-  "Jersey",
-  "Guernsey",
-  "South Sudan",
-  "Kosovo",
-  "Croatia",
-];
-const currencies = [
-  { label: "€", value: "€" },
-  { label: "Kč", value: "Kč" },
-  { label: "USD", value: "USD" },
-  { label: "£", value: "£" },
-  { label: "HUF", value: "HUF" },
-  { label: "PLN", value: "PLN" },
-  { label: "CHF", value: "CHF" },
-  { label: "RUB", value: "RUB" },
-  { label: "¥", value: "¥" },
-  { label: "SEK", value: "SEK" },
-  { label: "AUD", value: "AUD" },
-  { label: "NOK", value: "NOK" },
-  { label: "CAD", value: "CAD" },
-  { label: "RON", value: "RON" },
-  { label: "LKR", value: "LKR" },
-  { label: "DKK", value: "DKK" },
-  { label: "JPY", value: "JPY" },
-  { label: "HRK", value: "HRK" },
-  { label: "RSD", value: "RSD" },
-  { label: "BGN", value: "BGN" },
-  { label: "MXN", value: "MXN" },
-];
-const units = [
-  { label: "ks.", value: "ks" },
-  { label: "hod.", value: "hod" },
-  { label: "m", value: "m" },
-  { label: "km", value: "km" },
-  { label: "bm", value: "bm" },
-  { label: "m2", value: "m2" },
-  { label: "m3", value: "m3" },
-  { label: "kg", value: "kg" },
-  { label: "mesiace", value: "mesiace" },
-  { label: "osoba", value: "osoba" },
-];
-const payment_types = [
-  { label: "", value: "" },
-  { label: "Bankový prevod", value: "bankovy_prevod" },
-  { label: "Hotovosť", value: "hotovost" },
-  { label: "Paypal", value: "paypal" },
-  { label: "Trustpay", value: "trustpay" },
-  { label: "Besteron", value: "besteron" },
-  { label: "Kreditná karta", value: "kreditna_karta" },
-  { label: "Debetná karta", value: "debetna_karta" },
-  { label: "Dobierka", value: "dobierka" },
-  { label: "Vzájomný zápočet", value: "vzajomny_zapocet" },
-  { label: "GoPay", value: "gopay" },
-  { label: "Viamo", value: "viamo" },
-  { label: "Poštový poukaz", value: "postovy_poukaz" },
-];
-const delivery_types = [
-  { label: "", value: "" },
-  { label: "Poštou", value: "posta" },
-  { label: "Kuriérom", value: "kurier" },
-  { label: "Osobný odber", value: "osobny" },
-  { label: "Nákladná doprava", value: "nakladna" },
-  { label: "Odberné miesto", value: "odberne_miesto" },
-];
-const dues = [
-  { label: "", value: "" },
-  { label: "Dátum vystavenia", value: "datum_vystavenia" },
-  { label: "1 deň", value: "1" },
-  { label: "7 dní", value: "7" },
-  { label: "14 dní", value: "14" },
-  { label: "30 dní", value: "30" },
-  { label: "60 dní", value: "60" },
-  { label: "Iné", value: "ine" },
-];
-const documentSubtypes = [
-  {value: 1, label: 'Faktúra'},
-  {value: 2, label: 'Zálohová faktúra'},
-  {value: 3, label: 'Dobropis'},
-  {value: 4, label: 'Cenová ponuka'},
-  {value: 5, label: 'Objednávka'}
-];
 
 const company = ref({} as Company);
 const address = ref({
@@ -1004,7 +679,7 @@ const companyBankDetails = ref({
   swift: "",
 });
 
-const documentTypeStr = ref('faktúru');
+const documentTypeStr = ref("faktúru");
 
 const document = ref({
   type: 1,
@@ -1023,7 +698,7 @@ const document = ref({
   konstantny: "",
   specificky: "",
   note_above: "",
-  items: JSON.stringify(items.value),
+  items: "",
   note_under: "",
   date_of_issue: today,
   due_by: "",
@@ -1034,6 +709,8 @@ const document = ref({
   pdf: "",
   isIssued: true,
   isPaid: false,
+  total: totalPrice,
+  total_topay: 0
 });
 
 watch(
@@ -1101,12 +778,27 @@ function vatEntered(event: any) {
 }
 
 function documentSubtypeChanged() {
-  switch(document.value.subtype){
-    case 1: document.value.type = 1; documentTypeStr.value = 'fakúru'; break;
-    case 2: document.value.type = 1; documentTypeStr.value = 'zálohovú fakúru'; break;
-    case 3: document.value.type = 1; documentTypeStr.value = 'dobropis'; break;
-    case 4: document.value.type = 2; documentTypeStr.value = 'cenovú ponuku'; break;
-    case 5: document.value.type = 2; documentTypeStr.value = 'objednávku'; break;
+  switch (document.value.subtype) {
+    case 1:
+      document.value.type = 1;
+      documentTypeStr.value = "fakúru";
+      break;
+    case 2:
+      document.value.type = 1;
+      documentTypeStr.value = "zálohovú fakúru";
+      break;
+    case 3:
+      document.value.type = 1;
+      documentTypeStr.value = "dobropis";
+      break;
+    case 4:
+      document.value.type = 2;
+      documentTypeStr.value = "cenovú ponuku";
+      break;
+    case 5:
+      document.value.type = 2;
+      documentTypeStr.value = "objednávku";
+      break;
   }
 }
 
@@ -1130,6 +822,7 @@ function removeItem(index: number) {
 
 function submitHandler() {
   submitted.value = true;
+  document.value.items = JSON.stringify(items.value);
   return store
     .dispatch("addDocument", document.value)
     .then((res) => {

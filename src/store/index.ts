@@ -204,14 +204,43 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/documents/${companyId}/getAll`);
       return data;
     },
+    async getDocumentSubtypes() {
+      const { data } = await axiosClient.get(`/documents/getDocumentSubTypes`);
+      return data;
+    },
+    async getDocumentById({ commit }, id) {
+      const { data } = await axiosClient.get(`/documents/${id}/get`);
+      return data;
+    },
+    async downloadDocument({ commit }, id) {
+      const { data } = await axiosClient.get(`/documents/${id}/download`);
+      return data;
+    },
+    sendReminder({ commit, dispatch }, data) {
+      if (data.id) {
+        return axiosClient
+          .post(`/documents/${data.id}/sendReminder`, data)
+          .then((res) => {
+            return res;
+          });
+      }
+    },
     addDocument({ commit }, document) {
       return axiosClient.post("/documents/add", document).then(({ data }) => {
         return data;
       });
     },
-    async getDocumentSubtypes() {
-      const { data } = await axiosClient.get(`/documents/getDocumentSubTypes`);
-      return data;
+    updateDocument({ commit, dispatch }, document) {
+      if (document.id) {
+        return axiosClient
+          .put(`/documents/${document.id}/update`, document)
+          .then((res) => {
+            return res;
+          });
+      }
+    },
+    deleteDocument({ commit }, id) {
+      return axiosClient.delete(`/documents/${id}/delete`);
     },
     //#endregion
     //#region orders

@@ -28,6 +28,7 @@
                 <input
                   type="text"
                   id="search-navbar"
+                  v-model="searchQuery"
                   class="block w-full p-2 pl-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                   placeholder="Vyhľadajte doklad"
                 />
@@ -140,9 +141,11 @@
         <div
           class="flex flex-row bg-gray-700 text-gray-300 rounded-b-lg font-bold"
         >
-          <div class="py-6 pl-6">SPOLU {{ total }}€ bez DPH</div>
-          <div class="py-6 px-8">|</div>
-          <div class="py-6 pr-6">NEUHRADENÉ {{ totalToPay }}€ bez DPH</div>
+          <div class="py-6 px-12">SPOLU {{ total.toFixed(2) }}€ bez DPH</div>
+          <div class="py-6">|</div>
+          <div class="py-6 px-12">
+            NEUHRADENÉ {{ totalToPay.toFixed(2) }}€ bez DPH
+          </div>
         </div>
       </div>
 
@@ -154,20 +157,24 @@
               name="vystavene"
               label="Vystavené"
               validation-visibility="dirty"
+              v-model="isIssuedChecked"
             />
             <FormKit
               type="checkbox"
               name="prijate"
               label="Prijaté"
               validation-visibility="dirty"
+              v-model="isReceivedChecked"
             />
-            <div>
+            <div class="pt-4">
               Importujte prijaté doklady <br />
-              <b>TU</b>
+              <button class="font-bold">TU</button>
             </div>
           </div>
           <div class="flex flex-col items-center w-full py-8 px-10">
-            <DocumentsListTable :data="documents"></DocumentsListTable>
+            <DocumentsListTable
+              :data="filteredDocumentsBySearch"
+            ></DocumentsListTable>
           </div>
           <div class="flex flex-col items-center">
             <button
@@ -197,7 +204,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref, computed, watch } from "vue";
+import { onBeforeMount, ref, computed, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
 import type Company from "@/@types/Company";
@@ -208,25 +215,52 @@ const docTab = ref(1);
 const activeDocTab = ref(1);
 const company = ref({} as Company);
 const documents = ref([] as any[]);
+const filteredDocuments = ref([] as any[]);
+const searchQuery = ref("");
+const isIssuedChecked = ref(false);
+const isReceivedChecked = ref(false);
 
-const items = ref([
-  {
-    name: "",
-    quantity: 0,
-    unit: "ks",
-    unit_price: 0.0,
-    vat: 0,
-    total: 0.0,
-    description: "",
-  },
-]);
+const filteredDocumentsByIssued: any = computed(() => {
+  return filteredDocuments.value.filter((document: any) => {
+    if (document.isIssued == 1 && isIssuedChecked.value == true) {
+      return true;
+    } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
+      return true;
+    } else if (
+      isIssuedChecked.value == true &&
+      isReceivedChecked.value == true
+    ) {
+      return true;
+    } else if (
+      isIssuedChecked.value == false &&
+      isReceivedChecked.value == false
+    ) {
+      return true;
+    }
+  });
+});
+
+const filteredDocumentsBySearch: any = computed(() => {
+  return filteredDocumentsByIssued.value.filter((document: any) => {
+    const odberatel = document.odberatel.toLowerCase();
+    const serial_number = document.serial_number.toLowerCase();
+    const searchTerm = searchQuery.value.toLowerCase();
+    return odberatel.includes(searchTerm) || serial_number.includes(searchTerm);
+  });
+});
 
 const total: any = computed(() => {
-  return items.value.reduce((acc, item) => acc + item.total, 0);
+  return filteredDocumentsBySearch.value.reduce(
+    (acc: any, item: any) => acc + item.total,
+    0
+  );
 });
 
 const totalToPay: any = computed(() => {
-  return items.value.reduce((acc, item) => acc + item.total, 0);
+  return filteredDocumentsBySearch.value.reduce(
+    (acc: any, item: any) => (!item.isPaid ? acc + item.total : acc + 0),
+    0
+  );
 });
 
 function currentTab(tabNumber: any) {
@@ -237,6 +271,43 @@ function currentTab(tabNumber: any) {
 function currentDocTab(tabNumber: any) {
   docTab.value = tabNumber;
   activeDocTab.value = tabNumber;
+  switch (tabNumber) {
+    case 1:
+      filteredDocuments.value = documents.value.filter((document: any) => {
+        if (document.subtype == 1) {
+          return true;
+        }
+      });
+      break;
+    case 2:
+      filteredDocuments.value = documents.value.filter((document: any) => {
+        if (document.subtype == 2) {
+          return true;
+        }
+      });
+      break;
+    case 3:
+      filteredDocuments.value = documents.value.filter((document: any) => {
+        if (document.subtype == 3) {
+          return true;
+        }
+      });
+      break;
+    case 4:
+      filteredDocuments.value = documents.value.filter((document: any) => {
+        if (document.subtype == 4) {
+          return true;
+        }
+      });
+      break;
+    case 5:
+      filteredDocuments.value = documents.value.filter((document: any) => {
+        if (document.subtype == 5) {
+          return true;
+        }
+      });
+      break;
+  }
 }
 
 function redirect() {
@@ -261,6 +332,12 @@ async function refreshData() {
         .dispatch("getAllDocumentsForCompany", company.value.id)
         .then((response) => {
           documents.value = response.data;
+          filteredDocuments.value = documents.value.filter((document: any) => {
+            if (document.subtype == 1) {
+              return true;
+            }
+          });
+          filteredDocumentsByIssued.value = filteredDocuments.value;
         });
     });
 }

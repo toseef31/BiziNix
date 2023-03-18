@@ -29,4 +29,7 @@ export default interface Doklad {
   isPaid: boolean;
   company_name: string;
   updated_at: Date;
+  overdue: string;
+  total: number;
+  total_topay: number;
 }
