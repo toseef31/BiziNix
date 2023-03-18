@@ -595,10 +595,11 @@ import type Company from "@/@types/Company";
 import type Doklad from "@/@types/Document";
 import store from "@/store";
 import { ref, onBeforeMount, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 
 const route = useRoute();
+const router = useRouter();
 const submitted = ref(false);
 
 const document = ref({} as Doklad);
@@ -715,7 +716,7 @@ function submitHandler() {
     .then((res) => {
       const documentResponse = res;
       console.log("Document from Res " + JSON.stringify(documentResponse));
-      route.push({
+      router.push({
         name: "My documents",
       });
       return documentResponse;
