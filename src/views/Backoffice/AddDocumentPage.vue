@@ -479,6 +479,15 @@
                   </div>
                 </div>
               </div>
+              <div class="flex justify-center pt-4 text-black">
+                <FormKit
+                  type="checkbox"
+                  name="paid"
+                  label="Uhradené"
+                  validation-visibility="dirty"
+                  v-model="document.isPaid"
+                />
+              </div>
             </div>
             <hr class="my-8 h-px bg-gray-200 border-0 dark:bg-gray-300" />
             <div class="flex flex-col">
@@ -709,8 +718,9 @@ const document = ref({
   pdf: "",
   isIssued: true,
   isPaid: false,
+  paid: 0.0,
   total: totalPrice,
-  total_topay: 0
+  paid_date: today
 });
 
 watch(
@@ -823,13 +833,13 @@ function removeItem(index: number) {
 function submitHandler() {
   submitted.value = true;
   document.value.items = JSON.stringify(items.value);
+  if(document.value.isPaid == true) {
+    document.value.paid = document.value.total;
+  }
   return store
     .dispatch("addDocument", document.value)
     .then((res) => {
-      const documentResponse = res;
-      console.log("Document from Res " + JSON.stringify(documentResponse));
       showModal();
-      return documentResponse;
     })
     .catch((err) => {
       console.log(err);

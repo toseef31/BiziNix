@@ -1,6 +1,9 @@
 <template>
   <div class="overflow-x-auto w-full">
-    <div class="flex flex-row pb-6 gap-4 justify-start">
+    <div
+      class="flex flex-row pb-6 gap-4 justify-start"
+      v-show="selectedDocuments.length > 0"
+    >
       <div class="flex">
         <button
           type="button"
@@ -22,7 +25,12 @@
     </div>
     <ul>
       <li class="pb-2" v-for="document in documents" :key="document.id">
-        <div class="flex bg-gray-700 rounded-2xl">
+        <div
+          :class="[
+            document.isPaid ? 'bg-teal-900' : 'bg-gray-700',
+            'flex rounded-2xl',
+          ]"
+        >
           <div class="flex flex-col basis-4/5 px-4">
             <div class="flex flex-col">
               <div
@@ -76,11 +84,24 @@
                 >
                   Vystaviť upomienku
                 </button>
+                <button
+                  :disabled="document.isPaid"
+                  :class="[
+                    document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
+                    'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
+                  ]"
+                  type="button"
+                  class=" "
+                  v-on:click="repay()"
+                >
+                  <label v-show="!document.isPaid">Uhradiť</label>
+                  <label v-show="document.isPaid">Uhradené</label>
+                </button>
               </div>
             </div>
           </div>
           <div
-            class="flex flex-col basis-2/6 bg-gray-800 rounded-2xl text-white py-2"
+            class="flex flex-col basis-1/4 bg-gray-800 rounded-2xl text-white py-2"
           >
             <div class="flex flex-row">
               <div class="flex flex-col items-end basis-3/5 pr-8">
@@ -90,8 +111,8 @@
                 <div class="flex text-xl">{{ document.total }} € s DPH</div>
                 <div class="flex text-sm">{{ document.overdue }}</div>
               </div>
-              <div class="flex flex-col items-center basis-2/5">
-                <div class="flex items-center pb-4">
+              <div class="flex flex-col items-center justify-center basis-2/5">
+                <div class="flex items-center">
                   <input
                     id="default-checkbox"
                     type="checkbox"
@@ -99,29 +120,6 @@
                     v-model="selectedDocuments"
                     class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                </div>
-                <div class="flex">
-                  <label class="relative cursor-pointer">
-                    <input
-                      type="checkbox"
-                      v-bind:checked="document.isPaid"
-                      class="sr-only peer"
-                      disabled
-                    />
-                    <div
-                      class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"
-                    ></div>
-                    <span
-                      v-show="!document.isPaid"
-                      class="text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >Neuhradená</span
-                    >
-                    <span
-                      v-show="document.isPaid"
-                      class="text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >Uhradená</span
-                    >
-                  </label>
                 </div>
               </div>
             </div>
@@ -165,7 +163,7 @@
           v-model:visible="isVisible"
           :type="'clean'"
           :closable="false"
-          title="Zmazanie dokladu"
+          title="Zmazanie dokladov"
         >
           <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
             <div
@@ -236,6 +234,56 @@
             </div>
           </div>
         </Modal>
+        <Modal
+          name="repayModal"
+          v-model:visible="isVisible"
+          :type="'clean'"
+          :closable="false"
+          title="Zaplatenie dokladu"
+        >
+          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+            <div
+              class="flex justify-start py-4 px-4 text-white font-bold text-lg"
+            >
+              Prosím zadajte hodnotu platby dokladu.
+            </div>
+            <div class="flex justify-start px-4 text-white">
+              <FormKit
+                type="number"
+                id="repay_amount"
+                label="Zaplatená suma"
+                v-model="document.paid"
+              />
+            </div>
+            <div class="flex justify-start px-4 text-white">
+              <FormKit
+                type="date"
+                name="Dátum úhrady"
+                label="Dátum úhrady"
+                validation="required|length:10"
+                v-model="document.payment_date"
+              />
+            </div>
+            <div class="flex flex-row justify-end py-2 px-4">
+              <div class="flex flex-1/4 px-4">
+                <button
+                  class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+                  v-on:click="repayConfirm(document)"
+                >
+                  Zaplatiť
+                </button>
+              </div>
+              <div class="flex flex-1/4">
+                <button
+                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                  v-on:click="closeModal('repayModal')"
+                >
+                  Zrušiť
+                </button>
+              </div>
+            </div>
+          </div>
+        </Modal>
       </li>
     </ul>
   </div>
@@ -262,7 +310,8 @@ const reminderEmail = ref("");
 const setModal = useModal({
   deleteModal: 1,
   deleteMultipleModal: 2,
-  reminderModal: 3
+  reminderModal: 3,
+  repayModal: 4,
 });
 
 let isVisible = reactive({});
@@ -270,6 +319,7 @@ let isVisible = reactive({});
 isVisible = setModal("deleteModal", false);
 isVisible = setModal("deleteMultipleModal", false);
 isVisible = setModal("reminderModal", false);
+isVisible = setModal("repayModal", false);
 
 function showModal(modal: string) {
   isVisible = setModal(modal, true);
@@ -392,6 +442,23 @@ function confirmReminder(id: any, email: any) {
       const documentResponse = res;
       console.log("Res " + JSON.stringify(documentResponse));
       return documentResponse;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function repay() {
+  showModal("repayModal");
+}
+
+function repayConfirm(document: any) {
+  isVisible = setModal("repayModal", false);
+  console.log(document);
+  store
+    .dispatch("updateDocument", document)
+    .then(() => {
+      router.go(0);
     })
     .catch((err) => {
       console.log(err);

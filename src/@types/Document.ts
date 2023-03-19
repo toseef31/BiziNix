@@ -23,6 +23,7 @@ export default interface Doklad {
   delivery_method: string;
   delivery_date: string;
   payment_method: string;
+  payment_date: string;
   currency: string;
   pdf: string;
   isIssued: boolean;
