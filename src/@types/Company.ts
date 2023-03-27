@@ -17,7 +17,13 @@ export default interface Company {
   last_step: number
   first_name: string
   last_name: string
-  subjects_of_business: string
+  subjects_of_business:[{
+    id: number,
+    title: string,
+    price: number,
+    description:string,
+    category_id: number
+  }],
   note: string
   updated_at: Date
   is_hq_virtual: boolean

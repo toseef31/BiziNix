@@ -10,6 +10,15 @@ export default interface Order {
   is_tos_accepted: boolean
   is_advocate_requested: boolean
   fakturacne_udaje_id: number
+  fakturacne_udaje: [{
+    first_name: string,
+    last_name: string,
+    name: string,
+    ico: string,
+    dic: string,
+    ic_dph: string,
+    address_id: number
+  }],
   first_name: string
   last_name: string
   company_name: string

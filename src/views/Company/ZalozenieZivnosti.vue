@@ -20,27 +20,32 @@
       </div>
     </div>
   </div>
-  <div class="py-6 bg-gray-800 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800">
-      <h2 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+  <div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-center mb-8 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
 
       <!-- NOVY FORM -->
       <div>
-        <FormKit type="form" :actions="false">
-          <FormKit type="multi-step" tab-style="tab">
-            <FormKit type="step" name="personalInfo">
+        <FormKit type="form"
+        :actions="false"
+        id="zalZivnostiMultiStepPlugin"
+        #default="{ value }"
+        @submit="newSustmiApp"
+        >
+          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
+            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie">
               <!-- component for example brevity. -->
-              <StepOne />
+              <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
-            <FormKit type="step" name="references">
+            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje">
               <!-- component for example brevity. -->
-              <StepTwo />
+              <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
             </FormKit>
 
-            <FormKit type="step" name="Supplemental">
+            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje">
             <!-- component for example brevity. -->
-            <StepThree />
+            <fakturacneUdajeFormStep ref="invoiceData" />
 
             <!-- using step slot for submit button-->
             <template #stepNext>
@@ -48,7 +53,11 @@
             </template>
             </FormKit>
           </FormKit>
+          <details>
+            <pre>{{ value }}</pre>
+          </details>
         </FormKit>
+        <button @click="newLogSubmit">New log Submit</button>
       </div>
 
       <div>
@@ -70,156 +79,6 @@
         </div>
       </div>
 
-      <FormKit type="form" id="zalZivForm"
-        #default="{ value, state: { valid } }"
-        :plugins="[stepPlugin]"
-        @submit="submitApp"
-        :actions="false"
-      >
-        <!-- Zoznam krokov list steps -->
-        <div class="flex items-center justify-center">
-          <ul class="steps m-8 list-none flex flex-col md:flex-row space-x-8 cursor-pointer">
-            <li v-for="(step, stepName) in steps" :class="['step px-4 py-5 my-1', { 'has-errors': checkStepValidity(stepName) }]" @click="activeStep = stepName.toString()"
-            :data-step-valid="step.valid && step.errorCount === 0" :data-step-active="activeStep === stepName.toString()">
-              <span
-                v-if="checkStepValidity(stepName)"
-                class="step--errors"
-                v-text="step.errorCount + step.blockingCount"
-              />
-              {{ camel2title(stepName.toString()) }}
-            </li>
-          </ul>
-        </div>
-        <div class="form-body my-6">
-          <!-- Predmet podnikania -->
-          <section v-show="activeStep === 'PredmetPodnikania'">
-            <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
-            <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
-            <FormKit type="group" id="PredmetPodnikania" name="PredmetPodnikania">            
-              <FormKit :type="multiSelVueForm" id="subjects_of_business" v-model="companyOrZivnostModel.subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
-                :items="businessCategori"
-                @input="calculatePriceForBusinessOfcategories"
-                placeholder="Example placeholder"
-                help="Môžete vybrať aj viac predmetov podnikania."
-                validation="required"/>
-            </FormKit>
-          </section>
-          <!-- Podnikatelské údaje -->
-          <section v-show="activeStep === 'Podnikatelské údaje'">
-            <div class="text-4xl font-bold">Vaše osobné a podnikatelské údaje</div>
-            <div class="my-2">Na tomto mieste zadajte prosím vaše údje.</div>
-            <div>
-              <FormKit type="group" id="Podnikatelské údaje" name="Podnikatelské údaje">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-                  <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
-                  <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required|length:2" />
-                  <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Dodatok k názvu živnosti" />
-                  <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
-                </div>
-                <div class="flex flex-col md:flex-row md:space-x-4">
-                  <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
-                  <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
-                    <FormKit type="text" name="title_before" v-model="user.title_before" label="Titul pred menom" />
-                    <FormKit type="text" name="title_after" v-model="user.title_after" label="Titul za menom" />
-                  </div>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="text" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
-                  <FormKit type="date" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
-                  <FormKit type="text" name="rodne_cislo" v-model="user.rodne_cislo" label="Rodné číslo" validation="required|length:10" />
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                  <FormKit type="text" name="city" v-model="userAddress.city" label="Mesto" validation="required" />
-                  <FormKit type="text" name="country" v-model="userAddress.country" label="Krajina" validation="required" />
-                  <FormKit type="text" name="psc" v-model="userAddress.psc" label="PSČ" validation="required" />
-                  <FormKit type="text" name="street" v-model="userAddress.street" label="Ulica" validation="required" />
-                  <FormKit type="text" name="street_number" v-model="userAddress.street_number" label="Súpisne číslo" validation="required" />
-                  <FormKit type="text" name="street_number2" v-model="userAddress.street_number2" label="Orientačné číslo" validation="required" />
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="email" name="email"
-                    v-model="user.email"
-                    label="Email"
-                    :validation-rules="{ emailIsUnique }"
-                    validation="required|email|emailIsUnique"
-                    :validation-messages="{ emailIsUnique: 'E-mail sa už používa!'}"
-                    validation-visibility="live"                  
-                    help="Email ktorý budete používať aj na prihlasenie do účtu."
-                  />
-                  <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
-                  <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
-                </div>
-                <div class="grid grid-cols-1 gap-4">
-                  <div class="font-bold">Miesto podnikania?</div>
-                  <FormKit type="checkbox" v-model="placeOfBusinness" :ignore="true" :disabled="true" label="Totožné s trvalým bydliskom?" name="placeOfBusinness" />
-                </div>
-                <div class="flex flex-col md:flex-row md:space-x-4">
-                  <FormKit type="radio" v-model="companyRegDateCheckboxValue" :ignore="true" label="Registrácia živnosti ku dňu?"
-                  :options="[{ value: 'Nezáleží', label: 'Nezáleží' }, { value: 'Podľa dátumu', label: 'Podľa dátumu' }]" name="companyRegDateCheckbox"
-                  validation="required" />
-                  <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
-                    <FormKit type="date" name="registration_date" v-model="companyOrZivnostModel.registration_date" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
-                  </div>
-                </div>
-              </FormKit>
-            </div>
-          </section>
-          <!-- Fakturačné údaje -->
-          <section v-show="activeStep === 'Fakturačné údaje'">
-            <div class="text-4xl font-bold">Fakturačné údaje</div>
-            <div class="my-2">Na nasledujúce údaje vám budeme odosielať faktúri.</div>
-            <div>
-              <FormKit type="group" v-model="fakturacne_udaje" id="Fakturačné údaje" name="Fakturačné údaje">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-                <FormKit type="text" name="first_name" label="Meno" validation="required" />
-                <FormKit type="text" name="last_name" label="Priezvisko" validation="required" />
-                <FormKit type="checkbox" v-model="invoiceAddressIsSame" :ignore="true" :disabled="true" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
-                </div>
-                <div class="w-fit">
-                  <FormKit type="checkbox" v-model="orderingAsCompany" :ignore="true" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
-                </div>
-                <div v-show="orderingAsCompany" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <FormKit type="text" name="name" label="Názov firmy" />
-                    <FormKit type="text" name="ico" label="IČO" />
-                    <FormKit type="text" name="dic" label="DIČ" />
-                    <FormKit type="text" name="ic_dph" label="IČ DPH" />
-                </div>
-
-                <div class="w-full">
-                  <FormKit type="radio" v-model="paymentOptions" label="Spôsob platby?" name="payment_method"
-                  :options="
-                  [
-                    { value: 'iban', label: 'Priamy vklad na účet', help: 'Pošlite vašu platbu priamo na náš bankový účet, ktorý nájdete na ďakovnej stránke po dokončení objednávky.' },
-                    { value: 'stripe', label: 'Online kartou', help: 'Platba prostredníctvom platobnej brány Stripe.' }
-                  ]"
-                  validation="required" />
-
-                  <div v-if="paymentOptions == 'stripe'" class="platba bg-gray-900 mt-4 p-4">
-                    <stripePaymentComponent ref="childRefComponentForPay"></stripePaymentComponent>
-                  </div>
-
-                </div>
-
-              </FormKit>
-            </div>
-          </section>
-        </div>
-
-        <div class="flex my-2 justify-center space-x-4">
-          <FormKit type="button" :disabled="activeStep == 'PredmetPodnikania'" @click="setStep(-1)" v-text="'Predchádzajúci krok'" />
-          <FormKit type="button" class="next" :disabled="activeStep == 'Fakturačné údaje' " @click="setStep(1)" v-text="'Ďalši krok'"/>
-        </div>
-
-        <div class="my-4 text-center text-lg">
-          <div>Cena za zavolené predmety podnikania: {{ finalPriceForBusinessCategori }}</div>
-          <div>Celkom k úhrade: {{ totalForPay }} €</div>
-        </div>
-        <div class="flex flex-col items-center justify-center">
-          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
-        </div>
-        <!-- <button class="bg-fuchsia-500 p-2 rounded-md" @click="logujData">Loguj dáda</button> 
-        <pre wrap>{{ value }}</pre> -->
-      </FormKit>
 
     </div>
   </div>
@@ -235,29 +94,51 @@ import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSe
 import router from "@/router";
 import type User from "@/@types/User";
 import { toast } from 'vue3-toastify';
+import { getNode } from '@formkit/core';
 import useCalculatePriceForBusinessCategories from './Composables/CalculatePriceForBusinessCategories'
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
-import StepOne from "@/components/forms/stepOne.vue";
-import StepTwo from "@/components/forms/stepTwo.vue";
-import StepThree from "@/components/forms/stepThree.vue";
+import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
+import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
+import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
+import type predmetPodnikaniaFormStepVue from "@/components/forms/predmetPodnikaniaFormStep.vue";
+import type Address from "@/@types/Address";
+import type Order from "@/@types/Order";
+import type Company from "@/@types/Company";
+import { fa } from "@formkit/i18n";
+
 
 onBeforeMount(() => {
       
-  companyOrZivnostModel.value.subjects_of_business.pop()
-  store.dispatch("getAllSubjectOfBusiness")
-  .then(res => {
-    businessCategori.value.shift()
-    res.data.data.forEach((element: any) => {
-      businessCategori.value.push({
-        label: element.title,
-        value: element
-      })
-    })
-  })
-    .catch(err => {
-    // sucessMsg.value = false
-    // errorMsg.value = err.response.data.errors // response data is from store actions
-  })
+  // companyOrZivnostModel.value!.subjects_of_business.pop()
+  // store.dispatch("getAllSubjectOfBusiness")
+  // .then(res => {
+  //   businessCategori.value.shift()
+  //   res.data.data.forEach((element: any) => {
+  //     businessCategori.value.push({
+  //       label: element.title,
+  //       value: element
+  //     })
+  //   })
+  // })
+  //   .catch(err => {
+  //   errorMsg.value = err.response.data.errors // response data is from store actions
+  // })
+
+})
+
+
+onMounted(() => {
+
+  //let formsValues: any = getNode('zalZivnostiMultiStepPlugin')?.value;
+
+  // userAddress = ref({
+  //   street: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street,
+  //   street_number: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street_number,
+  //   street_number2: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street_number2,
+  //   city: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.city,
+  //   psc: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.psc,
+  //   country: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.country,
+  // })
 
 })
 
@@ -272,79 +153,115 @@ let errorMsgCompany = ref('');
 let sucessMsg = ref('');
 let addressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
-const camel2title = (str: string) => str
-  .replace(/([A-Z])/g, (match) => ` ${match}`)
-  .replace(/^./, (match) => match.toUpperCase())
-  .trim()
+// const camel2title = (str: string) => str
+//   .replace(/([A-Z])/g, (match) => ` ${match}`)
+//   .replace(/^./, (match) => match.toUpperCase())
+//   .trim()
 
-const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
-const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
-  props: ['items'],
-})
-const checkStepValidity = (stepName: any) => {
-  return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
+// const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
+// const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
+//   props: ['items'],
+// })
+// const checkStepValidity = (stepName: any) => {
+//   return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
+// }
+
+// let businessCategori = ref([
+//   {
+//     label: '' as string,
+//     value: ''
+//   }
+// ])
+
+
+let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStepVue>>(null as any)
+let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
+let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
+
+let userAddress = ref<Address>();
+let user = ref<User>();
+let companyOrZivnostModel = ref<Company>({} as any);
+
+let totalForPay = computed(() => subjects_of_business.value.finalPriceForBusinessCategori + order.value.items[0].price)
+
+  // let userAddress = ref<Address>({
+//   id: null,
+//   street: '',
+//   street_number: '',
+//   street_number2: '',
+//   city: '',
+//   psc: '',
+//   country: ''
+// })
+
+function newLogSubmit(){
+
+  console.log("InvData");
+  console.log(invoiceData.value)
+
+//console.log(formsValues['zalZivnostiMultiStepPlugin'].predmetPodnikania.subjects_of_business);
+//companyOrZivnostModel.value?.subjects_of_business.shift();
+//companyOrZivnostModel.value.subjects_of_business.push(formsValues['zalZivnostiMultiStepPlugin'].predmetPodnikania.subjects_of_business)
+console.log("CompanyModel");
+console.log(companyOrZivnostModel.value.subjects_of_business);
+
+console.log("UserAddresssssss");
+console.log(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
+
+console.log("SubjectOfbusinesss");
+console.log(subjects_of_business.value?.subjects_of_business);
+console.log("UserAddresssssss original");
+console.log(userAddress.value);
+
 }
 
-let businessCategori = ref([
-  {
-    label: '' as string,
-    value: ''
-  }
-])
+//let companyRegDateCheckboxValue = ref("")
+// let fakturacne_udaje = ref({
+//   first_name: '',
+//   last_name: '',
+//   name: '',
+//   ico: '',
+//   dic: '',
+//   ic_dph: '',
+//   address_id: 12
+//   // TO DO ADDRESS ID
+// })
 
-let companyRegDateCheckboxValue = ref("")
-let paymentOptions = ref("")
-let fakturacne_udaje = ref({
-  first_name: '',
-  last_name: '',
-  name: '',
-  ico: '',
-  dic: '',
-  ic_dph: '',
-  address_id: 12
-  // TO DO ADDRESS ID
-})
-let userAddress = ref({
-  street: '',
-  street_number: '',
-  street_number2: '',
-  city: '',
-  psc: '',
-  country: '',
-})
-let user = ref({
-    address_id: 0, // address should be created first and save to store
-    first_name: '',
-    last_name: '',
-    title_before: '',
-    title_after: '',
-    gender: '',
-    phone: '',
-    date_of_birth: '',
-    rodne_cislo: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-} as User)
-let companyOrZivnostModel = ref({
-  name: '',
-  headquarters_id: 0,
-  type: 2, // type 1 sro, type 2 živnosť
-  status: 2, // Zakladanie spoločnosti je v priebehu
-  ičo: '',
-  dič: '',
-  icdph: '',
-  is_dph: false,
-  registration_date: '',
-  owner: 0,
-  subjects_of_business: [{
-    id: '',
-    title: '',
-    price: 0,
-    description: '',
-    category_id: 0
-  }]
-})
+// let user = ref({
+//     address_id: 0, // address should be created first and save to store
+//     first_name: '',
+//     last_name: '',
+//     title_before: '',
+//     title_after: '',
+//     gender: '',
+//     phone: '',
+//     date_of_birth: '',
+//     rodne_cislo: '',
+//     email: '',
+//     password: '',
+//     password_confirmation: '',
+// } as User )
+
+// let companyOrZivnostModel = ref({
+//   name: '',
+//   headquarters_id: 0,
+//   type: 2, // type 1 sro, type 2 živnosť
+//   status: 2, // Zakladanie spoločnosti je v priebehu
+//   ičo: '',
+//   dič: '',
+//   icdph: '',
+//   is_dph: false,
+//   registration_date: '',
+//   owner: 0,
+//   subjects_of_business: [{
+//     id: '',
+//     title: '',
+//     price: 0,
+//     description: '',
+//     category_id: 0
+//   }]
+// })
+
 let headquarter = ref({
   name: '',
   description: 'test',
@@ -388,9 +305,7 @@ let order = ref({
   }]
 })
 
-const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(companyOrZivnostModel.value.subjects_of_business)
-
-let totalForPay = computed(() => finalPriceForBusinessCategori.value + order.value.items[0].price)
+//const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(companyOrZivnostModel.value!.subjects_of_business)
 
 function logujData(){
   console.log(companyOrZivnostModel.value.subjects_of_business)
@@ -398,14 +313,16 @@ function logujData(){
   console.log(user.value)
   console.log(headquarter.value)
   console.log(companyOrZivnostModel.value)
-  console.log(fakturacne_udaje.value)
-  console.log(paymentOptions.value)
+  //console.log(fakturacne_udaje.value)
+  //console.log(paymentOptions)
   console.log(order.value)
 }
 
 /* Submiting form and Api calls */
 
 async function registerAddress() {
+
+  userAddress.value = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
   return store.dispatch('registerAddress', userAddress.value)
     .then((res) => {
       console.log("Registering address: " + JSON.stringify(res))
@@ -419,7 +336,8 @@ async function registerAddress() {
 
 async function registerUser() {
 
-  user.value.address_id = addressFromResponse.address_id
+  user.value  = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user;
+  user.value.address_id  = addressFromResponse.address_id
 
   return store.dispatch('registerUser', user.value) // dispatch -> register action in store
       .then((res) => {
@@ -434,7 +352,7 @@ async function registerUser() {
 }
 
 async function addHeadquarter() {
-  headquarter.value.owner_name = user.value.first_name + " " + user.value.last_name
+  headquarter.value.owner_name = user.value?.first_name + " " + user.value?.last_name
 
   if(placeOfBusinness.value){
     headquarter.value.name = 'Rovnaký názov ako moja trvalá adresa'
@@ -459,10 +377,13 @@ async function addHeadquarter() {
 
 async function addCompany() {
 
-  let dodatokNazvuZivnosti: string = companyOrZivnostModel.value.name // Dodatok k nazvu živnosti
+  companyOrZivnostModel.value.type = '2'
   companyOrZivnostModel.value.owner = userFromResponse.user_id
   companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
-  companyOrZivnostModel.value.name = user.value.first_name + " " + user.value.last_name + " " + dodatokNazvuZivnosti
+  companyOrZivnostModel.value.is_dph = false
+  companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
+  companyOrZivnostModel.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
+  companyOrZivnostModel.value.registration_date = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.registration_date
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
@@ -473,11 +394,13 @@ async function addCompany() {
   }).catch( err => {
     console.log(err)
   })
+
 }
 
 async function addOrder() {
+
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  order.value.payment_method = paymentOptions.value
+  order.value.payment_method = invoiceData.value.paymentOptions
   order.value.company_id = companyFomResponse.company.id
   order.value.user_id = userFromResponse.user_id
   order.value.address_id = addressFromResponse.address_id
@@ -490,12 +413,12 @@ async function addOrder() {
     })
   });
 
-  order.value.fakturacne_udaje[0].first_name = fakturacne_udaje.value.first_name
-  order.value.fakturacne_udaje[0].last_name = fakturacne_udaje.value.last_name
-  order.value.fakturacne_udaje[0].dic = fakturacne_udaje.value.dic
-  order.value.fakturacne_udaje[0].ic_dph = fakturacne_udaje.value.ic_dph
-  order.value.fakturacne_udaje[0].ico = fakturacne_udaje.value.ico
-  if(invoiceAddressIsSame.value){
+  order.value.fakturacne_udaje[0].first_name = invoiceData.value.fakturacne_udaje[0].first_name
+  order.value.fakturacne_udaje[0].last_name = invoiceData.value.fakturacne_udaje[0].last_name
+  order.value.fakturacne_udaje[0].dic = invoiceData.value.fakturacne_udaje[0].dic
+  order.value.fakturacne_udaje[0].ic_dph = invoiceData.value.fakturacne_udaje[0].ic_dph
+  order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
+  if(invoiceData.value.invoiceAddressIsSame){
     order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
   }
 
@@ -532,6 +455,39 @@ const callStripePayment = (totalForPay: number, orderId: any) => {
     childRefComponentForPay.value.pay(totalForPay, orderId)
 }
 
+const newSustmiApp = async (formdata: any, node: any) => {
+  registerAddress().then(() => {
+        registerUser().then(() => {
+          if(userFromResponse){
+            addHeadquarter().then(() => {
+              addCompany().then(() => {
+                addOrder().then(() => {
+                  userFromResponse = null
+                  hqFromResponse = null
+                  companyOrZivnostModel.value.owner = 0
+                  companyOrZivnostModel.value.headquarters_id = 0
+                  console.log("SUPER!")
+
+                  if(invoiceData.value.paymentOptions == "stripe"){
+                    callStripePayment(totalForPay.value, orderFromRes.id)
+                  } else {
+                      router.push({
+                        name:"Thanks You New Order",
+                        params: {
+                          orderId: orderFromRes.id,
+                        }
+                    })
+                  }
+
+                })
+              })
+            })
+          }
+        })
+    })
+}
+
+
 const submitApp = async (formData: any, node: any) => {
 
   console.log(formData)
@@ -549,7 +505,7 @@ const submitApp = async (formData: any, node: any) => {
                   companyOrZivnostModel.value.headquarters_id = 0
                   console.log("SUPER!")
 
-                  if(paymentOptions.value == "stripe"){
+                  if(invoiceData.value.paymentOptions == "stripe"){
                     callStripePayment(totalForPay.value, orderFromRes.id)
                   } else {
                       router.push({

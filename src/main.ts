@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-
 import App from "./App.vue";
 import "./index.css";
 import router from "./router";
@@ -8,13 +7,12 @@ import store from "./store";
 import { defineRule } from "vee-validate";
 import { plugin, defaultConfig } from '@formkit/vue';
 import { createProPlugin, inputs } from '@formkit/pro';
-import { createMultiStepPlugin } from '@formkit/addons'
-import { genesisIcons } from '@formkit/icons'
-import { generateClasses } from '@formkit/themes';
-import genesis from '@formkit/themes/tailwindcss/genesis';
-//import themeFormkit from "./themeFormkit";
-import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import { createMultiStepPlugin } from '@formkit/addons';
+import { genesisIcons } from '@formkit/icons';
+import '@formkit/themes/genesis';
+import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
@@ -22,9 +20,6 @@ const config = defaultConfig({
   plugins: [ pro, createMultiStepPlugin() ],
   icons: {
     ...genesisIcons
-  },
-  config: {
-    classes: generateClasses(genesis)
   }
 });
 

@@ -16,7 +16,7 @@ export default function useCalculatePriceForBusinessCategories(companyOrZivnostM
             });
         }
         finalPriceForBusinessCategori.value = priceForOneBusinessCategory
-        console.log("Total Price " + finalPriceForBusinessCategori.value)
+        console.log("Price for BusinessCategories: " + finalPriceForBusinessCategori.value)
     }
 
     return {
