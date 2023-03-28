@@ -24,7 +24,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-center mb-8 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
 
-      <!-- NOVY FORM -->
+      <!--FORM -->
       <div>
         <FormKit type="form"
         :actions="false"
@@ -57,7 +57,7 @@
             <pre>{{ value }}</pre>
           </details>
         </FormKit>
-        <button @click="newLogSubmit">New log Submit</button>
+        <!-- <button @click="newLogSubmit">New log Submit</button> -->
       </div>
 
       <div>
@@ -79,7 +79,6 @@
         </div>
       </div>
 
-
     </div>
   </div>
 </template>
@@ -87,16 +86,10 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount, onMounted, computed } from "vue";
-import useSteps from "@/components/forms/useStep";
-import { createInput } from '@formkit/vue'
-import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
+import { ref, computed } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import { toast } from 'vue3-toastify';
-import { getNode } from '@formkit/core';
-import useCalculatePriceForBusinessCategories from './Composables/CalculatePriceForBusinessCategories'
-import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
@@ -104,43 +97,6 @@ import type predmetPodnikaniaFormStepVue from "@/components/forms/predmetPodnika
 import type Address from "@/types/Address";
 import type Order from "@/types/Order";
 import type Company from "@/types/Company";
-import { fa } from "@formkit/i18n";
-
-
-onBeforeMount(() => {
-      
-  // companyOrZivnostModel.value!.subjects_of_business.pop()
-  // store.dispatch("getAllSubjectOfBusiness")
-  // .then(res => {
-  //   businessCategori.value.shift()
-  //   res.data.data.forEach((element: any) => {
-  //     businessCategori.value.push({
-  //       label: element.title,
-  //       value: element
-  //     })
-  //   })
-  // })
-  //   .catch(err => {
-  //   errorMsg.value = err.response.data.errors // response data is from store actions
-  // })
-
-})
-
-
-onMounted(() => {
-
-  //let formsValues: any = getNode('zalZivnostiMultiStepPlugin')?.value;
-
-  // userAddress = ref({
-  //   street: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street,
-  //   street_number: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street_number,
-  //   street_number2: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.street_number2,
-  //   city: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.city,
-  //   psc: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.psc,
-  //   country: formsValues['zalZivnostiMultiStepPlugin'].podnikatelskeUdaje.country,
-  // })
-
-})
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -153,27 +109,6 @@ let errorMsgCompany = ref('');
 let sucessMsg = ref('');
 let addressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
-// const camel2title = (str: string) => str
-//   .replace(/([A-Z])/g, (match) => ` ${match}`)
-//   .replace(/^./, (match) => match.toUpperCase())
-//   .trim()
-
-// const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps()
-// const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
-//   props: ['items'],
-// })
-// const checkStepValidity = (stepName: any) => {
-//   return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && visitedSteps.value.includes(stepName)
-// }
-
-// let businessCategori = ref([
-//   {
-//     label: '' as string,
-//     value: ''
-//   }
-// ])
-
-
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStepVue>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
 let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
@@ -184,83 +119,23 @@ let companyOrZivnostModel = ref<Company>({} as any);
 
 let totalForPay = computed(() => subjects_of_business.value.finalPriceForBusinessCategori + order.value.items[0].price)
 
-  // let userAddress = ref<Address>({
-//   id: null,
-//   street: '',
-//   street_number: '',
-//   street_number2: '',
-//   city: '',
-//   psc: '',
-//   country: ''
-// })
 
 function newLogSubmit(){
 
   console.log("InvData");
   console.log(invoiceData.value)
+  console.log("CompanyModel");
+  console.log(companyOrZivnostModel.value.subjects_of_business);
 
-//console.log(formsValues['zalZivnostiMultiStepPlugin'].predmetPodnikania.subjects_of_business);
-//companyOrZivnostModel.value?.subjects_of_business.shift();
-//companyOrZivnostModel.value.subjects_of_business.push(formsValues['zalZivnostiMultiStepPlugin'].predmetPodnikania.subjects_of_business)
-console.log("CompanyModel");
-console.log(companyOrZivnostModel.value.subjects_of_business);
+  console.log("UserAddresssssss");
+  console.log(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
-console.log("UserAddresssssss");
-console.log(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
-
-console.log("SubjectOfbusinesss");
-console.log(subjects_of_business.value?.subjects_of_business);
-console.log("UserAddresssssss original");
-console.log(userAddress.value);
+  console.log("SubjectOfbusinesss");
+  console.log(subjects_of_business.value?.subjects_of_business);
+  console.log("UserAddresssssss original");
+  console.log(userAddress.value);
 
 }
-
-//let companyRegDateCheckboxValue = ref("")
-// let fakturacne_udaje = ref({
-//   first_name: '',
-//   last_name: '',
-//   name: '',
-//   ico: '',
-//   dic: '',
-//   ic_dph: '',
-//   address_id: 12
-//   // TO DO ADDRESS ID
-// })
-
-// let user = ref({
-//     address_id: 0, // address should be created first and save to store
-//     first_name: '',
-//     last_name: '',
-//     title_before: '',
-//     title_after: '',
-//     gender: '',
-//     phone: '',
-//     date_of_birth: '',
-//     rodne_cislo: '',
-//     email: '',
-//     password: '',
-//     password_confirmation: '',
-// } as User )
-
-// let companyOrZivnostModel = ref({
-//   name: '',
-//   headquarters_id: 0,
-//   type: 2, // type 1 sro, type 2 živnosť
-//   status: 2, // Zakladanie spoločnosti je v priebehu
-//   ičo: '',
-//   dič: '',
-//   icdph: '',
-//   is_dph: false,
-//   registration_date: '',
-//   owner: 0,
-//   subjects_of_business: [{
-//     id: '',
-//     title: '',
-//     price: 0,
-//     description: '',
-//     category_id: 0
-//   }]
-// })
 
 let headquarter = ref({
   name: '',
@@ -305,18 +180,6 @@ let order = ref({
   }]
 })
 
-//const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(companyOrZivnostModel.value!.subjects_of_business)
-
-function logujData(){
-  console.log(companyOrZivnostModel.value.subjects_of_business)
-  console.log(userAddress.value)
-  console.log(user.value)
-  console.log(headquarter.value)
-  console.log(companyOrZivnostModel.value)
-  //console.log(fakturacne_udaje.value)
-  //console.log(paymentOptions)
-  console.log(order.value)
-}
 
 /* Submiting form and Api calls */
 
