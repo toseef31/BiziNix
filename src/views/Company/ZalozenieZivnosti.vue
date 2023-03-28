@@ -377,13 +377,13 @@ async function addHeadquarter() {
 
 async function addCompany() {
 
-  companyOrZivnostModel.value.type = '2'
+  companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
   companyOrZivnostModel.value.owner = userFromResponse.user_id
   companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
   companyOrZivnostModel.value.is_dph = false
   companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
   companyOrZivnostModel.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
-  companyOrZivnostModel.value.registration_date = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.registration_date
+  companyOrZivnostModel.value.zaciatok_opravnenia = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.registration_date
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {

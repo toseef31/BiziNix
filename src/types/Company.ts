@@ -1,7 +1,7 @@
 export default interface Company {
   id: number
   name: string
-  type: string
+  type: number
   status: string
   ico: string
   dic: string
@@ -10,7 +10,7 @@ export default interface Company {
   imanie_splatene: number
   headquarters_id: number
   is_dph: boolean
-  registration_date: string
+  zaciatok_opravnenia: string
   konecny_uzivatelia_vyhod: number
   sposob_konania_konatelov: number
   owner: number
