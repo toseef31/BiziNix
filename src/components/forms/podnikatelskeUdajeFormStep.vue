@@ -55,9 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import type Address from '@/@types/Address';
-import type Company from '@/@types/Company';
-import type User from '@/@types/User';
+import type Address from '@/types/Address';
+import type Company from '@/types/Company';
+import type User from '@/types/User';
 import store from '@/store';
 import { ref } from 'vue';
 

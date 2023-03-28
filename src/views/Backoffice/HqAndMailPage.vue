@@ -216,7 +216,7 @@
 
 <script setup lang="ts">
 import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue";
-import type Mail from "@/@types/Mail";
+import type Mail from "@/types/Mail";
 import store from "@/store";
 import { search } from "@formkit/inputs";
 import { ChevronDownIcon } from "@heroicons/vue/outline";

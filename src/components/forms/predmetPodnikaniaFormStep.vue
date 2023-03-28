@@ -16,7 +16,7 @@ import { onMounted, ref } from 'vue';
 import formkitCustomMultiSelectVue from './formkitCustomMultiSelect.vue';
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories'
 import store from '@/store';
-import type Company from '@/@types/Company';
+import type Company from '@/types/Company';
 
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
   props: ['items'],

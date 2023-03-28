@@ -92,7 +92,7 @@ import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
-import type User from "@/@types/User";
+import type User from "@/types/User";
 import { toast } from 'vue3-toastify';
 import { getNode } from '@formkit/core';
 import useCalculatePriceForBusinessCategories from './Composables/CalculatePriceForBusinessCategories'
@@ -101,9 +101,9 @@ import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormS
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
 import type predmetPodnikaniaFormStepVue from "@/components/forms/predmetPodnikaniaFormStep.vue";
-import type Address from "@/@types/Address";
-import type Order from "@/@types/Order";
-import type Company from "@/@types/Company";
+import type Address from "@/types/Address";
+import type Order from "@/types/Order";
+import type Company from "@/types/Company";
 import { fa } from "@formkit/i18n";
 
 

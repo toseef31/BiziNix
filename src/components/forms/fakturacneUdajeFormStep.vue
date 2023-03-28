@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
-import type Order from '@/@types/Order';
+import type Order from '@/types/Order';
 
 
 const invoiceAddressIsSame = ref(true);

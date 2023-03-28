@@ -1,8 +1,7 @@
 import { createStore } from "vuex";
 import axiosClient from "@/axios";
-import type Mail from "@/@types/Mail";
-import type Company from "@/@types/Company";
-import axios from "axios";
+import type Mail from "@/types/Mail";
+import type Company from "@/types/Company";
 
 export const store = createStore({
   state: {

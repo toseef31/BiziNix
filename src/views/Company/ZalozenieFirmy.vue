@@ -355,7 +355,7 @@ import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
-import type User from "@/@types/User";
+import type User from "@/types/User";
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);
