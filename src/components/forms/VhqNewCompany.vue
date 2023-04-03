@@ -451,7 +451,7 @@ const companyOrZivnostModel = ref({
   dic: '',
   icdph: '',
   is_dph: false,
-  registration_date: '',
+  zaciatok_opravnenia: '',
   owner: 0,
   subjects_of_business: [],
 });
