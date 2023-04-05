@@ -217,8 +217,8 @@ const company = ref({} as Company);
 const documents = ref([] as any[]);
 const filteredDocuments = ref([] as any[]);
 const searchQuery = ref("");
-const isIssuedChecked = ref(false);
-const isReceivedChecked = ref(false);
+const isIssuedChecked = ref(true);
+const isReceivedChecked = ref(true);
 
 const filteredDocumentsByIssued: any = computed(() => {
   return filteredDocuments.value.filter((document: any) => {
@@ -313,6 +313,7 @@ function currentDocTab(tabNumber: any) {
 function redirect() {
   return router.push({
     name: "Add document",
+    params: { subtype: activeDocTab.value },
   });
 }
 

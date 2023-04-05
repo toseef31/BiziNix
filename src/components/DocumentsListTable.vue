@@ -27,6 +27,7 @@
       <li class="pb-2" v-for="document in documents" :key="document.id">
         <div
           :class="[
+            document.isIssued ? 'bg-gray-700' : 'bg-gray-500',
             document.isPaid ? 'bg-teal-900' : 'bg-gray-700',
             'flex rounded-2xl',
           ]"
@@ -48,8 +49,9 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-row justify-between">
+              <div class="flex flex-row justify-start">
                 <button
+                  v-show="document.isIssued"
                   type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
                   v-on:click="editDocument(document.id)"
@@ -57,18 +59,12 @@
                   Upraviť
                 </button>
                 <button
+                  v-show="document.isIssued"
                   type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
                   v-on:click="duplicateDocument(document)"
                 >
                   Duplikovať
-                </button>
-                <button
-                  type="button"
-                  class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-red-500 focus:outline-none"
-                  v-on:click="deleteSingleDocument()"
-                >
-                  Zmazať
                 </button>
                 <button
                   type="button"
@@ -79,29 +75,45 @@
                 </button>
                 <button
                   type="button"
-                  class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
+                  :disabled="document.isPaid"
+                  v-show="document.isIssued"
+                  :class="[
+                    document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
+                    'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
+                  ]"
                   v-on:click="sendReminder()"
                 >
                   Vystaviť upomienku
                 </button>
                 <button
+                  v-show="document.isIssued"
                   :disabled="document.isPaid"
                   :class="[
                     document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
                     'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
                   ]"
                   type="button"
-                  class=" "
                   v-on:click="repay()"
                 >
                   <label v-show="!document.isPaid">Uhradiť</label>
                   <label v-show="document.isPaid">Uhradené</label>
                 </button>
+                <button
+                  type="button"
+                  class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-red-500 focus:outline-none"
+                  v-on:click="deleteSingleDocument()"
+                >
+                  Zmazať
+                </button>
               </div>
             </div>
           </div>
           <div
-            class="flex flex-col basis-1/4 bg-gray-800 rounded-2xl text-white py-2"
+            :class="[
+              document.isIssued ? 'bg-gray-800' : 'bg-gray-600',
+              document.isPaid ? 'bg-teal-700' : 'bg-gray-800',
+              'flex flex-col basis-1/4 rounded-2xl text-white py-2',
+            ]"
           >
             <div class="flex flex-row">
               <div class="flex flex-col items-end basis-3/5 pr-8">
@@ -245,7 +257,7 @@
             <div
               class="flex justify-start py-4 px-4 text-white font-bold text-lg"
             >
-              Prosím zadajte hodnotu platby dokladu.
+              Koľko bolo uhradené?
             </div>
             <div class="flex justify-start px-4 text-white">
               <FormKit
@@ -253,6 +265,7 @@
                 id="repay_amount"
                 label="Zaplatená suma"
                 v-model="document.paid"
+                :value="document.total"
               />
             </div>
             <div class="flex justify-start px-4 text-white">
@@ -262,6 +275,7 @@
                 label="Dátum úhrady"
                 validation="required|length:10"
                 v-model="document.payment_date"
+                :value="today"
               />
             </div>
             <div class="flex flex-row justify-end py-2 px-4">
@@ -299,10 +313,12 @@ import type Doklad from "@/@types/Document";
 import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import * as FileSaver from "file-saver";
+import moment from "moment";
 
 const props = defineProps(["data"]);
 const documents = computed(() => props.data);
 const router = useRouter();
+const today = moment(new Date()).format("YYYY-MM-DD");
 
 const selectedDocuments = ref([] as any[]);
 const reminderEmail = ref("");
@@ -357,14 +373,14 @@ function deleteSingleDocument() {
 
 function confirmDelete(id: any) {
   isVisible = setModal("deleteModal", false);
-  store
+  /*store
     .dispatch("deleteDocument", id)
     .then(() => {
       router.go(0);
     })
     .catch((err) => {
       console.log(err);
-    });
+    });*/
 }
 
 function deleteMultipleDocuments() {
@@ -454,7 +470,6 @@ function repay() {
 
 function repayConfirm(document: any) {
   isVisible = setModal("repayModal", false);
-  console.log(document);
   store
     .dispatch("updateDocument", document)
     .then(() => {

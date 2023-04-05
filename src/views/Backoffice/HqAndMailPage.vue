@@ -63,11 +63,106 @@
 
           <div class="flex flex-1/4">
             <button
+              v-show="checkedMails.length > 0"
               class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
-              v-on:click="sendMails()"
+              v-on:click="showSendMails()"
             >
               Preposlať poštu
             </button>
+            <button
+              disabled
+              v-show="checkedMails.length == 0"
+              class="bg-gray-300 h-12 px-6 rounded z-10 font-bold text-gray-400"
+            >
+              Preposlať poštu
+            </button>
+            <Modal
+              name="m3"
+              v-model:visible="isVisible"
+              :type="'clean'"
+              :closable="false"
+              title="Preposlanie zásielok"
+            >
+              <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+                <div
+                  class="flex flex-col justify-start py-4 px-4 text-white font-bold"
+                >
+                  <div class="text-xl">
+                    Prosím potvrdte preposlanie zvolených zásielok zo zoznamu.
+                  </div>
+                  <div class="py-3">Na adresu:</div>
+                  <FormKit
+                    type="text"
+                    name="street"
+                    label="Ulica"
+                    validation="required"
+                    v-model="userAddress.street"
+                    :value="userAddress.street"
+                  />
+                  <FormKit
+                    type="text"
+                    name="street_number"
+                    label="Súpisne číslo"
+                    validation="required"
+                    v-model="userAddress.street_number"
+                    :value="userAddress.street_number"
+                  />
+                  <FormKit
+                    type="text"
+                    name="street_number2"
+                    label="Orientačné číslo"
+                    validation="required"
+                    v-model="userAddress.street_number2"
+                    :value="userAddress.street_number2"
+                  />
+                  <FormKit
+                    type="text"
+                    name="city"
+                    label="Mesto"
+                    validation="required"
+                    v-model="userAddress.city"
+                    :value="userAddress.city"
+                  />
+                  <FormKit
+                    type="text"
+                    name="psc"
+                    label="PSČ"
+                    validation="required"
+                    v-model="userAddress.psc"
+                    :value="userAddress.psc"
+                  />
+                  <FormKit
+                    type="select"
+                    name="country"
+                    label="Štát"
+                    placeholder="Vyberte štát"
+                    :options="['Slovensko', 'Česká republika']"
+                    validation="required"
+                    validation-visibility="dirty"
+                    v-model="userAddress.country"
+                    :value="userAddress.country"
+                  />
+                </div>
+                <div class="flex flex-row justify-end py-2 px-4">
+                  <div class="flex flex-1/4 px-4">
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
+                      v-on:click="sendMails()"
+                    >
+                      Preposlať
+                    </button>
+                  </div>
+                  <div class="flex flex-1/4">
+                    <button
+                      class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                      v-on:click="closeModal()"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
           </div>
 
           <div class="flex-1/4">
@@ -175,11 +270,115 @@
                       class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                     >
                       <button
+                        v-if="!mail.forward_requested && mail.status != 4"
                         class="font-medium text-gray-900 hover:underline"
-                        v-on:click="sendSingleMail(mail.id)"
+                        v-on:click="showSendSingleMail()"
                       >
                         Preposlať originál
                       </button>
+                      <Modal
+                        name="m2"
+                        v-model:visible="isVisible"
+                        :type="'clean'"
+                        :closable="false"
+                        title="Preposlanie zásielky"
+                      >
+                        <div
+                          class="bg-gray-600 rounded-lg border-gray-800 border-2"
+                        >
+                          <div
+                            class="flex flex-col justify-start py-6 px-6 text-white font-bold"
+                          >
+                            <div class="text-xl">
+                              Prosím potvrdte preposlanie zásielky od <br />
+                              {{ mail.sender }}
+                            </div>
+                            <div class="py-3">Na adresu:</div>
+                            <FormKit
+                              type="text"
+                              name="street"
+                              label="Ulica"
+                              validation="required"
+                              v-model="userAddress.street"
+                              :value="userAddress.street"
+                            />
+                            <FormKit
+                              type="text"
+                              name="street_number"
+                              label="Súpisne číslo"
+                              validation="required"
+                              v-model="userAddress.street_number"
+                              :value="userAddress.street_number"
+                            />
+                            <FormKit
+                              type="text"
+                              name="street_number2"
+                              label="Orientačné číslo"
+                              validation="required"
+                              v-model="userAddress.street_number2"
+                              :value="userAddress.street_number2"
+                            />
+                            <FormKit
+                              type="text"
+                              name="city"
+                              label="Mesto"
+                              validation="required"
+                              v-model="userAddress.city"
+                              :value="userAddress.city"
+                            />
+                            <FormKit
+                              type="text"
+                              name="psc"
+                              label="PSČ"
+                              validation="required"
+                              v-model="userAddress.psc"
+                              :value="userAddress.psc"
+                            />
+                            <FormKit
+                              type="select"
+                              name="country"
+                              label="Štát"
+                              placeholder="Vyberte štát"
+                              :options="['Slovensko', 'Česká republika']"
+                              validation="required"
+                              validation-visibility="dirty"
+                              v-model="userAddress.country"
+                              :value="userAddress.country"
+                            />
+                          </div>
+                          <div class="flex flex-row justify-end py-2 px-4">
+                            <div class="flex flex-1/4 px-4">
+                              <button
+                                class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
+                                v-on:click="sendSingleMail(mail.id)"
+                              >
+                                Preposlať
+                              </button>
+                            </div>
+                            <div class="flex flex-1/4">
+                              <button
+                                class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                                v-on:click="closeModal()"
+                              >
+                                Zrušiť
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal>
+                      <div class="text-left" v-if="mail.status == 4" disabled>
+                        <button class="font-medium text-gray-900" disabled>
+                          Originál preposlaný
+                        </button>
+                      </div>
+                      <div
+                        class="text-left"
+                        v-if="mail.forward_requested && mail.status != 4"
+                      >
+                        <button class="font-medium text-gray-900" disabled>
+                          Čaká sa na preposlanie
+                        </button>
+                      </div>
                     </td>
                     <td
                       class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6"
@@ -218,7 +417,7 @@
                     <td>
                       <div
                         class="flex-1 py-4 px-3 text-left"
-                        v-if="!mail.shred_requested"
+                        v-if="!mail.shred_requested && mail.status != 2"
                       >
                         <button
                           class="font-medium text-gray-900 hover:underline"
@@ -229,7 +428,15 @@
                       </div>
                       <div
                         class="flex-1 py-4 px-3 text-left"
-                        v-if="mail.shred_requested"
+                        v-if="mail.shred_requested && mail.status != 2"
+                      >
+                        <button class="font-medium text-gray-900" disabled>
+                          Čaká sa na skartovanie
+                        </button>
+                      </div>
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="mail.status == 2"
                       >
                         <button class="font-medium text-gray-900" disabled>
                           Skartované
@@ -352,7 +559,6 @@ const dateFrom = ref(null);
 const dateTo = ref(null);
 
 const checkedMails = ref([] as any[]);
-const checked = ref(false);
 const indeterminate = computed(
   () =>
     checkedMails.value.length > 0 &&
@@ -361,18 +567,32 @@ const indeterminate = computed(
 
 const setModal = useModal({
   m1: 1,
+  m2: 2,
+  m3: 3,
 });
 
 let isVisible = reactive({});
 
 isVisible = setModal("m1", false);
+isVisible = setModal("m2", false);
+isVisible = setModal("m3", false);
 
 function showModal() {
   isVisible = setModal("m1", true);
 }
 
+function showSendSingleMail() {
+  isVisible = setModal("m2", true);
+}
+
+function showSendMails() {
+  isVisible = setModal("m3", true);
+}
+
 function closeModal() {
   isVisible = setModal("m1", false);
+  isVisible = setModal("m2", false);
+  isVisible = setModal("m3", false);
 }
 
 const address = ref({
@@ -382,6 +602,15 @@ const address = ref({
   city: "",
   country: "",
   psc: "",
+});
+
+const userAddress = ref({
+  street: "",
+  street_number: "",
+  street_number2: "",
+  city: "",
+  psc: "",
+  country: "",
 });
 
 const headquarter = ref({
@@ -396,6 +625,15 @@ watch(
   () => store.getters.getSelectedCompany,
   function () {
     refreshData();
+  }
+);
+
+watch(
+  () => store.state.user.address,
+  (newValUserAddres, oldValUserAddres) => {
+    userAddress.value = {
+      ...JSON.parse(JSON.stringify(newValUserAddres)),
+    };
   }
 );
 
@@ -456,12 +694,14 @@ function boxChecked(event: any) {
 function sendMails() {
   checkedMails.value.forEach(function (value: any) {
     value.forward_requested = 1;
+    value.forward_address = userAddress.value.street+' '+userAddress.value.street_number+'/'+userAddress.value.street_number2+', '+userAddress.value.psc+' '+userAddress.value.city+', '+userAddress.value.country;
   });
   store
     .dispatch("updateMultipleMails", checkedMails.value)
     .then((res) => {
       console.log("Zásielky úspešne zmenené.");
       checkedMails.value = [];
+      isVisible = setModal("m3", false);
     })
     .catch((err) => {
       console.log(err);
@@ -477,10 +717,12 @@ function sendSingleMail(id: any) {
   const mail = mails.value.find((item: any) => item.id == id);
   if (mail) {
     mail.forward_requested = true;
+    mail.forward_address = userAddress.value.street+' '+userAddress.value.street_number+'/'+userAddress.value.street_number2+', '+userAddress.value.psc+' '+userAddress.value.city+', '+userAddress.value.country;
     store
       .dispatch("updateMail", mail)
       .then((res) => {
         console.log("Zásielka úspešne zmenená.");
+        isVisible = setModal("m2", false);
       })
       .catch((err) => {
         console.log(err);
@@ -567,6 +809,7 @@ async function refreshData() {
 }
 
 onBeforeMount(async () => {
+  store.dispatch("userAddress");
   refreshData();
 });
 </script>

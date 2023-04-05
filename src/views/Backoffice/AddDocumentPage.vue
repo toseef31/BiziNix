@@ -89,9 +89,16 @@
                   </div>
 
                   <div class="flex justify-between">
-                    <label for="icdph" class="text-black basis-1/3 font-bold"
-                      >IČ DPH</label
-                    >
+                    <div class="flex flex-col basis-1/3">
+                      <label
+                        for="client-icdph"
+                        class="flex text-black font-bold"
+                        >IČ DPH</label
+                      >
+                      <label for="client-icdph" class="flex text-black text-xs"
+                        >platca DPH</label
+                      >
+                    </div>
                     <label class="flex basis-2/3 text-black">{{
                       company.icdph
                     }}</label>
@@ -101,7 +108,9 @@
 
               <section class="flex basis-1/2 flex-col">
                 <div class="flex py-2 justify-between">
-                  <label for="client-name" class="flex text-black basis-1/3"
+                  <label
+                    for="client-name"
+                    class="flex text-black basis-1/3 font-bold"
                     >Odberateľ</label
                   >
                   <div class="w-full">
@@ -120,7 +129,7 @@
                   <div class="flex pb-2 justify-between">
                     <label
                       for="client-address"
-                      class="flex text-black basis-1/3"
+                      class="flex text-black basis-1/3 font-bold"
                       >Adresa</label
                     >
                     <div class="w-full">
@@ -134,7 +143,9 @@
                     </div>
                   </div>
                   <div class="flex pb-2 justify-between">
-                    <label for="client-zip" class="flex text-black basis-1/3"
+                    <label
+                      for="client-zip"
+                      class="flex text-black basis-1/3 font-bold"
                       >PSČ</label
                     >
                     <div class="w-full">
@@ -148,7 +159,9 @@
                     </div>
                   </div>
                   <div class="flex pb-2 justify-between">
-                    <label for="client-city" class="flex text-black basis-1/3"
+                    <label
+                      for="client-city"
+                      class="flex text-black basis-1/3 font-bold"
                       >Mesto</label
                     >
                     <div class="w-full">
@@ -164,7 +177,7 @@
                   <div class="flex pb-2 justify-between">
                     <label
                       for="client-country"
-                      class="flex text-black basis-1/3"
+                      class="flex text-black basis-1/3 font-bold"
                       >Krajina</label
                     >
                     <div class="w-full">
@@ -178,7 +191,9 @@
                     </div>
                   </div>
                   <div class="flex pb-2 justify-between">
-                    <label for="client-ico" class="flex text-black basis-1/3"
+                    <label
+                      for="client-ico"
+                      class="flex text-black basis-1/3 font-bold"
                       >IČO</label
                     >
                     <div class="w-full">
@@ -193,7 +208,9 @@
                   </div>
 
                   <div class="flex pb-2 justify-between">
-                    <label for="client-dic" class="flex text-black basis-1/3"
+                    <label
+                      for="client-dic"
+                      class="flex text-black basis-1/3 font-bold"
                       >DIČ</label
                     >
                     <div class="w-full">
@@ -208,9 +225,17 @@
                   </div>
 
                   <div class="flex justify-between">
-                    <label for="client-icdph" class="flex text-black basis-1/3"
-                      >IČ DPH</label
-                    >
+                    <div class="flex flex-col basis-1/3">
+                      <label
+                        for="client-icdph"
+                        class="flex text-black font-bold"
+                        >IČ DPH</label
+                      >
+                      <label for="client-icdph" class="flex text-black text-xs"
+                        >platca DPH</label
+                      >
+                    </div>
+
                     <div class="w-full">
                       <FormKit
                         v-model="document.icdph"
@@ -639,12 +664,14 @@
 import type Company from "@/@types/Company";
 import store from "@/store";
 import { ref, onBeforeMount, computed, reactive, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
 
-const route = useRouter();
+const route = useRoute();
+const router = useRouter();
+const subtype = Number(route.params.subtype);
 const submitted = ref(false);
 const today = moment(new Date()).format("YYYY-MM-DD");
 
@@ -692,7 +719,7 @@ const documentTypeStr = ref("faktúru");
 
 const document = ref({
   type: 1,
-  subtype: 1,
+  subtype: subtype,
   company_id: company.value.id,
   odberatel: "",
   address: "",
@@ -720,7 +747,7 @@ const document = ref({
   isPaid: false,
   paid: 0.0,
   total: totalPrice,
-  paid_date: today
+  payment_date: ""
 });
 
 watch(
@@ -791,22 +818,27 @@ function documentSubtypeChanged() {
   switch (document.value.subtype) {
     case 1:
       document.value.type = 1;
+      document.value.subtype = 1;
       documentTypeStr.value = "fakúru";
       break;
     case 2:
       document.value.type = 1;
+      document.value.subtype = 2;
       documentTypeStr.value = "zálohovú fakúru";
       break;
     case 3:
       document.value.type = 1;
+      document.value.subtype = 3;
       documentTypeStr.value = "dobropis";
       break;
     case 4:
       document.value.type = 2;
+      document.value.subtype = 4;
       documentTypeStr.value = "cenovú ponuku";
       break;
     case 5:
       document.value.type = 2;
+      document.value.subtype = 5;
       documentTypeStr.value = "objednávku";
       break;
   }
@@ -833,9 +865,8 @@ function removeItem(index: number) {
 function submitHandler() {
   submitted.value = true;
   document.value.items = JSON.stringify(items.value);
-  if(document.value.isPaid == true) {
-    document.value.paid = document.value.total;
-  }
+  document.value.paid = document.value.total;
+
   return store
     .dispatch("addDocument", document.value)
     .then((res) => {
@@ -860,14 +891,14 @@ function showModal() {
 
 function addNew() {
   isVisible = setModal("submitted1", false);
-  route.push({
+  router.push({
     name: "Add document",
   });
 }
 
 function closeModal() {
   isVisible = setModal("submitted1", false);
-  route.push({
+  router.push({
     name: "My documents",
   });
 }

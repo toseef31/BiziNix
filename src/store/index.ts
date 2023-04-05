@@ -115,10 +115,9 @@ export const store = createStore({
           });
       }
     },
-    userAddress({ commit, dispatch }, userAddress) {
-      let response;
+    userAddress({ commit, dispatch }) {
       if (this.state.user.userId) {
-        response = axiosClient
+        axiosClient
           .get(`/address/${this.state.user.addressId}/get`)
           .then((res) => {
             commit("setUserAddress", res.data);

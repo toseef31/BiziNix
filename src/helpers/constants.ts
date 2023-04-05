@@ -282,7 +282,6 @@ const UNITS = [
   { label: "osoba", value: "osoba" },
 ];
 const PAYMENT_TYPES = [
-  { label: "", value: "" },
   { label: "Bankový prevod", value: "bankovy_prevod" },
   { label: "Hotovosť", value: "hotovost" },
   { label: "Paypal", value: "paypal" },
@@ -297,19 +296,17 @@ const PAYMENT_TYPES = [
   { label: "Poštový poukaz", value: "postovy_poukaz" },
 ];
 const DELIVERY_TYPES = [
-  { label: "", value: "" },
+  { label: "Osobný odber", value: "osobny" },
   { label: "Poštou", value: "posta" },
   { label: "Kuriérom", value: "kurier" },
-  { label: "Osobný odber", value: "osobny" },
   { label: "Nákladná doprava", value: "nakladna" },
   { label: "Odberné miesto", value: "odberne_miesto" },
 ];
 const DUES = [
-  { label: "", value: "" },
+  { label: "14 dní", value: "14" },
   { label: "Dátum vystavenia", value: "datum_vystavenia" },
   { label: "1 deň", value: "1" },
   { label: "7 dní", value: "7" },
-  { label: "14 dní", value: "14" },
   { label: "30 dní", value: "30" },
   { label: "60 dní", value: "60" },
   { label: "Iné", value: "ine" },

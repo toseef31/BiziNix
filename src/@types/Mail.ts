@@ -11,4 +11,5 @@ export default interface Mail {
   scan_requested: boolean;
   forward_requested: boolean;
   shred_requested: boolean;
+  forward_address: string;
 }
