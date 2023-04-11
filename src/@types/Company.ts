@@ -23,4 +23,6 @@ export default interface Company {
   is_hq_virtual: boolean
   sidlo_zaplatene_do: string
   fakturacia_zaplatene_do: string
+  doc_template_id: number
+  logo: string
 }

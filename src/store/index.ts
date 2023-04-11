@@ -197,6 +197,33 @@ export const store = createStore({
       );
       return data;
     },
+    async updateCompany({ commit, dispatch }, company) {
+      if (company.id) {
+        return axiosClient
+          .put(`/companies/${company.id}/update`, company)
+          .then((res) => {
+            commit("setCompany", res.data);
+            return res;
+          });
+      }
+    },
+    async uploadCompanyLogo({ commit, dispatch }, data) {
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+      return axiosClient
+        .post(
+          `/companies/${data.companyId}/uploadCompanyLogo`,
+          data.body,
+          config
+        )
+        .then((res) => {
+          commit("setCompany", res.data);
+          return res;
+        });
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {
@@ -205,6 +232,10 @@ export const store = createStore({
     },
     async getDocumentSubtypes() {
       const { data } = await axiosClient.get(`/documents/getDocumentSubTypes`);
+      return data;
+    },
+    async getDocumentTemplates() {
+      const { data } = await axiosClient.get(`/documents/getDocumentTemplates`);
       return data;
     },
     async getDocumentById({ commit }, id) {
