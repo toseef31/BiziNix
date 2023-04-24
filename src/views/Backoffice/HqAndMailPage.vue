@@ -237,7 +237,7 @@
                   <tr
                     v-for="mail in paginatedItems"
                     :key="mail.id"
-                    :class="[checkedMails.includes(mail) && 'bg-gray-50']"
+                    :class="[mail.status == 4 && 'bg-gray-50' ]"
                   >
                     <td class="relative w-12 px-6 sm:w-16 sm:px-8">
                       <div
