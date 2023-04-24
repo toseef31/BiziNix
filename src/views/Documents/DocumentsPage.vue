@@ -95,84 +95,17 @@
         background-image: linear-gradient(to top,rgba(17, 24, 39, 0.85) 0%,rgba(17, 24, 39, 1) 100%);
       "
     >
-      <div class="container justify-center mx-auto flex pb-8">
+      <div class="mx-auto flex pb-8 w-full justify-center">
         <!--NAJOBLUBENEJSIE-->
         <div>
           <section>
             <div>
-              <div class="grid grid-cols-3 gap-8 place-items-end">
+              <div class="grid grid-cols-2 gap-8 place-items-end">
                 <!-- Pricing Card -->
                 <div
                   class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-400 text-gray-800"
                 >
-                  <h3 class="mb-8 text-3xl font-extrabold">Mini</h3>
-                  <!-- List -->
-                  <ul role="list" class="mb-8 space-y-4 text-left">
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Faktúry</span>
-                      <span>5 zákazníkov</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Design dokladov</span>
-                      <span>5 šablón</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Firmy</span>
-                      <span>1 firma na účte</span>
-                    </li>
-                  </ul>
-                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-                  <div class="flex flex-col items-cenetr my-10">
-                    <span class="text-xl font-extrabold">Zdarma</span>
-                  </div>
-                  <a
-                    href="#"
-                    class="text-gray-900 font-extrabold bg-teal-600 hover:bg-teal-700 focus:ring-4 rounded-lg text-sm px-5 py-2.5 text-center focus:ring-teal-900"
-                    >Spustiť</a
-                  >
-                </div>
-                <!-- Pricing Card -->
-                <div
-                  class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-800 text-white"
-                >
-                  <h3 class="mb-8 text-3xl font-extrabold">Classic</h3>
-                  <!-- List -->
-                  <ul role="list" class="mb-8 space-y-4 text-left">
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Faktúry</span>
-                      <span>neobmedzene zákazníkov</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Design dokladov</span>
-                      <span>neobmedzene</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Firmy</span>
-                      <span>3 firmy na účte</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold"
-                        >Zmluvy a iné dokumenty</span
-                      >
-                      <span>3 dokumenty / mesiac</span>
-                    </li>
-                  </ul>
-                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-                  <div class="flex flex-col items-center my-8">
-                    <span class="text-xl font-extrabold">4€/mesiac</span>
-                    <span class="text-sm font-bold">alebo 40€/rok</span>
-                  </div>
-                  <a
-                    href="#"
-                    class="text-gray-900 font-extrabold bg-teal-600 hover:bg-teal-700 focus:ring-4font-medium rounded-lg text-sm px-5 py-2.5 text-center focus:ring-teal-900"
-                    >Vyskúšať 6 mesiacov zdarma</a
-                  >
-                </div>
-                <!-- Pricing Card -->
-                <div
-                  class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-400 text-gray-800"
-                >
-                  <h3 class="mb-8 text-3xl font-extrabold">Pro</h3>
+                  <h3 class="mb-8 text-3xl font-extrabold">My</h3>
                   <!-- List -->
                   <ul role="list" class="mb-8 space-y-4 text-left">
                     <li class="flex flex-col items-center space-x-3">
@@ -200,14 +133,49 @@
                   </ul>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
                   <div class="flex flex-col items-center my-8">
-                    <span class="text-xl font-extrabold">10€/mesiac</span>
-                    <span class="text-sm font-bold">alebo 90€/rok</span>
+                    <span class="text-xl font-extrabold">5€/mesiac</span>
+                    <span class="text-sm font-bold">alebo 50€/rok</span>
                   </div>
                   <a
                     href="#"
                     class="text-gray-900 font-extrabold bg-teal-600 hover:bg-teal-700 focus:ring-4 rounded-lg text-sm px-5 py-2.5 text-center focus:ring-teal-900"
                     >Vyskúšať 6 mesiacov zdarma</a
                   >
+                </div>
+                <!-- Pricing Card -->
+                <div
+                  class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-400 text-gray-800"
+                >
+                  <h3 class="mb-8 text-3xl font-extrabold">Konkurencia</h3>
+                  <!-- List -->
+                  <ul role="list" class="mb-8 space-y-4 text-left">
+                    <li class="flex flex-col items-center space-x-3">
+                      <span class="text-lg font-bold">Faktúry</span>
+                      <span>obmedzený počet faktúr</span>
+                    </li>
+                    <li class="flex flex-col items-center space-x-3">
+                      <span class="text-lg font-bold">Design dokladov</span>
+                      <span>obmedzený počet designov</span>
+                    </li>
+                    <li class="flex flex-col items-center space-x-3">
+                      <span class="text-lg font-bold">Firmy</span>
+                      <span>obmedzený počet firiem</span>
+                    </li>
+                    <li class="flex flex-col items-center space-x-3">
+                      <span class="text-lg font-bold"
+                        >Zmluvy a iné dokumenty</span
+                      >
+                      <span>obmedzený počet dokumentov</span>
+                    </li>
+                    <li class="flex flex-col items-center space-x-3">
+                      <span class="text-lg font-bold">Zmeny firiem</span>
+                      <span>za poplatok</span>
+                    </li>
+                  </ul>
+                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+                  <div class="flex flex-col items-center my-8">
+                    <span class="text-xl font-extrabold">Od 8€/mesiac</span>
+                  </div>
                 </div>
               </div>
             </div>

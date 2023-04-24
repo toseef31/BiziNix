@@ -4,6 +4,7 @@ export default interface Doklad {
   subtype: number;
   company_id: number;
   odberatel: string;
+  contact_person: string;
   address: string;
   psc: string;
   city: string;
