@@ -439,8 +439,7 @@
             <img v-bind:src="currentVhq.img" class="h-[300px] w-full" />
             <div class="px-3 py-2 shrink text-sm">
               {{ currentVhq.name }}, {{ currentVhq.address.street }}
-              {{ currentVhq.address.street_number }} /
-              {{ currentVhq.address.street_number2 }},
+              {{ currentVhq.address.street_number }}/{{ currentVhq.address.street_number2 }},
               {{ currentVhq.address.psc }}
               {{ currentVhq.address.city }}
             </div>

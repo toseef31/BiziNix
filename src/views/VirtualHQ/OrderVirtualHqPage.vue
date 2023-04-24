@@ -13,8 +13,7 @@
           <div class="flex basis-1/2 justify-end text-right">
             <div class="flex flex-col">
               <div class="flex pt-4 pb-2 pr-4 text-lg">
-                {{ data.vhq.name }}, {{ data.vhq.address.street }} /
-                {{ data.vhq.address.street_number2 }},
+                {{ data.vhq.name }}, {{ data.vhq.address.street }}/{{ data.vhq.address.street_number2 }},
                 {{ data.vhq.address.psc }} {{ data.vhq.address.city }}
               </div>
               <div class="flex font-bold text-2xl pr-4 pb-1 self-end">

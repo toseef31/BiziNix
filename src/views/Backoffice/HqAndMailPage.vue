@@ -168,8 +168,7 @@
           <div class="flex-1/4">
             <div class="flex flex-row text-left font-bold">
               <div class="pr-4">
-                {{ address.street }} {{ address.street_number }} /
-                {{ address.street_number2 }}, <br />
+                {{ address.street }} {{ address.street_number }}/{{ address.street_number2 }},<br />
                 {{ address.psc }} {{ address.city }}
               </div>
               <img src="@/assets/company.png" />
