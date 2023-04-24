@@ -168,7 +168,8 @@
           <div class="flex-1/4">
             <div class="flex flex-row text-left font-bold">
               <div class="pr-4">
-                {{ address.street }} {{ address.street_number }}, <br />
+                {{ address.street }} {{ address.street_number }},
+                {{ address.street_number2 }} <br />
                 {{ address.psc }} {{ address.city }}
               </div>
               <img src="@/assets/company.png" />
@@ -694,7 +695,18 @@ function boxChecked(event: any) {
 function sendMails() {
   checkedMails.value.forEach(function (value: any) {
     value.forward_requested = 1;
-    value.forward_address = userAddress.value.street+' '+userAddress.value.street_number+'/'+userAddress.value.street_number2+', '+userAddress.value.psc+' '+userAddress.value.city+', '+userAddress.value.country;
+    value.forward_address =
+      userAddress.value.street +
+      " " +
+      userAddress.value.street_number +
+      "/" +
+      userAddress.value.street_number2 +
+      ", " +
+      userAddress.value.psc +
+      " " +
+      userAddress.value.city +
+      ", " +
+      userAddress.value.country;
   });
   store
     .dispatch("updateMultipleMails", checkedMails.value)
@@ -717,7 +729,18 @@ function sendSingleMail(id: any) {
   const mail = mails.value.find((item: any) => item.id == id);
   if (mail) {
     mail.forward_requested = true;
-    mail.forward_address = userAddress.value.street+' '+userAddress.value.street_number+'/'+userAddress.value.street_number2+', '+userAddress.value.psc+' '+userAddress.value.city+', '+userAddress.value.country;
+    mail.forward_address =
+      userAddress.value.street +
+      " " +
+      userAddress.value.street_number +
+      "/" +
+      userAddress.value.street_number2 +
+      ", " +
+      userAddress.value.psc +
+      " " +
+      userAddress.value.city +
+      ", " +
+      userAddress.value.country;
     store
       .dispatch("updateMail", mail)
       .then((res) => {

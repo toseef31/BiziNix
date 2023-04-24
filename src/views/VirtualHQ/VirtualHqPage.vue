@@ -119,7 +119,14 @@
   <div
     class="flex py-20 w-full h-full bg-cover bg-no-repeat bg-center bg-local relative"
     style="
-      background-image: linear-gradient(to top,rgba(17, 24, 39, 1) 0%,rgba(17, 24, 39, 1) 40%,rgba(31, 41, 55, 1) 40%,rgba(31, 41, 55, 1) 100%);"
+      background-image: linear-gradient(
+        to top,
+        rgba(17, 24, 39, 1) 0%,
+        rgba(17, 24, 39, 1) 40%,
+        rgba(31, 41, 55, 1) 40%,
+        rgba(31, 41, 55, 1) 100%
+      );
+    "
   >
     <div class="absolute bottom-[-5px] left-5">
       <img src="@/assets/dots_h.png" class="max-h-[330px]" />
@@ -165,8 +172,9 @@
                 {{ vhq.name }}
               </div>
               <div class="text-white px-2 mb-2 text-sm">
-                {{ vhq.address.street }} {{ vhq.address.street_number }},
-                {{ vhq.address.psc }} {{ vhq.address.city }}
+                {{ vhq.address.street }} {{ vhq.address.street_number }} /
+                {{ currentVhq.address.street_number2 }}, {{ vhq.address.psc }}
+                {{ vhq.address.city }}
               </div>
               <!---->
             </section>
@@ -393,7 +401,7 @@
               </div>
             </div>
             <!------>
-            <hr class="my-8 h-px bg-gray-200 border-0 dark:bg-gray-700">
+            <hr class="my-8 h-px bg-gray-200 border-0 dark:bg-gray-700" />
             <div class="flex flex-row py-5 justify-between">
               <div class="flex flex-row">
                 <svg
@@ -431,7 +439,8 @@
             <img v-bind:src="currentVhq.img" class="h-[300px] w-full" />
             <div class="px-3 py-2 shrink text-sm">
               {{ currentVhq.name }}, {{ currentVhq.address.street }}
-              {{ currentVhq.address.street_number }},
+              {{ currentVhq.address.street_number }} /
+              {{ currentVhq.address.street_number2 }},
               {{ currentVhq.address.psc }}
               {{ currentVhq.address.city }}
             </div>
@@ -470,7 +479,7 @@ import { ChevronDownIcon } from "@heroicons/vue/outline";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";
 
-const router = useRouter()
+const router = useRouter();
 
 const vhqs: any = computed(() => {
   return store.state.vhqs;
@@ -621,16 +630,16 @@ function newCompanyChanged(event: any) {
 }
 
 function createNewOrder() {
-    const data = {
-      createCompany: newCompany.value,
-      skartovanie: skartovanie.value,
-      preposlanie: preposlanie.value,
-      scanovanie: scanovanie.value,
-      preberanie: preberanie.value,
-      price: final_price.value,
-      vhq: currentVhq.value
-    };
-    return router.push({
+  const data = {
+    createCompany: newCompany.value,
+    skartovanie: skartovanie.value,
+    preposlanie: preposlanie.value,
+    scanovanie: scanovanie.value,
+    preberanie: preberanie.value,
+    price: final_price.value,
+    vhq: currentVhq.value,
+  };
+  return router.push({
     name: "Order vhq",
     params: { data: JSON.stringify(data) },
   });
