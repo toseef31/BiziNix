@@ -320,7 +320,6 @@ const documents = computed(() => props.data);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 
-
 const selectedDocuments = ref([] as any[]);
 const reminderEmail = ref("");
 
@@ -351,17 +350,24 @@ function saveAs(filename: string, blob: Blob) {
 }
 
 function editDocument(id: any) {
+  const document = documents.value.find((d) => d.id === id);
   return router.push({
     name: "My document",
-    params: { id: id },
+    params: { document: JSON.stringify(document) },
   });
 }
 
-function duplicateDocument(document: any) {
+function duplicateDocument(document: Doklad) {
+  document.date_of_issue = today;
+  document.delivery_date = today;
+  //este treba updatnut VS a serial_number
   store
     .dispatch("addDocument", document)
     .then(() => {
-      router.go(0);
+      return router.push({
+        name: "My document",
+        params: { document: JSON.stringify(document) },
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -374,14 +380,14 @@ function deleteSingleDocument() {
 
 function confirmDelete(id: any) {
   isVisible = setModal("deleteModal", false);
-  /*store
+  store
     .dispatch("deleteDocument", id)
     .then(() => {
       router.go(0);
     })
     .catch((err) => {
       console.log(err);
-    });*/
+    });
 }
 
 function deleteMultipleDocuments() {

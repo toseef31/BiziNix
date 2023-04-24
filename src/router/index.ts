@@ -67,7 +67,7 @@ const router = createRouter({
         { path: '/add-document', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true } },
         { path: '/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
         { path: '/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
-        { path: '/my-documents/:id', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
+        { path: '/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true }, props: true },
       ],
     },
     {

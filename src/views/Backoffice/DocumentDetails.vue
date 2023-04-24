@@ -10,10 +10,21 @@
       >
         <div class="bg-gray-200 rounded-lg px-4 my-2">
           <section>
-            <h3 class="text-3xl font-bold text-center py-10 text-black">
-              Detail dokladu č. <br />
-              {{ document.serial_number }}
-            </h3>
+            <div class="flex flex-row">
+              <div class="flex basis-5/6 justify-center">
+                <h3 class="text-3xl font-bold text-center py-10 text-black">
+                  Detail dokladu č. {{ document.serial_number }}
+                </h3>
+              </div>
+              <div class="flex basis-1/6 justify-end py-6 px-6">
+                <button
+                  class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                  v-on:click="cancelEdit()"
+                >
+                  X
+                </button>
+              </div>
+            </div>
 
             <div class="flex">
               <section class="flex flex-col w-full">
@@ -517,16 +528,19 @@
 import type Company from "@/@types/Company";
 import type Doklad from "@/@types/Document";
 import store from "@/store";
-import { ref, onBeforeMount, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
+import { toast } from "vue3-toastify";
+
+const props = defineProps(["document"]);
+const document = computed(() => JSON.parse(props.document));
+const items = ref([] as any[]);
 
 const route = useRoute();
 const router = useRouter();
 const submitted = ref(false);
 const isOpen = ref(false);
-
-const document = ref({} as Doklad);
 
 const company = ref({} as Company);
 const address = ref({
@@ -537,8 +551,6 @@ const address = ref({
   country: "",
   psc: "",
 });
-
-const items = ref([] as any[]);
 
 const headquarter = ref({
   id: 0,
@@ -586,6 +598,12 @@ async function refreshData() {
 
 function toggleAccordion() {
   isOpen.value = !isOpen.value;
+}
+
+function cancelEdit() {
+  router.push({
+    name: "My documents",
+  });
 }
 
 function priceEntered(item: any) {
@@ -642,30 +660,18 @@ function submitHandler() {
   return store
     .dispatch("updateDocument", document.value)
     .then((res) => {
-      const documentResponse = res;
-      console.log("Document from Res " + JSON.stringify(documentResponse));
       router.push({
         name: "My documents",
       });
       return documentResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error("Error: " + err.message);
     });
 }
 
-onBeforeMount(async () => {
-  const id = route.params.id;
-  store
-    .dispatch("getDocumentById", id)
-    .then((response) => {
-      document.value = response.data;
-      items.value = JSON.parse(document.value.items);
-    }); 
-  await refreshData();
-});
-
 onMounted(async () => {
-   
+  await refreshData();
+  //items.value = JSON.parse(JSON.stringify(document.value.items));
 });
 </script>
