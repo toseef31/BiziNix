@@ -600,6 +600,7 @@ const address = ref({
   id: 0,
   street: "",
   street_number: 0,
+  street_number2: 0,
   city: "",
   country: "",
   psc: "",
