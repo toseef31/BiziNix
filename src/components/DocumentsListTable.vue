@@ -86,7 +86,7 @@
                   Vystaviť upomienku
                 </button>
                 <button
-                  v-show="document.isIssued"
+                  v-show="!document.isIssued"
                   :disabled="document.isPaid"
                   :class="[
                     document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',

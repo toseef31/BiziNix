@@ -168,8 +168,117 @@
             />
             <div class="pt-4">
               Importujte prijaté doklady <br />
-              <button class="font-bold">TU</button>
+              <button
+                class="font-bold"
+                v-on:click="openImportDialog('importModal')"
+              >
+                TU
+              </button>
             </div>
+            <Modal
+              name="importModal"
+              v-model:visible="isVisible"
+              :type="'clean'"
+              :closable="false"
+              title="Importovanie dokladu"
+            >
+              <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+                <div
+                  class="flex justify-between py-8 px-4 text-white font-bold text-lg"
+                >
+                  Importujte prijatý doklad
+                  <button
+                    class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                    v-on:click="closeDialog('importModal')"
+                  >
+                    X
+                  </button>
+                </div>
+                <FormKit
+                  type="form"
+                  id="add-document"
+                  submit-label="Importovať doklad"
+                  @submit="importDocument()"
+                  :actions="false"
+                >
+                  <div class="pl-4 text-white w-full">
+                    <FormKit
+                      v-model="document.subtype"
+                      :value="activeDocTab"
+                      type="select"
+                      name="Druh dokladu"
+                      placeholder="Vyberte druh dokladu"
+                      :options="Constants.DOCUMENT_SUBTYPES"
+                      @change="documentSubtypeChanged()"
+                      validation="required"
+                    />
+                  </div>
+                  <div class="pl-4 text-white w-full py-4">
+                    <FormKit
+                      type="text"
+                      name="Od koho je doklad"
+                      label="Od koho je doklad"
+                      validation="required"
+                      v-model="document.odberatel"
+                    />
+                  </div>
+                  <div class="flex flex-row pb-8 gap-4">
+                    <div class="flex text-white pl-4 basis-1/3">
+                      <FormKit
+                        type="date"
+                        name="Termín prijatia"
+                        label="Termín prijatia"
+                        validation="required|length:10"
+                        v-model="document.date_of_issue"
+                        :value="today"
+                      />
+                    </div>
+                    <div class="flex text-white basis-2/3 pr-4">
+                      <div class="w-full">
+                        <FormKit
+                          type="text"
+                          id="amount"
+                          name="Suma"
+                          label="Suma v €"
+                          v-model="document.total"
+                          validation="required"
+                        />
+                      </div>
+                      <div class="w-full">
+                        <FormKit
+                          type="select"
+                          label="DPH"
+                          name="DPH"
+                          :options="['s DPH', 'bez DPH']"
+                          @change="dphChanged($event)"
+                          validation="required"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pl-4 w-full text-white">
+                    <FormKit
+                      id="scan"
+                      label="Importovať doklad"
+                      accept="image/*"
+                      v-on:change="updateImgData($event)"
+                      name="scan"
+                      type="file"
+                    />
+                  </div>
+
+                  <div class="flex flex-row justify-end py-8 px-4 gap-4">
+                    <div class="flex flex-1/4">
+                      <FormKit
+                        label="Importovať doklad"
+                        type="submit"
+                        class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+                      />
+                    </div>
+                  </div>
+                </FormKit>
+              </div>
+            </Modal>
           </div>
           <div class="flex flex-col items-center w-full py-8 px-10">
             <DocumentsListTable
@@ -208,6 +317,11 @@ import { onBeforeMount, ref, computed, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
 import type Company from "@/@types/Company";
+import type Doklad from "@/@types/Document";
+import { useModal, Modal } from "usemodal-vue3";
+import moment from "moment";
+import Constants from "@/helpers/constants";
+
 const router = useRouter();
 const tab = ref(1);
 const activeTab = ref(1);
@@ -219,6 +333,26 @@ const filteredDocuments = ref([] as any[]);
 const searchQuery = ref("");
 const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
+const today = moment(new Date()).format("YYYY-MM-DD");
+const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
+const document = ref({
+  type: activeTab,
+  subtype: activeDocTab,
+  company_id: company.value.id,
+  odberatel: "",
+  serial_number: "20230001",
+  isIssued: false,
+  isPaid: false,
+  total: 0,
+  payment_date: "",
+  date_of_issue: today,
+});
+
+const setModal = useModal({
+  importModal: 1,
+});
+let isVisible = reactive({});
+isVisible = setModal("importModal", false);
 
 const filteredDocumentsByIssued: any = computed(() => {
   return filteredDocuments.value.filter((document: any) => {
@@ -262,6 +396,40 @@ const totalToPay: any = computed(() => {
     0
   );
 });
+
+function dphChanged(event: any) {
+  //
+}
+
+function documentSubtypeChanged() {
+  switch (document.value.subtype) {
+    case 1:
+      document.value.type = 1;
+      document.value.subtype = 1;
+      break;
+    case 2:
+      document.value.type = 1;
+      document.value.subtype = 2;
+      break;
+    case 3:
+      document.value.type = 1;
+      document.value.subtype = 3;
+      break;
+    case 4:
+      document.value.type = 2;
+      document.value.subtype = 4;
+      break;
+    case 5:
+      document.value.type = 2;
+      document.value.subtype = 5;
+      break;
+  }
+}
+
+function updateImgData(evt: any) {
+  uploadImageData.value.body.name = evt.target.files[0].name;
+  uploadImageData.value.body.logo = evt.target.files[0];
+}
 
 function currentTab(tabNumber: any) {
   tab.value = tabNumber;
@@ -315,6 +483,42 @@ function redirect() {
     name: "Add document",
     params: { subtype: activeDocTab.value },
   });
+}
+
+function openImportDialog(modal: string) {
+  isVisible = setModal(modal, true);
+}
+
+function closeDialog(modal: string) {
+  isVisible = setModal(modal, false);
+  router.go(0);
+}
+
+function importDocument() {
+  document.value.isIssued = false;
+  document.value.company_id = company.value.id;
+  document.value.serial_number = 420;
+
+  return store
+    .dispatch("addDocument", document.value)
+    .then((res) => {
+      //uploadImg();
+      closeDialog("importModal");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function uploadImg() {
+  store
+    .dispatch("uploadDocumentImg", uploadImageData.value)
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 watch(
