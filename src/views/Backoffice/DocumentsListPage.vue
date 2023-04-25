@@ -497,7 +497,7 @@ function closeDialog(modal: string) {
 function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
-  document.value.serial_number = 420;
+  document.value.serial_number = '420';
 
   return store
     .dispatch("addDocument", document.value)
