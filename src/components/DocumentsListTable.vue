@@ -350,7 +350,7 @@ function saveAs(filename: string, blob: Blob) {
 }
 
 function editDocument(id: any) {
-  const document = documents.value.find((d) => d.id === id);
+  const document = documents.value.find((d: any) => d.id === id);
   return router.push({
     name: "My document",
     params: { document: JSON.stringify(document) },

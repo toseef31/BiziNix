@@ -532,10 +532,12 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
+import moment from "moment";
 
 const props = defineProps(["document"]);
 const document = computed(() => JSON.parse(props.document));
 const items = ref([] as any[]);
+const today = moment(new Date()).format("YYYY-MM-DD");
 
 const route = useRoute();
 const router = useRouter();
@@ -663,7 +665,6 @@ function submitHandler() {
       router.push({
         name: "My documents",
       });
-      return documentResponse;
     })
     .catch((err) => {
       toast.error("Error: " + err.message);
