@@ -144,7 +144,7 @@
           :closable="false"
           title="Zmazanie dokladu"
         >
-          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
             <div
               class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
             >
@@ -177,7 +177,7 @@
           :closable="false"
           title="Zmazanie dokladov"
         >
-          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
             <div
               class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
             >
@@ -210,11 +210,15 @@
           :closable="false"
           title="Odoslanie upomienky"
         >
-          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+            <img
+              src="@/assets/upomienka.png"
+              class="h-auto shrink-0 z-0 w-[128px] absolute right-4 top-4"
+            />
             <div
               class="flex justify-start py-4 px-4 text-white font-bold text-lg"
             >
-              Prosím potvrdte odoslanie upomienky.
+              Prosím potvrďte vystavenie upomienky
             </div>
             <div class="flex justify-start px-4 text-white">
               <FormKit
@@ -253,30 +257,16 @@
           :closable="false"
           title="Zaplatenie dokladu"
         >
-          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
             <div
               class="flex justify-start py-4 px-4 text-white font-bold text-lg"
             >
-              Koľko bolo uhradené?
+              Uhradenie dokladu
             </div>
-            <div class="flex justify-start px-4 text-white">
-              <FormKit
-                type="number"
-                id="repay_amount"
-                label="Zaplatená suma"
-                v-model="document.paid"
-                :value="document.total"
-              />
-            </div>
-            <div class="flex justify-start px-4 text-white">
-              <FormKit
-                type="date"
-                name="Dátum úhrady"
-                label="Dátum úhrady"
-                validation="required|length:10"
-                v-model="document.payment_date"
-                :value="today"
-              />
+            <div class="w-full px-4 py-4 text-white bg-gray-900">
+              <stripePaymentComponent
+                ref="childRefComponentForPay"
+              ></stripePaymentComponent>
             </div>
             <div class="flex flex-row justify-end py-2 px-4">
               <div class="flex flex-1/4 px-4">
@@ -314,6 +304,7 @@ import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import * as FileSaver from "file-saver";
 import moment from "moment";
+import stripePaymentComponent from "@/components/payments/PayStripe.vue";
 
 const props = defineProps(["data"]);
 const documents = computed(() => props.data);

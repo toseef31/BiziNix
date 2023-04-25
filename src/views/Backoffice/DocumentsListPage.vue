@@ -183,6 +183,10 @@
               title="Importovanie dokladu"
             >
               <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+                <img
+                  src="@/assets/doklad.png"
+                  class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12"
+                />
                 <div
                   class="flex justify-between py-8 px-4 text-white font-bold text-lg"
                 >
@@ -201,7 +205,7 @@
                   @submit="importDocument()"
                   :actions="false"
                 >
-                  <div class="pl-4 text-white w-full">
+                  <div class="flex px-4 pt-10 text-white z-10 relative">
                     <FormKit
                       v-model="document.subtype"
                       :value="activeDocTab"
@@ -491,7 +495,6 @@ function openImportDialog(modal: string) {
 
 function closeDialog(modal: string) {
   isVisible = setModal(modal, false);
-  router.go(0);
 }
 
 function importDocument() {
@@ -504,6 +507,7 @@ function importDocument() {
     .then((res) => {
       //uploadImg();
       closeDialog("importModal");
+      router.go(0);
     })
     .catch((err) => {
       console.log(err);

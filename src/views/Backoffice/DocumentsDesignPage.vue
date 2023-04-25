@@ -54,7 +54,7 @@
           :closable="false"
           title="Upload logo"
         >
-          <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
             <div
               class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
             >

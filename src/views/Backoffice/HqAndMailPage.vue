@@ -83,10 +83,14 @@
               :closable="false"
               title="Preposlanie zásielok"
             >
-              <div class="bg-gray-600 rounded-lg border-gray-800 border-2">
+              <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
                 <div
                   class="flex flex-col justify-start py-4 px-4 text-white font-bold"
                 >
+                  <img
+                    src="@/assets/posta.png"
+                    class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12"
+                  />
                   <div class="text-xl">
                     Prosím potvrdte preposlanie zvolených zásielok zo zoznamu.
                   </div>
@@ -284,11 +288,15 @@
                         title="Preposlanie zásielky"
                       >
                         <div
-                          class="bg-gray-600 rounded-lg border-gray-800 border-2"
+                          class="bg-gray-800 rounded-lg border-teal-600 border-2"
                         >
                           <div
                             class="flex flex-col justify-start py-6 px-6 text-white font-bold"
                           >
+                            <img
+                              src="@/assets/posta.png"
+                              class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12"
+                            />
                             <div class="text-xl">
                               Prosím potvrdte preposlanie zásielky od <br />
                               {{ mail.sender }}
@@ -450,7 +458,7 @@
                         title="Skartovanie zásielky"
                       >
                         <div
-                          class="bg-gray-600 rounded-lg border-gray-800 border-2"
+                          class="bg-gray-800 rounded-lg border-teal-600 border-2"
                         >
                           <div
                             class="flex flex-row justify-start py-4 px-4 text-white font-bold"
