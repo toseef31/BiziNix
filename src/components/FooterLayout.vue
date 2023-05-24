@@ -1,7 +1,6 @@
 <template>
-  <div class="z-10 relative">
-    <img src="../assets/footer-2.png" class="-mt-[380px]" />
-    <div class="absolute w-full bottom-[40px] left-0">
+  <footer>
+    <div class="w-full bg-[url('src/assets/footer-2.png')] bg-cover bg-no-repeat bg-top pt-36 pb-8">
       <div class="container mx-auto flex">
         <div class="flex-1 text-white font-bold text-xl">
           <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
@@ -100,5 +99,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </footer>
 </template>
