@@ -97,7 +97,7 @@
 import store from "@/store";
 import { onBeforeMount, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import type Company from "@/@types/Company";
+import type Company from "@/types/Company";
 import { useModal, Modal } from "usemodal-vue3";
 const router = useRouter();
 const company = ref({} as Company);

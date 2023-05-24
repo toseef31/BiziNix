@@ -607,7 +607,7 @@
 </template>
 
 <script setup lang="ts">
-import type Company from "@/@types/Company";
+import type Company from "@/types/Company";
 import store from "@/store";
 import { ref, onBeforeMount, computed, reactive, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";

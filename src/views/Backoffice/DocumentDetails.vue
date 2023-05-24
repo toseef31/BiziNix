@@ -525,8 +525,8 @@
 </template>
 
 <script setup lang="ts">
-import type Company from "@/@types/Company";
-import type Doklad from "@/@types/Document";
+import type Company from "@/types/Company";
+import type Doklad from "@/types/Document";
 import store from "@/store";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";

@@ -299,7 +299,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import { computed, ref, reactive } from "vue";
-import type Doklad from "@/@types/Document";
+import type Doklad from "@/types/Document";
 import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import * as FileSaver from "file-saver";
