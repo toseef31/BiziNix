@@ -148,6 +148,12 @@ export const store = createStore({
       );
       return response;
     },
+    async getDocumentSnCounters() {
+      const response = await axiosClient.get(
+        "/companies/getDocumentSnCounters"
+      );
+      return response;
+    },
     async getHeadquartersById({ commit }, hqId) {
       const { data } = await axiosClient.get(`/headquarters/${hqId}/get`);
       return data;
@@ -183,6 +189,12 @@ export const store = createStore({
     async getCompanyBankDetails({ commit }, companyId) {
       const { data } = await axiosClient.get(
         `/companies/${companyId}/getBankDetails`
+      );
+      return data;
+    },
+    async getDocumentSnForCompany({ commit }, companyId) {
+      const { data } = await axiosClient.get(
+        `/companies/${companyId}/getDocumentSnForCompany`
       );
       return data;
     },

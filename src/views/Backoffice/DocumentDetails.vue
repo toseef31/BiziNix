@@ -528,17 +528,19 @@
 import type Company from "@/@types/Company";
 import type Doklad from "@/@types/Document";
 import store from "@/store";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
 const props = defineProps(["document"]);
-const document = computed(() => JSON.parse(props.document));
-const items = ref([] as any[]);
-const today = moment(new Date()).format("YYYY-MM-DD");
+const document: any = computed(() => JSON.parse(props.document));
 
+let items = ref([] as any[]);
+//items = JSON.parse(document.value.items);
+
+const today = moment(new Date()).format("YYYY-MM-DD");
 const route = useRoute();
 const router = useRouter();
 const submitted = ref(false);
@@ -673,6 +675,5 @@ function submitHandler() {
 
 onMounted(async () => {
   await refreshData();
-  //items.value = JSON.parse(JSON.stringify(document.value.items));
 });
 </script>

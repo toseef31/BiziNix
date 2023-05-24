@@ -25,18 +25,42 @@
                 X
               </button>
             </div>
-            <div class="flex flex-row">
-              <h3 class="text-3xl font-bold py-10 text-black">
-                Vystavujete {{ documentTypeStr }} č.
-              </h3>
-              <div class="py-10 px-2">
-                <FormKit
-                  v-model="document.serial_number"
-                  autocomplete="nope"
-                  id="invoice-number"
-                  name="serial_number"
-                  type="text"
-                />
+            <div class="flex flex-row justify-between">
+              <div class="flex">
+                <h3 class="text-3xl font-bold py-10 text-black">
+                  Vystavujete {{ documentTypeStr }} č.
+                </h3>
+                <div class="py-10 px-2">
+                  <FormKit
+                    v-model="document.serial_number"
+                    autocomplete="nope"
+                    id="invoice-number"
+                    name="serial_number"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div class="flex">
+                <div class="py-10 px-2 text-right">
+                  <div>
+                    <label class="text-sm">
+                      {{ company.name }}
+                    </label>
+                    <br />
+                    <label class="text-sm">
+                      {{ address.street }} {{ address.street_number }}/{{
+                        address.street_number2
+                      }}
+                      {{ address.city }}
+                    </label>
+                  </div>
+                </div>
+                <div class="py-10 px-2">
+                  <OfficeBuildingIcon
+                    class="w-12 text-black"
+                    aria-hidden="true"
+                  />
+                </div>
               </div>
             </div>
 
@@ -419,6 +443,7 @@
                             class="flex"
                             inputmode="decimal"
                             v-model="item.quantity"
+                            @change="quantityEntered(item)"
                           />
                         </div>
                         <div class="flex">
@@ -505,7 +530,9 @@
                 <table class="w-full">
                   <tbody>
                     <tr>
-                      <th class="text-right pr-1 text-4xl">{{ totalPrice.toFixed(2) }}</th>
+                      <th class="text-right pr-1 text-4xl">
+                        {{ totalPrice.toFixed(2) }}
+                      </th>
                       <th>
                         <FormKit
                           type="select"
@@ -587,6 +614,7 @@ import { useRoute, useRouter } from "vue-router";
 import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
+import { OfficeBuildingIcon } from "@heroicons/vue/outline";
 
 const route = useRoute();
 const router = useRouter();
@@ -600,6 +628,7 @@ const address = ref({
   id: 0,
   street: "",
   street_number: 0,
+  street_number2: 0,
   city: "",
   country: "",
   psc: "",
@@ -637,6 +666,9 @@ const companyBankDetails = ref({
 
 const documentTypeStr = ref("faktúru");
 
+const serial_number = ref("");
+const variabilny = ref("");
+
 const document = ref({
   type: 1,
   subtype: subtype,
@@ -650,8 +682,8 @@ const document = ref({
   ico: "",
   dic: "",
   icdph: "",
-  serial_number: "20230001",
-  variabilny: "20230001",
+  serial_number: serial_number,
+  variabilny: variabilny,
   konstantny: "",
   specificky: "",
   note_above: "",
@@ -677,6 +709,15 @@ watch(
     refreshData();
   }
 );
+
+async function setSerialNumber() {
+  store
+    .dispatch("getDocumentSnForCompany", company.value.id)
+    .then((response) => {
+      serial_number.value = response.data;
+      variabilny.value = response.data;
+    });
+}
 
 async function refreshData() {
   await store
@@ -710,6 +751,14 @@ function toggleAccordion() {
 }
 
 function priceEntered(item: any) {
+  if (item.vat > 0) {
+    item.total = item.quantity * item.unit_price;
+  } else {
+    item.total = item.quantity * item.unit_price;
+  }
+}
+
+function quantityEntered(item: any) {
   if (item.vat > 0) {
     item.total = item.quantity * item.unit_price;
   } else {
@@ -836,6 +885,7 @@ function closeModal() {
 
 onBeforeMount(async () => {
   await refreshData();
+  await setSerialNumber();
 });
 </script>
 

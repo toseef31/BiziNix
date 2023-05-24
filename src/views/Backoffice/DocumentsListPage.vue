@@ -226,6 +226,14 @@
                       v-model="document.odberatel"
                     />
                   </div>
+                  <div class="pl-4 text-white w-full py-4">
+                    <FormKit
+                      type="text"
+                      name="Číslo dokladu"
+                      label="Číslo dokladu"
+                      v-model="document.serial_number"
+                    />
+                  </div>
                   <div class="flex flex-row pb-8 gap-4">
                     <div class="flex text-white pl-4 basis-1/3">
                       <FormKit
@@ -344,7 +352,7 @@ const document = ref({
   subtype: activeDocTab,
   company_id: company.value.id,
   odberatel: "",
-  serial_number: "20230001",
+  serial_number: "",
   isIssued: false,
   isPaid: false,
   total: 0,

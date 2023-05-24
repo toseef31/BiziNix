@@ -24,5 +24,6 @@ export default interface Company {
   sidlo_zaplatene_do: string
   fakturacia_zaplatene_do: string
   doc_template_id: number
+  doc_sncounters_id: number
   logo: string
 }
