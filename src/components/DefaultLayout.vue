@@ -57,12 +57,14 @@
           </PopoverButton>
         </div>
         <PopoverGroup as="nav" class="hidden space-x-6 md:flex">
-          <Popover class="relative" v-slot="{ open }">
+          <Popover class="relative" v-slot="{ open, close }">
             <PopoverButton
               :class="[
                 open ? 'text-gray-400' : 'text-white',
                 'group inline-flex items-center rounded-md bg-gray-800 text-base font-medium hover:text-gray-400 focus:outline-none',
               ]"
+              @mouseover="(e) => hoverPopover(e, open)"
+              @mouseleave="closePopover(close)"
             >
               <span>Firmy a ich úprava</span>
               <ChevronDownIcon
@@ -84,6 +86,8 @@
             >
               <PopoverPanel
                 class="absolute z-10 -ml-4 mt-3 w-screen max-w-md transform px-2 sm:px-0 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2"
+                @mouseover.prevent="popoverHover = true"
+                @mouseleave.prevent="closePopover(close)"
               >
                 <div
                   class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
@@ -542,14 +546,36 @@ import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
-import { computed, onBeforeMount } from "vue";
+import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-let user: any;
+const store = useStore();
+const router = useRouter();
+let user = ref();
+user = computed(() => store.state.user);
 
-onBeforeMount( () => {
+onBeforeMount(async () => {
   user = computed(() => store.state.user);
+  if(user.value.userId){
+    await store.dispatch('setUserDataAfterLogin')
+   }
 })
+
+const popoverHover = ref(false)
+const popoverTimeout = ref()
+
+const hoverPopover = (e: any, open: any) => {
+  popoverHover.value = true
+  if (!open) e.target.click()
+}
+
+const closePopover = (close: any) => {
+  popoverHover.value = false
+  if (popoverTimeout.value) clearTimeout(Number(popoverHover.value))
+  popoverTimeout.value = setTimeout(() => {
+    if (!popoverHover.value) close()
+  }, 100)
+}
 
 const topBarNavigation = [
   { name: "Podpora", to: { name: "Counseling center" } },
@@ -650,9 +676,6 @@ const recentPosts = [
   { id: 3, name: "Improve your customer experience", href: "#" },
 ];
 
-const store = useStore();
-const router = useRouter();
-
 function logout() {
   store
     .dispatch("logoutUser") // action in store
@@ -662,7 +685,5 @@ function logout() {
       });
     });
 }
-
-user = computed(() => store.state.user);
 
 </script>

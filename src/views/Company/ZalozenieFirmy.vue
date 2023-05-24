@@ -345,6 +345,7 @@
 
     </div>
   </div>
+  <FooterLayout></FooterLayout>
 </template>
 
 <script setup lang="ts">
@@ -355,7 +356,8 @@ import useSteps from "@/components/forms/useStep";
 import { createInput } from '@formkit/vue'
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
-import type User from "@/@types/User";
+import type User from "@/types/User";
+import FooterLayout from "@/components/FooterLayout.vue";
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);

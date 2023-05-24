@@ -25,10 +25,10 @@
 
 <script setup lang="ts">
 import { ChevronDownIcon } from "@heroicons/vue/outline";
-import type Mail from "@/@types/Mail";
+import type Mail from "@/types/Mail";
 import store from "@/store";
 import { onBeforeMount, ref } from "vue";
-import type Company from "@/@types/Company";
+import type Company from "@/types/Company";
 
 const companies = ref([""] as any);
 const mails = ref([] as Mail[]);
