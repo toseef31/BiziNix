@@ -4,6 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "lib": [],
+    "verbatimModuleSyntax": true,
     "types": ["node", "jsdom"]
   }
 }

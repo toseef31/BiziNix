@@ -20,9 +20,9 @@
       </div>
     </div>
   </div>
-  <div class="py-6">
+  <div class="py-12 mb-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-center mb-8 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+      <h2 class="text-center mb-10 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
 
       <!--FORM -->
       <div>
@@ -81,6 +81,7 @@
 
     </div>
   </div>
+  <!-- <FooterLayout></FooterLayout> -->
 </template>
 
 <script setup lang="ts">
@@ -89,6 +90,7 @@ import store from "@/store";
 import { ref, computed } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
+import FooterLayout from "@/components/FooterLayout.vue";
 import { toast } from 'vue3-toastify';
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
