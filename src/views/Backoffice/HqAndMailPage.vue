@@ -600,7 +600,7 @@ import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
 import dayjs from "dayjs";
 import { useModal, Modal } from "usemodal-vue3";
-import * as _ from 'lodash'
+import * as _ from "lodash";
 
 const route = useRoute();
 const searchQuery = ref("");

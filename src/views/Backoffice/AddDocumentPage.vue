@@ -688,7 +688,7 @@ const document = ref({
   konstantny: "",
   specificky: "",
   note_above: "",
-  items: [],
+  items: [] as any[],
   note_under: "",
   date_of_issue: today,
   due_by: "",

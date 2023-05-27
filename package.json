@@ -13,7 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@formkit/addons": "^0.17.2",
+    "@formkit/addons": "latest",
     "@formkit/icons": "latest",
     "@formkit/pro": "^1.0.0-alpha.105",
     "@formkit/themes": "^0.16.4",
@@ -40,6 +40,7 @@
     "@stripe/stripe-js": "^1.46.0",
     "@tailwindcss/forms": "^0.5.2",
     "@types/jsdom": "^16.2.14",
+    "@types/lodash": "^4.14.195",
     "@types/node": "^16.11.45",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitejs/plugin-vue-jsx": "^3.0.0",
