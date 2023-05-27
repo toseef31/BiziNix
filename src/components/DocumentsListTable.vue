@@ -437,7 +437,7 @@ function downlaodSingleDocument(document: Doklad) {
   store
     .dispatch("downloadDocument", document.id)
     .then((response) => {
-      const byteCharacters = atob(response.data);
+      const byteCharacters = atob(response);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
