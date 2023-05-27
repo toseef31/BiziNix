@@ -342,12 +342,12 @@
                 </div>
               </div>
               <div class="flex justify-center py-4 text-black">
-                <label class="px-2">Uhradené?</label>
                 <FormKit
-                  type="checkbox"
-                  name="paid"
-                  validation-visibility="dirty"
-                  v-model="document.isPaid"
+                  type="date"
+                  name="Dátum úhrady"
+                  label="Dátum úhrady"
+                  v-model="document.payment_date"
+                  :value="today"
                 />
               </div>
             </div>
@@ -373,7 +373,10 @@
               </div>
 
               <ul class="py-2" id="items_list">
-                <li v-for="(item, index) in items" :key="index">
+                <li
+                  v-for="(item, index) in JSON.parse(document.items)"
+                  :key="index"
+                >
                   <div class="flex flex-row gap-1">
                     <div class="flex basis-3/12">
                       <FormKit
@@ -528,17 +531,17 @@
 import type Company from "@/types/Company";
 import type Doklad from "@/types/Document";
 import store from "@/store";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, onBeforeMount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
-const props = defineProps(["document"]);
-const document: any = computed(() => JSON.parse(props.document));
+const document: any = computed(() => {
+  return store.state.document;
+});
 
-let items = ref([] as any[]);
-//items = JSON.parse(document.value.items);
+const items = ref([] as any[]);
 
 const today = moment(new Date()).format("YYYY-MM-DD");
 const route = useRoute();
@@ -650,17 +653,17 @@ function addItem() {
     total: 0.0,
     description: "",
   };
-
-  items.value.push(item);
+  JSON.parse(document.value.items).push(item);
 }
 
 function removeItem(index: number) {
-  items.value.splice(index, 1);
+  const items = JSON.parse(document.value.items);
+  items.splice(index, 1);
+  document.value.items = JSON.stringify(items);
 }
 
 function submitHandler() {
   submitted.value = true;
-  document.value.items = JSON.stringify(items.value);
   return store
     .dispatch("updateDocument", document.value)
     .then((res) => {
@@ -675,5 +678,6 @@ function submitHandler() {
 
 onMounted(async () => {
   await refreshData();
+  items.value = JSON.parse(document.value.items);
 });
 </script>

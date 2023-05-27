@@ -24,10 +24,10 @@
       </div>
     </div>
     <ul>
-      <li class="pb-2" v-for="document in documents" :key="document.id">
+      <li class="pb-2" v-for="document in orderedItems" :key="document.id">
         <div
           :class="[
-            document.isIssued ? 'bg-gray-700' : 'bg-gray-500',
+            document.isIssued ? 'bg-gray-700' : 'bg-slate-500',
             document.isPaid ? 'bg-teal-900' : 'bg-gray-700',
             'flex rounded-2xl',
           ]"
@@ -54,7 +54,7 @@
                   v-show="document.isIssued"
                   type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
-                  v-on:click="editDocument(document.id)"
+                  v-on:click="editDocument(document)"
                 >
                   Upraviť
                 </button>
@@ -69,7 +69,7 @@
                 <button
                   type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
-                  v-on:click="downlaodSingleDocument(document.id)"
+                  v-on:click="downlaodSingleDocument(document)"
                 >
                   Stiahnuť
                 </button>
@@ -81,27 +81,14 @@
                     document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
                     'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
                   ]"
-                  v-on:click="sendReminder()"
+                  v-on:click="sendReminder(document)"
                 >
                   Vystaviť upomienku
                 </button>
                 <button
-                  v-show="!document.isIssued"
-                  :disabled="document.isPaid"
-                  :class="[
-                    document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
-                    'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
-                  ]"
-                  type="button"
-                  v-on:click="repay()"
-                >
-                  <label v-show="!document.isPaid">Uhradiť</label>
-                  <label v-show="document.isPaid">Uhradené</label>
-                </button>
-                <button
                   type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-red-500 focus:outline-none"
-                  v-on:click="deleteSingleDocument()"
+                  v-on:click="deleteSingleDocument(document)"
                 >
                   Zmazať
                 </button>
@@ -124,176 +111,216 @@
                 <div class="flex text-sm">{{ document.overdue }}</div>
               </div>
               <div class="flex flex-col items-center justify-center basis-2/5">
-                <div class="flex items-center">
-                  <input
-                    id="default-checkbox"
-                    type="checkbox"
-                    :value="document"
-                    v-model="selectedDocuments"
-                    class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
+                <div class="flex flex-col items-center">
+                  <div>
+                    <input
+                      id="default-checkbox"
+                      type="checkbox"
+                      :value="document"
+                      v-model="selectedDocuments"
+                      class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                  </div>
+                  <div class="flex flex-col pt-4">
+                    <label
+                      class="relative inline-flex items-center cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        value=""
+                        class="sr-only peer"
+                        @click="repay(document)"
+                        :checked="document.isPaid"
+                        :disabled="document.isPaid"
+                      />
+                      <div
+                        class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-teal-800 dark:peer-focus:ring-teal-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"
+                      ></div>
+                    </label>
+                    <span
+                      class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      v-show="!document.isPaid"
+                      >Neuhradené</span
+                    >
+                    <span
+                      class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      v-show="document.isPaid"
+                      >Uhradené</span
+                    >
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <Modal
-          name="deleteModal"
-          v-model:visible="isVisible"
-          :type="'clean'"
-          :closable="false"
-          title="Zmazanie dokladu"
-        >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-            <div
-              class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
-            >
-              Prosím potvrdte zmazanie dokladu.
-            </div>
-            <div class="flex flex-row justify-end py-2 px-4">
-              <div class="flex flex-1/4 px-4">
-                <button
-                  class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="confirmDelete(document.id)"
-                >
-                  Zmazať
-                </button>
-              </div>
-              <div class="flex flex-1/4">
-                <button
-                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="closeModal('deleteModal')"
-                >
-                  Zrušiť
-                </button>
-              </div>
-            </div>
-          </div>
-        </Modal>
-        <Modal
-          name="deleteMultipleModal"
-          v-model:visible="isVisible"
-          :type="'clean'"
-          :closable="false"
-          title="Zmazanie dokladov"
-        >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-            <div
-              class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
-            >
-              Prosím potvrdte zmazanie označených dokladov.
-            </div>
-            <div class="flex flex-row justify-end py-2 px-4">
-              <div class="flex flex-1/4 px-4">
-                <button
-                  class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="confirmDeleteMultipleDocuments()"
-                >
-                  Zmazať
-                </button>
-              </div>
-              <div class="flex flex-1/4">
-                <button
-                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="closeModal('deleteMultipleModal')"
-                >
-                  Zrušiť
-                </button>
-              </div>
-            </div>
-          </div>
-        </Modal>
-        <Modal
-          name="reminderModal"
-          v-model:visible="isVisible"
-          :type="'clean'"
-          :closable="false"
-          title="Odoslanie upomienky"
-        >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-            <img
-              src="@/assets/upomienka.png"
-              class="h-auto shrink-0 z-0 w-[128px] absolute right-4 top-4"
-            />
-            <div
-              class="flex justify-start py-4 px-4 text-white font-bold text-lg"
-            >
-              Prosím potvrďte vystavenie upomienky
-            </div>
-            <div class="flex justify-start px-4 text-white">
-              <FormKit
-                type="email"
-                id="reminder_email"
-                label="Email klienta"
-                placeholder="email@example.com"
-                v-model="reminderEmail"
-              />
-            </div>
-
-            <div class="flex flex-row justify-end py-2 px-4">
-              <div class="flex flex-1/4 px-4">
-                <button
-                  class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="confirmReminder(document.id, reminderEmail)"
-                >
-                  Odoslať upomienku
-                </button>
-              </div>
-              <div class="flex flex-1/4">
-                <button
-                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="closeModal('reminderModal')"
-                >
-                  Zrušiť
-                </button>
-              </div>
-            </div>
-          </div>
-        </Modal>
-        <Modal
-          name="repayModal"
-          v-model:visible="isVisible"
-          :type="'clean'"
-          :closable="false"
-          title="Zaplatenie dokladu"
-        >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-            <div
-              class="flex justify-start py-4 px-4 text-white font-bold text-lg"
-            >
-              Uhradenie dokladu
-            </div>
-            <div class="w-full px-4 py-4 text-white bg-gray-900">
-              <stripePaymentComponent
-                ref="childRefComponentForPay"
-              ></stripePaymentComponent>
-            </div>
-            <div class="flex flex-row justify-end py-2 px-4">
-              <div class="flex flex-1/4 px-4">
-                <button
-                  class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="repayConfirm(document)"
-                >
-                  Zaplatiť
-                </button>
-              </div>
-              <div class="flex flex-1/4">
-                <button
-                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="closeModal('repayModal')"
-                >
-                  Zrušiť
-                </button>
-              </div>
-            </div>
-          </div>
-        </Modal>
       </li>
     </ul>
   </div>
   <div v-if="data.length == 0">
     <div>Momentálne nemáte vo svojom účte žiadne doklady.</div>
   </div>
+  <Modal
+    name="deleteModal"
+    v-model:visible="isVisible"
+    :type="'clean'"
+    :closable="false"
+    title="Zmazanie dokladu"
+  >
+    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+      <div
+        class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
+      >
+        Prosím potvrdte zmazanie dokladu.
+      </div>
+      <div class="flex flex-row justify-end py-2 px-4">
+        <div class="flex flex-1/4 px-4">
+          <button
+            class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="confirmDelete(selectedDocument)"
+          >
+            Zmazať
+          </button>
+        </div>
+        <div class="flex flex-1/4">
+          <button
+            class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="closeModal('deleteModal')"
+          >
+            Zrušiť
+          </button>
+        </div>
+      </div>
+    </div>
+  </Modal>
+  <Modal
+    name="deleteMultipleModal"
+    v-model:visible="isVisible"
+    :type="'clean'"
+    :closable="false"
+    title="Zmazanie dokladov"
+  >
+    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+      <div
+        class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
+      >
+        Prosím potvrdte zmazanie označených dokladov.
+      </div>
+      <div class="flex flex-row justify-end py-2 px-4">
+        <div class="flex flex-1/4 px-4">
+          <button
+            class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="confirmDeleteMultipleDocuments()"
+          >
+            Zmazať
+          </button>
+        </div>
+        <div class="flex flex-1/4">
+          <button
+            class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="closeModal('deleteMultipleModal')"
+          >
+            Zrušiť
+          </button>
+        </div>
+      </div>
+    </div>
+  </Modal>
+  <Modal
+    name="reminderModal"
+    v-model:visible="isVisible"
+    :type="'clean'"
+    :closable="false"
+    title="Odoslanie upomienky"
+  >
+    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+      <img
+        src="@/assets/upomienka.png"
+        class="h-auto shrink-0 z-0 w-[128px] absolute right-4 top-4"
+      />
+      <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
+        Prosím potvrďte vystavenie upomienky
+      </div>
+      <div class="flex justify-start px-4 text-white">
+        <FormKit
+          type="email"
+          id="reminder_email"
+          label="Email klienta"
+          placeholder="email@example.com"
+          v-model="reminderEmail"
+        />
+      </div>
+
+      <div class="flex flex-row justify-end py-2 px-4">
+        <div class="flex flex-1/4 px-4">
+          <button
+            class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="confirmReminder(selectedDocument, reminderEmail)"
+          >
+            Odoslať upomienku
+          </button>
+        </div>
+        <div class="flex flex-1/4">
+          <button
+            class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="closeModal('reminderModal')"
+          >
+            Zrušiť
+          </button>
+        </div>
+      </div>
+    </div>
+  </Modal>
+  <Modal
+    name="repayModal"
+    v-model:visible="isVisible"
+    :type="'clean'"
+    :closable="false"
+    title="Zaplatenie dokladu"
+  >
+    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+      <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
+        Koľko bolo uhradené?
+      </div>
+      <div class="flex justify-start px-4 text-white">
+        <FormKit
+          type="number"
+          id="repay_amount"
+          label="Zaplatená suma"
+          v-model="selectedDocument.paid"
+          :value="selectedDocument.total"
+          :min="0"
+        />
+      </div>
+      <div class="flex justify-start px-4 text-white">
+        <FormKit
+          type="date"
+          name="Dátum úhrady"
+          label="Dátum úhrady"
+          validation="required|length:10"
+          v-model="selectedDocument.payment_date"
+          :value="today"
+        />
+      </div>
+      <div class="flex flex-row justify-end py-2 px-4">
+        <div class="flex flex-1/4 px-4">
+          <button
+            class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="repayConfirm(selectedDocument)"
+          >
+            Zaplatiť
+          </button>
+        </div>
+        <div class="flex flex-1/4">
+          <button
+            class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+            v-on:click="closeModal('repayModal')"
+          >
+            Zrušiť
+          </button>
+        </div>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -304,14 +331,15 @@ import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import * as FileSaver from "file-saver";
 import moment from "moment";
-import stripePaymentComponent from "@/components/payments/PayStripe.vue";
+import * as _ from "lodash";
 
 const props = defineProps(["data"]);
 const documents = computed(() => props.data);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 
-const selectedDocuments = ref([] as any[]);
+const selectedDocuments = ref([] as Doklad[]);
+const selectedDocument = ref({} as Doklad);
 const reminderEmail = ref("");
 
 const setModal = useModal({
@@ -319,6 +347,10 @@ const setModal = useModal({
   deleteMultipleModal: 2,
   reminderModal: 3,
   repayModal: 4,
+});
+
+const orderedItems: any = computed(() => {
+  return _.orderBy(documents.value, ["created_at"], ["desc"]);
 });
 
 let isVisible = reactive({});
@@ -340,11 +372,11 @@ function saveAs(filename: string, blob: Blob) {
   FileSaver.saveAs(blob, filename);
 }
 
-function editDocument(id: any) {
-  const document = documents.value.find((d: any) => d.id === id);
-  return router.push({
-    name: "My document",
-    params: { document: JSON.stringify(document) },
+function editDocument(document: Doklad) {
+  store.dispatch("setDocument", document).then(() => {
+    return router.push({
+      name: "My document",
+    });
   });
 }
 
@@ -355,9 +387,10 @@ function duplicateDocument(document: Doklad) {
   store
     .dispatch("addDocument", document)
     .then(() => {
-      return router.push({
-        name: "My document",
-        params: { document: JSON.stringify(document) },
+      store.dispatch("setDocument", document).then(() => {
+        return router.push({
+          name: "My document",
+        });
       });
     })
     .catch((err) => {
@@ -365,14 +398,15 @@ function duplicateDocument(document: Doklad) {
     });
 }
 
-function deleteSingleDocument() {
+function deleteSingleDocument(document: Doklad) {
+  selectedDocument.value = document;
   showModal("deleteModal");
 }
 
-function confirmDelete(id: any) {
+function confirmDelete(document: Doklad) {
   isVisible = setModal("deleteModal", false);
   store
-    .dispatch("deleteDocument", id)
+    .dispatch("deleteDocument", document.id)
     .then(() => {
       router.go(0);
     })
@@ -399,9 +433,9 @@ function confirmDeleteMultipleDocuments() {
   });
 }
 
-function downlaodSingleDocument(id: any) {
+function downlaodSingleDocument(document: Doklad) {
   store
-    .dispatch("downloadDocument", id)
+    .dispatch("downloadDocument", document.id)
     .then((response) => {
       const byteCharacters = atob(response.data);
       const byteNumbers = new Array(byteCharacters.length);
@@ -440,14 +474,15 @@ function downloadMultipleDocuments() {
   });
 }
 
-function sendReminder() {
+function sendReminder(document: Doklad) {
+  selectedDocument.value = document;
   showModal("reminderModal");
 }
 
-function confirmReminder(id: any, email: any) {
+function confirmReminder(document: Doklad, email: any) {
   isVisible = setModal("reminderModal", false);
   const data = {
-    id: id,
+    id: document.id,
     email: email,
   };
   store
@@ -462,12 +497,17 @@ function confirmReminder(id: any, email: any) {
     });
 }
 
-function repay() {
+function repay(document: Doklad) {
+  selectedDocument.value = document;
   showModal("repayModal");
 }
 
-function repayConfirm(document: any) {
+function repayConfirm(document: Doklad) {
   isVisible = setModal("repayModal", false);
+  document.paid = Number(document.paid);
+  if(document.paid == document.total) {
+    document.isPaid = true;
+  }
   store
     .dispatch("updateDocument", document)
     .then(() => {

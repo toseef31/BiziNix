@@ -7,6 +7,7 @@
         submit-label="Vystaviť doklad"
         @submit="submitHandler()"
         :actions="false"
+        @keydown.enter="$event.preventDefault()"
       >
         <div class="bg-gray-200 rounded-lg px-4 my-2">
           <section>
@@ -687,7 +688,7 @@ const document = ref({
   konstantny: "",
   specificky: "",
   note_above: "",
-  items: "",
+  items: [],
   note_under: "",
   date_of_issue: today,
   due_by: "",
@@ -844,7 +845,7 @@ function cancelAddition() {
 
 function submitHandler() {
   submitted.value = true;
-  document.value.items = JSON.stringify(items.value);
+  document.value.items = items.value;
   document.value.paid = document.value.total;
 
   return store

@@ -17,7 +17,15 @@ export default interface Doklad {
   konstantny: string;
   specificky: string;
   note_above: string;
-  items: string;
+  items: Array<{
+    name: string;
+    description: string;
+    quantity: number;
+    unit: string;
+    price: number;
+    price_vat: number;
+    final_price: number;
+  }>;
   note_under: string;
   date_of_issue: string;
   due_by: string;
@@ -28,9 +36,11 @@ export default interface Doklad {
   currency: string;
   pdf: string;
   isIssued: boolean;
+  paid: number;
   isPaid: boolean;
   company_name: string;
   updated_at: Date;
+  created_at: Date;
   overdue: string;
   total: number;
   total_topay: number;

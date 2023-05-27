@@ -13,7 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@formkit/addons": "latest",
+    "@formkit/addons": "^0.17.2",
     "@formkit/icons": "latest",
     "@formkit/pro": "^1.0.0-alpha.105",
     "@formkit/themes": "^0.16.4",

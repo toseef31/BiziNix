@@ -493,7 +493,7 @@ function currentDocTab(tabNumber: any) {
 function redirect() {
   return router.push({
     name: "Add document",
-    params: { subtype: activeDocTab.value },
+    params: { subtype: activeDocTab.value }
   });
 }
 
@@ -508,7 +508,10 @@ function closeDialog(modal: string) {
 function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
-  document.value.serial_number = '420';
+
+  if(document.value.serial_number == '') {
+    document.value.serial_number = '0';
+  }
 
   return store
     .dispatch("addDocument", document.value)

@@ -26,8 +26,12 @@ export const store = createStore({
     hqAddress: {},
     selectedCompanyMails: [],
     selectedCompanyAddress: {},
+    document: {}
   },
   getters: {
+    getDocument: (state) => {
+      return state.document;
+    },
     getReviews: (state) => {
       return state.reviews;
     },
@@ -347,6 +351,9 @@ export const store = createStore({
           return res;
         });
     },
+    setDocument({ commit }, data) {
+      commit("setDocument", data);
+    },
   },
   mutations: {
     logoutUser: (state) => {
@@ -381,6 +388,9 @@ export const store = createStore({
     },
     setMailsAfterUpdate: (state, mails) => {
       state.mails = mails;
+    },
+    setDocument: (state, data) => {
+      state.document = data;
     },
     setReviews: (state, data) => {
       state.reviews = data.data;

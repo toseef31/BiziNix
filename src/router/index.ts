@@ -64,10 +64,10 @@ const router = createRouter({
         { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },
         { path: '/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
         { path: '/documents', name: "Documents", component: DocumentsPageVue },
-        { path: '/add-document', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true } },
+        { path: '/add-document/:subtype', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true }, props: true },
         { path: '/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
         { path: '/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
-        { path: '/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true }, props: true },
+        { path: '/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
       ],
     },
     {

@@ -103,22 +103,26 @@
                     v-model="userAddress.street"
                     :value="userAddress.street"
                   />
-                  <FormKit
-                    type="text"
-                    name="street_number"
-                    label="Súpisne číslo"
-                    validation="required"
-                    v-model="userAddress.street_number"
-                    :value="userAddress.street_number"
-                  />
-                  <FormKit
-                    type="text"
-                    name="street_number2"
-                    label="Orientačné číslo"
-                    validation="required"
-                    v-model="userAddress.street_number2"
-                    :value="userAddress.street_number2"
-                  />
+                  <div class="flex flex-row">
+                    <FormKit
+                      type="text"
+                      name="street_number"
+                      label="Súpisne číslo"
+                      validation="required"
+                      v-model="userAddress.street_number"
+                      :value="userAddress.street_number"
+                    />
+                    <div class="py-6 px-4">/</div>
+                    <FormKit
+                      type="text"
+                      name="street_number2"
+                      label="Orientačné číslo"
+                      validation="required"
+                      v-model="userAddress.street_number2"
+                      :value="userAddress.street_number2"
+                    />
+                  </div>
+
                   <FormKit
                     type="text"
                     name="city"
@@ -172,7 +176,9 @@
           <div class="flex-1/4">
             <div class="flex flex-row text-left font-bold">
               <div class="pr-4">
-                {{ address.street }} {{ address.street_number }}/{{ address.street_number2 }},<br />
+                {{ address.street }} {{ address.street_number }}/{{
+                  address.street_number2
+                }},<br />
                 {{ address.psc }} {{ address.city }}
               </div>
               <img src="@/assets/company.png" />
@@ -215,8 +221,31 @@
                       scope="col"
                       class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Dátum doručenia
+                      <span
+                        class="inline-flex items-center"
+                        :class="{
+                          'text-teal-500':
+                            selectedColumn == 'distribution_date',
+                        }"
+                      >
+                        Dátum doručenia
+                        <button>
+                          <svg
+                            @click="setOrderResultsBy('distribution_date')"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="ml-1 w-3 h-3"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 320 512"
+                          >
+                            <path
+                              d="M27.66 224h264.7c24.6 0 36.89-29.78 19.54-47.12l-132.3-136.8c-5.406-5.406-12.47-8.107-19.53-8.107c-7.055 0-14.09 2.701-19.45 8.107L8.119 176.9C-9.229 194.2 3.055 224 27.66 224zM292.3 288H27.66c-24.6 0-36.89 29.77-19.54 47.12l132.5 136.8C145.9 477.3 152.1 480 160 480c7.053 0 14.12-2.703 19.53-8.109l132.3-136.8C329.2 317.8 316.9 288 292.3 288z"
+                            />
+                          </svg>
+                        </button>
+                      </span>
                     </th>
+
                     <th
                       scope="col"
                       class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -241,7 +270,7 @@
                   <tr
                     v-for="mail in paginatedItems"
                     :key="mail.id"
-                    :class="[mail.status == 4 && 'bg-gray-50' ]"
+                    :class="[mail.status == 4 && 'bg-gray-50']"
                   >
                     <td class="relative w-12 px-6 sm:w-16 sm:px-8">
                       <div
@@ -268,7 +297,7 @@
                     <td
                       class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                     >
-                      {{ formatDate(mail.distribution_date.toString()) }}
+                      {{ formatDate(mail.distribution_date) }}
                     </td>
                     <td
                       class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
@@ -310,22 +339,25 @@
                               v-model="userAddress.street"
                               :value="userAddress.street"
                             />
-                            <FormKit
-                              type="text"
-                              name="street_number"
-                              label="Súpisne číslo"
-                              validation="required"
-                              v-model="userAddress.street_number"
-                              :value="userAddress.street_number"
-                            />
-                            <FormKit
-                              type="text"
-                              name="street_number2"
-                              label="Orientačné číslo"
-                              validation="required"
-                              v-model="userAddress.street_number2"
-                              :value="userAddress.street_number2"
-                            />
+                            <div class="flex flex-row">
+                              <FormKit
+                                type="text"
+                                name="street_number"
+                                label="Súpisne číslo"
+                                validation="required"
+                                v-model="userAddress.street_number"
+                                :value="userAddress.street_number"
+                              />
+                              <div class="py-6 px-4">/</div>
+                              <FormKit
+                                type="text"
+                                name="street_number2"
+                                label="Orientačné číslo"
+                                validation="required"
+                                v-model="userAddress.street_number2"
+                                :value="userAddress.street_number2"
+                              />
+                            </div>
                             <FormKit
                               type="text"
                               name="city"
@@ -425,7 +457,7 @@
                     <td>
                       <div
                         class="flex-1 py-4 px-3 text-left"
-                        v-if="!mail.shred_requested && mail.status != 2"
+                        v-if="!mail.shred_requested && mail.status == 1"
                       >
                         <button
                           class="font-medium text-gray-900 hover:underline"
@@ -448,6 +480,14 @@
                       >
                         <button class="font-medium text-gray-900" disabled>
                           Skartované
+                        </button>
+                      </div>
+                      <div
+                        class="flex-1 py-4 px-3 text-left"
+                        v-if="mail.status == 4"
+                      >
+                        <button class="font-medium text-gray-900" disabled>
+                          Nie je možné skartovať
                         </button>
                       </div>
                       <Modal
@@ -560,11 +600,15 @@ import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
 import dayjs from "dayjs";
 import { useModal, Modal } from "usemodal-vue3";
+import * as _ from 'lodash'
 
 const route = useRoute();
 const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
+
+let selectedColumn = ref("distribution_date");
+let selectedDirection = ref("desc");
 
 const checkedMails = ref([] as any[]);
 const indeterminate = computed(
@@ -691,8 +735,29 @@ const pagination: any = computed(() => {
 const paginatedItems: any = computed(() => {
   const start = (pagination.value.currentPage - 1) * pagination.value.perPage;
   const stop = start + pagination.value.perPage;
-  return filteredMailsByDates.value.slice(start, stop);
+  return orderedItems.value.slice(start, stop);
 });
+
+const orderedItems: any = computed(() => {
+  return _.orderBy(
+    filteredMailsByDates.value,
+    ["distribution_date"],
+    [selectedDirection.value.includes("asc") ? "asc" : "desc"]
+  );
+});
+
+function setOrderResultsBy(column: any) {
+  if (selectedColumn.value == column) {
+    if (selectedDirection.value == "desc") {
+      selectedDirection.value = "asc";
+    } else {
+      selectedDirection.value = "desc";
+    }
+  } else {
+    selectedDirection.value = "asc";
+  }
+  selectedColumn.value = column;
+}
 
 function boxChecked(event: any) {
   checkedMails.value = event.target.checked
@@ -752,7 +817,7 @@ function sendSingleMail(id: any) {
     store
       .dispatch("updateMail", mail)
       .then((res) => {
-        console.log("Zásielka úspešne zmenená.");
+        console.log("Zásielka úspešne zmenená." + mail.sender);
         isVisible = setModal("m2", false);
       })
       .catch((err) => {
