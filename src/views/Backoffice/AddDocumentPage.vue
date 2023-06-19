@@ -699,6 +699,7 @@ const document = ref({
   pdf: "",
   isIssued: true,
   isPaid: false,
+  reminder_sent: false,
   paid: 0.0,
   total: totalPrice,
   payment_date: "",

@@ -233,12 +233,36 @@
     title="Odoslanie upomienky"
   >
     <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-      <img
-        src="@/assets/upomienka.png"
-        class="h-auto shrink-0 z-0 w-[128px] absolute right-4 top-4"
-      />
       <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
         Prosím potvrďte vystavenie upomienky
+      </div>
+      <img
+        src="@/assets/upomienka.png"
+        class="h-auto shrink-0 z-0 w-[128px] relative float-right pr-8"
+      />
+      <div
+        class="flex p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+        role="alert"
+        v-show="selectedDocument.reminder_sent"
+      >
+        <svg
+          aria-hidden="true"
+          class="flex-shrink-0 inline w-5 h-5 mr-3"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <span class="sr-only">Info</span>
+        <div>
+          <span class="font-medium">Pozor!</span> Pre tento doklad ste už
+          upomienku vystavili.
+        </div>
       </div>
       <div class="flex justify-start px-4 text-white">
         <FormKit
@@ -325,18 +349,20 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, watch } from "vue";
 import type Doklad from "@/types/Document";
 import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import * as FileSaver from "file-saver";
 import moment from "moment";
 import * as _ from "lodash";
+import type Company from "@/types/Company";
 
 const props = defineProps(["data"]);
 const documents = computed(() => props.data);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
+const company = ref({} as Company);
 
 const selectedDocuments = ref([] as Doklad[]);
 const selectedDocument = ref({} as Doklad);
@@ -348,6 +374,13 @@ const setModal = useModal({
   reminderModal: 3,
   repayModal: 4,
 });
+
+watch(
+  () => store.getters.getSelectedCompany,
+  function () {
+    refreshData();
+  }
+);
 
 const orderedItems: any = computed(() => {
   return _.orderBy(documents.value, ["created_at"], ["desc"]);
@@ -380,17 +413,20 @@ function editDocument(document: Doklad) {
   });
 }
 
-function duplicateDocument(document: Doklad) {
+async function duplicateDocument(document: Doklad) {
   document.date_of_issue = today;
   document.delivery_date = today;
-  //este treba updatnut VS a serial_number
+  await store
+    .dispatch("getDocumentSnForCompany", company.value.id)
+    .then((response) => {
+      document.serial_number = response.data;
+      document.variabilny = response.data;
+    });
   store
     .dispatch("addDocument", document)
     .then(() => {
       store.dispatch("setDocument", document).then(() => {
-        return router.push({
-          name: "My document",
-        });
+        router.go(0);
       });
     })
     .catch((err) => {
@@ -505,7 +541,7 @@ function repay(document: Doklad) {
 function repayConfirm(document: Doklad) {
   isVisible = setModal("repayModal", false);
   document.paid = Number(document.paid);
-  if(document.paid == document.total) {
+  if (document.paid == document.total) {
     document.isPaid = true;
   }
   store
@@ -515,6 +551,14 @@ function repayConfirm(document: Doklad) {
     })
     .catch((err) => {
       console.log(err);
+    });
+}
+
+async function refreshData() {
+  await store
+    .dispatch("getSelectedCompany", store.state.selectedCompany.id)
+    .then((response) => {
+      company.value = response.data;
     });
 }
 </script>

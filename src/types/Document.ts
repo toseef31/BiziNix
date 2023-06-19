@@ -38,6 +38,7 @@ export default interface Doklad {
   isIssued: boolean;
   paid: number;
   isPaid: boolean;
+  reminder_sent: boolean;
   company_name: string;
   updated_at: Date;
   created_at: Date;

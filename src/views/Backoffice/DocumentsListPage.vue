@@ -355,6 +355,7 @@ const document = ref({
   serial_number: "",
   isIssued: false,
   isPaid: false,
+  reminder_sent: false,
   total: 0,
   payment_date: "",
   date_of_issue: today,
