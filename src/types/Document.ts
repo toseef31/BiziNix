@@ -22,9 +22,9 @@ export default interface Doklad {
     description: string;
     quantity: number;
     unit: string;
-    price: number;
-    price_vat: number;
-    final_price: number;
+    total: number;
+    vat: number;
+    unit_price: number;
   }>;
   note_under: string;
   date_of_issue: string;

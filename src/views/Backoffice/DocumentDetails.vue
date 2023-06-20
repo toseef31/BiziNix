@@ -373,10 +373,7 @@
               </div>
 
               <ul class="py-2" id="items_list">
-                <li
-                  v-for="(item, index) in JSON.parse(document.items)"
-                  :key="index"
-                >
+                <li v-for="(item, index) in items" :key="index">
                   <div class="flex flex-row gap-1">
                     <div class="flex basis-3/12">
                       <FormKit
@@ -573,6 +570,7 @@ const companyBankDetails = ref({
 const totalPrice: any = computed(() => {
   return items.value.reduce((acc, item) => acc + item.total, 0);
 });
+
 const totalPriceVat: any = computed(() => {
   return totalPrice.value * 0.2;
 });
@@ -653,17 +651,20 @@ function addItem() {
     total: 0.0,
     description: "",
   };
-  JSON.parse(document.value.items).push(item);
+  items.value.push(item);
 }
 
 function removeItem(index: number) {
-  const items = JSON.parse(document.value.items);
-  items.splice(index, 1);
-  document.value.items = JSON.stringify(items);
+  items.value.splice(index, 1);
 }
 
 function submitHandler() {
   submitted.value = true;
+  document.value.items = items.value;
+  document.value.total = totalPrice.value;
+  if(document.value.isPaid) {
+    document.value.paid = totalPrice.value;
+  }
   return store
     .dispatch("updateDocument", document.value)
     .then((res) => {

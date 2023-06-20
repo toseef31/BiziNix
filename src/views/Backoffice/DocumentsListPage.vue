@@ -340,8 +340,8 @@ const activeTab = ref(1);
 const docTab = ref(1);
 const activeDocTab = ref(1);
 const company = ref({} as Company);
-const documents = ref([] as any[]);
-const filteredDocuments = ref([] as any[]);
+const documents = ref([] as Doklad[]);
+const filteredDocuments = ref([] as Doklad[]);
 const searchQuery = ref("");
 const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
@@ -388,7 +388,7 @@ const filteredDocumentsByIssued: any = computed(() => {
 });
 
 const filteredDocumentsBySearch: any = computed(() => {
-  return filteredDocumentsByIssued.value.filter((document: any) => {
+  return filteredDocumentsByIssued.value.filter((document: Doklad) => {
     const odberatel = document.odberatel.toLowerCase();
     const serial_number = document.serial_number.toLowerCase();
     const searchTerm = searchQuery.value.toLowerCase();

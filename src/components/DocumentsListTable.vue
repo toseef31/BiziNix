@@ -413,9 +413,13 @@ function editDocument(document: Doklad) {
   });
 }
 
-async function duplicateDocument(document: Doklad) {
+async function duplicateDocument(document: any) {
   document.date_of_issue = today;
   document.delivery_date = today;
+  let items = [];
+  items = JSON.parse(document.items);
+  document.items = items;
+
   await store
     .dispatch("getDocumentSnForCompany", company.value.id)
     .then((response) => {
