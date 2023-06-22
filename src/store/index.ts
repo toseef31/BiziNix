@@ -239,6 +239,12 @@ export const store = createStore({
           return res;
         });
     },
+    async getCompanyLogo({ commit, dispatch }, companyId) {
+      const { data } = await axiosClient.get(
+        `/companies/${companyId}/getCompanyLogo`
+      );
+      return data;
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {

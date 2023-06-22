@@ -516,7 +516,7 @@ function importDocument() {
 
   return store
     .dispatch("addDocument", document.value)
-    .then((res) => {
+    .then(() => {
       //uploadImg();
       closeDialog("importModal");
       router.go(0);

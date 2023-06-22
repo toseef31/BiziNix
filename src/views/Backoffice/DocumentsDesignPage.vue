@@ -39,7 +39,7 @@
         <div
           class="max-w-sm bg-gray-800 border border-teal-500 rounded-lg shadow justify-center"
         >
-          <img class="rounded-t-lg p-8" v-bind:src="company.logo" alt="" />
+          <img class="rounded-t-lg p-8" v-bind:src="logoSrc" alt="" />
           <button
             class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
             v-on:click="showModal()"
@@ -103,6 +103,7 @@ const router = useRouter();
 const company = ref({} as Company);
 const templates = ref([] as any[]);
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
+const logoSrc = ref();
 
 const setModal = useModal({
   uploadModal: 1,
@@ -156,6 +157,10 @@ async function refreshData() {
     .then((response) => {
       company.value = response.data;
       uploadImageData.value.companyId = company.value.id;
+      store.dispatch("getCompanyLogo", company.value.id).then((response) => {
+        console.log(response);
+        logoSrc.value = response.image_url
+      });
     });
 
   await store.dispatch("getDocumentTemplates").then((response) => {
