@@ -487,7 +487,10 @@
                       </div>
                       <div
                         class="flex-1 py-4 px-3 text-left"
-                        v-if="mail.status == 2 && mail.scan == null"
+                        v-if="
+                          (mail.status == 2 || mail.status == 4) &&
+                          mail.scan == null
+                        "
                       >
                         <button class="font-medium text-gray-900" disabled>
                           Nie je možné scanovať
@@ -508,7 +511,7 @@
                       </div>
                       <div
                         class="flex-1 py-4 px-3 text-left"
-                        v-if="mail.shred_requested && mail.status != 2"
+                        v-if="mail.shred_requested && mail.status != 2 && mail.status != 4"
                       >
                         <button class="font-medium text-gray-900" disabled>
                           Čaká sa na skartovanie

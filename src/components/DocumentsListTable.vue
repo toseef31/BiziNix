@@ -430,7 +430,9 @@ async function duplicateDocument(document: any) {
     .dispatch("addDocument", document)
     .then(() => {
       store.dispatch("setDocument", document).then(() => {
-        router.go(0);
+        return router.push({
+          name: "My document",
+        });
       });
     })
     .catch((err) => {
