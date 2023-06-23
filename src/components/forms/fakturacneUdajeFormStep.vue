@@ -36,7 +36,7 @@ import { ref } from 'vue';
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import type Order from '@/types/Order';
 
-
+const childRefComponentForPay = ref()
 const invoiceAddressIsSame = ref(true);
 const orderingAsCompany = ref(false);
 let paymentOptions = ref<string>('');
@@ -56,7 +56,8 @@ let fakturacne_udaje = ref([{
 defineExpose({
   fakturacne_udaje,
   invoiceAddressIsSame,
-  paymentOptions
+  paymentOptions,
+  childRefComponentForPay
 })
 
 </script>

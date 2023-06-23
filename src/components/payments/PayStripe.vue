@@ -43,7 +43,7 @@ const cardOptions = ref({
 style: {
   base: {
     iconColor: '#c4f0ff',
-    color: '#fff',
+    color: '#333',
     fontWeight: '500',
     fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
     fontSize: '18px',
@@ -79,7 +79,7 @@ onBeforeMount(() => {
 })
 
 
-const pay = (totalForPay: number, orderId: any) => {
+const payWithStripe = (totalForPay: number, orderId: any) => {
     // Get stripe element
     const cardElement = card.value.stripeElement
   
@@ -141,6 +141,6 @@ async function payForOrder(amount: number){
   
 }
 
-defineExpose( { pay })
+defineExpose( { payWithStripe } )
 
 </script>

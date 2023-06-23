@@ -33,23 +33,23 @@
         @submit="newSustmiApp"
         >
           <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
-            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie">
+            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <!-- component for example brevity. -->
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
-            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje">
+            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
               <!-- component for example brevity. -->
               <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
             </FormKit>
 
-            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje">
+            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
             <!-- component for example brevity. -->
             <fakturacneUdajeFormStep ref="invoiceData" />
 
             <!-- using step slot for submit button-->
             <template #stepNext>
-              <FormKit type="submit" />
+              <FormKit type="submit" label="Objednať s povinnosťou platby" />
             </template>
             </FormKit>
           </FormKit>
@@ -95,7 +95,6 @@ import { toast } from 'vue3-toastify';
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
-import type predmetPodnikaniaFormStepVue from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import type Address from "@/types/Address";
 import type Order from "@/types/Order";
 import type Company from "@/types/Company";
@@ -111,7 +110,7 @@ let errorMsgCompany = ref('');
 let sucessMsg = ref('');
 let addressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
-let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStepVue>>(null as any)
+let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
 let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
 
@@ -121,6 +120,10 @@ let companyOrZivnostModel = ref<Company>({} as any);
 
 let totalForPay = computed(() => subjects_of_business.value.finalPriceForBusinessCategori + order.value.items[0].price)
 
+// const childRefComponentForPay = ref()
+// const callStripePayment = (totalForPay: number, orderId: any) => {
+//   childRefComponentForPay.value.payWithStripe(totalForPay, orderId)
+// }
 
 function newLogSubmit(){
 
@@ -136,6 +139,8 @@ function newLogSubmit(){
   console.log(subjects_of_business.value?.subjects_of_business);
   console.log("UserAddresssssss original");
   console.log(userAddress.value);
+  console.log()
+  console.log(invoiceData.value.childRefComponentForPay.payWithStripe(1,1))
 
 }
 
@@ -219,7 +224,7 @@ async function registerUser() {
 async function addHeadquarter() {
   headquarter.value.owner_name = user.value?.first_name + " " + user.value?.last_name
 
-  if(placeOfBusinness.value){
+  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness){
     headquarter.value.name = 'Rovnaký názov ako moja trvalá adresa'
   }
   else {
@@ -243,12 +248,13 @@ async function addHeadquarter() {
 async function addCompany() {
 
   companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
+  companyOrZivnostModel.value.status = 2
   companyOrZivnostModel.value.owner = userFromResponse.user_id
   companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
   companyOrZivnostModel.value.is_dph = false
   companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
   companyOrZivnostModel.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
-  companyOrZivnostModel.value.zaciatok_opravnenia = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.registration_date
+  companyOrZivnostModel.value.zaciatok_opravnenia = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.zaciatok_opravnenia
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
@@ -315,10 +321,7 @@ async function emailIsUnique(node: any){
   return result
 }
 
-const childRefComponentForPay = ref()
-const callStripePayment = (totalForPay: number, orderId: any) => {
-    childRefComponentForPay.value.pay(totalForPay, orderId)
-}
+
 
 const newSustmiApp = async (formdata: any, node: any) => {
   registerAddress().then(() => {
@@ -334,7 +337,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
                   console.log("SUPER!")
 
                   if(invoiceData.value.paymentOptions == "stripe"){
-                    callStripePayment(totalForPay.value, orderFromRes.id)
+                    invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
                   } else {
                       router.push({
                         name:"Thanks You New Order",
@@ -353,51 +356,51 @@ const newSustmiApp = async (formdata: any, node: any) => {
 }
 
 
-const submitApp = async (formData: any, node: any) => {
+// const submitApp = async (formData: any, node: any) => {
 
-  console.log(formData)
+//   console.log(formData)
   
-  try {  
-    registerAddress().then(() => {
-        registerUser().then(() => {
-          if(userFromResponse){
-            addHeadquarter().then(() => {
-              addCompany().then(() => {
-                addOrder().then(() => {
-                  userFromResponse = null
-                  hqFromResponse = null
-                  companyOrZivnostModel.value.owner = 0
-                  companyOrZivnostModel.value.headquarters_id = 0
-                  console.log("SUPER!")
+//   try {  
+//     registerAddress().then(() => {
+//         registerUser().then(() => {
+//           if(userFromResponse){
+//             addHeadquarter().then(() => {
+//               addCompany().then(() => {
+//                 addOrder().then(() => {
+//                   userFromResponse = null
+//                   hqFromResponse = null
+//                   companyOrZivnostModel.value.owner = 0
+//                   companyOrZivnostModel.value.headquarters_id = 0
+//                   console.log("SUPER!")
 
-                  if(invoiceData.value.paymentOptions == "stripe"){
-                    callStripePayment(totalForPay.value, orderFromRes.id)
-                  } else {
-                      router.push({
-                        name:"Thanks You New Order",
-                        params: {
-                          orderId: orderFromRes.id,
-                        }
-                    })
-                  }
+//                   if(invoiceData.value.paymentOptions == "stripe"){
+//                     callStripePayment(totalForPay.value, orderFromRes.id)
+//                   } else {
+//                       router.push({
+//                         name:"Thanks You New Order",
+//                         params: {
+//                           orderId: orderFromRes.id,
+//                         }
+//                     })
+//                   }
 
-                })
-              })
-            })
-          }
-        })
-    })
+//                 })
+//               })
+//             })
+//           }
+//         })
+//     })
 
-    node.clearErrors()
-    // alert('Your application was submitted successfully!')
+//     node.clearErrors()
+//     // alert('Your application was submitted successfully!')
 
-  }
-  catch (err: any) {
-    console.log(err)
-    node.setErrors(err.formErrors, err.fieldErrors)
-  }
+//   }
+//   catch (err: any) {
+//     console.log(err)
+//     node.setErrors(err.formErrors, err.fieldErrors)
+//   }
 
-}
+// }
 
 // // This is just a mock of an actual axios instance.
 // const axios = {

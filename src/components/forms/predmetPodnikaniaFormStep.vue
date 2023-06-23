@@ -1,12 +1,19 @@
 <template>
-  <div class="text-4xl font-bold">Vyberte si premet podnikania</div>
+  <div class="text-4xl font-bold">Vyberte si predmet podnikania</div>
   <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom najvhodnejších predmetov podnikania. Ako prvú zadajte hlavnú činosť podnikania.</div>
-    <FormKit :type="multiSelVueForm" id="subjects_of_business" v-model="subjects_of_business" name="subjects_of_business" label="Predmet podnikania" autocomplete="off"
-      :items="businessCategori"
+    <FormKit
+      :type="multiSelVueForm"
+      id="subjects_of_business"
+      v-model="subjects_of_business"
+      name="subjects_of_business"
+      label="Predmet podnikania"
+      autocomplete="off"
+      :list-items="businessCategori"
       @input="calculatePriceForBusinessOfcategories"
       placeholder="Example placeholder"
       help="Môžete vybrať aj viac predmetov podnikania."
-      validation="required"/>
+      validation="required"
+    />
       <div>Cena za zavolené predmety podnikania <b>{{ finalPriceForBusinessCategori }} €.</b></div>
   </template>
 
@@ -19,7 +26,7 @@ import store from '@/store';
 import type Company from '@/types/Company';
 
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
-  props: ['items'],
+  props: ['listItems'],
 })
 
 let businessCategori = ref([

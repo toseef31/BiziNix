@@ -6,10 +6,11 @@ import router from "./router";
 import store from "./store";
 import { defineRule } from "vee-validate";
 import { plugin, defaultConfig } from '@formkit/vue';
-import { createProPlugin, inputs } from '@formkit/pro';
+import { createProPlugin, inputs, repeater } from '@formkit/pro';
 import { createMultiStepPlugin } from '@formkit/addons';
-import { genesisIcons } from '@formkit/icons';
-import '@formkit/themes/genesis';
+import '@formkit/themes/genesis'
+import '@formkit/pro/genesis'
+import { genesisIcons } from '@formkit/icons'
 import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
@@ -20,7 +21,8 @@ const config = defaultConfig({
   plugins: [ pro, createMultiStepPlugin() ],
   icons: {
     ...genesisIcons
-  }
+  },
+  theme: 'genesis'
 });
 
 const app = createApp(App);

@@ -2,7 +2,7 @@ export default interface Company {
   id: number
   name: string
   type: number
-  status: string
+  status: number
   ico: string
   dic: string
   icdph: string

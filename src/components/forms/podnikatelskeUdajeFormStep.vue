@@ -49,7 +49,7 @@
   :options="[{ value: 'Nezáleží', label: 'Nezáleží' }, { value: 'Podľa dátumu', label: 'Podľa dátumu' }]" name="companyRegDateCheckbox"
   validation="required" />
   <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
-    <FormKit type="date" name="registration_date" v-model="companyData.registration_date" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
+    <FormKit type="date" name="registration_date" v-model="companyData.zaciatok_opravnenia" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
   </div>
 </div>
 </template>
@@ -67,7 +67,7 @@ const placeOfBusinness = ref(true);
 
 let companyData = ref({
   name: '',
-  registration_date: ''
+  zaciatok_opravnenia: ''
 })
 
 let userAddress = ref({
@@ -95,7 +95,7 @@ let user = ref({
     password_confirmation: '',
 } as User)
 
-let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData})
+let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData, placeOfBusinness})
 
 defineExpose({
   userAddressUserInfoCompanyNameAndRegDate
