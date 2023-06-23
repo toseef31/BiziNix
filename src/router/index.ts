@@ -30,6 +30,7 @@ import AddDocumentPageVue from "@/views/Backoffice/AddDocumentPage.vue";
 import DocumentDetailsVue from "@/views/Backoffice/DocumentDetails.vue";
 import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
 import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
+import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,7 @@ const router = createRouter({
         { path: '/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
         { path: '/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
         { path: '/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
+        { path: "/documents/order", name: "Order documents", component: OrderDocumentsPageVue },
       ],
     },
     {

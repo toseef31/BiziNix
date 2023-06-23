@@ -15,8 +15,6 @@ export default interface Company {
   sposob_konania_konatelov: number
   owner: number
   last_step: number
-  first_name: string
-  last_name: string
   subjects_of_business:[{
     id: number,
     title: string,

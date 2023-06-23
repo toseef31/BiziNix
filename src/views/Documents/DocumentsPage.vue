@@ -357,7 +357,7 @@ const router = useRouter();
 
 function redirect() {
   return router.push({
-    name: "Counseling center",
+    name: "Order documents",
   });
 }
 
