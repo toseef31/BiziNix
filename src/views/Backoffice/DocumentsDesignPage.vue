@@ -35,12 +35,12 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-col basis-1/6 items-center">
+      <div class="flex flex-col basis-1/6 items-center px-8">
         <div
           class="max-w-sm bg-gray-800 border border-teal-500 rounded-lg shadow justify-center"
         >
           <img
-            class="rounded-t-lg p-8"
+            class="rounded-t-lg p-6 max-w-sm"
             v-bind:src="'data:image/png;base64,' + logoSrc"
             alt=""
           />
