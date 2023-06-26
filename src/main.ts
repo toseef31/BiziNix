@@ -13,6 +13,8 @@ import '@formkit/themes/genesis';
 import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import theme from '../theme.js';
+import { generateClasses } from "@formkit/themes";
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
@@ -20,7 +22,8 @@ const config = defaultConfig({
   plugins: [ pro, createMultiStepPlugin() ],
   icons: {
     ...genesisIcons
-  }
+  },
+  classes: generateClasses(theme)
 });
 
 const app = createApp(App);

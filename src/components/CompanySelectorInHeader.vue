@@ -55,10 +55,22 @@ onBeforeMount(async () => {
       companies.value = response.data;
       currentCompany.value = companies.value.at(0);
       store.state.selectedCompany = currentCompany.value;
+      //aktualizovat adresu
+      store
+        .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
+        .then((response) => {
+          headquarter.value = response.data;
+          store
+            .dispatch("getAddressById", headquarter.value.address_id)
+            .then((response) => {
+              address.value = response.data;
+              store.state.selectedCompanyAddress = address.value;
+            });
+        });
     });
 });
 
-function switchSelect(event: any) {
+async function switchSelect(event: any) {
   currentCompany.value = companies.value.find(
     (item: any) => item.id == event.target.value
   );
@@ -68,7 +80,7 @@ function switchSelect(event: any) {
   mails.value = [];
 
   //aktualizovat adresu
-  store
+  await store
     .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
     .then((response) => {
       headquarter.value = response.data;
@@ -76,12 +88,12 @@ function switchSelect(event: any) {
         .dispatch("getAddressById", headquarter.value.address_id)
         .then((response) => {
           address.value = response.data;
-          store.commit("setSelectedCompanyAddress", address.value);
+          store.state.selectedCompanyAddress = address.value;
         });
     });
 
   //vyhladat postu
-  store
+  await store
     .dispatch("getAllMailsForCompany", currentCompany.value.id)
     .then((response) => {
       mails.value = response.data;

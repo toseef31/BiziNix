@@ -36,13 +36,13 @@
       <!-- Podnikatelské údaje -->
       <section v-show="activeStep === 'Podnikatelské údaje'">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
-        <div class="my-2">
-          Po zaplatení služby dostanete dokument, pomocou ktorého môžete
-          prepísať sídlo Vašej firmy na to naše (virtuálne).
-        </div>
-        <div class="my-5">
-          Chcete, aby sme prepis sídla zabezpečili tiež my?
-          <a class="text-teal-500" href="#">Kliknite sem</a>
+        <div class="my-4">
+          Vyberte si zo zoznamu Vašu firmu, pre ktorú chcete balík aktivovať:
+          <div class="py-2">
+            <CompanySelectorInHeader
+              v-if="user.userId"
+            ></CompanySelectorInHeader>
+          </div>
         </div>
         <div>
           <FormKit
@@ -57,6 +57,7 @@
                 validation="required"
                 v-model="company.name"
                 label="Názov spoločnosti"
+                disabled
               />
               <FormKit
                 type="text"
@@ -64,50 +65,57 @@
                 validation="required"
                 v-model="company.ico"
                 label="IČO"
+                disabled
               />
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
               <FormKit
                 type="text"
                 name="street"
-                v-model="userAddress.street"
+                v-model="companyAddress.street"
                 label="Ulica"
                 validation="required"
+                disabled
               />
               <FormKit
                 type="text"
                 name="street_number"
-                v-model="userAddress.street_number"
+                v-model="companyAddress.street_number"
                 label="Súpisne číslo"
                 validation="required"
+                disabled
               />
               <FormKit
                 type="text"
                 name="street_number2"
-                v-model="userAddress.street_number2"
+                v-model="companyAddress.street_number2"
                 label="Orientačné číslo"
                 validation="required"
+                disabled
               />
               <FormKit
                 type="text"
                 name="city"
-                v-model="userAddress.city"
+                v-model="companyAddress.city"
                 label="Mesto"
                 validation="required"
+                disabled
               />
               <FormKit
                 type="text"
                 name="psc"
-                v-model="userAddress.psc"
+                v-model="companyAddress.psc"
                 label="PSČ"
                 validation="required"
+                disabled
               />
               <FormKit
                 type="text"
                 name="country"
-                v-model="userAddress.country"
+                v-model="companyAddress.country"
                 label="Krajina"
                 validation="required"
+                disabled
               />
             </div>
           </FormKit>
@@ -396,7 +404,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import useSteps from "@/components/forms/useStep";
 import { createInput } from "@formkit/vue";
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
@@ -404,6 +412,18 @@ import router from "@/router";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
+import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue";
+
+let user = computed(() => store.state.user);
+const company = computed(() => store.state.selectedCompany);
+const companyAddress = computed(() => store.state.selectedCompanyAddress);
+
+onBeforeMount(async () => {
+  user = computed(() => store.state.user);
+  if (user.value.userId) {
+    await store.dispatch("setUserDataAfterLogin");
+  }
+});
 
 const camel2title = (str: string) =>
   str
@@ -414,7 +434,7 @@ const camel2title = (str: string) =>
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
 const orderingAsCompany = ref(false);
-let companyFromResponse: any, orderFromRes: any;
+let orderFromRes: any;
 
 const { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps();
 const multiSelVueForm = createInput(formkitCustomMultiSelectVue, {
@@ -440,7 +460,6 @@ const fakturacne_udaje = ref({
 });
 
 const userAddress = ref({} as Address);
-const company = ref({} as Company);
 const currentUser = ref({} as User);
 
 const order = ref({
@@ -495,12 +514,12 @@ function addOrder(): Promise<Response> {
   order.value.fakturacne_udaje[0].dic = fakturacne_udaje.value.dic;
   order.value.fakturacne_udaje[0].ic_dph = fakturacne_udaje.value.ic_dph;
   order.value.fakturacne_udaje[0].ico = fakturacne_udaje.value.ico;
-  order.value.fakturacne_udaje[0].address_id = currentUser.value.address_id.toString();
+  order.value.fakturacne_udaje[0].address_id =
+    currentUser.value.address_id.toString();
 
   return store
     .dispatch("addOrder", order.value)
     .then((res) => {
-      console.log("Adding order: " + JSON.stringify(res));
       orderFromRes = res.order;
       return orderFromRes;
     })
@@ -510,17 +529,15 @@ function addOrder(): Promise<Response> {
 }
 
 const submitApp = async (formData: any, node: any) => {
-  console.log(formData);
   try {
-      addOrder().then(() => {
-        console.log("SUPER!");
-        router.push({
-          name: "Thanks You New Order",
-          params: {
-            orderId: orderFromRes.id,
-          },
-        });
+    addOrder().then(() => {
+      router.push({
+        name: "Thanks You New Order",
+        params: {
+          orderId: orderFromRes.id,
+        },
       });
+    });
     node.clearErrors();
   } catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors);
