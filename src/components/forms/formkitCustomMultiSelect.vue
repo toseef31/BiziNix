@@ -8,14 +8,18 @@ const props = defineProps(['context'])
 
 <template>
     <Multiselect
-        :options="props.context.items"
+        :options="props.context.listItems"
         :value="props.context._value"
         mode="tags"
         placeholder="Napíšte a vyhľadajte predmet podnikania, alebo vyberte"
         :searchable="true"
-        :min-chars="0"
-        :infinite="true"
-        :limit="20"
+        :min-chars="3"
         @change="(v: any) => props.context.node.input(v)"
     />
 </template>
+
+<style>
+.multiselect-tag {
+    white-space: normal;
+}
+</style>
