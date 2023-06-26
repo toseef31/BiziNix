@@ -134,7 +134,7 @@
             <FormKit
               type="text"
               name="first_name"
-              v-model="user.first_name"
+              v-model="userData.first_name"
               id="first_name"
               label="Krstné meno"
               validation="required|length:2"
@@ -142,7 +142,7 @@
             <FormKit
               type="text"
               name="last_name"
-              v-model="user.last_name"
+              v-model="userData.last_name"
               label="Priezvisko"
               validation="required|length:2"
             />
@@ -156,7 +156,7 @@
             <FormKit
               type="select"
               label="Pohlavie"
-              v-model="user.gender"
+              v-model="userData.gender"
               placeholder="Vyberte pohlavie"
               name="gender"
               id="gender"
@@ -178,13 +178,13 @@
               <FormKit
                 type="text"
                 name="title_before"
-                v-model="user.title_before"
+                v-model="userData.title_before"
                 label="Titul pred menom"
               />
               <FormKit
                 type="text"
                 name="title_after"
-                v-model="user.title_after"
+                v-model="userData.title_after"
                 label="Titul za menom"
               />
             </div>
@@ -193,7 +193,7 @@
             <FormKit
               type="text"
               name="phone"
-              v-model="user.phone"
+              v-model="userData.phone"
               autocomplete="phone"
               label="Telefonné číslo"
               validation="required|length:9"
@@ -201,7 +201,7 @@
             <FormKit
               type="date"
               name="date_of_birth"
-              v-model="user.date_of_birth"
+              v-model="userData.date_of_birth"
               autocomplete="date_of_birth"
               label="Dátum narodenia"
               validation="required|length:10"
@@ -209,7 +209,7 @@
             <FormKit
               type="text"
               name="rodne_cislo"
-              v-model="user.rodne_cislo"
+              v-model="userData.rodne_cislo"
               label="Rodné číslo"
               validation="required|length:10"
             />
@@ -417,11 +417,12 @@ import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue";
 import moment from "moment";
 
 const user = computed(() => store.state.user);
-const company = computed(() => store.state.selectedCompany);
+const company = computed(() => store.state.selectedCompany as Company);
 const companyAddress = computed(
   () => store.state.selectedCompanyAddress as Address
 );
 const userAddress = computed(() => store.state.user.address as Address);
+const userData = computed(() => store.state.user.data as User);
 
 const today = moment(new Date()).format("YYYY-MM-DD");
 const firstTimePaymentDate = moment(today).add(90, "days").format("YYYY-MM-DD");
@@ -461,37 +462,7 @@ const fakturacne_udaje = ref({
   address_id: 1,
 });
 
-const order = ref({
-  payment_date: "" as any,
-  payment_method: "",
-  description: "test doklady",
-  amount: 12, // final cena s dph
-  amount_vat: 2, // vat je čisto len dph
-  is_paid: false,
-  address_id: 0,
-  user_id: 0,
-  company_id: 0,
-  is_tos_accepted: true,
-  is_advocate_requested: true,
-  items: [
-    {
-      description: "Zakúpenie dokladov pre firmu",
-      price: 0, // finalna cena za polozku s dph
-      price_vat: 0, // toto je len dph
-    },
-  ],
-  fakturacne_udaje: [
-    {
-      first_name: "",
-      last_name: "",
-      name: "",
-      ico: "",
-      dic: "",
-      ic_dph: "",
-      address_id: "",
-    },
-  ],
-});
+const order = ref({} as any);
 
 async function addOrder(): Promise<Response> {
   order.value.payment_date = new Date()
