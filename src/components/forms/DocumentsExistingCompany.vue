@@ -416,7 +416,9 @@ import CompanySelectorInHeader from "@/components/CompanySelectorInHeader.vue";
 
 let user = computed(() => store.state.user);
 const company = computed(() => store.state.selectedCompany);
-const companyAddress = computed(() => store.state.selectedCompanyAddress);
+const companyAddress = computed(
+  () => store.state.selectedCompanyAddress as Address
+);
 
 onBeforeMount(async () => {
   user = computed(() => store.state.user);
