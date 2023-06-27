@@ -26,10 +26,10 @@
           </div>
         </div>
         <div class="flex" v-if="data.createCompany">
-          <VhqNewCompany :data="JSON.stringify(data)" />
+          <VhqNewCompany/>
         </div>
         <div class="flex" v-else>
-          <VhqExistingCompany :data="JSON.stringify(data)" />
+          <VhqExistingCompany/>
         </div>
       </div>
     </div>
@@ -44,18 +44,13 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, onBeforeMount } from "vue";
+import { computed } from "vue";
 import VhqNewCompany from "../../components/forms/VhqNewCompany.vue";
 import VhqExistingCompany from "../../components/forms/VhqExistingCompany.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
-import { useRoute } from "vue-router";
 
-const route = useRoute();
-const data = ref();
+const data = computed(() => store.state.orderVhqData);
 
-onBeforeMount(async () => {
-  data.value = JSON.parse(route.params.data.toString());
-});
 </script>
