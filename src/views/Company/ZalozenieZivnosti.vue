@@ -26,6 +26,7 @@
 
       <!--FORM -->
       <div>
+        <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</div>
         <FormKit type="form"
         :actions="false"
         id="zalZivnostiMultiStepPlugin"
@@ -46,16 +47,15 @@
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
             <!-- component for example brevity. -->
             <fakturacneUdajeFormStep ref="invoiceData" />
-
             <!-- using step slot for submit button-->
             <template #stepNext>
               <FormKit type="submit" label="Objednať s povinnosťou platby" />
             </template>
             </FormKit>
           </FormKit>
-          <details>
+          <!-- <details>
             <pre>{{ value }}</pre>
-          </details>
+          </details> -->
         </FormKit>
         <!-- <button @click="newLogSubmit">New log Submit</button> -->
       </div>
@@ -108,7 +108,7 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let addressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
+let addressFromResponse: any, userFromResponse: any, hqAddressFromResponse: any, invAddressFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
@@ -118,7 +118,7 @@ let userAddress = ref<Address>();
 let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
-let totalForPay = computed(() => subjects_of_business.value.finalPriceForBusinessCategori + order.value.items[0].price)
+let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
 
 // const childRefComponentForPay = ref()
 // const callStripePayment = (totalForPay: number, orderId: any) => {
@@ -146,8 +146,8 @@ function newLogSubmit(){
 
 let headquarter = ref({
   name: '',
-  description: 'test',
-  headquarters_type: 1, // 1 Nebytový priestor, 2 Byt, 3 iná budova, 4 rod dom, 5 Samost stoj garaž
+  description: 'živnosť',
+  headquarters_type: 3, // 1 Nebytový priestor, 2 Byt, 3 iná budova, 4 rod dom, 5 Samost stoj garaž
   owner_name: '',
   price: 0,
   registry: false,
@@ -155,7 +155,7 @@ let headquarter = ref({
   scanning: false,
   shredding: false,
   is_virtual: false,
-  img: 'test',
+  img: '',
   address_id: 0
 })
 
@@ -163,8 +163,8 @@ let order = ref({
   payment_date: '' as any,
   payment_method: '',
   description: 'test',
-  amount: 12, // final cena s dph
-  amount_vat: 2, // vat je čisto len dph
+  amount: 0, // final cena s dph
+  amount_vat: 0, // vat je čisto len dph
   is_paid: false,
   address_id: 0,
   user_id: 0,
@@ -190,7 +190,7 @@ let order = ref({
 
 /* Submiting form and Api calls */
 
-async function registerAddress() {
+async function registerAddress(): Promise<Response> {
 
   userAddress.value = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
   return store.dispatch('registerAddress', userAddress.value)
@@ -221,17 +221,35 @@ async function registerUser() {
   })
 }
 
-async function addHeadquarter() {
-  headquarter.value.owner_name = user.value?.first_name + " " + user.value?.last_name
+function registerHqAddress(): Promise<Response>  {
 
-  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness){
-    headquarter.value.name = 'Rovnaký názov ako moja trvalá adresa'
+  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness == 'Totožné'){
+    userAddressUserInfoCompanyNameAndRegDate.value.hqAddress = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
+  }
+  
+  return store.dispatch('registerAddress', userAddressUserInfoCompanyNameAndRegDate.value.hqAddress)
+    .then((res) => {
+      console.log("Registering hq address: " + JSON.stringify(res))
+      hqAddressFromResponse = res
+      return hqAddressFromResponse
+    })
+    .catch(err => {
+      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+    })
+}
+
+async function addHeadquarter() {
+
+
+  headquarter.value.address_id = hqAddressFromResponse.address_id
+  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness == 'Totožné'){
+    headquarter.value.owner_name = user.value?.first_name + " " + user.value?.last_name
   }
   else {
-    headquarter.value.name = 'Iný názov'
+    headquarter.value.owner_name = "Treba doplniť z oprávnenie."
   }
-
-  headquarter.value.address_id = addressFromResponse.address_id
+  headquarter.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
+  headquarter.value.description = "Miesto podnikania k živnosti " + user.value?.first_name + " " + user.value?.last_name
 
   return store.dispatch('addHeadquarter', headquarter.value)
   .then((res) => {
@@ -268,6 +286,19 @@ async function addCompany() {
 
 }
 
+async function registerInvoiceAddress() {
+  
+  return store.dispatch('registerAddress', invoiceData.value.invoiceAddress)
+    .then((res) => {
+      console.log("Registering invoice address: " + JSON.stringify(res))
+      invAddressFromResponse = res
+      return invAddressFromResponse
+    })
+    .catch(err => {
+      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+    })
+}
+
 async function addOrder() {
 
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -286,12 +317,17 @@ async function addOrder() {
 
   order.value.fakturacne_udaje[0].first_name = invoiceData.value.fakturacne_udaje[0].first_name
   order.value.fakturacne_udaje[0].last_name = invoiceData.value.fakturacne_udaje[0].last_name
+  order.value.fakturacne_udaje[0].name = invoiceData.value.fakturacne_udaje[0].name
   order.value.fakturacne_udaje[0].dic = invoiceData.value.fakturacne_udaje[0].dic
   order.value.fakturacne_udaje[0].ic_dph = invoiceData.value.fakturacne_udaje[0].ic_dph
   order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
   if(invoiceData.value.invoiceAddressIsSame){
     order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+  } else {
+    order.value.fakturacne_udaje[0].address_id = invAddressFromResponse.address_id
   }
+  order.value.amount = totalForPay.value
+  order.value.amount_vat = totalForPay.value * 0.2
 
   return store.dispatch('addOrder', order.value)
   .then((res) => {
@@ -322,33 +358,54 @@ async function emailIsUnique(node: any){
 }
 
 
+async function handleAPICallsAndSubmitForm() {
+  try{
+    const resRegisterUserAddress = await registerAddress()
+    const resRegisterUser = await registerUser()
+    const resAddHeadquarter = await addHeadquarter()
+    const resAddCompany = await addCompany()
+
+
+
+  } catch(error){
+    console.log(error)
+  }
+}
+
 
 const newSustmiApp = async (formdata: any, node: any) => {
   registerAddress().then(() => {
         registerUser().then(() => {
           if(userFromResponse){
-            addHeadquarter().then(() => {
-              addCompany().then(() => {
-                addOrder().then(() => {
-                  userFromResponse = null
-                  hqFromResponse = null
-                  companyOrZivnostModel.value.owner = 0
-                  companyOrZivnostModel.value.headquarters_id = 0
-                  console.log("SUPER!")
 
-                  if(invoiceData.value.paymentOptions == "stripe"){
-                    invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
-                  } else {
-                      router.push({
-                        name:"Thanks You New Order",
-                        params: {
-                          orderId: orderFromRes.id,
-                        }
-                    })
+            registerHqAddress().then(() => {
+
+              addHeadquarter().then(() => {
+                addCompany().then(async () => {
+
+                  if(!invoiceData.value.invoiceAddressIsSame){
+                    await registerInvoiceAddress()
                   }
-
+                  await addOrder().then(() => {
+                    userFromResponse = null
+                    hqFromResponse = null
+                    companyOrZivnostModel.value.owner = 0
+                    companyOrZivnostModel.value.headquarters_id = 0
+                    console.log("SUPER!")
+                    if(invoiceData.value.paymentOptions == "stripe"){
+                      invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
+                    } else {
+                    router.push({
+                      name:"Thanks You New Order",
+                      params: {
+                        orderId: orderFromRes.id,
+                        }
+                      })
+                    }
+                  })
                 })
               })
+
             })
           }
         })

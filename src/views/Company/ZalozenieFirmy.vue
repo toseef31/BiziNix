@@ -44,10 +44,8 @@
           </span>
         </div>
       </div>
-
-
-                <!--FORM -->
-        <div>
+      <div>
+        <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</div>
         <FormKit type="form"
         :actions="false"
         id="zalZivnostiMultiStepPlugin"
@@ -90,11 +88,7 @@
           </details>
         </FormKit>
         <!-- <button @click="logujData">New log Submit</button> -->
-      </div>
-
-
-      
-
+      </div> 
     </div>
   </div>
   <FooterLayout></FooterLayout>
@@ -129,7 +123,7 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let addressFromResponse: any, hqAddressFromResponse: any, userFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
+let addressFromResponse: any, hqAddressFromResponse: any, userFromResponse: any, hqFromResponse: any, invAddressFromResponse: any, companyFomResponse: any, orderFromRes: any;
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
 let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
@@ -271,8 +265,8 @@ let order = ref({
   payment_date: '' as any,
   payment_method: '',
   description: 'test',
-  amount: 20, // final cena s dph
-  amount_vat: 3.33, // vat je čisto len dph
+  amount: 0, // final cena s dph
+  amount_vat: 0, // vat je čisto len dph
   is_paid: false,
   address_id: 0,
   user_id: 0,
@@ -297,7 +291,7 @@ let order = ref({
   }]
 })
 
-let totalForPay = computed(() => subjects_of_business.value.finalPriceForBusinessCategori + order.value.items[0].price)
+let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
 
 onBeforeMount( () => {
 
@@ -492,7 +486,20 @@ function addMultipleCompanyMembersKonatelia(): Promise<Response> {
     })
 }
 
-function addOrder(): Promise<Response> {
+async function registerInvoiceAddress() {
+  
+  return store.dispatch('registerAddress', invoiceData.value.invoiceAddress)
+    .then((res) => {
+      console.log("Registering invoice address: " + JSON.stringify(res))
+      invAddressFromResponse = res
+      return invAddressFromResponse
+    })
+    .catch(err => {
+      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
+    })
+}
+
+async function addOrder(): Promise<Response> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceData.value.paymentOptions
   order.value.company_id = companyFomResponse.company.id
@@ -514,7 +521,12 @@ function addOrder(): Promise<Response> {
   order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
   if(invoiceData.value.invoiceAddressIsSame){
     order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+  } else {
+    order.value.fakturacne_udaje[0].address_id = invAddressFromResponse.address_id
   }
+
+  order.value.amount = totalForPay.value
+  order.value.amount_vat = totalForPay.value * 0.2
 
   return store.dispatch('addOrder', order.value)
   .then((res) => {
@@ -556,8 +568,13 @@ const newSustmiApp = async (formdata: any, node: any) => {
           
             registerHqAddress().then(() => {
               addHeadquarter().then(() => {
-                addCompany().then(() => {
-                  addOrder().then(() => {
+                addCompany().then(async () => {
+
+                  if(!invoiceData.value.invoiceAddressIsSame){
+                    await registerInvoiceAddress()
+                  }
+
+                  await addOrder().then(() => {
                     userFromResponse = null
                     hqFromResponse = null
                     companyOrZivnostModel.value.owner = 0

@@ -1,7 +1,7 @@
 <template>
 <div class="text-4xl font-bold">Vyberte si sídlo spoločnosti</div>
 <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom sídla spoločnosti.</div>
-  <FormKit type="radio" v-model="obchodneSidlo" label="O aké sídlo máte záujem" name="obchodneSidlo"
+  <FormKit type="radio" v-model="obchodneSidlo" label="O aké sídlo máte záujem?" name="obchodneSidlo"
   :options="
       [
         { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
@@ -16,8 +16,14 @@
     <FormKit type="text" name="city" v-model="hqAddress.city" label="Obec" validation="required" />
     <FormKit type="text" name="psc" v-model="hqAddress.psc" label="PSČ" validation="required" />
     <FormKit type="text" name="street" v-model="hqAddress.street" label="Ulica" validation="required" />
-    <FormKit type="text" name="street_number" v-model="hqAddress.street_number" label="Súpisne číslo" validation="required" />
-    <FormKit type="text" name="street_number2" v-model="hqAddress.street_number2" label="Orientačné číslo" validation="required" />
+    <FormKit type="text" name="street_number" v-model="hqAddress.street_number" label="Súpisne číslo"
+      validation="require_one:street_number2"
+      help="Čislo pred lomítkom"
+    />
+    <FormKit type="text" name="street_number2" v-model="hqAddress.street_number2" label="Orientačné číslo"
+      validation="require_one:street_number"
+      help="Čislo za lomítkom"
+    />
     </div>
     <div class="mb-4">
       <p>
@@ -26,7 +32,7 @@
     </div>
     <div class="flex flex-col md:flex-row md:space-x-4">
       <FormKit type="select" name="headquarters_type" id="headquarters_type" label="Druh priestoru" v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
-        :options=headquartersTypes validation="required" validation-visibility="dirty"
+        :options=headquartersTypes.values validation="required" validation-visibility="dirty"
       />
       <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
     </div>
@@ -89,8 +95,8 @@ let headquarterInfo = ref({
   forwarding: false,
   scanning: false,
   shredding: false,
-  is_virtual: true, // to do reg virtual
-  img: 'pri vytvarani firmy',
+  is_virtual: false, // to do reg virtual
+  img: '',
   address_id: 0
 })
 

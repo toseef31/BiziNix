@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { createInput } from '@formkit/vue'
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import formkitCustomMultiSelectVue from './formkitCustomMultiSelect.vue';
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories'
 import store from '@/store';
@@ -46,7 +46,7 @@ let subjects_of_business = ref([{
 
 const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business.value)
 
-onMounted(() => {
+onBeforeMount(() => {
   businessCategori.value.pop()
   subjects_of_business.value.pop()
   store.dispatch("getAllSubjectOfBusiness")

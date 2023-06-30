@@ -31,7 +31,7 @@
       <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
         :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
       />
-      <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" placeholder="Vyberte typ dokladu ttožnosti"
+      <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" placeholder="Vyberte typ dokladu tožnosti"
         :options="['Občiansky preukaz','Cestovný pas','Vodičský preukaz']" validation="required" validation-visibility="dirty"
       />
       <FormKit type="text" name="cislo_dokladu_totoznosti" label="Číslo dokladu totožnosti" validation="required|length:5" />

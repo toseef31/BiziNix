@@ -4,7 +4,9 @@
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
   <FormKit type="text" name="first_name" v-model="user.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
   <FormKit type="text" name="last_name" v-model="user.last_name" label="Priezvisko" validation="required|length:2" />
-  <FormKit type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" />
+  <div v-show="isZivnostForm">
+    <FormKit type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" />
+  </div>
   <FormKit type="select" label="Pohlavie" v-model="user.gender" placeholder="Vyberte pohlavie" name="gender" id="gender" :options="['Muž','Žena']" validation="required" validation-visibility="dirty"/>
 </div>
 <div class="flex flex-col md:flex-row md:space-x-4">
@@ -24,8 +26,14 @@
   <FormKit type="text" name="country" v-model="userAddress.country" label="Krajina" validation="required" />
   <FormKit type="text" name="psc" v-model="userAddress.psc" label="PSČ" validation="required" />
   <FormKit type="text" name="street" v-model="userAddress.street" label="Ulica" validation="required" />
-  <FormKit type="text" name="street_number" v-model="userAddress.street_number" label="Súpisne číslo" validation="required" />
-  <FormKit type="text" name="street_number2" v-model="userAddress.street_number2" label="Orientačné číslo" validation="required" />
+  <FormKit type="text" name="street_number" v-model="userAddress.street_number" label="Súpisne číslo"
+    validation="require_one:street_number2"
+    help="Čislo pred lomítkom"
+  />
+  <FormKit type="text" name="street_number2" v-model="userAddress.street_number2" label="Orientačné číslo"
+    validation="require_one:street_number"
+    help="Číslo za lomítkom"
+  />
 </div>
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
   <FormKit type="email" name="email"
@@ -40,16 +48,50 @@
   <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
   <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
 </div>
-<div class="grid grid-cols-1 gap-4">
-  <div class="font-bold">Miesto podnikania?</div>
-  <FormKit type="checkbox" v-model="placeOfBusinness" :ignore="true" :disabled="true" label="Totožné s trvalým bydliskom?" name="placeOfBusinness" />
+<div v-if="isZivnostForm">
+    <FormKit type="radio" v-model="placeOfBusinness" :ignore="true" label="Miesto podnikania?" name="placeOfBusinness"
+      :options="[
+          { value: 'Totožné', label: 'Totožné s trvalým bydliskom' },
+          { value: 'Iné', label: 'Na inej adrese' },
+      ]"
+      validation="required"
+    />
+    <div v-if="placeOfBusinness == 'Iné'">
+      <div class="mb-4">
+        <p>
+          Ak sa miesto podnikania odlišuje od trvalého bydliska, je potrebné preukázať oprávnenie
+          užívať nehnuteľnosť buď nájomnou zmluvou alebo súhlasom vlastníka nehnuteľnosti
+          (tento dokument vám môžeme vypracovať a zaslať emailom).
+        </p>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <FormKit type="select" name="country" id="country" label="Štát" v-model="hqAddress.country"
+          :options="['Slovensko']" validation="required" validation-visibility="dirty"
+        />
+        <FormKit type="text" name="city" v-model="hqAddress.city" label="Obec" validation="required" />
+        <FormKit type="text" name="psc" v-model="hqAddress.psc" label="PSČ" validation="required" />
+        <FormKit type="text" name="street" v-model="hqAddress.street" label="Ulica" validation="required" />
+        <FormKit type="text" name="hq_street_number" v-model="hqAddress.street_number" label="Súpisne číslo"
+          validation="require_one:hq_street_number2"
+          help="Číslo pred lomítkom"
+        />
+        <FormKit type="text" name="hq_street_number2" v-model="hqAddress.street_number2" label="Orientačné číslo"
+          validation="require_one:hq_street_number"
+          help="Číslo za lomítkom"
+        />
+      </div>
+    </div>
 </div>
 <div class="flex flex-col md:flex-row md:space-x-4">
-  <FormKit type="radio" v-model="companyRegDateCheckboxValue" :ignore="true" label="Registrácia živnosti ku dňu?"
-  :options="[{ value: 'Nezáleží', label: 'Nezáleží' }, { value: 'Podľa dátumu', label: 'Podľa dátumu' }]" name="companyRegDateCheckbox"
-  validation="required" />
+  <FormKit type="radio" v-model="companyRegDateCheckboxValue" :ignore="true" label="Registrácia firmy/živnosti ku dňu?" name="companyRegDateCheckbox"
+    :options="[
+      { value: 'Nezáleží', label: 'Nezáleží' },
+      { value: 'Podľa dátumu', label: 'Podľa dátumu' },
+    ]"
+    validation="required"
+  />
   <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
-    <FormKit type="date" name="registration_date" v-model="companyData.zaciatok_opravnenia" autocomplete="off" label="Dátum zápisu do živnostenského registra" validation="required" />
+    <FormKit type="date" name="registration_date" v-model="companyData.zaciatok_opravnenia" autocomplete="off" label="Dátum zápisu" validation="required" />
   </div>
 </div>
 </template>
@@ -59,11 +101,22 @@ import type Address from '@/types/Address';
 import type Company from '@/types/Company';
 import type User from '@/types/User';
 import store from '@/store';
+import { onBeforeMount, onMounted } from 'vue';
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
+
+onBeforeMount( () => {
+  if(route.fullPath.includes('zivnosti')){    
+    isZivnostForm.value = true  
+  }
+})
 
 const hasTitle = ref(false);
+const isZivnostForm = ref(false);
 let companyRegDateCheckboxValue = ref("");
-const placeOfBusinness = ref(true);
+const placeOfBusinness = ref("");
 
 let companyData = ref({
   name: '',
@@ -97,8 +150,34 @@ let user = ref({
 
 let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData, placeOfBusinness})
 
+let hqAddress = ref({
+  id: null,
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+} as Address)
+
+let headquarterInfo = ref({
+  name: '',
+  description: '',
+  headquarters_type: 0,
+  owner_name: '',
+  price: 0,
+  registry: false,
+  forwarding: false,
+  scanning: false,
+  shredding: false,
+  is_virtual: false, // to do reg virtual
+  img: '',
+  address_id: 0
+})
+
 defineExpose({
-  userAddressUserInfoCompanyNameAndRegDate
+  userAddressUserInfoCompanyNameAndRegDate,
+  hqAddress
 })
 
 async function isEmailAlreadyRegistered(node: any) {

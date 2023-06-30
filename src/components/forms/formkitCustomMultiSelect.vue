@@ -15,7 +15,12 @@ const props = defineProps(['context'])
         :searchable="true"
         :min-chars="3"
         @change="(v: any) => props.context.node.input(v)"
-    />
+    >
+        <template v-slot:option="{ option }">
+            {{ option['label'] }} ({{ option['value']['price'] }} €)
+        </template>
+
+    </Multiselect>
 </template>
 
 <style>
