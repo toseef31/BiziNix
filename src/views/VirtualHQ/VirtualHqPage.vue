@@ -636,11 +636,15 @@ function createNewOrder() {
     scanovanie: scanovanie.value,
     preberanie: preberanie.value,
     price: final_price.value,
-    vhq: currentVhq.value,
+    vhq: currentVhq.value
   };
+
+  store.state.orderVhqData = data;
+
+  console.log(store.state.orderVhqData)
+
   return router.push({
-    name: "Order vhq",
-    params: { data: JSON.stringify(data) },
+    name: "Order vhq"
   });
 }
 

@@ -425,7 +425,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, computed } from "vue";
 import useSteps from "@/components/forms/useStep";
 import { createInput } from "@formkit/vue";
 import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
@@ -436,14 +436,7 @@ const camel2title = (str: string) => str
   .replace(/^./, (match) => match.toUpperCase())
   .trim()
 
-const props = defineProps({
-  data: {
-    type: String,
-    default: "No data specified"
-  }
-});
-
-const data = JSON.parse(props.data);
+const data = computed(() => store.state.orderVhqData);
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -575,7 +568,7 @@ function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      errorMsg.value = JSON.stringify(err.response.data.errors); // response data is from store actions
+      errorMsg.value = JSON.stringify(err.response.data.value.errors); // response data is from store actions
     });
 }
 
@@ -592,7 +585,7 @@ function registerUser(): Promise<Response> {
       return userFromResponse;
     })
     .catch((err) => {
-      errorMsg.value = JSON.stringify(err.response.data.errors); // response data is from store actions
+      errorMsg.value = JSON.stringify(err.response.data.value.errors); // response data is from store actions
     });
 }
 
@@ -600,17 +593,17 @@ function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.name = "VS-" + companyOrZivnostModel.value.name;
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyOrZivnostModel.value.name;
-  headquarter.value.price = data.price;
+  headquarter.value.price = data.value.price;
 
-  headquarter.value.registry = data.preberanie;
-  headquarter.value.forwarding = data.preposlanie;
-  headquarter.value.scanning = data.scanovanie;
-  headquarter.value.shredding = data.skartovanie;
+  headquarter.value.registry = data.value.preberanie;
+  headquarter.value.forwarding = data.value.preposlanie;
+  headquarter.value.scanning = data.value.scanovanie;
+  headquarter.value.shredding = data.value.skartovanie;
   headquarter.value.is_virtual = true;
 
-  headquarter.value.img = data.vhq.img;
+  headquarter.value.img = data.value.vhq.img;
 
-  headquarter.value.address_id = data.vhq.address.id;
+  headquarter.value.address_id = data.value.vhq.address.id;
 
   return store
     .dispatch("addHeadquarter", headquarter.value)
@@ -620,8 +613,8 @@ function addHeadquarter(): Promise<Response> {
       return hqFromResponse;
     })
     .catch((err) => {
-      console.log(err.response.data.errors);
-      errorMsg.value = JSON.stringify(err.response.data.errors);
+      console.log(err.response.data.value.errors);
+      errorMsg.value = JSON.stringify(err.response.data.value.errors);
     });
 }
 
@@ -651,10 +644,10 @@ function addOrder(): Promise<Response> {
   order.value.company_id = companyFromResponse.company.id;
   order.value.user_id = userFromResponse.user_id;
 
-  order.value.amount = data.price;
-  order.value.amount_vat = data.price*0.2;
-  order.value.items[0].price = data.price;
-  order.value.items[0].price_vat = data.price*0.2;
+  order.value.amount = data.value.price;
+  order.value.amount_vat = data.value.price*0.2;
+  order.value.items[0].price = data.value.price;
+  order.value.items[0].price_vat = data.value.price*0.2;
 
   order.value.fakturacne_udaje[0].first_name =
     fakturacne_udaje.value.first_name;
@@ -663,7 +656,7 @@ function addOrder(): Promise<Response> {
   order.value.fakturacne_udaje[0].ic_dph = fakturacne_udaje.value.ic_dph;
   order.value.fakturacne_udaje[0].ico = fakturacne_udaje.value.ico;
   if(invoiceAddressIsSame.value){
-    order.value.fakturacne_udaje[0].address_id = data.vhq.address.id;
+    order.value.fakturacne_udaje[0].address_id = data.value.vhq.address.id;
   } else {
     order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
   }

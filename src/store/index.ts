@@ -26,7 +26,16 @@ export const store = createStore({
     hqAddress: {},
     selectedCompanyMails: [],
     selectedCompanyAddress: {},
-    document: {}
+    document: {},
+    orderVhqData: {
+      createCompany: false,
+      skartovanie: false,
+      preposlanie: false,
+      scanovanie: false,
+      preberanie: false,
+      price: 0,
+      vhq: {} as any
+    }
   },
   getters: {
     getDocument: (state) => {

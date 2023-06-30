@@ -38,7 +38,7 @@
             class="w-[400px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
           >
             <span class="text-center w-full"
-              >Vyskúšať zadarmo na 6 mesiacov</span
+              >Vyskúšať zadarmo na 3 mesiace</span
             >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -66,14 +66,14 @@
     <div>
       <div class="container flex-col justify-center mx-auto flex h-full">
         <div class="text-5xl text-white leading-normal font-bold">
-          Vyberte si balík, ktorý <br />
-          vám vyhovuje
+          Jedinečný pomer ceny<br />
+          a kvality
         </div>
         <div class="text-base text-white my-4">
           <div class="flex items-center space-x-2">
             <div>
-              Ručíme za najnižšie ceny na trhu.<br />
-              Ak nájdete nižšiu, radi sa jej prispôsobíme
+              Ručíme za najnižšiu cenu v pomere za<br />
+              kvalitu na trhu.
             </div>
           </div>
         </div>
@@ -100,84 +100,193 @@
         <div>
           <section>
             <div>
-              <div class="grid grid-cols-2 gap-8 place-items-end">
-                <!-- Pricing Card -->
-                <div
-                  class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-400 text-gray-800"
-                >
-                  <h3 class="mb-8 text-3xl font-extrabold">My</h3>
-                  <!-- List -->
-                  <ul role="list" class="mb-8 space-y-4 text-left">
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Faktúry</span>
-                      <span>neobmedzene zákazníkov</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Design dokladov</span>
-                      <span>neobmedzene</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Firmy</span>
-                      <span>neobmedzene</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold"
-                        >Zmluvy a iné dokumenty</span
-                      >
-                      <span>neobmedzene</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Zmeny firiem</span>
-                      <span>zdarma</span>
-                    </li>
-                  </ul>
-                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-                  <div class="flex flex-col items-center my-8">
-                    <span class="text-xl font-extrabold">5€/mesiac</span>
-                    <span class="text-sm font-bold">alebo 50€/rok</span>
-                  </div>
-                  <a
-                    href="#"
-                    class="text-gray-900 font-extrabold bg-teal-600 hover:bg-teal-700 focus:ring-4 rounded-lg text-sm px-5 py-2.5 text-center focus:ring-teal-900"
-                    >Vyskúšať 6 mesiacov zdarma</a
+              <table class="rounded border-separate border-spacing-x-4">
+                <tr>
+                  <td class="flex pb-20"></td>
+                  <td class="mb-16 bg-gray-700 rounded-t-xl">
+                    <div class="flex justify-center">
+                      <img
+                        class="w-28"
+                        src="@/assets/logo.png"
+                        alt="Logo Bizinix"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="text-white font-bold text-3xl mb-16 px-4 text-center bg-gray-700 rounded-t-xl"
                   >
-                </div>
-                <!-- Pricing Card -->
-                <div
-                  class="w-full h-fit p-8 mx-auto text-center rounded-lg shadow bg-gray-400 text-gray-800"
-                >
-                  <h3 class="mb-8 text-3xl font-extrabold">Konkurencia</h3>
-                  <!-- List -->
-                  <ul role="list" class="mb-8 space-y-4 text-left">
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Faktúry</span>
-                      <span>obmedzený počet faktúr</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Design dokladov</span>
-                      <span>obmedzený počet designov</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Firmy</span>
-                      <span>obmedzený počet firiem</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold"
-                        >Zmluvy a iné dokumenty</span
+                    <div class="flex justify-center">Konkurencia</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold pb-4 pt-8 px-4">Faktúry</td>
+                  <td
+                    class="text-teal-500 font-bold pb-4 pt-8 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Neobmedzene
+                  </td>
+                  <td
+                    class="text-red-500 font-bold pb-4 pt-8 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Obmedzený počet
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Iné obchodné dokumenty
+                  </td>
+                  <td
+                    class="text-teal-500 font-bold py-4 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Neobmedzene
+                  </td>
+                  <td
+                    class="text-red-500 font-bold py-4 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Nezahŕňa
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Počet zákazníkov a kontaktov
+                  </td>
+                  <td
+                    class="text-teal-500 font-bold py-4 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Neobmedzene
+                  </td>
+                  <td
+                    class="text-red-500 font-bold py-4 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Obmedzený počet
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Zasielanie upomienok
+                  </td>
+                  <td
+                    class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    <div class="flex justify-center">
+                      <div class="flex justify-center">
+                        <CheckIcon
+                          class="w-12 text-teal-500"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="text-red-500 font-bold py-4 text-center bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    Nezahŕňa
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Import prijatých dokladov
+                  </td>
+                  <td
+                    class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    <div class="flex justify-center">
+                      <CheckIcon
+                        class="w-12 text-teal-500"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    <div class="flex justify-center">
+                      <div class="flex justify-center">
+                        <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Aktuálny reporting pre účtovníctvo
+                  </td>
+                  <td
+                    class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    <div class="flex justify-center">
+                      <CheckIcon
+                        class="w-12 text-teal-500"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
+                  >
+                    <div class="flex justify-center">
+                      <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-white font-bold py-4 px-4">
+                    Design dokladov
+                  </td>
+                  <td class="text-white font-bold py-4 bg-gray-800">
+                    <div class="flex justify-center">
+                      <CheckIcon
+                        class="w-12 text-teal-500"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </td>
+                  <td class="text-white font-bold py-4 bg-gray-800">
+                    <div class="flex justify-center">
+                      <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-4"></td>
+                  <td class="text-white font-bold py-4 text-2xl text-center">
+                    5€/mesiac
+                  </td>
+                  <td
+                    class="text-gray-400 font-bold py-4 px-4 text-2xl text-center"
+                  >
+                    Viac ako 5,5€ za mesiac
+                  </td>
+                </tr>
+                <tr>
+                  <td class="pb-16"></td>
+                  <td>
+                    <div
+                      @click="redirect()"
+                      class="w-[400px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+                    >
+                      <span class="text-center w-full"
+                        >Vyskúšať zadarmo na 3 mesiace</span
                       >
-                      <span>obmedzený počet dokumentov</span>
-                    </li>
-                    <li class="flex flex-col items-center space-x-3">
-                      <span class="text-lg font-bold">Zmeny firiem</span>
-                      <span>za poplatok</span>
-                    </li>
-                  </ul>
-                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-                  <div class="flex flex-col items-center my-8">
-                    <span class="text-xl font-extrabold">Od 8€/mesiac</span>
-                  </div>
-                </div>
-              </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                        />
+                      </svg>
+                    </div>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
             </div>
           </section>
         </div>
@@ -187,7 +296,7 @@
   </div>
 
   <!-- STVRTA SEKCIA -->
-  <div class="bg-gray-800 text-white z-2">
+  <div class="bg-gray-800 text-white z-2 py-6">
     <div class="flex flex-row container justify-center mx-auto py-6">
       <div class="flex flex-col px-16 self-center">
         <span class="text-2xl font-bold"
@@ -228,7 +337,7 @@
     <img
       src="@/assets/robot_left.png"
       class="absolute bottom-[-120px] left-[-90px] z-0 max-h-[720px]"
-    /> 
+    />
     <img
       src="@/assets/logo_b.png"
       class="absolute right-5 top-0 max-h-[980px]"
@@ -338,7 +447,6 @@
   </div>
 
   <div class="bg-gray-800 text-white">
-    <CounselingCenter></CounselingCenter>
     <Reviews></Reviews>
     <FooterLayout></FooterLayout>
   </div>
@@ -347,6 +455,7 @@
 <script setup lang="ts">
 import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
+import { CheckIcon, XIcon } from "@heroicons/vue/outline";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";
