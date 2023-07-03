@@ -34,8 +34,8 @@ export const store = createStore({
       scanovanie: false,
       preberanie: false,
       price: 0,
-      vhq: {} as any
-    }
+      vhq: {} as any,
+    },
   },
   getters: {
     getDocument: (state) => {
@@ -253,6 +253,13 @@ export const store = createStore({
         `/companies/${companyId}/getCompanyLogo`
       );
       return data;
+    },
+    async searchCompanies({ commit, dispatch }, searchQuery) {
+      return axiosClient
+        .post("/companies/findCompanyFinstat", searchQuery)
+        .then((res) => {
+          return res.data;
+        });
     },
     //#endregion
     //#region documents

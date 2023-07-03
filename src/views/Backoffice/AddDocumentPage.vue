@@ -70,17 +70,9 @@
                 <label for="client-name" class="flex text-black font-bold"
                   >Odberateľ</label
                 >
-                <div class="flex py-2 justify-between w-full">
+                <div class="flex py-2 w-full">
                   <div class="w-full">
-                    <FormKit
-                      v-model="document.odberatel"
-                      autocomplete="nope"
-                      id="client-name"
-                      name="Odberateľ"
-                      type="text"
-                      placeholder="Meno alebo IČO firmy"
-                      validation="required"
-                    />
+                    <Autocomplete v-model="odberatel"></Autocomplete>
                   </div>
                   <div class="w-full">
                     <FormKit
@@ -616,6 +608,7 @@ import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
 import { OfficeBuildingIcon } from "@heroicons/vue/outline";
+import Autocomplete from "@/components/Autocomplete.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -623,6 +616,8 @@ const subtype = Number(route.params.subtype);
 const submitted = ref(false);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const isOpen = ref(false);
+
+const odberatel = ref({} as any);
 
 const company = ref({} as Company);
 const address = ref({
@@ -674,7 +669,7 @@ const document = ref({
   type: 1,
   subtype: subtype,
   company_id: company.value.id,
-  odberatel: "",
+  odberatel: odberatel.value.Name,
   contact_person: "",
   address: "",
   psc: "",
