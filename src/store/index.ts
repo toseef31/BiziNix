@@ -322,6 +322,10 @@ export const store = createStore({
         return data;
       });
     },
+    async getOrderById({ commit }, id) {
+      const { data } = await axiosClient.get(`/orders/${id}/get`);
+      return data;
+    },
     //#endregion
     //#region payments
     async pay({ commit }, amount) {

@@ -49,7 +49,6 @@ const router = createRouter({
         { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
-        { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },

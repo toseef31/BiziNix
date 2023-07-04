@@ -71,7 +71,6 @@ let fakturacne_udaje = ref([{
 }] as Order["fakturacne_udaje"] )
 
 let invoiceAddress = ref({
-  id: null,
   street: '',
   street_number: '',
   street_number2: '',

@@ -13,26 +13,28 @@
             <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </div>
-    </main>
+      <div v-else="!order" class="text-center">
+        <EmojiSadIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
+        <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-import store from '@/store';
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { BadgeCheckIcon } from '@heroicons/vue/outline'
-import { EmojiSadIcon } from '@heroicons/vue/outline'
+import store from "@/store";
+import { onBeforeMount, ref } from "vue";
+import { useRoute } from "vue-router";
+import { BadgeCheckIcon } from "@heroicons/vue/outline";
+import { EmojiSadIcon } from "@heroicons/vue/outline";
 
-const route = useRoute()
+const route = useRoute();
 const order = ref();
 
-// const order: any = computed(() => {
-//     return store.getters.getOrder(orderId)
-// });
-
-onMounted(() => {
-    let orderId = route.params.orderId
-    order.value = store.getters.getOrder(Number(orderId))
-})
-
+onBeforeMount(() => {
+  const orderId = route.params.orderId;
+  store.dispatch("getOrderById", orderId).then((response) => {
+    order.value = response.data;
+  });
+});
 </script>

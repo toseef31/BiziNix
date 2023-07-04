@@ -1,5 +1,5 @@
 export default interface Address {
-  id: null
+  id: number
   street: string
   street_number: string
   street_number2: string

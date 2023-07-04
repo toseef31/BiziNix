@@ -124,7 +124,6 @@ let companyData = ref({
 })
 
 let userAddress = ref({
-  id: null,
   street: '',
   street_number: '',
   street_number2: '',
@@ -151,7 +150,6 @@ let user = ref({
 let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData})
 
 let hqAddress = ref({
-  id: null,
   street: '',
   street_number: '',
   street_number2: '',
