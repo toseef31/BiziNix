@@ -7,7 +7,7 @@
     <FormKit type="checkbox" v-model="invoiceAddressIsSame" :ignore="true" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
   </div>
   <div v-if="!invoiceAddressIsSame" class="grid grid-cols-3 gap-4">
-    <FormKit type="select" name="country" id="country" label="Štát" v-model="invoiceAddress.country"
+    <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
       :options="['Slovensko', 'Česko']" validation="required" validation-visibility="dirty"
     />
     <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
@@ -52,6 +52,7 @@ import { ref } from 'vue';
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import type Order from '@/types/Order';
 import type Address from '@/types/Address';
+import { values } from 'lodash';
 
 const childRefComponentForPay = ref()
 const invoiceAddressIsSame = ref(true);

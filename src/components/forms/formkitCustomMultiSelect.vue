@@ -17,7 +17,7 @@ const props = defineProps(['context'])
         @change="(v: any) => props.context.node.input(v)"
     >
         <template v-slot:option="{ option }">
-            {{ option['label'] }} ({{ option['value']['price'] }} €)
+            <div>{{ option['label'] }} <span class="font-medium">({{ option['value']['price'] }} €)</span></div>
         </template>
 
     </Multiselect>

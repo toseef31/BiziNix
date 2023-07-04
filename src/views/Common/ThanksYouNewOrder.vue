@@ -5,7 +5,7 @@
             <BadgeCheckIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
             <h1 class="text-6xl my-6 font-bold text-gray-900">Ďakujeme vám.</h1>
             <div class="text-xl">
-                Vaša objednávka #{{ order.id }} bola prijatá na spracovanie o ďalšom postupe Vás budeme informovať e-mailom.
+                Vaša objednávka <b>#{{ order.id }}</b> bola prijatá na spracovanie o ďalšom postupe Vás budeme informovať e-mailom.
             </div>
         </div>
         <div v-else="!order" class="text-center">

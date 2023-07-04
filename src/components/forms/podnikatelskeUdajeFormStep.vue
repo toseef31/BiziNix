@@ -148,7 +148,7 @@ let user = ref({
     password_confirmation: '',
 } as User)
 
-let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData, placeOfBusinness})
+let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData})
 
 let hqAddress = ref({
   id: null,
@@ -176,6 +176,7 @@ let headquarterInfo = ref({
 })
 
 defineExpose({
+  placeOfBusinness,
   userAddressUserInfoCompanyNameAndRegDate,
   hqAddress
 })
