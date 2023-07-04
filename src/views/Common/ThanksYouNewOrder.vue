@@ -13,11 +13,6 @@
             <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </div>
-      <div v-else="!order" class="text-center">
-        <EmojiSadIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
-        <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
-      </div>
-    </div>
   </main>
 </template>
 
