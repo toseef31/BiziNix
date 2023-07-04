@@ -76,7 +76,6 @@ let headquartersTypes = ref([
 ])
 
 let hqAddress = ref({
-  id: null,
   street: '',
   street_number: '',
   street_number2: '',

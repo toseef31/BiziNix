@@ -459,7 +459,7 @@ import { CheckIcon, XIcon } from "@heroicons/vue/outline";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";
-import { ref, computed, onBeforeMount, reactive } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import store from "@/store";
 
 const router = useRouter();

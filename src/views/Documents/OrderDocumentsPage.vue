@@ -66,7 +66,30 @@
             </div>
           </div>
         </div>
-        <div class="flex">
+        <div class="w-full">
+          <FormKit
+            type="radio"
+            v-model="createCompany"
+            label="Je spoločnosť na Vašom účte u nás?"
+            name="payment_method"
+            :options="[
+              {
+                value: 'new',
+                label: 'Nie, chcem pridať novú spoločnosť a aktivovať službu',
+                attrs: { selected: true }
+              },
+              {
+                value: 'existing',
+                label: 'Áno, chcem len aktivovať službu',
+              },
+            ]"
+            validation="required"
+          />
+        </div>
+        <div class="flex" v-if="createCompany == 'new'">
+          <DocumentsNewCompany />
+        </div>
+        <div class="flex" v-if="createCompany == 'existing'">
           <DocumentsExistingCompany />
         </div>
       </div>
@@ -82,7 +105,11 @@
 
 <script setup lang="ts">
 import DocumentsExistingCompany from "../../components/forms/DocumentsExistingCompany.vue";
+import DocumentsNewCompany from "../../components/forms/DocumentsNewCompany.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
+import { ref } from "vue";
+
+const createCompany = ref("new");
 </script>

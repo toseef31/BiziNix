@@ -2,6 +2,7 @@ export default interface Order {
   id: number
   is_paid: boolean
   amount: number
+  amount_vat: number
   description: string
   payment_date: string
   payment_method: string
@@ -23,4 +24,9 @@ export default interface Order {
   last_name: string
   company_name: string
   updated_at: Date
+  items: {
+    price: number,
+    price_vat: number,
+    description: string
+  }[],
 }
