@@ -47,11 +47,17 @@
       <div>
         <FormKit type="form"
           :actions="false"
-          id="zalZivnostiMultiStepPlugin"
+          id="zalFirmyMultiStepForm"
+          @submit-invalid="showErrors"
           #default="{ value, state: { valid }  }"
           @submit="newSustmiApp"
         >
-          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
+          <div>
+            <ul class="validation-errors" v-if="messages.length">
+              <li v-for="message in messages">{{ message }}</li>
+            </ul>
+          </div>
+          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" tab-style="tab">
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
@@ -88,7 +94,7 @@
                 <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
               </template>
             </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
+          <FormKit type="submit" label="Objednať s povinnosťou platby" />
 
         </FormKit>
         <!-- <button @click="logujData">New log Submit</button> -->
@@ -116,6 +122,7 @@ import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.
 import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
+import { getValidationMessages } from '@formkit/validation'
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);
@@ -136,6 +143,19 @@ let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>
 let user = ref<User>();
 let headquarter = ref<Headquarters>({} as Headquarters);
 let companyOrZivnostModel = ref<Company>({} as any);
+
+
+const messages = ref([])
+
+function showErrors(node: any) {
+  messages.value = []
+  const validations = getValidationMessages(node)
+  validations.forEach((inputMessages: any) => {
+    messages.value = messages.value.concat(
+      inputMessages.map((message: any) => message.value)
+    )
+  })
+}
 
 let businessCategori = ref([
   {

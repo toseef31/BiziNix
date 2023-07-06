@@ -7,8 +7,8 @@
   padding-top: 5px;
 }
 
-#zalZivnostiMultiStepPlugin > .formkit-outer > .formkit-wrapper {
-  max-width: 100%;
+.formkit-wrapper {
+  max-width: 100% !important;
 }
 
 [data-type="button"] .formkit-input {

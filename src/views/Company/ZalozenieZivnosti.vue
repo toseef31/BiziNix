@@ -28,38 +28,44 @@
       <div>
         <FormKit type="form"
           :actions="false"
-          id="zalZivnostiMultiStepPlugin"
+          id="zalZivnostiMultiStepForm"
+          @submit-invalid="showErrors"
           #default="{ value, state: { valid } }"
           @submit="newSustmiApp"
         >
-            <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
-              <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
-                <predmetPodnikaniaFormStep ref="subjects_of_business" />
-              </FormKit>
-
-              <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
-                <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
-              </FormKit>
-
-              <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-              <fakturacneUdajeFormStep ref="invoiceData" />
-              </FormKit>
+        <div>
+          <ul class="validation-errors" v-if="messages.length">
+            <li v-for="message in messages">{{ message }}</li>
+          </ul>
+        </div>
+          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
+            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
+              <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
-            <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
-              Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
-            </div>
-            <FormKit
-              type="checkbox"
-              label="Všeobecné obchodné podmienky"
-              validation="accepted"
-              validation-visibility="dirty"
-            >
-              <template #label="context">
-                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-              </template>
+            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
+              <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
             </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
+
+            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
+            <fakturacneUdajeFormStep ref="invoiceData" />
+            </FormKit>
+          </FormKit>
+
+          <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
+            Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
+          </div>
+          <FormKit
+            type="checkbox"
+            label="Všeobecné obchodné podmienky"
+            validation="accepted"
+            validation-visibility="dirty"
+          >
+            <template #label="context">
+              <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
+            </template>
+          </FormKit>
+          <FormKit type="submit" label="Objednať s povinnosťou platby" />
           <!-- <details>
             <pre>{{ value }}</pre>
           </details> -->
@@ -107,6 +113,7 @@ import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.
 import type Address from "@/types/Address";
 import type Order from "@/types/Order";
 import type Company from "@/types/Company";
+import { getValidationMessages } from '@formkit/validation'
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
@@ -131,6 +138,19 @@ let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusine
 // const callStripePayment = (totalForPay: number, orderId: any) => {
 //   childRefComponentForPay.value.payWithStripe(totalForPay, orderId)
 // }
+
+
+const messages = ref([])
+
+function showErrors(node: any) {
+  messages.value = []
+  const validations = getValidationMessages(node)
+  validations.forEach((inputMessages: any) => {
+    messages.value = messages.value.concat(
+      inputMessages.map((message: any) => message.value)
+    )
+  })
+}
 
 function newLogSubmit(){
 

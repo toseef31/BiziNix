@@ -14,6 +14,7 @@ import { genesisIcons } from '@formkit/icons'
 import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import { sk } from '@formkit/i18n'
 import { generateClasses } from "@formkit/themes";
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
@@ -23,7 +24,9 @@ const config = defaultConfig({
   icons: {
     ...genesisIcons
   },
-  theme: 'genesis'
+  theme: 'genesis',
+  locales: { sk },
+  locale: 'sk',
 });
 
 const app = createApp(App);
