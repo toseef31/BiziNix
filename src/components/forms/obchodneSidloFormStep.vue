@@ -4,8 +4,7 @@
   <FormKit type="radio" v-model="obchodneSidlo" label="O aké sídlo máte záujem?" name="obchodneSidlo"
   :options="
       [
-        { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
-        // { value: 'virtualne', label: 'Virtuálne' }
+        { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' }
       ]"
       validation="required" />
   <div v-if="obchodneSidlo === 'vlastnePrenajate'">
@@ -32,7 +31,7 @@
     </div>
     <div class="flex flex-col md:flex-row md:space-x-4">
       <FormKit type="select" name="headquarters_type" id="headquarters_type" label="Druh priestoru" v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
-        :options=headquartersTypes.values validation="required" validation-visibility="dirty"
+        :options=headquartersTypes validation="required" validation-visibility="dirty"
       />
       <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
     </div>

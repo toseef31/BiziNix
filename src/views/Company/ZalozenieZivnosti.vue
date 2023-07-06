@@ -26,36 +26,45 @@
 
       <!--FORM -->
       <div>
-        <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</div>
         <FormKit type="form"
-        :actions="false"
-        id="zalZivnostiMultiStepPlugin"
-        #default="{ value }"
-        @submit="newSustmiApp"
+          :actions="false"
+          id="zalZivnostiMultiStepPlugin"
+          #default="{ value, state: { valid } }"
+          @submit="newSustmiApp"
         >
-          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
-            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
-              <!-- component for example brevity. -->
-              <predmetPodnikaniaFormStep ref="subjects_of_business" />
+            <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
+              <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
+                <predmetPodnikaniaFormStep ref="subjects_of_business" />
+              </FormKit>
+
+              <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
+                <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
+              </FormKit>
+
+              <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
+              <fakturacneUdajeFormStep ref="invoiceData" />
+              </FormKit>
             </FormKit>
 
-            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
-              <!-- component for example brevity. -->
-              <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
+            <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
+              Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
+            </div>
+            <FormKit
+              type="checkbox"
+              label="Všeobecné obchodné podmienky"
+              validation="accepted"
+              validation-visibility="dirty"
+            >
+              <template #label="context">
+                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
+              </template>
             </FormKit>
-
-            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-            <!-- component for example brevity. -->
-            <fakturacneUdajeFormStep ref="invoiceData" />
-            <!-- using step slot for submit button-->
-            <template #stepNext>
-              <FormKit type="submit" label="Objednať s povinnosťou platby" />
-            </template>
-            </FormKit>
-          </FormKit>
+          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
           <!-- <details>
             <pre>{{ value }}</pre>
           </details> -->
+
+
         </FormKit>
         <!-- <button @click="newLogSubmit">New log Submit</button> -->
       </div>
@@ -199,20 +208,23 @@ async function registerAddress(userAddress: Address) {
     })
 }
 
-async function registerUser(user: User, addressId: any) {
+async function registerUser(user: User, addressId: any): Promise<any> {
+  user.address_id = addressId;
 
-  user.address_id  = addressId
-
-  return store.dispatch('registerUser', user) // dispatch -> register action in store
-      .then((res) => {
-          sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
-          console.log("Registering user: " + JSON.stringify(res))
-          return res
-      })
-  .catch(err => {
-    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-  })
+  try {
+    const res = await store.dispatch('registerUser', user);
+    sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty.";
+    console.log("Registering user: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    if (err.response && err.response.data && err.response.data.errors) {
+      errorMsg.value = JSON.stringify(err.response.data.errors);
+    } else {
+      errorMsg.value = 'Nastala chyba pri registrácii uživateľa.';
+    }
+  }
 }
+
 
 async function registerHqAddress(hqAddress: Address): Promise<any>  {
 
@@ -277,15 +289,13 @@ async function addCompany(user: User, userId: any, hqId: any) {
 }
 
 async function registerInvoiceAddress(invoiceAddress: Address) {
-  
-  return store.dispatch('registerAddress', invoiceAddress)
-    .then((res) => {
-      console.log("Registering invoice address: " + JSON.stringify(res))
-      return res
-    })
-    .catch(err => {
-      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-    })
+  try {
+    const res = await store.dispatch('registerAddress', invoiceAddress);
+    console.log("Registering invoice address: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    errorMsg.value = JSON.stringify(err.response.data.errors);
+  }
 }
 
 async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceAddressId?: any) {
@@ -321,7 +331,6 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
   return store.dispatch('addOrder', order.value)
   .then((res) => {
     console.log("Adding order: " + JSON.stringify(res))
-    //orderFromRes = res.order
     return res.order
   })
   .catch( err => {
