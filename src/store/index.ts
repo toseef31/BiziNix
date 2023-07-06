@@ -73,7 +73,12 @@ export const store = createStore({
     },
   },
   actions: {
-    registerUser({ commit }, user) {
+    async registerUser(_, user) {
+      // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
+      const { data } = await axiosClient.post("/users/register", user);
+      return data;
+    },
+    registerUserAndSetUserDataToSession({ commit }, user) {
       // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
       return axiosClient.post("/users/register", user).then(({ data }) => {
         commit("setUser", data); // setuser is defined as muttation below

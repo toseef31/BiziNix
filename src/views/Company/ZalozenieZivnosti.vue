@@ -101,14 +101,12 @@ import type Company from "@/types/Company";
 
 const hasTitle = ref(false);
 const invoiceAddressIsSame = ref(true);
-const placeOfBusinness = ref(true);
 const dateOfRegisterCompany = ref(true);
 const orderingAsCompany = ref(false);
 let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let addressFromResponse: any, userFromResponse: any, hqAddressFromResponse: any, invAddressFromResponse: any, hqFromResponse: any, companyFomResponse: any, orderFromRes: any;
 
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
@@ -131,7 +129,6 @@ function newLogSubmit(){
   console.log(invoiceData.value)
   console.log("CompanyModel");
   console.log(companyOrZivnostModel.value.subjects_of_business);
-
   console.log("UserAddresssssss");
   console.log(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
@@ -190,72 +187,66 @@ let order = ref({
 
 /* Submiting form and Api calls */
 
-async function registerAddress(): Promise<Response> {
+async function registerAddress(userAddress: Address) {
 
-  userAddress.value = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
-  return store.dispatch('registerAddress', userAddress.value)
+  return store.dispatch('registerAddress', userAddress)
     .then((res) => {
       console.log("Registering address: " + JSON.stringify(res))
-      addressFromResponse = res
-      return addressFromResponse
+      return res
     })
     .catch(err => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
 }
 
-async function registerUser() {
+async function registerUser(user: User, addressId: any) {
 
-  user.value  = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user;
-  user.value.address_id  = addressFromResponse.address_id
+  user.address_id  = addressId
 
-  return store.dispatch('registerUser', user.value) // dispatch -> register action in store
+  return store.dispatch('registerUser', user) // dispatch -> register action in store
       .then((res) => {
           sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
-          userFromResponse = res
           console.log("Registering user: " + JSON.stringify(res))
-          return userFromResponse
+          return res
       })
   .catch(err => {
     errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
   })
 }
 
-function registerHqAddress(): Promise<Response>  {
+async function registerHqAddress(hqAddress: Address): Promise<any>  {
 
-  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness == 'Totožné'){
-    userAddressUserInfoCompanyNameAndRegDate.value.hqAddress = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
+  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné'){
+    hqAddress = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
   }
   
-  return store.dispatch('registerAddress', userAddressUserInfoCompanyNameAndRegDate.value.hqAddress)
+  return store.dispatch('registerAddress', hqAddress)
     .then((res) => {
       console.log("Registering hq address: " + JSON.stringify(res))
-      hqAddressFromResponse = res
-      return hqAddressFromResponse
+      return res
     })
     .catch(err => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
 }
 
-async function addHeadquarter() {
+async function addHeadquarter(user: User, hqAddressId: any) {
 
+  headquarter.value.address_id = hqAddressId
 
-  headquarter.value.address_id = hqAddressFromResponse.address_id
-  if(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.placeOfBusinness == 'Totožné'){
-    headquarter.value.owner_name = user.value?.first_name + " " + user.value?.last_name
+  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné'){
+    headquarter.value.owner_name = user.first_name + " " + user.last_name
   }
   else {
     headquarter.value.owner_name = "Treba doplniť z oprávnenie."
   }
-  headquarter.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
-  headquarter.value.description = "Miesto podnikania k živnosti " + user.value?.first_name + " " + user.value?.last_name
+  headquarter.value.name = user.first_name + " " + user.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
+  headquarter.value.description = "Miesto podnikania k živnosti " + user.first_name + " " + user.last_name
 
   return store.dispatch('addHeadquarter', headquarter.value)
   .then((res) => {
     console.log("Adding hq: " + JSON.stringify(res))
-    hqFromResponse = res.headquarters
-    return hqFromResponse
+    return res.headquarters
   })
   .catch(err => {
     console.log(err.response.data.errors)
@@ -263,49 +254,47 @@ async function addHeadquarter() {
   })
 }
 
-async function addCompany() {
+async function addCompany(user: User, userId: any, hqId: any) {
 
   companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
   companyOrZivnostModel.value.status = 2
-  companyOrZivnostModel.value.owner = userFromResponse.user_id
-  companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
+  companyOrZivnostModel.value.owner = userId
+  companyOrZivnostModel.value.headquarters_id = hqId
   companyOrZivnostModel.value.is_dph = false
   companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
-  companyOrZivnostModel.value.name = user.value?.first_name + " " + user.value?.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
+  companyOrZivnostModel.value.name = user.first_name + " " + user.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name
   companyOrZivnostModel.value.zaciatok_opravnenia = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.zaciatok_opravnenia
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
     console.log("Adding company: " + JSON.stringify(res))
-    companyFomResponse = res
-    console.log("Company from Res " + JSON.stringify(companyFomResponse))
-    return companyFomResponse
+    console.log("Company from Res " + JSON.stringify(res))
+    return res
   }).catch( err => {
     console.log(err)
   })
 
 }
 
-async function registerInvoiceAddress() {
+async function registerInvoiceAddress(invoiceAddress: Address) {
   
-  return store.dispatch('registerAddress', invoiceData.value.invoiceAddress)
+  return store.dispatch('registerAddress', invoiceAddress)
     .then((res) => {
       console.log("Registering invoice address: " + JSON.stringify(res))
-      invAddressFromResponse = res
-      return invAddressFromResponse
+      return res
     })
     .catch(err => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
 }
 
-async function addOrder() {
+async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceAddressId?: any) {
 
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceData.value.paymentOptions
-  order.value.company_id = companyFomResponse.company.id
-  order.value.user_id = userFromResponse.user_id
-  order.value.address_id = addressFromResponse.address_id
+  order.value.company_id = companyId
+  order.value.user_id = userId
+  order.value.address_id = userAddressId
 
   companyOrZivnostModel.value.subjects_of_business.forEach(element => {
     order.value.items.push({
@@ -322,9 +311,9 @@ async function addOrder() {
   order.value.fakturacne_udaje[0].ic_dph = invoiceData.value.fakturacne_udaje[0].ic_dph
   order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
   if(invoiceData.value.invoiceAddressIsSame){
-    order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+    order.value.fakturacne_udaje[0].address_id = userAddressId
   } else {
-    order.value.fakturacne_udaje[0].address_id = invAddressFromResponse.address_id
+    order.value.fakturacne_udaje[0].address_id = invoiceAddressId
   }
   order.value.amount = totalForPay.value
   order.value.amount_vat = totalForPay.value * 0.2
@@ -332,8 +321,8 @@ async function addOrder() {
   return store.dispatch('addOrder', order.value)
   .then((res) => {
     console.log("Adding order: " + JSON.stringify(res))
-    orderFromRes = res.order
-    return orderFromRes
+    //orderFromRes = res.order
+    return res.order
   })
   .catch( err => {
     console.log(err.response.data )
@@ -341,75 +330,93 @@ async function addOrder() {
   
 }
 
-async function isEmailAlreadyRegistered(node: any) {
-  try {
-    const res = await store.dispatch("isEmailAlreadyRegistered", node);
-    console.log(res);
-    return true;
-  }
-  catch (error) {
-    return false;
-  }
-}
-
-async function emailIsUnique(node: any){
-  const result = await isEmailAlreadyRegistered(node.value)
-  return result
-}
-
-
-async function handleAPICallsAndSubmitForm() {
-  try{
-    const resRegisterUserAddress = await registerAddress()
-    const resRegisterUser = await registerUser()
-    const resAddHeadquarter = await addHeadquarter()
-    const resAddCompany = await addCompany()
-
-
-
-  } catch(error){
-    console.log(error)
-  }
-}
-
-
 const newSustmiApp = async (formdata: any, node: any) => {
-  registerAddress().then(() => {
-        registerUser().then(() => {
-          if(userFromResponse){
 
-            registerHqAddress().then(() => {
+  const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
-              addHeadquarter().then(() => {
-                addCompany().then(async () => {
+  const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
+  
+  const hqAddressRes = await registerHqAddress(userAddressUserInfoCompanyNameAndRegDate.value.hqAddress); 
 
-                  if(!invoiceData.value.invoiceAddressIsSame){
-                    await registerInvoiceAddress()
-                  }
-                  await addOrder().then(() => {
-                    userFromResponse = null
-                    hqFromResponse = null
-                    companyOrZivnostModel.value.owner = 0
-                    companyOrZivnostModel.value.headquarters_id = 0
-                    console.log("SUPER!")
-                    if(invoiceData.value.paymentOptions == "stripe"){
-                      invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
-                    } else {
-                    router.push({
-                      name:"Thanks You New Order",
-                      params: {
-                        orderId: orderFromRes.id,
-                        }
-                      })
-                    }
-                  })
-                })
-              })
+  const regHqRes = await addHeadquarter(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, hqAddressRes.address_id);
+  
+  const companyRes = await addCompany(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, regUserRes.user_id, regHqRes.id);
 
-            })
+  let invoiceAddressRes: any;
+  if(!invoiceData.value.invoiceAddressIsSame){
+    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+  }
+
+  const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
+
+  if(orderRes.id){
+
+    console.log("SUPER! Objednávka bola spracovaná.")
+    
+    if(invoiceData.value.paymentOptions == "stripe"){
+      await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
+    }
+
+    await router.push({
+        name:"Thanks You New Order",
+        params: {
+          orderId: orderRes.id,
           }
-        })
     })
+
+  }  
+  else {
+    errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
+  }
+
+  //const results = await Promise.allSettled([registerAddress()]);
+
+
+
+  // const regUserAddress = await registerAddress()
+  // .then(async () => {
+  //   const regUser = await registerUser();
+  // })
+  // .catch(() => {
+  //   errorMsg.value = 'Nastal problém pri registrácii adresy.'
+  // })
+
+  // registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress).then(() => {
+  //       registerUser().then(() => {
+  //         if(userFromResponse){
+
+  //           registerHqAddress().then(() => {
+
+  //             addHeadquarter().then(() => {
+  //               addCompany().then(async () => {
+
+  //                 if(!invoiceData.value.invoiceAddressIsSame){
+  //                   await registerInvoiceAddress()
+  //                 }
+  //                 await addOrder().then(() => {
+  //                   userFromResponse = null
+  //                   hqFromResponse = null
+  //                   companyOrZivnostModel.value.owner = 0
+  //                   companyOrZivnostModel.value.headquarters_id = 0
+  //                   console.log("SUPER!")
+  //                   if(invoiceData.value.paymentOptions == "stripe"){
+  //                     invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
+  //                   } else {
+  //                   router.push({
+  //                     name:"Thanks You New Order",
+  //                     params: {
+  //                       orderId: orderFromRes.id,
+  //                       }
+  //                     })
+  //                   }
+  //                 })
+  //               })
+  //             })
+
+  //           })
+  //         }
+  //       })
+  //   })
 }
 
 

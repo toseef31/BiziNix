@@ -354,7 +354,7 @@ function priceForBusinessOfcategories(){
 
 /* Submiting form and Api calls */
 
-function registerAddress(): Promise<Response>  {
+async function registerAddress(): Promise<any>  {
 
   return store.dispatch('registerAddress', userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress)
     .then((res) => {
@@ -367,20 +367,18 @@ function registerAddress(): Promise<Response>  {
     })
 }
 
-function registerHqAddress(): Promise<Response>  {
-
-return store.dispatch('registerAddress', sidloCompanyAddress.value.hqAddress)
-  .then((res) => {
-    console.log("Registering hq address: " + JSON.stringify(res))
-    hqAddressFromResponse = res
-    return hqAddressFromResponse
-  })
-  .catch(err => {
-    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-  })
+async function registerHqAddress() {
+  try {
+    const res = await store.dispatch('registerAddress', sidloCompanyAddress.value.hqAddress);
+    console.log("Registering hq address: " + JSON.stringify(res));
+    hqAddressFromResponse = res;
+    return hqAddressFromResponse;
+  } catch (err: any) {
+    errorMsg.value = JSON.stringify(err.response.data.errors); // response data is from store actions
+  }
 }
 
-function registerUser(): Promise<Response>  {
+async function registerUser(): Promise<any>  {
 
   user.value  = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user;
   user.value.address_id  = addressFromResponse.address_id
@@ -397,7 +395,7 @@ function registerUser(): Promise<Response>  {
   })
 }
 
-function addHeadquarter(): Promise<Response> {
+async function addHeadquarter(): Promise<any> {
 
   headquarter.value.address_id = hqAddressFromResponse.address_id
   headquarter.value.name = "Sidlo pre spoločnosť " + companyMembersAndDetails.value.companyOrZivnostModel.name
@@ -425,7 +423,7 @@ function addHeadquarter(): Promise<Response> {
   })
 }
 
-function addCompany(): Promise<Response> {
+async function addCompany(): Promise<any> {
 
   companyOrZivnostModel.value.name = companyMembersAndDetails.value.companyOrZivnostModel.name
   companyOrZivnostModel.value.type = companyMembersAndDetails.value.companyOrZivnostModel.type
@@ -452,7 +450,7 @@ function addCompany(): Promise<Response> {
   })
 }
 
-function addMultipleCompanyMembersSpolocnici(): Promise<Response> {
+async function addMultipleCompanyMembersSpolocnici(): Promise<any> {
 
   companyMembersAndDetails.value.zakladateliaSpolocnici.members.forEach((item, index: any) => {
     companyMembersAndDetails.value.zakladateliaSpolocnici.members[index].company_id = companyFomResponse.company.id
@@ -469,7 +467,7 @@ function addMultipleCompanyMembersSpolocnici(): Promise<Response> {
     })
 }
 
-function addMultipleCompanyMembersKonatelia(): Promise<Response> {
+async function addMultipleCompanyMembersKonatelia(): Promise<any> {
 
   companyMembersAndDetails.value.konatelia.members.forEach((item, index: any) => {
     companyMembersAndDetails.value.konatelia.members[index].company_id = companyFomResponse.company.id
@@ -569,6 +567,9 @@ const newSustmiApp = async (formdata: any, node: any) => {
             registerHqAddress().then(() => {
               addHeadquarter().then(() => {
                 addCompany().then(async () => {
+
+                  await addMultipleCompanyMembersSpolocnici()
+                  await addMultipleCompanyMembersKonatelia()
 
                   if(!invoiceData.value.invoiceAddressIsSame){
                     await registerInvoiceAddress()
