@@ -1,7 +1,6 @@
 <template>
   <FormKit
     type="form"
-    id="vhqExistingCompany"
     #default="{ value, state: { valid } }"
     :plugins="[stepPlugin]"
     @submit="submitApp"
@@ -35,10 +34,31 @@
     <div class="form-body my-6">
       <!-- Podnikatelské údaje -->
       <section v-show="activeStep === 'Podnikatelské údaje'">
+        <div class="pb-8" v-if="!user.userId">
+          <div class="flex flex-row">
+            <div>
+              Máte už u nás založenú (a pridanú) firmu a chcete k nej dokúpiť
+              službu Bizinix Doklady? <br />
+              Prihláste sa a predíďte tak "nudnému" vyplňovaniu podnikateľských
+              údajov. ✌️
+            </div>
+            <div>
+              <router-link
+                to="/login"
+                class="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-teal-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-teal-700"
+                >Prihlásiť sa</router-link
+              >
+            </div>
+          </div>
+        </div>
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-4">
-          Vyberte si zo zoznamu Vašu firmu, pre ktorú chcete balík aktivovať:
-          <div class="py-2">
+          Vypíšte údaje firmy, z ktorej chcete vystavovať doklady.
+          <div class="pb-2 pt-8">
+            <div class="py-2">
+              Vyberte si zo zoznamu Vašu spoločnosť, pre ktorú chcete balík
+              aktivovať:
+            </div>
             <CompanySelectorInHeader
               v-if="user.userId"
             ></CompanySelectorInHeader>
@@ -57,7 +77,6 @@
                 validation="required"
                 v-model="company.name"
                 label="Názov spoločnosti"
-                disabled
               />
               <FormKit
                 type="text"
@@ -65,7 +84,12 @@
                 validation="required"
                 v-model="company.ico"
                 label="IČO"
-                disabled
+              />
+              <FormKit
+                type="text"
+                name="dic"
+                label="DIČ"
+                v-model="company.dic"
               />
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -75,7 +99,6 @@
                 v-model="companyAddress.street"
                 label="Ulica"
                 validation="required"
-                disabled
               />
               <FormKit
                 type="text"
@@ -83,7 +106,6 @@
                 v-model="companyAddress.street_number"
                 label="Súpisne číslo"
                 validation="required"
-                disabled
               />
               <FormKit
                 type="text"
@@ -91,7 +113,6 @@
                 v-model="companyAddress.street_number2"
                 label="Orientačné číslo"
                 validation="required"
-                disabled
               />
               <FormKit
                 type="text"
@@ -99,7 +120,6 @@
                 v-model="companyAddress.city"
                 label="Mesto"
                 validation="required"
-                disabled
               />
               <FormKit
                 type="text"
@@ -107,7 +127,6 @@
                 v-model="companyAddress.psc"
                 label="PSČ"
                 validation="required"
-                disabled
               />
               <FormKit
                 type="text"
@@ -115,8 +134,20 @@
                 v-model="companyAddress.country"
                 label="Krajina"
                 validation="required"
-                disabled
               />
+              <FormKit
+                type="text"
+                name="ic_dph"
+                label="IČ DPH (nepovinné)"
+                v-model="company.icdph"
+              />
+            </div>
+            <div v-if="!firstTimeActivation">
+              <div class="text-teal-500 font-bold">POZNÁMKA:</div>
+              <div>
+                Zvolená firma už minula svoje 3 mesiace využívania služby
+                zdarma.
+              </div>
             </div>
           </FormKit>
         </div>
@@ -124,13 +155,21 @@
       <!-- Fakturačné údaje -->
       <section v-show="activeStep === 'Fakturačné údaje'">
         <div class="text-4xl font-bold">Fakturácia a účet</div>
-        <div class="my-2">
+        <div class="my-2" v-if="!user.userId">
           Už máte u nás účet?
-          <a class="text-teal-500" href="/login">Prihláste sa</a>
+          <a class="text-teal-500 hover:underline" href="/login"
+            >Prihláste sa</a
+          >
+        </div>
+        <div class="my-2" v-if="user.userId">
+          <a class="text-teal-500 hover:underline" href="/dashboard"
+            >Prihlásený ako {{ userData.first_name }}
+            {{ userData.last_name }}</a
+          >
         </div>
         <div>
           <div class="text-2xl font-bold py-4">Účet</div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
             <FormKit
               type="text"
               name="first_name"
@@ -146,48 +185,34 @@
               label="Priezvisko"
               validation="required|length:2"
             />
-            <FormKit
-              type="text"
-              name="name"
-              v-model="company.name"
-              label="Názov spoločnosti"
-              disabled
-            />
-            <FormKit
-              type="select"
-              label="Pohlavie"
-              v-model="userData.gender"
-              placeholder="Vyberte pohlavie"
-              name="gender"
-              id="gender"
-              :options="['Muž', 'Žena']"
-              validation="required"
-              validation-visibility="dirty"
-            />
           </div>
-          <div class="flex flex-col md:flex-row md:space-x-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <FormKit
-              type="checkbox"
-              :ignore="true"
-              v-model="hasTitle"
-              label="Máte titul pred alebo za menom?"
-              id="hasTitle"
-              name="hasTitle"
+              type="email"
+              name="email"
+              v-model="userData.email"
+              label="Emailová adresa"
+              :validation-rules="{ emailIsUnique }"
+              validation="required|email|emailIsUnique"
+              :validation-messages="{ emailIsUnique: 'E-mail sa už používa!' }"
+              validation-visibility="live"
             />
-            <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
-              <FormKit
-                type="text"
-                name="title_before"
-                v-model="userData.title_before"
-                label="Titul pred menom"
-              />
-              <FormKit
-                type="text"
-                name="title_after"
-                v-model="userData.title_after"
-                label="Titul za menom"
-              />
-            </div>
+            <FormKit
+              type="password"
+              autocomplete="new-password"
+              v-model="userData.password"
+              name="password"
+              label="Heslo"
+              validation="required|length:8"
+            />
+            <FormKit
+              type="password"
+              autocomplete="new-password"
+              v-model="userData.password_confirmation"
+              name="password_confirmation"
+              label="Zopakujte heslo"
+              validation="required|confirm:password"
+            />
           </div>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <FormKit
@@ -195,67 +220,8 @@
               name="phone"
               v-model="userData.phone"
               autocomplete="phone"
-              label="Telefonné číslo"
-              validation="required|length:9"
-            />
-            <FormKit
-              type="date"
-              name="date_of_birth"
-              v-model="userData.date_of_birth"
-              autocomplete="date_of_birth"
-              label="Dátum narodenia"
-              validation="required|length:10"
-            />
-            <FormKit
-              type="text"
-              name="rodne_cislo"
-              v-model="userData.rodne_cislo"
-              label="Rodné číslo"
-              validation="required|length:10"
-            />
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-            <FormKit
-              type="text"
-              name="city"
-              v-model="userAddress.city"
-              label="Mesto"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="country"
-              v-model="userAddress.country"
-              label="Krajina"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="psc"
-              v-model="userAddress.psc"
-              label="PSČ"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street"
-              v-model="userAddress.street"
-              label="Ulica"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street_number"
-              v-model="userAddress.street_number"
-              label="Súpisne číslo"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street_number2"
-              v-model="userAddress.street_number2"
-              label="Orientačné číslo"
-              validation="required"
+              label="Telefonné číslo (nepovinné)"
+              validation="length:9"
             />
           </div>
           <FormKit
@@ -264,46 +230,30 @@
             id="Fakturačné údaje"
             name="Fakturačné údaje"
           >
-            <div class="text-2xl font-bold py-4">Fakturácia</div>
+            <div class="text-2xl font-bold pt-4 pb-2">Fakturácia</div>
+            <div class="pb-4" v-if="user.userId">
+              Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix
+              Doklady, Alebo zvoľte jeden z Fakturačných profilov.
+            </div>
+            <div class="pb-4" v-if="!user.userId">
+              Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix Doklady
+            </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <FormKit
-                type="text"
-                name="first_name"
-                label="Meno"
-                validation="required"
-              />
-              <FormKit
-                type="text"
-                name="last_name"
-                label="Priezvisko"
-                validation="required"
-              />
               <FormKit
                 type="checkbox"
                 v-model="invoiceAddressIsSame"
                 :ignore="true"
-                label="Fakturačná adresa je rovnaká ako podnikateľská?"
+                label="Fakturačné údaje sú rovnaké ako podnikateľské?"
                 name="invoiceAddressIsSame"
               />
             </div>
-            <div class="w-fit">
-              <FormKit
-                type="checkbox"
-                v-model="orderingAsCompany"
-                :ignore="true"
-                label="Objednávate ako firma?"
-                id="orderingAsCompany"
-                name="orderingAsCompany"
-              />
-            </div>
             <div
-              v-show="orderingAsCompany"
+              v-show="!invoiceAddressIsSame"
               class="grid grid-cols-2 md:grid-cols-3 gap-4"
             >
-              <FormKit type="text" name="name" label="Názov firmy" />
+              <FormKit type="text" name="name" label="Názov spoločnosti" />
               <FormKit type="text" name="ico" label="IČO" />
               <FormKit type="text" name="dic" label="DIČ" />
-              <FormKit type="text" name="ic_dph" label="IČ DPH" />
             </div>
             <div
               v-show="!invoiceAddressIsSame"
@@ -351,6 +301,7 @@
                 label="Krajina"
                 validation="required"
               />
+              <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" />
             </div>
           </FormKit>
           <div class="w-full" v-show="!firstTimeActivation">
@@ -363,11 +314,11 @@
                 :options="[
                   {
                     value: 'iban',
-                    label: 'Priamy vklad na účet'
+                    label: 'Priamy vklad na účet',
                   },
                   {
                     value: 'stripe',
-                    label: 'Online kartou'
+                    label: 'Online kartou',
                   },
                 ]"
               />
@@ -381,15 +332,15 @@
                 :options="[
                   {
                     value: 'mesiac',
-                    label: 'Platba na 1 mesiac'
+                    label: 'Platba na 1 mesiac',
                   },
                   {
                     value: 'polrok',
-                    label: 'Platba na 6 mesiacov'
+                    label: 'Platba na 6 mesiacov',
                   },
                   {
                     value: 'rok',
-                    label: 'Platba na rok'
+                    label: 'Platba na rok',
                   },
                 ]"
               />
@@ -452,11 +403,24 @@
       />
     </div>
 
-    <div
-      class="w-full"
-      v-show="firstTimeActivation || paymentOptions == 'iban'"
-    >
-      <FormKit type="submit" label="Objednať" :disabled="!valid" />
+    <div class="w-full" v-show="firstTimeActivation">
+      <FormKit
+        type="submit"
+        label="Objednať na 3 mesiace zdarma"
+        :disabled="!valid"
+      />
+      <div class="pb-4 text-xs italic">
+        Prvú faktúru obdržíte o 3 mesiace. <br />
+        Dovtedy Vám nebudeme nič účtovať.
+      </div>
+    </div>
+
+    <div class="w-full" v-show="paymentOptions == 'iban'">
+      <FormKit
+        type="submit"
+        label="Objednať s povinnosťou platby"
+        :disabled="!valid"
+      />
     </div>
 
     <Modal
@@ -622,16 +586,16 @@ async function addOrder(): Promise<Response> {
   order.value.amount_vat = 0 * 0.2;
 
   let items = [
-      {
-        price: 0,
-        price_vat: 0,
-        description: "Objednávka balíčku dokladov",
-      },
-    ];
+    {
+      price: 0,
+      price_vat: 0,
+      description: "Objednávka balíčku dokladov",
+    },
+  ];
 
-  if(paymentOptions.value == 'iban') {
-    switch(paymentOptionsLength.value){
-      case 'mesiac': 
+  if (paymentOptions.value == "iban") {
+    switch (paymentOptionsLength.value) {
+      case "mesiac":
         company.value.fakturacia_zaplatene_do = monthlyPaymentDate;
         order.value.amount = 5;
         order.value.amount_vat = 5 * 0.2;
@@ -643,7 +607,7 @@ async function addOrder(): Promise<Response> {
           },
         ];
         break;
-      case 'polrok': 
+      case "polrok":
         company.value.fakturacia_zaplatene_do = halfYearPaymentDate;
         order.value.amount = 25;
         order.value.amount_vat = 25 * 0.2;
@@ -655,7 +619,7 @@ async function addOrder(): Promise<Response> {
           },
         ];
         break;
-      case 'rok': 
+      case "rok":
         company.value.fakturacia_zaplatene_do = yearlyPaymentDate;
         order.value.amount = 50;
         order.value.amount_vat = 50 * 0.2;
@@ -668,8 +632,7 @@ async function addOrder(): Promise<Response> {
         ];
         break;
     }
-    
-  } else if(paymentOptions.value == 'stripe') {
+  } else if (paymentOptions.value == "stripe") {
     order.value.amount = 0;
     order.value.amount_vat = 0 * 0.2;
 
@@ -720,9 +683,25 @@ const submitApp = async (formData: any, node: any) => {
   }
 };
 
+async function isEmailAlreadyRegistered(node: any) {
+  try {
+    const res = await store.dispatch("isEmailAlreadyRegistered", node);
+    console.log(res);
+    return true;
+  }
+  catch (error) {
+    return false;
+  }
+}
+
+async function emailIsUnique(node: any){
+  const result = await isEmailAlreadyRegistered(node.value)
+  return result
+}
+
 async function continueFirstTimeActivation() {
   try {
-    paymentOptions.value = "iban"
+    paymentOptions.value = "iban";
     await addOrder().then(() => {
       company.value.fakturacia_zaplatene_do = firstTimePaymentDate;
       store
