@@ -45,47 +45,51 @@
         </div>
       </div>
       <div>
-        <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</div>
         <FormKit type="form"
-        :actions="false"
-        id="zalZivnostiMultiStepPlugin"
-        #default="{ value }"
-        @submit="newSustmiApp"
+          :actions="false"
+          id="zalZivnostiMultiStepPlugin"
+          #default="{ value, state: { valid }  }"
+          @submit="newSustmiApp"
         >
           <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
-              <!-- component for example brevity. -->
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
             <FormKit type="step" name="obchodneSidlo" label="Obchodné sídlo" next-label="Pokračovať" previous-label="Naspäť">
-              <!-- component for example brevity. -->
               <obchodneSidloFormStep ref="sidloCompanyAddress" />
             </FormKit>
 
             <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" next-label="Pokračovať" previous-label="Naspäť">
-              <!-- component for example brevity. -->
               <udajeSpolocnostiFormStep ref="companyMembersAndDetails" />
             </FormKit>
 
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
-              <!-- component for example brevity. -->
               <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-            <!-- component for example brevity. -->
-            <fakturacneUdajeFormStep ref="invoiceData" />
-
-            <!-- using step slot for submit button-->
-            <template #stepNext>              
-              <FormKit type="submit" label="Objednať s povinnosťou platby" />
-            </template>
+              <fakturacneUdajeFormStep ref="invoiceData" />
             </FormKit>
           </FormKit>
-          <details>
+          <!-- <details>
             <pre>{{ value }}</pre>
-          </details>
+          </details> -->          
+            <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
+              Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
+            </div>
+            <FormKit
+              type="checkbox"
+              label="Všeobecné obchodné podmienky"
+              validation="accepted"
+              validation-visibility="dirty"
+            >
+              <template #label="context">
+                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
+              </template>
+            </FormKit>
+          <FormKit type="submit" label="Objednať s povinnosťou platby" :disabled="!valid" />
+
         </FormKit>
         <!-- <button @click="logujData">New log Submit</button> -->
       </div> 
@@ -123,7 +127,6 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let addressFromResponse: any, hqAddressFromResponse: any, userFromResponse: any, hqFromResponse: any, invAddressFromResponse: any, companyFomResponse: any, orderFromRes: any;
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let userAddressUserInfoCompanyNameAndRegDate = ref<InstanceType<typeof podnikatelskeUdajeFormStep>>(null as any)
 let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
@@ -354,155 +357,155 @@ function priceForBusinessOfcategories(){
 
 /* Submiting form and Api calls */
 
-async function registerAddress(): Promise<any>  {
-
-  return store.dispatch('registerAddress', userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress)
-    .then((res) => {
-      console.log("Registering address: " + JSON.stringify(res))
-      addressFromResponse = res
-      return addressFromResponse
-    })
-    .catch(err => {
-      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-    })
-}
-
-async function registerHqAddress() {
+async function registerAddress(userAddress: Address): Promise<any> {
   try {
-    const res = await store.dispatch('registerAddress', sidloCompanyAddress.value.hqAddress);
-    console.log("Registering hq address: " + JSON.stringify(res));
-    hqAddressFromResponse = res;
-    return hqAddressFromResponse;
+    const res = await store.dispatch('registerAddress', userAddress);
+    console.log("Registering address: " + JSON.stringify(res));
+    return res;
   } catch (err: any) {
-    errorMsg.value = JSON.stringify(err.response.data.errors); // response data is from store actions
+    errorMsg.value = JSON.stringify(err.response?.data?.errors) || 'Nastala chyba pri registrácii adresy.';
+    throw err;
   }
 }
 
-async function registerUser(): Promise<any>  {
+ async function registerHqAddress(hqAddress: Address): Promise<any> {
 
-  user.value  = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user;
-  user.value.address_id  = addressFromResponse.address_id
-
-  return store.dispatch('registerUser', user.value) // dispatch -> register action in store
-      .then((res) => {
-          sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty."
-          userFromResponse = res
-          console.log("Registering user: " + JSON.stringify(res))
-          return userFromResponse
-      })
-  .catch(err => {
-    errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-  })
+  try {
+    const res = await store.dispatch('registerAddress', hqAddress);
+    console.log("Registering HQ address: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    if (err.response && err.response.data && err.response.data.errors) {
+      errorMsg.value = JSON.stringify(err.response.data.errors);
+    } else {
+      errorMsg.value = 'Nastala chyba pri registrácii HQ adresy.';
+    }
+  }
 }
 
-async function addHeadquarter(): Promise<any> {
 
-  headquarter.value.address_id = hqAddressFromResponse.address_id
-  headquarter.value.name = "Sidlo pre spoločnosť " + companyMembersAndDetails.value.companyOrZivnostModel.name
-  headquarter.value.description = "Sidlo pre spoločnosť " + companyMembersAndDetails.value.companyOrZivnostModel.name 
-  headquarter.value.owner_name = sidloCompanyAddress.value.headquarterInfo.owner_name
-  headquarter.value.headquarters_type = sidloCompanyAddress.value.headquarterInfo.headquarters_type
-  headquarter.value.forwarding = sidloCompanyAddress.value.headquarterInfo.forwarding
-  headquarter.value.img = sidloCompanyAddress.value.headquarterInfo.img
-  headquarter.value.registry = sidloCompanyAddress.value.headquarterInfo.registry
-  headquarter.value.scanning = sidloCompanyAddress.value.headquarterInfo.scanning
-  headquarter.value.shredding = sidloCompanyAddress.value.headquarterInfo.shredding
-  headquarter.value.shredding = sidloCompanyAddress.value.headquarterInfo.shredding
-  headquarter.value.is_virtual = sidloCompanyAddress.value.isVirtual
-  headquarter.value.price = sidloCompanyAddress.value.headquarterInfo.price
+async function registerUser(user: User, addressId: any): Promise<any> {
+  user.address_id = addressId;
 
-  return store.dispatch('addHeadquarter', headquarter.value)
-  .then((res) => {
-    console.log("Adding hq: " + JSON.stringify(res))
-    hqFromResponse = res.headquarters
-    return hqFromResponse
-  })
-  .catch(err => {
-    console.log(err.response.data.errors)
-    errorMsg.value = JSON.stringify(err.response.data.errors);
-  })
+  try {
+    const res = await store.dispatch('registerUser', user);
+    sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty.";
+    console.log("Registering user: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    if (err.response && err.response.data && err.response.data.errors) {
+      errorMsg.value = JSON.stringify(err.response.data.errors);
+    } else {
+      errorMsg.value = 'Nastala chyba pri registrácii uživateľa.';
+    }
+  }
 }
 
-async function addCompany(): Promise<any> {
+async function addHeadquarter(hqAddressId: any): Promise<any> {
+  const hqInfo = sidloCompanyAddress.value.headquarterInfo;
+  const companyOrZivnostModel = companyMembersAndDetails.value.companyOrZivnostModel;
 
-  companyOrZivnostModel.value.name = companyMembersAndDetails.value.companyOrZivnostModel.name
-  companyOrZivnostModel.value.type = companyMembersAndDetails.value.companyOrZivnostModel.type
-  companyOrZivnostModel.value.status = companyMembersAndDetails.value.companyOrZivnostModel.status
-  companyOrZivnostModel.value.owner = userFromResponse.user_id
-  companyOrZivnostModel.value.headquarters_id = hqFromResponse.id
-  companyOrZivnostModel.value.imanie_vyska = companyMembersAndDetails.value.companyOrZivnostModel.imanie_vyska
-  companyOrZivnostModel.value.imanie_splatene = companyMembersAndDetails.value.companyOrZivnostModel.imanie_splatene
-  companyOrZivnostModel.value.is_dph = companyMembersAndDetails.value.companyOrZivnostModel.is_dph
-  companyOrZivnostModel.value.zaciatok_opravnenia = userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.zaciatok_opravnenia
-  companyOrZivnostModel.value.konecny_uzivatelia_vyhod = companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod
-  companyOrZivnostModel.value.sposob_konania_konatelov = companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov
-  companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
+  const headquarterData = {
+    address_id: hqAddressId,
+    name: "Sidlo pre spoločnosť " + companyOrZivnostModel.name,
+    description: "Sidlo pre spoločnosť " + companyOrZivnostModel.name,
+    owner_name: hqInfo.owner_name,
+    headquarters_type: hqInfo.headquarters_type,
+    forwarding: hqInfo.forwarding,
+    img: hqInfo.img,
+    registry: hqInfo.registry,
+    scanning: hqInfo.scanning,
+    shredding: hqInfo.shredding,
+    is_virtual: sidloCompanyAddress.value.isVirtual,
+    price: hqInfo.price
+  };
 
-
-  return store.dispatch('addCompany', companyOrZivnostModel.value)
-  .then((res) => {
-    console.log("Adding company: " + JSON.stringify(res))
-    companyFomResponse = res
-    console.log("Company from Res " + JSON.stringify(companyFomResponse))
-    return companyFomResponse
-  }).catch( err => {
-    console.log(err)
-  })
+  try {
+    const res = await store.dispatch('addHeadquarter', headquarterData);
+    console.log("Adding HQ: " + JSON.stringify(res));
+    return res.headquarters;
+  } catch (err: any) {
+    console.log(err.response?.data?.errors);
+    errorMsg.value = JSON.stringify(err.response?.data?.errors);
+  }
 }
 
-async function addMultipleCompanyMembersSpolocnici(): Promise<any> {
+async function addCompany(userId: any, hqId: any): Promise<any> {
+
+  const companyOrZivnostModelData = {
+    name: companyMembersAndDetails.value.companyOrZivnostModel.name,
+    type: companyMembersAndDetails.value.companyOrZivnostModel.type,
+    status: companyMembersAndDetails.value.companyOrZivnostModel.status,
+    owner: userId,
+    headquarters_id: hqId,
+    imanie_vyska: companyMembersAndDetails.value.companyOrZivnostModel.imanie_vyska,
+    imanie_splatene: companyMembersAndDetails.value.companyOrZivnostModel.imanie_splatene,
+    is_dph: companyMembersAndDetails.value.companyOrZivnostModel.is_dph,
+    zaciatok_opravnenia: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.zaciatok_opravnenia,
+    konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
+    sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
+    subjects_of_business: subjects_of_business.value.subjects_of_business
+  };
+
+  try {
+    const res = await store.dispatch('addCompany', companyOrZivnostModelData);
+    console.log("Adding company: " + JSON.stringify(res));
+    return res;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any> {
 
   companyMembersAndDetails.value.zakladateliaSpolocnici.members.forEach((item, index: any) => {
-    companyMembersAndDetails.value.zakladateliaSpolocnici.members[index].company_id = companyFomResponse.company.id
+    companyMembersAndDetails.value.zakladateliaSpolocnici.members[index].company_id = companyId
   })
 
-  return store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.zakladateliaSpolocnici)
-  .then((res) => {
+  try {
+    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.zakladateliaSpolocnici)
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
-    let multipleCompanyMembersFromResponse = res
-    console.log("Multiple Company Members Spolocnici from response  " + JSON.stringify(multipleCompanyMembersFromResponse))
-    return multipleCompanyMembersFromResponse
-  }).catch( err => {
+    return res
+  } catch(err) {
     console.log(err)
-    })
+  }
 }
 
-async function addMultipleCompanyMembersKonatelia(): Promise<any> {
+async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> {
 
   companyMembersAndDetails.value.konatelia.members.forEach((item, index: any) => {
-    companyMembersAndDetails.value.konatelia.members[index].company_id = companyFomResponse.company.id
+    companyMembersAndDetails.value.konatelia.members[index].company_id = companyId
   })
 
-  return store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.konatelia)
-  .then((res) => {
+  try {
+    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.konatelia)
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
-    let multipleCompanyMembersFromResponse = res
-    console.log("Multiple Company Members Konatelia from response  " + JSON.stringify(multipleCompanyMembersFromResponse))
-    return multipleCompanyMembersFromResponse
-  }).catch( err => {
+    return res
+  } catch (err: any){
     console.log(err)
-    })
+  }
+
 }
 
-async function registerInvoiceAddress() {
-  
-  return store.dispatch('registerAddress', invoiceData.value.invoiceAddress)
-    .then((res) => {
-      console.log("Registering invoice address: " + JSON.stringify(res))
-      invAddressFromResponse = res
-      return invAddressFromResponse
-    })
-    .catch(err => {
-      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-    })
+//invoiceData.value.invoiceAddress
+
+async function registerInvoiceAddress(invoiceAddress: Address) {
+  try {
+    const res = await store.dispatch('registerAddress', invoiceAddress);
+    console.log("Registering invoice address: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    errorMsg.value = JSON.stringify(err.response.data.errors);
+  }
 }
 
-async function addOrder(): Promise<Response> {
+
+async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceAddressId?: any): Promise<any> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceData.value.paymentOptions
-  order.value.company_id = companyFomResponse.company.id
-  order.value.user_id = userFromResponse.user_id
-  order.value.address_id = addressFromResponse.address_id
+  order.value.company_id = companyId
+  order.value.user_id = userId
+  order.value.address_id = userAddressId
 
   companyOrZivnostModel.value.subjects_of_business.forEach(element => {
     order.value.items.push({
@@ -518,23 +521,22 @@ async function addOrder(): Promise<Response> {
   order.value.fakturacne_udaje[0].ic_dph = invoiceData.value.fakturacne_udaje[0].ic_dph
   order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
   if(invoiceData.value.invoiceAddressIsSame){
-    order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+    order.value.fakturacne_udaje[0].address_id = userAddressId
   } else {
-    order.value.fakturacne_udaje[0].address_id = invAddressFromResponse.address_id
+    order.value.fakturacne_udaje[0].address_id = invoiceAddressId
   }
 
   order.value.amount = totalForPay.value
   order.value.amount_vat = totalForPay.value * 0.2
 
-  return store.dispatch('addOrder', order.value)
-  .then((res) => {
-    console.log("Adding order: " + JSON.stringify(res))
-    orderFromRes = res.order
-    return orderFromRes
-  })
-  .catch( err => {
-    console.log(err.response.data )
-  })
+  try {
+    const res = await store.dispatch('addOrder', order.value);
+    console.log("Adding order: " + JSON.stringify(res));
+    return res.order;
+  } catch (err: any) {
+    console.log(err.response.data);
+  }
+
 }
 
 // async function isEmailAlreadyRegistered(node: any) {
@@ -559,49 +561,53 @@ async function addOrder(): Promise<Response> {
 // }
 
 const newSustmiApp = async (formdata: any, node: any) => {
-  registerAddress().then(() => {
-        registerUser().then(() => {
-          
-          if(userFromResponse){
-          
-            registerHqAddress().then(() => {
-              addHeadquarter().then(() => {
-                addCompany().then(async () => {
 
-                  await addMultipleCompanyMembersSpolocnici()
-                  await addMultipleCompanyMembersKonatelia()
+  try {
 
-                  if(!invoiceData.value.invoiceAddressIsSame){
-                    await registerInvoiceAddress()
-                  }
+  const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
-                  await addOrder().then(() => {
-                    userFromResponse = null
-                    hqFromResponse = null
-                    companyOrZivnostModel.value.owner = 0
-                    companyOrZivnostModel.value.headquarters_id = 0
-                    console.log("SUPER!")
+  const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
 
-                    if(invoiceData.value.paymentOptions == "stripe"){
-                      invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderFromRes.id)
-                    } else {
-                        router.push({
-                          name:"Thanks You New Order",
-                          params: {
-                            orderId: orderFromRes.id,
-                          }
-                      })
-                    }
+  const hqAddressRes = await registerHqAddress(sidloCompanyAddress.value.hqAddress);
 
-                  })
-                })
-              })
-            })
-          
+  const regHqRes = await addHeadquarter(hqAddressRes.address_id);
+
+  const companyRes = await addCompany(regUserRes.user_id, regHqRes.id);
+  
+  await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
+  await addMultipleCompanyMembersKonatelia(companyRes.company.id)
+
+  let invoiceAddressRes: any;
+  if(!invoiceData.value.invoiceAddressIsSame){
+    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+  }
+
+  const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
+  
+  if(orderRes.id){
+
+    console.log("SUPER! Objednávka bola spracovaná.")
+
+    if(invoiceData.value.paymentOptions == "stripe"){
+      await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
+    }
+
+    await router.push({
+        name:"Thanks You New Order",
+        params: {
+          orderId: orderRes.id,
           }
-
-        })
     })
+
+    }  
+    else {
+    errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
+    }
+    node.clearErrors()
+  } catch (err: any) {
+    node.setErrors(err.formErrors, err.fieldErrors);
+    console.error(err);
+  }
 }
 
 
