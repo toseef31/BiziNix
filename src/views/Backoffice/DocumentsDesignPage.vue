@@ -143,13 +143,13 @@ function updateLogoData(evt: any) {
   uploadImageData.value.body.logo = evt.target.files[0];
 }
 
-function uploadLogo() {
-  store
+async function uploadLogo() {
+  await store
     .dispatch("uploadCompanyLogo", uploadImageData.value)
-    .then((response) => {
+    .then(async (response) => {
       company.value = response.data;
       isVisible = setModal("uploadModal", false);
-      console.log(response);
+      await refreshData();
     })
     .catch((err) => {
       console.log(err);
