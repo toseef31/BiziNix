@@ -373,15 +373,6 @@
                   </div>
                 </div>
               </div>
-              <div class="flex justify-center py-4 text-black">
-                <label class="px-2">Uhradené?</label>
-                <FormKit
-                  type="checkbox"
-                  name="paid"
-                  validation-visibility="dirty"
-                  v-model="document.isPaid"
-                />
-              </div>
             </div>
             <div class="flex flex-col pb-10">
               <div
@@ -669,7 +660,7 @@ const document = ref({
   type: 1,
   subtype: subtype,
   company_id: company.value.id,
-  odberatel: odberatel.value.Name,
+  odberatel: "",
   contact_person: "",
   address: "",
   psc: "",
@@ -841,6 +832,7 @@ function cancelAddition() {
 
 function submitHandler() {
   submitted.value = true;
+  document.value.odberatel = odberatel.value.Spoločnosť.Name;
   document.value.items = items.value;
   document.value.paid = document.value.total;
 

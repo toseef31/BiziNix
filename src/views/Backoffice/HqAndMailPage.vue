@@ -332,7 +332,7 @@
                           mail.status != 2
                         "
                         class="font-medium text-gray-900 hover:underline"
-                        v-on:click="showSendSingleMail()"
+                        v-on:click="showSendSingleMail(mail)"
                       >
                         Preposlať originál
                       </button>
@@ -355,7 +355,7 @@
                             />
                             <div class="text-xl">
                               Prosím potvrdte preposlanie zásielky od <br />
-                              {{ mail.sender }}
+                              {{ selectedMail.sender }}
                             </div>
                             <div class="py-3">Na adresu:</div>
                             <FormKit
@@ -417,7 +417,7 @@
                             <div class="flex flex-1/4 px-4">
                               <button
                                 class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
-                                v-on:click="sendSingleMail(mail.id)"
+                                v-on:click="sendSingleMail(selectedMail)"
                               >
                                 Preposlať
                               </button>
@@ -504,7 +504,7 @@
                       >
                         <button
                           class="font-medium text-gray-900 hover:underline"
-                          @click="showModal()"
+                          @click="showModal(mail)"
                         >
                           Skartovať
                         </button>
@@ -547,13 +547,13 @@
                             class="flex flex-row justify-start py-4 px-4 text-white font-bold"
                           >
                             Prosím potvrdte skartovanie zásielky od
-                            {{ mail.sender }}
+                            {{ selectedMail.sender }}
                           </div>
                           <div class="flex flex-row justify-end py-2 px-4">
                             <div class="flex flex-1/4 px-4">
                               <button
                                 class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                                v-on:click="shredSingleMail(mail.id)"
+                                v-on:click="shredSingleMail(selectedMail)"
                               >
                                 Skartovať
                               </button>
@@ -638,7 +638,7 @@ import type Mail from "@/types/Mail";
 import store from "@/store";
 import { search } from "@formkit/inputs";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
-import { ref, onBeforeMount, computed, reactive, watch } from "vue";
+import { ref, onBeforeMount, computed, reactive, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosClient from "@/axios";
 import dayjs from "dayjs";
@@ -656,6 +656,8 @@ const selectedColumn = ref("distribution_date");
 const selectedDirection = ref("desc");
 
 const checkedMails = ref([] as any[]);
+const selectedMail = ref({} as Mail);
+
 const indeterminate = computed(
   () =>
     checkedMails.value.length > 0 &&
@@ -674,11 +676,13 @@ isVisible = setModal("m1", false);
 isVisible = setModal("m2", false);
 isVisible = setModal("m3", false);
 
-function showModal() {
+function showModal(mail: any) {
+  selectedMail.value = mail;
   isVisible = setModal("m1", true);
 }
 
-function showSendSingleMail() {
+function showSendSingleMail(mail: any) {
+  selectedMail.value = mail;
   isVisible = setModal("m2", true);
 }
 
@@ -702,14 +706,8 @@ const address = ref({
   psc: "",
 });
 
-const userAddress = ref({
-  street: "",
-  street_number: "",
-  street_number2: "",
-  city: "",
-  psc: "",
-  country: "",
-});
+
+const userAddress = computed(() => store.state.user.address as any);
 
 const headquarter = ref({
   id: 0,
@@ -723,15 +721,6 @@ watch(
   () => store.getters.getSelectedCompany,
   function () {
     refreshData();
-  }
-);
-
-watch(
-  () => store.state.user.address,
-  (newValUserAddres, oldValUserAddres) => {
-    userAddress.value = {
-      ...JSON.parse(JSON.stringify(newValUserAddres)),
-    };
   }
 );
 
@@ -829,7 +818,6 @@ function sendMails() {
   store
     .dispatch("updateMultipleMails", checkedMails.value)
     .then((res) => {
-      console.log("Zásielky úspešne zmenené.");
       checkedMails.value = [];
       isVisible = setModal("m3", false);
     })
@@ -843,11 +831,11 @@ function formatDate(dateString: string) {
   return date.format("DD.MM.YYYY");
 }
 
-function sendSingleMail(id: any) {
-  const mail = mails.value.find((item: any) => item.id == id);
-  if (mail) {
-    mail.forward_requested = true;
-    mail.forward_address =
+function sendSingleMail(mail: any) {
+  selectedMail.value = mail;
+  if (selectedMail.value) {
+    selectedMail.value.forward_requested = true;
+    selectedMail.value.forward_address =
       userAddress.value.street +
       " " +
       userAddress.value.street_number +
@@ -860,9 +848,8 @@ function sendSingleMail(id: any) {
       ", " +
       userAddress.value.country;
     store
-      .dispatch("updateMail", mail)
+      .dispatch("updateMail", selectedMail.value)
       .then((res) => {
-        console.log("Zásielka úspešne zmenená." + mail.sender);
         isVisible = setModal("m2", false);
       })
       .catch((err) => {
@@ -871,14 +858,13 @@ function sendSingleMail(id: any) {
   }
 }
 
-function shredSingleMail(id: any) {
-  const mail = mails.value.find((item: any) => item.id == id);
-  if (mail) {
-    mail.shred_requested = true;
+function shredSingleMail(mail: any) {
+  selectedMail.value = mail;
+  if (selectedMail.value) {
+    selectedMail.value.shred_requested = true;
     store
-      .dispatch("updateMail", mail)
+      .dispatch("updateMail", selectedMail.value)
       .then((res) => {
-        console.log("Zásielka úspešne zmenená.");
         isVisible = setModal("m1", false);
       })
       .catch((err) => {
@@ -894,7 +880,6 @@ function scanSingleMail(id: any) {
     store
       .dispatch("updateMail", mail)
       .then((res) => {
-        console.log("Zásielka úspešne zmenená.");
       })
       .catch((err) => {
         console.log(err);
