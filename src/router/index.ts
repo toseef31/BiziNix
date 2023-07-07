@@ -3,6 +3,7 @@ import Dashboard from "../views/Backoffice/Dashboard.vue";
 import Login from "../views/User/Login.vue";
 import Register from "../views/User/Register.vue";
 import DefaultLayout from "../components/DefaultLayout.vue";
+import MojDefaultLayout from "../components/MojDefaultLayout.vue";
 import CompanyEdit from "../views/Company/CompanyEdit.vue";
 import HomePage from "../views/Common/HomePage.vue";
 import ZalozenieZivnosti from "../views/Company/ZalozenieZivnosti.vue";
@@ -53,23 +54,32 @@ const router = createRouter({
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/activate/:token', name: "Active User", component: ActiveUser },
-        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },
-        { path: '/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
-        { path: '/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
-        { path: '/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
-        { path: '/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
+        { path: '/counseling-center', name: "Counseling center", component: CounselingCenterPageVue },        
         { path: "/posts", name: "Posts", component: PostsPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
         { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },
-        { path: '/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
         { path: '/documents', name: "Documents", component: DocumentsPageVue },
-        { path: '/add-document/:subtype', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true }, props: true },
-        { path: '/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
-        { path: '/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
-        { path: '/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
         { path: "/documents/order", name: "Order documents", component: OrderDocumentsPageVue },
       ],
+    },
+    {
+      path: "/moj",
+      component: MojDefaultLayout,
+      redirect: "/moj/dashboard",
+      name: "Moj",
+      meta: { isGuest: false },
+      children: [
+        { path: '/moj/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
+        { path: '/moj/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
+        { path: '/moj/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
+        { path: '/moj/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
+        { path: '/moj/add-document/:subtype', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true }, props: true },
+        { path: '/moj/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
+        { path: '/moj/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
+        { path: '/moj/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
+        { path: '/moj/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
+      ]
     },
     {
       path: "/auth",
