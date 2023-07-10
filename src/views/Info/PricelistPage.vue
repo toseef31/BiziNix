@@ -16,8 +16,8 @@
             <div
               class="flex flex-col p-6 mx-auto max-w-lg text-center rounded-lg border shadow border-gray-600 xl:p-8 bg-gray-800 text-white"
             >
-              <h3 class="mb-2 text-2xl font-bold">Bizinix<br>Doklady</h3>
-              <div class="flex justify-center items-baseline my-8">
+              <h3 class="text-2xl font-bold">Bizinix<br>Doklady</h3>
+              <div class="flex justify-center items-baseline mb-8 mt-2">
                 <span class="text-5xl font-extrabold">5€</span><span class="text-sm text-gray-500 font-bold">/mesačne</span>
               </div>
               <!-- List -->
@@ -119,8 +119,8 @@
             <div
               class="flex flex-col p-6 mx-auto max-w-lg text-center rounded-lg border shadow border-gray-600 xl:p-8 bg-gray-800 text-white"
             >
-              <h3 class="mb-2 text-2xl font-semibold">Najlepšie<br>virtuálne sídlo</h3>
-              <div class="flex justify-center items-baseline my-8">
+              <h3 class="text-2xl font-semibold">Najlepšie<br>virtuálne sídlo</h3>
+              <div class="flex justify-center items-baseline mb-8 mt-2">
                 <span class="text-sm text-gray-500 font-bold">od</span><span class="text-5xl font-extrabold">7€</span><span class="text-sm text-gray-500 font-bold">/mesačne</span>
               </div>
               <!-- List -->
@@ -222,8 +222,8 @@
             <div
               class="flex flex-col p-6 mx-auto max-w-lg text-center ounded-lg border shadow border-gray-600 xl:p-8 bg-gray-800 text-white"
             >
-              <h3 class="mb-2 text-2xl font-semibold">Založenie<br>s.r.o.</h3>
-              <div class="flex justify-center items-baseline mt-8 mb-4">
+              <h3 class="text-2xl font-semibold">Založenie<br>s.r.o.</h3>
+              <div class="flex justify-center items-baseline mb-2 mt-2">
                 <span class="text-5xl font-extrabold">199€</span>
               </div>
               <div class="mb-4">
