@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 
-#help-input_1 {
+/* #help-input_1 {
   padding-top: 5px;
 }
 
@@ -11,10 +11,16 @@
   max-width: 100% !important;
 }
 
-[data-type="button"] .formkit-input {
-  background: #0d9488 !important;
+[data-invalid] .formkit-inner {
+  border-color: red;
+  box-shadow: 0 0 0 1px red;
 }
 
+[data-type="button"] .formkit-input {
+  background: #0d9488 !important;
+} */
+
+/**/
 /* 
 .multiselect-option {
     color: black !important;

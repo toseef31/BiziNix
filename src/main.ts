@@ -5,29 +5,32 @@ import "./index.css";
 import router from "./router";
 import store from "./store";
 import { defineRule } from "vee-validate";
+import type { DefaultConfigOptions } from '@formkit/vue';
 import { plugin, defaultConfig } from '@formkit/vue';
-import { createProPlugin, inputs, repeater } from '@formkit/pro';
+import { generateClasses } from '@formkit/themes'
+import { createProPlugin, inputs } from '@formkit/pro';
 import { createMultiStepPlugin } from '@formkit/addons';
-import '@formkit/themes/genesis'
-import '@formkit/pro/genesis'
 import { genesisIcons } from '@formkit/icons'
 import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 import { sk } from '@formkit/i18n'
-import { generateClasses } from "@formkit/themes";
+import myTailwindTheme from '../tailwind-theme';
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
-const config = defaultConfig({
+const config: DefaultConfigOptions  = {
   plugins: [ pro, createMultiStepPlugin() ],
   icons: {
     ...genesisIcons
   },
-  theme: 'genesis',
   locales: { sk },
   locale: 'sk',
-});
+  config: {
+    // @ts-expect-error
+    classes: generateClasses(myTailwindTheme)
+  },
+};
 
 const app = createApp(App);
 app.use(store);

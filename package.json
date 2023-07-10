@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@formkit/addons": "latest",
-    "@formkit/icons": "latest",
-    "@formkit/pro": "^1.0.0-alpha.105",
-    "@formkit/themes": "^0.16.5",
+    "@formkit/icons": "^0.17.4",
+    "@formkit/pro": "^0.112.7",
+    "@formkit/themes": "^0.17.4",
     "@formkit/vue": "latest",
     "@headlessui/vue": "^1.7.13",
     "@heroicons/vue": "^1.0.6",

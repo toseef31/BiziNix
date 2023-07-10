@@ -18,7 +18,7 @@
 </div>
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
   <FormKit type="text" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
-  <FormKit type="date" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
+  <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
   <FormKit type="text" name="rodne_cislo" v-model="user.rodne_cislo" label="Rodné číslo" validation="required|length:10" />
 </div>
 <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -91,7 +91,7 @@
     validation="required"
   />
   <div v-if="companyRegDateCheckboxValue === 'Podľa dátumu'">
-    <FormKit type="date" name="registration_date" v-model="companyData.zaciatok_opravnenia" autocomplete="off" label="Dátum zápisu" validation="required" />
+    <FormKit type="date" style="color-scheme: dark;" name="registration_date" v-model="companyData.zaciatok_opravnenia" autocomplete="off" label="Dátum zápisu" validation="required" />
   </div>
 </div>
 </template>

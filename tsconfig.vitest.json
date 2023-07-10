@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.app.json",
+  "include": ["./tailwind-theme.js"],
   "exclude": [],
   "compilerOptions": {
+    "allowJs": true,
     "ignoreDeprecations": "5.0",
     "composite": true,
     "lib": [],

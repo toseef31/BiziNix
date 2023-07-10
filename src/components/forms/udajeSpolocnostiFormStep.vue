@@ -27,7 +27,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
       <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
-      <FormKit type="date" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
+      <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
       <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
         :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
       />
@@ -65,7 +65,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
       <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
-      <FormKit type="date" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
+      <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
       <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
         :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
       />

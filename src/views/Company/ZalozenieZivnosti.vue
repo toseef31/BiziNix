@@ -20,9 +20,9 @@
       </div>
     </div>
   </div>
-  <div class="py-12 mb-12">
+  <div class="py-12 mb-12 bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-center mb-10 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
+      <h2 class="text-center mb-8 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
 
       <!--FORM -->
       <div>
@@ -33,7 +33,7 @@
           #default="{ value, state: { valid } }"
           @submit="newSustmiApp"
         >
-        <div>
+        <div class="mb-8">
           <ul class="validation-errors" v-if="messages.length">
             <li v-for="message in messages">{{ message }}</li>
           </ul>
@@ -52,7 +52,7 @@
             </FormKit>
           </FormKit>
 
-          <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
+          <div class="p-4 mb-4  bg-gray-900 text-white border rounded-md border-[#ccccd7] border-solid">
             Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
           </div>
           <FormKit
@@ -96,7 +96,7 @@
 
     </div>
   </div>
-  <!-- <FooterLayout></FooterLayout> -->
+  <FooterLayout></FooterLayout>
 </template>
 
 <script setup lang="ts">
