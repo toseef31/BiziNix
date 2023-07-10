@@ -266,8 +266,8 @@
               class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
-                <th scope="col" class="py-3 px-6">Názov služby</th>
-                <th scope="col" class="py-3 px-6">Kategória</th>
+                <th scope="col" class="py-3 px-6">Položka</th>
+                <th scope="col" class="py-3 px-6">Popis</th>
                 <th scope="col" class="py-3 px-6">Cena</th>
               </tr>
             </thead>
@@ -281,7 +281,7 @@
                 >
                   Založenie sro
                 </th>
-                <td class="py-4 px-6">SRO</td>
+                <td class="py-4 px-6">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
                 <td class="py-4 px-6">199€</td>
               </tr>
               <tr
@@ -293,8 +293,8 @@
                 >
                   Zmeny v sro
                 </th>
-                <td class="py-4 px-6">SRO</td>
-                <td class="py-4 px-6">50€</td>
+                <td class="py-4 px-6">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 px-6">79€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
@@ -303,28 +303,28 @@
                 >
                   Založenie živnosti 
                 </th>
-                <td class="py-4 px-6">ŽIVNOSŤ</td>
-                <td class="py-4 px-6">49€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 px-6">10€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
                   scope="row"
                   class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  Zmeny v živnosti (cena/kolok)
+                  Zmeny v živnosti
                 </th>
-                <td class="py-4 px-6">ŽIVNOSŤ</td>
-                <td class="py-4 px-6">od 20€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 px-6">10€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
                   scope="row"
                   class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  Pozastavenie živnosti (cena/kolok)
+                  Pozastavenie živnosti
                 </th>
-                <td class="py-4 px-6">ŽIVNOSŤ</td>
-                <td class="py-4 px-6">od 20€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
+                <td class="py-4 px-6">10€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
@@ -333,8 +333,8 @@
                 >
                   Obnovenie živnosti
                 </th>
-                <td class="py-4 px-6">ŽIVNOSŤ</td>
-                <td class="py-4 px-6">49€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
+                <td class="py-4 px-6">10€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
@@ -343,28 +343,28 @@
                 >
                   Zrušenie živnosti
                 </th>
-                <td class="py-4 px-6">ŽIVNOSŤ</td>
-                <td class="py-4 px-6">49€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
+                <td class="py-4 px-6">10€</td>
               </tr>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
                   scope="row"
                   class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  Založenie o.z.
+                Založenie občianskeho združenia
                 </th>
-                <td class="py-4 px-6">OBČIANSKE ZDRUŽENIE</td>
-                <td class="py-4 px-6">49€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
+                <td class="py-4 px-6">89€</td>
               </tr>
               <tr class="bg-white dark:bg-gray-800">
                 <th
                   scope="row"
                   class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  Registrácia pre 2%
+                Registrácia na darovanie 2% z daní
                 </th>
-                <td class="py-4 px-6">OBČIANSKE ZDRUŽENIE</td>
-                <td class="py-4 px-6">49€</td>
+                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
+                <td class="py-4 px-6">XY€</td>
               </tr>
             </tbody>
           </table>
