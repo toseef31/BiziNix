@@ -321,7 +321,7 @@ export const store = createStore({
     //#endregion
     //#region orders
     async getFakturacneUdajeByUserId({ commit }, id) {
-      const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getForUser`);
+      const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getAllForUser`);
       return data;
     },
     addOrder({ commit }, order) {
