@@ -87,16 +87,6 @@
               <div class="pb-4" v-if="!user.userId">
                 Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix Doklady
               </div>
-              <div class="w-fit">
-                <FormKit
-                  type="checkbox"
-                  v-model="orderingAsCompany"
-                  :ignore="true"
-                  label="Objednávate ako firma?"
-                  id="orderingAsCompany"
-                  name="orderingAsCompany"
-                />
-              </div>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
                 <FormKit
                   type="checkbox"
@@ -130,6 +120,16 @@
                       <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
                     </div>
                   </div>
+                </div>
+                <div class="w-fit">
+                  <FormKit
+                    type="checkbox"
+                    v-model="orderingAsCompany"
+                    :ignore="true"
+                    label="Objednávate ako firma?"
+                    id="orderingAsCompany"
+                    name="orderingAsCompany"
+                  />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center" v-show="!orderingAsCompany">
                   <FormKit
