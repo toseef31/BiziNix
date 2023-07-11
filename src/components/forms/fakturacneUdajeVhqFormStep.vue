@@ -198,7 +198,6 @@ const company = ref({} as Company);
 const invoiceAddress = ref({} as Address);
 const userAddress = ref({} as Address);
 
-const hasTitle = ref(false);
 const orderingAsCompany = ref(false);
 
 const invoiceAddressIsSame = ref(true);

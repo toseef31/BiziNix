@@ -119,18 +119,6 @@ const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
-let lineItems = [
-    {
-      price: "price_1NQ4aKGgtUfdovJEygXKtqGe",
-      quantity: 1,
-    },
-  ];
-
-const publishableKey =
-  "pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi";
-const baseSuccessURL = "http://localhost:8080/dakujeme-nova-objednavka/";
-let successURL = baseSuccessURL;
-
 let order = ref({
   payment_method: '',
   description: 'test',
@@ -455,34 +443,21 @@ async function continueToPayment() {
                       orderId: orderFromRes.id,
                     },
                   });
-                  /*lineItems = [
-                      {
-                        price: "price_1NQ4aKGgtUfdovJEygXKtqGe",
-                        quantity: 1,
-                      },
-                    ];*/
                 } else {
                   companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
                   const totalForPay = order.value.amount;
                   await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
-                  router.push({
-                    name: "Thanks You New Order",
-                    params: {
-                      orderId: orderFromRes.id,
-                    },
-                  });
-                  /*lineItems = [
-                      {
-                        price: "price_1NQ4aKGgtUfdovJEA9xf8Zev",
-                        quantity: 1,
-                      },
-                    ];*/
                 }
                 store
                   .dispatch("updateCompany", companyFromResponse.company)
                   .then(() => {
                     closeModal();
-                    successURL = baseSuccessURL.concat(orderFromRes.id);
+                    router.push({
+                      name: "Thanks You New Order",
+                      params: {
+                        orderId: orderFromRes.id,
+                      },
+                    });
                   })
                   .catch((err) => {
                     closeModal();
@@ -505,34 +480,21 @@ async function continueToPayment() {
               orderId: orderFromRes.id,
             },
           });
-          /*lineItems = [
-              {
-                price: "price_1NQ4aKGgtUfdovJEygXKtqGe",
-                quantity: 1,
-              },
-            ];*/
         } else {
           companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
           const totalForPay = order.value.amount;
           await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
-          router.push({
-            name: "Thanks You New Order",
-            params: {
-              orderId: orderFromRes.id,
-            },
-          });
-          /*lineItems = [
-              {
-                price: "price_1NQ4aKGgtUfdovJEA9xf8Zev",
-                quantity: 1,
-              },
-            ];*/
         }
         store
           .dispatch("updateCompany", companyDataRef.value.currentCompany)
           .then(() => {
             closeModal();
-            successURL = baseSuccessURL.concat(orderFromRes.id);
+            router.push({
+              name: "Thanks You New Order",
+              params: {
+                orderId: orderFromRes.id,
+              },
+            });
           })
           .catch((err) => {
             closeModal();

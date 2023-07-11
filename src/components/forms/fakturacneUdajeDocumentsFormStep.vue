@@ -87,6 +87,16 @@
               <div class="pb-4" v-if="!user.userId">
                 Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix Doklady
               </div>
+              <div class="w-fit">
+                <FormKit
+                  type="checkbox"
+                  v-model="orderingAsCompany"
+                  :ignore="true"
+                  label="Objednávate ako firma?"
+                  id="orderingAsCompany"
+                  name="orderingAsCompany"
+                />
+              </div>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
                 <FormKit
                   type="checkbox"
@@ -97,32 +107,50 @@
                 />
               </div>
               <div v-show="!invoiceAddressIsSame">
-                <div class="py-4">Zvoľte iný fakturačný profil alebo si vytvorte nový</div>
-                <div class="relative w-full pb-4">
-                <select
-                  id="profiles"
-                  name="profiles"
-                  class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
-                  @change="switchSelect($event)"
-                >
-                  <option
-                    v-for="profile in invoiceProfiles"
-                    :value="profile.id"
-                    :key="profile.id"
-                  >
-                    {{ profile.name }}
-                  </option>
-                </select>
-                <div
-                  class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
-                >
-                  <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                <div v-show="user.userId">
+                  <div class="py-4">Zvoľte iný fakturačný profil alebo si vytvorte nový</div>
+                  <div class="relative w-full pb-4">
+                    <select
+                      id="profiles"
+                      name="profiles"
+                      class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+                      @change="switchSelect($event)"
+                    >
+                      <option
+                        v-for="profile in invoiceProfiles"
+                        :value="profile.id"
+                        :key="profile.id"
+                      >
+                        {{ profile.name }}
+                      </option>
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
+                    >
+                      <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                    </div>
+                  </div>
                 </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center" v-show="!orderingAsCompany">
+                  <FormKit
+                    type="text"
+                    name="first_name"
+                    label="Meno"
+                    v-model="userData.first_name"
+                  />
+                  <FormKit
+                    type="text"
+                    name="last_name"
+                    label="Priezvisko"
+                    v-model="userData.last_name"
+                  />
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name"/>
-                  <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
-                  <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
+                <div v-show="orderingAsCompany">
+                  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name"/>
+                    <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
+                    <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
+                  </div>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <FormKit
@@ -161,7 +189,7 @@
                   v-model="invoiceAddress.country"
                   label="Krajina"
                 />
-                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" />
+                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="orderingAsCompany"/>
               </div>
             </div>
           </FormKit>
@@ -228,6 +256,7 @@ const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
+const orderingAsCompany = ref(false);
 const invoiceAddressIsSame = ref(true);
 const paymentOptions = ref("");
 const paymentOptionsLength = ref();
@@ -299,7 +328,6 @@ onBeforeMount(async () => {
     await store
       .dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
       .then((response) => {
-        console.log(response);
         invoiceProfiles.value = response.data;
         currentInvoiceProfile.value = invoiceProfiles.value.at(0);
         store
