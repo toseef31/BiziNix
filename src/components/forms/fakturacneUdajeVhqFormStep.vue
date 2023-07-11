@@ -31,115 +31,6 @@
               label="Priezvisko"
               validation="required|length:2"
             />
-            <FormKit
-              type="text"
-              name="name"
-              v-model="company.name"
-              label="Názov spoločnosti"
-            />
-            <FormKit
-              type="select"
-              label="Pohlavie"
-              v-model="userData.gender"
-              placeholder="Vyberte pohlavie"
-              name="gender"
-              id="gender"
-              :options="['Muž', 'Žena']"
-              validation="required"
-              validation-visibility="dirty"
-            />
-          </div>
-          <div class="flex flex-col md:flex-row md:space-x-4">
-            <FormKit
-              type="checkbox"
-              :ignore="true"
-              v-model="hasTitle"
-              label="Máte titul pred alebo za menom?"
-              id="hasTitle"
-              name="hasTitle"
-            />
-            <div v-show="hasTitle" class="grid grid-cols-2 gap-4">
-              <FormKit
-                type="text"
-                name="title_before"
-                v-model="userData.title_before"
-                label="Titul pred menom"
-              />
-              <FormKit
-                type="text"
-                name="title_after"
-                v-model="userData.title_after"
-                label="Titul za menom"
-              />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <FormKit
-              type="text"
-              name="phone"
-              v-model="userData.phone"
-              autocomplete="phone"
-              label="Telefonné číslo (nepovinné)"
-            />
-            <FormKit
-              type="date"
-              name="date_of_birth"
-              v-model="userData.date_of_birth"
-              autocomplete="date_of_birth"
-              label="Dátum narodenia"
-              validation="required|length:10"
-            />
-            <FormKit
-              type="text"
-              name="rodne_cislo"
-              v-model="userData.rodne_cislo"
-              label="Rodné číslo"
-              validation="required|length:10"
-            />
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-            <FormKit
-              type="text"
-              name="city"
-              v-model="userAddress.city"
-              label="Mesto"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="country"
-              v-model="userAddress.country"
-              label="Krajina"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="psc"
-              v-model="userAddress.psc"
-              label="PSČ"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street"
-              v-model="userAddress.street"
-              label="Ulica"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street_number"
-              v-model="userAddress.street_number"
-              label="Súpisne číslo"
-              validation="required"
-            />
-            <FormKit
-              type="text"
-              name="street_number2"
-              v-model="userAddress.street_number2"
-              label="Orientačné číslo"
-              validation="required"
-            />
           </div>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <FormKit
@@ -168,6 +59,15 @@
               name="password_confirmation"
               label="Zopakujte heslo"
               validation="required|confirm:password"
+            />
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <FormKit
+              type="text"
+              name="phone"
+              v-model="userData.phone"
+              autocomplete="phone"
+              label="Telefonné číslo (nepovinné)"
             />
           </div>
 
@@ -254,7 +154,7 @@
                 validation="required"
               />
             </div>
-            <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" />
+            <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="orderingAsCompany"/>
 
             <div class="w-full">
               <FormKit

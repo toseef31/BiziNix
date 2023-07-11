@@ -6,8 +6,8 @@ import type Company from "@/types/Company";
 export const store = createStore({
   state: {
     user: {
-      data: {},
-      address: {},
+      data: {} as any,
+      address: {} as any,
       userId: sessionStorage.getItem("USER_ID"),
       addressId: null,
       token: sessionStorage.getItem("TOKEN"),
