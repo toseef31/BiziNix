@@ -219,6 +219,10 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/users/${email}/check`);
       return data;
     },
+    async isIcoAlreadyRegistered({ commit }, ico: string) {
+      const { data } = await axiosClient.get(`/companies/${ico}/check`);
+      return data;
+    },
     async addMultipleCompanyMembers({ commit }, members) {
       const { data } = await axiosClient.post(
         "/companyMembers/addMultiple",

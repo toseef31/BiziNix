@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-900 text-white">
-    <div class="container justify-center flex mx-auto">
-      <div class="flex flex-col">
+    <div class="py-12 bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col">
         <div class="w-full bg-gray-800 flex flex-row rounded-l-xl my-10">
           <div
             class="flex flex-col basis-1/3 font-bold text-4xl p-4 justify-center"
@@ -56,8 +56,8 @@
               <div class="flex pt-4 pb-2 pr-4 text-lg font-bold text-teal-500">
                 3 mesiace zadarmo
               </div>
-              <div class="flex text-lg self-end pr-4">potom</div>
-              <div class="flex font-bold text-2xl pr-4 pb-1 self-end">
+              <div class="flex text-lg self-end pr-4 text-white">potom</div>
+              <div class="flex font-bold text-2xl pr-4 pb-1 self-end text-white">
                 5€/mesiac
               </div>
             </div>
@@ -66,7 +66,7 @@
             </div>
           </div>
         </div>
-        <div class="flex">
+        <div>
           <DocumentsOrderComponent />
         </div>
       </div>
