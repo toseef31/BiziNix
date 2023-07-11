@@ -49,7 +49,7 @@
   <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
 </div>
 <div v-if="isZivnostForm">
-    <FormKit type="radio" v-model="placeOfBusinness" :ignore="true" label="Miesto podnikania?" name="placeOfBusinness"
+    <FormKit type="radio" v-model="placeOfBusinness" label="Miesto podnikania?" id="miesto" name="placeOfBusinness"
       :options="[
           { value: 'Totožné', label: 'Totožné s trvalým bydliskom' },
           { value: 'Iné', label: 'Na inej adrese' },
@@ -104,10 +104,15 @@ import store from '@/store';
 import { onBeforeMount, onMounted } from 'vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { getNode } from '@formkit/core'
 
 const route = useRoute()
 
 onBeforeMount( () => {
+
+  const form = getNode('zalZivnostiMultiStepForm');
+  console.log(form?.value);
+
   if(route.fullPath.includes('zivnosti')){    
     isZivnostForm.value = true  
   }

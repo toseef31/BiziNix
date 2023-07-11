@@ -597,9 +597,15 @@ const newSustmiApp = async (formdata: any, node: any) => {
   await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
   await addMultipleCompanyMembersKonatelia(companyRes.company.id)
 
+
   let invoiceAddressRes: any;
-  if(!invoiceData.value.invoiceAddressIsSame){
+  if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
+  {
     invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+  }
+  else if(invoiceData.value.orderingAsCompany)
+  {
+    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
   }
 
   const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)

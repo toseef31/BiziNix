@@ -66,9 +66,9 @@
             </template>
           </FormKit>
           <FormKit type="submit" label="Objednať s povinnosťou platby" />
-          <!-- <details>
+          <details>
             <pre>{{ value }}</pre>
-          </details> -->
+          </details>
 
 
         </FormKit>
@@ -102,7 +102,7 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import FooterLayout from "@/components/FooterLayout.vue";
@@ -114,11 +114,8 @@ import type Address from "@/types/Address";
 import type Order from "@/types/Order";
 import type Company from "@/types/Company";
 import { getValidationMessages } from '@formkit/validation'
+import { getNode } from '@formkit/core'
 
-const hasTitle = ref(false);
-const invoiceAddressIsSame = ref(true);
-const dateOfRegisterCompany = ref(true);
-const orderingAsCompany = ref(false);
 let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
@@ -133,6 +130,11 @@ let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
 let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
+
+onMounted(() => {
+  const form = getNode('miesto');
+  console.log(form?.value);
+})
 
 // const childRefComponentForPay = ref()
 // const callStripePayment = (totalForPay: number, orderId: any) => {
@@ -372,8 +374,13 @@ const newSustmiApp = async (formdata: any, node: any) => {
   const companyRes = await addCompany(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, regUserRes.user_id, regHqRes.id);
 
   let invoiceAddressRes: any;
-  if(!invoiceData.value.invoiceAddressIsSame){
+  if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
+  {
     invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+  }
+  else if(invoiceData.value.orderingAsCompany)
+  {
+    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
   }
 
   const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
