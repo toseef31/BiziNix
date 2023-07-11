@@ -320,6 +320,10 @@ export const store = createStore({
     },
     //#endregion
     //#region orders
+    async getFakturacneUdajeByUserId({ commit }, id) {
+      const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getForUser`);
+      return data;
+    },
     addOrder({ commit }, order) {
       return axiosClient.post("/orders/add", order).then(({ data }) => {
         commit("setOrder", data); // setOrder is defined as muttation below

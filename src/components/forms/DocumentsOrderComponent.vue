@@ -32,30 +32,11 @@
               <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
             </template>
           </FormKit>
-          <!--
-          <div>
-              <div class="flex flex-row gap-12">
-                <div>
-                  <stripe-checkout
-                    ref="stripeCheckoutRef"
-                    mode="subscription"
-                    :pk="publishableKey"
-                    :line-items="lineItems"
-                    :success-url="successURL"
-                    :cancel-url="cancelURL"
-                  />
-                  <button
-                    @click="continueToPayment(stripeCheckoutRef)"
-                    class="shadow flex font-bold justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-                  >
-                    Objednať s povinnosťou platby
-                  </button>
-                </div>
-              </div>
-            </div>
-            -->
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
-          <!--<FormKit type="submit" label="Objednať na 3 mesiace zdarma"/>-->
+          <FormKit type="submit" label="Objednať s povinnosťou platby" v-show="!firstTimeActivation" />
+          <div v-show="firstTimeActivation">
+            <FormKit type="submit" label="Objednať na 3 mesiace zdarma"/>
+            <label class="text-xs italic text-gray-300">Prvú faktúru obdržíte o 3 mesiace.<br>Dovtedy Vám nebudeme nič účtovať.</label>
+          </div>
         </FormKit>
       <Modal
           name="loadingDocumentsModal"
@@ -94,6 +75,7 @@ import store from "@/store";
 import { ref, computed, reactive } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
+import type Company from "@/types/Company";
 import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import { getValidationMessages } from '@formkit/validation'
@@ -103,6 +85,7 @@ import PodnikatelskeUdajeDocumentsFormStep from "./podnikatelskeUdajeDocumentsFo
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
 let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeDocumentsFormStep>>(null as any);
 
+const company = computed(() => store.state.selectedCompany as Company);
 const user = computed(() => store.state.user);
 const userData = computed(() => store.state.user.data as User);
 
@@ -133,7 +116,7 @@ const monthlyPaymentDate = moment(today).add(30, "days").format("YYYY-MM-DD");
 const yearlyPaymentDate = moment(today).add(365, "days").format("YYYY-MM-DD");
 
 const firstTimeActivation = computed(() => {
-  return companyDataRef.value.currentCompany.fakturacia_zaplatene_do ? false : true;
+  return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
 let lineItems = [
@@ -263,16 +246,32 @@ function addOrder(): Promise<Response> {
         break;
     }
   } else if (invoiceDataRef.value.paymentOptions == "stripe") {
-    order.value.amount = 0;
-    order.value.amount_vat = 0 * 0.2;
-
-    items = [
-      {
-        price: 0,
-        price_vat: 0,
-        description: "Objednávka balíčku dokladov",
-      },
-    ];
+    switch (invoiceDataRef.value.paymentOptionsLength[0]) {
+      case "mesiac":
+        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = monthlyPaymentDate;
+        order.value.amount = 5;
+        order.value.amount_vat = 5 * 0.2;
+        items = [
+          {
+            price: 5,
+            price_vat: 5 * 0.2,
+            description: "Objednávka balíčku dokladov na 1 mesiac",
+          },
+        ];
+        break;
+      case "rok":
+        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
+        order.value.amount = 50;
+        order.value.amount_vat = 50 * 0.2;
+        items = [
+          {
+            price: 50,
+            price_vat: 50 * 0.2,
+            description: "Objednávka balíčku dokladov na rok",
+          },
+        ];
+        break;
+    }
   }
 
   order.value.items = items;
@@ -442,26 +441,42 @@ async function continueToPayment() {
     }
 
     const result = await isIcoAlreadyRegistered();
-    if(!result) {
+    if(result) {
       await addCompany().then(async (res) => {
             if(companyFromResponse) {
-              addOrder().then(() => {
-                if (invoiceDataRef.value.paymentOptionsLength == 'mesiac') {
+              addOrder().then(async () => {
+                if (invoiceDataRef.value.paymentOptionsLength[0] == 'mesiac') {
                   companyFromResponse.company.fakturacia_zaplatene_do = monthlyPaymentDate;
-                  lineItems = [
+                  const totalForPay = order.value.amount;
+                  await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
+                  /*lineItems = [
                       {
                         price: "price_1NQ4aKGgtUfdovJEygXKtqGe",
                         quantity: 1,
                       },
-                    ];
+                    ];*/
                 } else {
                   companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
-                  lineItems = [
+                  const totalForPay = order.value.amount;
+                  await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
+                  /*lineItems = [
                       {
                         price: "price_1NQ4aKGgtUfdovJEA9xf8Zev",
                         quantity: 1,
                       },
-                    ];
+                    ];*/
                 }
                 store
                   .dispatch("updateCompany", companyFromResponse.company)
@@ -479,23 +494,39 @@ async function continueToPayment() {
             }
           });
     } else {
-      addOrder().then(() => {
+      addOrder().then(async () => {
         if (invoiceDataRef.value.paymentOptionsLength == 'mesiac') {
           companyDataRef.value.currentCompany.fakturacia_zaplatene_do = monthlyPaymentDate;
-          lineItems = [
+          const totalForPay = order.value.amount;
+          await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+          router.push({
+            name: "Thanks You New Order",
+            params: {
+              orderId: orderFromRes.id,
+            },
+          });
+          /*lineItems = [
               {
                 price: "price_1NQ4aKGgtUfdovJEygXKtqGe",
                 quantity: 1,
               },
-            ];
+            ];*/
         } else {
           companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-          lineItems = [
+          const totalForPay = order.value.amount;
+          await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+          router.push({
+            name: "Thanks You New Order",
+            params: {
+              orderId: orderFromRes.id,
+            },
+          });
+          /*lineItems = [
               {
                 price: "price_1NQ4aKGgtUfdovJEA9xf8Zev",
                 quantity: 1,
               },
-            ];
+            ];*/
         }
         store
           .dispatch("updateCompany", companyDataRef.value.currentCompany)

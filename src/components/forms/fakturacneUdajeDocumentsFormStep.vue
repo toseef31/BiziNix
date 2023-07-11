@@ -76,76 +76,93 @@
 
           <FormKit
             type="group"
-            v-model="fakturacne_udaje"
             id="Fakturačné údaje"
             name="Fakturačné údaje"
           >
             <div class="text-2xl font-bold pt-4 pb-2">Fakturácia</div>
-            <div class="pb-4" v-if="user.userId">
-              Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix
-              Doklady, Alebo zvoľte jeden z Fakturačných profilov.
-            </div>
-            <div class="pb-4" v-if="!user.userId">
-              Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix Doklady
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <FormKit
-                type="checkbox"
-                v-model="invoiceAddressIsSame"
-                :ignore="true"
-                label="Fakturačné údaje sú rovnaké ako podnikateľské?"
-                name="invoiceAddressIsSame"
-              />
-            </div>
-            <div
-              v-show="!invoiceAddressIsSame"
-              class="grid grid-cols-2 md:grid-cols-3 gap-4"
-            >
-              <FormKit type="text" name="name" label="Názov spoločnosti" />
-              <FormKit type="text" name="ico" label="IČO" />
-              <FormKit type="text" name="dic" label="DIČ" />
-            </div>
-            <div
-              v-show="!invoiceAddressIsSame"
-              class="grid grid-cols-2 md:grid-cols-3 gap-4"
-            >
-              <FormKit
-                type="text"
-                name="street"
-                v-model="invoiceAddress.street"
-                label="Ulica"
-              />
-              <FormKit
-                type="text"
-                name="street_number"
-                v-model="invoiceAddress.street_number"
-                label="Súpisne číslo"
-              />
-              <FormKit
-                type="text"
-                name="street_number2"
-                v-model="invoiceAddress.street_number2"
-                label="Orientačné číslo"
-              />
-              <FormKit
-                type="text"
-                name="city"
-                v-model="invoiceAddress.city"
-                label="Mesto"
-              />
-              <FormKit
-                type="text"
-                name="psc"
-                v-model="invoiceAddress.psc"
-                label="PSČ"
-              />
-              <FormKit
-                type="text"
-                name="country"
-                v-model="invoiceAddress.country"
-                label="Krajina"
-              />
-              <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" />
+              <div class="pb-4" v-if="user.userId">
+                Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix
+                Doklady, Alebo zvoľte jeden z Fakturačných profilov.
+              </div>
+              <div class="pb-4" v-if="!user.userId">
+                Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix Doklady
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                <FormKit
+                  type="checkbox"
+                  v-model="invoiceAddressIsSame"
+                  :ignore="true"
+                  label="Fakturačné údaje sú rovnaké ako podnikateľské?"
+                  name="invoiceAddressIsSame"
+                />
+              </div>
+              <div v-show="!invoiceAddressIsSame">
+                <div class="py-4">Zvoľte iný fakturačný profil alebo si vytvorte nový</div>
+                <div class="relative w-full pb-4">
+                <select
+                  id="profiles"
+                  name="profiles"
+                  class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+                  @change="switchSelect($event)"
+                >
+                  <option
+                    v-for="profile in invoiceProfiles"
+                    :value="profile.id"
+                    :key="profile.id"
+                  >
+                    {{ profile.name }}
+                  </option>
+                </select>
+                <div
+                  class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
+                >
+                  <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name"/>
+                  <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
+                  <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormKit
+                  type="text"
+                  name="street"
+                  v-model="invoiceAddress.street"
+                  label="Ulica"
+                />
+                <FormKit
+                  type="text"
+                  name="street_number"
+                  v-model="invoiceAddress.street_number"
+                  label="Súpisne číslo"
+                />
+                <FormKit
+                  type="text"
+                  name="street_number2"
+                  v-model="invoiceAddress.street_number2"
+                  label="Orientačné číslo"
+                />
+                <FormKit
+                  type="text"
+                  name="city"
+                  v-model="invoiceAddress.city"
+                  label="Mesto"
+                />
+                <FormKit
+                  type="text"
+                  name="psc"
+                  v-model="invoiceAddress.psc"
+                  label="PSČ"
+                />
+                <FormKit
+                  type="text"
+                  name="country"
+                  v-model="invoiceAddress.country"
+                  label="Krajina"
+                />
+                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" />
+              </div>
             </div>
           </FormKit>
           <div class="w-full" v-show="!firstTimeActivation">
@@ -184,19 +201,22 @@
                 ]"
               />
             </div>
+            <div v-if="paymentOptions == 'stripe'" class="bg-gray-100 my-5 p-4">
+              <stripePaymentComponent ref="documentsStripeComponentRef"></stripePaymentComponent>
+            </div>
           </div>
         </div>
 </template>
 
-
-
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
+import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 
+const documentsStripeComponentRef = ref();
 const user = computed(() => store.state.user);
 const company = computed(() => store.state.selectedCompany as Company);
 const hqAddress = computed(() => store.state.selectedCompanyAddress as Address);
@@ -224,6 +244,9 @@ const fakturacne_udaje = ref({
   company_id: 0
 });
 
+const invoiceProfiles = ref([] as any);
+const currentInvoiceProfile = ref({} as any);
+
 function isInvoiceAddressSameAsCompany() {
   if(invoiceAddressIsSame.value == true) {
     fakturacne_udaje.value.ico = company.value.ico;
@@ -233,6 +256,12 @@ function isInvoiceAddressSameAsCompany() {
     fakturacne_udaje.value.company_id = company.value.id;
     fakturacne_udaje.value.address_id = hqAddress.value.id;
   } else {
+    fakturacne_udaje.value.ico = currentInvoiceProfile.value.ico;
+    fakturacne_udaje.value.dic = currentInvoiceProfile.value.dic;
+    fakturacne_udaje.value.ic_dph = currentInvoiceProfile.value.icdph;
+    fakturacne_udaje.value.name = currentInvoiceProfile.value.name;
+    fakturacne_udaje.value.company_id = currentInvoiceProfile.value.company_id;
+    fakturacne_udaje.value.address_id = currentInvoiceProfile.value.address_id;
     fakturacne_udaje.value.user_id = Number(user.value.userId);
   }
 }
@@ -252,6 +281,39 @@ async function emailIsUnique(node: any) {
   return result;
 }
 
+async function switchSelect(event: any) {
+  currentInvoiceProfile.value = invoiceProfiles.value.find(
+    (item: any) => item.id == event.target.value
+  );
+
+  await store
+    .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
+    .then((response) => {
+      invoiceAddress.value = response.data;
+      fakturacne_udaje.value.address_id = response.data.id;
+  });
+}
+
+onBeforeMount(async () => {
+  try {
+    await store
+      .dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
+      .then((response) => {
+        console.log(response);
+        invoiceProfiles.value = response.data;
+        currentInvoiceProfile.value = invoiceProfiles.value.at(0);
+        store
+          .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
+            .then((response) => {
+              invoiceAddress.value = response.data;
+              fakturacne_udaje.value.address_id = response.data.id;
+            });
+      });
+  } catch (err){
+    console.log(err)
+  }
+});
+
 defineExpose({
   isInvoiceAddressSameAsCompany,
   paymentOptions,
@@ -259,7 +321,8 @@ defineExpose({
   invoiceAddressIsSame,
   invoiceAddress,
   fakturacne_udaje,
-  userData
+  userData,
+  documentsStripeComponentRef
 })
 
 </script>
