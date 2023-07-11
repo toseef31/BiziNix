@@ -6,8 +6,8 @@ import type Company from "@/types/Company";
 export const store = createStore({
   state: {
     user: {
-      data: {},
-      address: {},
+      data: {} as any,
+      address: {} as any,
       userId: sessionStorage.getItem("USER_ID"),
       addressId: null,
       token: sessionStorage.getItem("TOKEN"),
@@ -219,6 +219,10 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/users/${email}/check`);
       return data;
     },
+    async isIcoAlreadyRegistered({ commit }, ico: string) {
+      const { data } = await axiosClient.get(`/companies/${ico}/check`);
+      return data;
+    },
     async addMultipleCompanyMembers({ commit }, members) {
       const { data } = await axiosClient.post(
         "/companyMembers/addMultiple",
@@ -316,6 +320,10 @@ export const store = createStore({
     },
     //#endregion
     //#region orders
+    async getFakturacneUdajeByUserId({ commit }, id) {
+      const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getAllForUser`);
+      return data;
+    },
     addOrder({ commit }, order) {
       return axiosClient.post("/orders/add", order).then(({ data }) => {
         commit("setOrder", data); // setOrder is defined as muttation below

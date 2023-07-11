@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gray-900 text-white">
-    <div class="container justify-center flex mx-auto">
+  <div class="py-12 bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col">
         <div class="w-full bg-gray-800 flex flex-row rounded-l-xl my-10">
           <div class="flex flex-col basis-1/2 font-bold text-4xl p-4">
@@ -25,11 +25,8 @@
             </div>
           </div>
         </div>
-        <div class="flex" v-if="data.createCompany">
-          <VhqNewCompany/>
-        </div>
-        <div class="flex" v-else>
-          <VhqExistingCompany/>
+        <div>
+          <VhqOrderComponent />
         </div>
       </div>
     </div>
@@ -45,8 +42,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import { computed } from "vue";
-import VhqNewCompany from "../../components/forms/VhqNewCompany.vue";
-import VhqExistingCompany from "../../components/forms/VhqExistingCompany.vue";
+import VhqOrderComponent from "../../components/forms/VhqOrderComponent.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";

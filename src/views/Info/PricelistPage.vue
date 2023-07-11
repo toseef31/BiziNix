@@ -259,112 +259,100 @@
           </h3>
         </div>
         <section class="bg-gray-900 w-full py-20 px-20">
+          <h3 class="text-xl tracking-tight font-extrabold text-white py-2">SRO</h3>
           <table
-            class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+            class="w-full text-sm text-left text-gray-400 table-fixed"
           >
             <thead
-              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              class="text-xs uppercase bg-gray-700 text-gray-400"
             >
               <tr>
-                <th scope="col" class="py-3 px-6">Položka</th>
-                <th scope="col" class="py-3 px-6">Popis</th>
-                <th scope="col" class="py-3 px-6">Cena</th>
+                <th class="py-3 pl-4">Položka</th>
+                <th class="py-3">Popis</th>
+                <th class="py-3 pr-8 text-right">Cena</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                class="border-b bg-gray-800 border-gray-700"
               >
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Založenie sro
-                </th>
-                <td class="py-4 px-6">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 px-6">199€</td>
+                <td class="py-4 pl-4 text-white font-medium">Založenie sro</td>
+                <td class="py-4">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 pr-8 text-right">199€</td>
               </tr>
               <tr
-                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                class="bg-gray-800"
               >
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Zmeny v sro
-                </th>
-                <td class="py-4 px-6">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 px-6">79€</td>
+                <td class="py-4 pl-4 text-white font-medium">Zmeny v sro</td>
+                <td class="py-4">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 pr-8 text-right">79€</td>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Založenie živnosti 
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 px-6">10€</td>
+            </tbody>
+          </table>
+          <h3 class="text-xl tracking-tight font-extrabold text-white py-2">Živnosť</h3>
+          <table
+            class="w-full text-sm text-left  text-gray-400 table-fixed"
+          >
+            <thead
+              class="text-xs  uppercase  bg-gray-700 text-gray-400"
+            >
+              <tr>
+                <th scope="col" class="py-3 pl-4">Položka</th>
+                <th scope="col" class="py-3">Popis</th>
+                <th scope="col" class="py-3 pr-8 text-right">Cena</th>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Zmeny v živnosti
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 px-6">10€</td>
+            </thead>
+            <tbody>
+              <tr class="border-b bg-gray-800 border-gray-700">
+                <td class="py-4 pl-4 text-white font-medium">Založenie živnosti </td>
+                <td class="py-4">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 pr-8 text-right">10€</td>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Pozastavenie živnosti
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
-                <td class="py-4 px-6">10€</td>
+              <tr class="border-b bg-gray-800 border-gray-700">
+                <td class="py-4 pl-4 text-white font-medium">Zmeny v živnosti</td>
+                <td class="py-4">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
+                <td class="py-4 pr-8 text-right">10€</td>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Obnovenie živnosti
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
-                <td class="py-4 px-6">10€</td>
+              <tr class="border-b bg-gray-800 border-gray-700">
+                <td class="py-4 pl-4 text-white font-medium">Pozastavenie živnosti</td>
+                <td class="py-4">Vrátane všetkých poplatkov</td>
+                <td class="py-4 pr-8 text-right">10€</td>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  Zrušenie živnosti
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
-                <td class="py-4 px-6">10€</td>
+              <tr class="border-b bg-gray-800 border-gray-700">
+                <td class="py-4 pl-4 text-white font-medium">Obnovenie živnosti</td>
+                <td class="py-4">Vrátane všetkých poplatkov</td>
+                <td class="py-4 pr-8 text-right">10€</td>
               </tr>
-              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                Založenie občianskeho združenia
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
-                <td class="py-4 px-6">89€</td>
+              <tr class="bg-gray-800">
+                <td class="py-4 pl-4 text-white font-medium">Zrušenie živnosti</td>
+                <td class="py-4">Vrátane všetkých poplatkov</td>
+                <td class="py-4 pr-8 text-right">10€</td>
               </tr>
-              <tr class="bg-white dark:bg-gray-800">
-                <th
-                  scope="row"
-                  class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                Registrácia na darovanie 2% z daní
-                </th>
-                <td class="py-4 px-6">Vrátane všetkých poplatkov</td>
-                <td class="py-4 px-6">XY€</td>
+            </tbody>
+          </table>
+          <h3 class="text-xl tracking-tight font-extrabold text-white py-2">Obchodné združenie</h3>
+          <table
+            class="w-full text-sm text-left  text-gray-400 table-fixed"
+          >
+            <thead
+              class="text-xs  uppercase  bg-gray-700 text-gray-400"
+            >
+              <tr>
+                <th scope="col" class="py-3 pl-4">Položka</th>
+                <th scope="col" class="py-3">Popis</th>
+                <th scope="col" class="py-3 pr-8 text-right">Cena</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b bg-gray-800 border-gray-700">
+                <td class="py-4 pl-4 text-white font-medium">Založenie občianskeho združenia</td>
+                <td class="py-4">Vrátane všetkých poplatkov</td>
+                <td class="py-4 pr-8 text-right">89€</td>
+              </tr>
+              <tr class="bg-gray-800">
+                <td class="py-4 pl-4 text-white font-medium">Registrácia na darovanie 2% z daní</td>
+                <td class="py-4">Vrátane všetkých poplatkov</td>
+                <td class="py-4 pr-8 text-right">XY€</td>
               </tr>
             </tbody>
           </table>
