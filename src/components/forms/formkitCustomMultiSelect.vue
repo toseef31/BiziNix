@@ -22,9 +22,3 @@ const props = defineProps(['context'])
 
     </Multiselect>
 </template>
-
-<style>
-.multiselect-tag {
-    white-space: normal;
-}
-</style>

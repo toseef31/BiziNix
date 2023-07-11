@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="py-12 mb-12">
+  <div class="py-12 mb-12 bg-gray-900 text-white">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-center mb-10 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
@@ -52,11 +52,11 @@
           #default="{ value, state: { valid }  }"
           @submit="newSustmiApp"
         >
-          <div>
-            <ul class="validation-errors" v-if="messages.length">
-              <li v-for="message in messages">{{ message }}</li>
-            </ul>
-          </div>
+        <div v-if="messages.length" class="mb-8 p-4 border rounded-md border-red-400 border-solid">
+          <ul class="list-disc list-inside validation-errors">
+            <li v-for="message in messages">{{ message }}</li>
+          </ul>
+        </div>
           <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" tab-style="tab">
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
@@ -81,7 +81,7 @@
           <!-- <details>
             <pre>{{ value }}</pre>
           </details> -->          
-            <div class="p-4 mb-4 bg-white border rounded-md border-[#ccccd7] border-solid">
+            <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
               Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
             </div>
             <FormKit

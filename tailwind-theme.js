@@ -20,14 +20,14 @@ export default {
   // Multi-step
   'multi-step': {
     wrapper: '!max-w-7xl',
-    tabs: '!border-b-[#006464]',
+    tabs: '!border-bizinix-border',
     tab:'!bg-gray-900 !shadow-[-1px_0_0_0_rgba(0,100,100)]',
     tabLabel:'text-white',
-    steps: 'bg-gray-900'
+    steps: 'bg-gray-900 !border-bizinix-border'
   },
   // Family styles apply to all inputs that share a common family
   'family:box': {
-    decorator: 'block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 ring-1 ring-gray-400 peer-checked:ring-blue-500 text-transparent peer-checked:text-blue-500',
+    decorator: 'block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 ring-1 ring-gray-400 peer-checked:ring-blue-500 text-transparent peer-checked:text-teal-600',
     decoratorIcon: 'flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
     help: 'mb-2 mt-1.5',
     input: 'absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer',
@@ -36,7 +36,7 @@ export default {
     wrapper: 'flex items-center mb-1',
   },
   'family:button': {
-    input: '$reset inline-flex items-center bg-blue-600 text-white text-sm font-normal py-3 px-6 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 formkit-disabled:bg-gray-400 formkit-loading:before:w-4 formkit-loading:before:h-4 formkit-loading:before:mr-2 formkit-loading:before:border formkit-loading:before:border-2 formkit-loading:before:border-r-transparent formkit-loading:before:rounded-3xl formkit-loading:before:border-white formkit-loading:before:animate-spin',
+    input: '$reset inline-flex items-center bg-teal-600 text-white text-sm font-normal py-3 px-6 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 formkit-disabled:bg-gray-400 formkit-loading:before:w-4 formkit-loading:before:h-4 formkit-loading:before:mr-2 formkit-loading:before:border formkit-loading:before:border-2 formkit-loading:before:border-r-transparent formkit-loading:before:rounded-3xl formkit-loading:before:border-white formkit-loading:before:animate-spin',
     wrapper: 'mb-1',
     prefixIcon: '$reset block w-4 -ml-2 mr-2 stretch',
     suffixIcon: '$reset block w-4 ml-2 stretch',
@@ -186,12 +186,12 @@ export default {
     downControl: 'hover:text-blue-500 disabled:hover:text-inherit disabled:opacity-25',
     fieldset: 'py-4 px-5',
     help: 'mb-2 mt-1.5',
-    item: 'flex w-full mb-1 rounded border border-gray-200',
+    item: 'flex w-full mb-1 rounded border border-gray-100 border-opacity-25',
     moveDownIcon: 'block w-3 my-1',
     moveUpIcon: 'block w-3 my-1',
-    removeControl: 'hover:text-blue-500 disabled:hover:text-inherit disabled:opacity-25',
+    removeControl: 'text-black hover:text-blue-500 disabled:hover:text-gray-600 disabled:opacity-25',
     removeIcon: 'block w-5 my-1',
-    upControl: 'hover:text-blue-500 disabled:hover:text-inherit disabled:opacity-25'
+    upControl: 'hover:text-blue-500 disabled:hover:text-gray-600 disabled:opacity-25'
   },
   slider: {
     outer: 'max-w-md',

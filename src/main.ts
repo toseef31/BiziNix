@@ -15,7 +15,7 @@ import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 import { sk } from '@formkit/i18n'
-import myTailwindTheme from '../tailwind-theme';
+import myTailwindTheme from '../tailwind-theme.js';
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit

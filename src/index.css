@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+.multiselect {
+  border: 1px solid theme('colors.bizinix.border') !important;
+  background: theme('colors.gray.bizinix') !important;
+}
+
+.multiselect-wrapper {
+  min-height: auto !important;
+}
+
+.multiselect-tags-search {
+  background: theme('colors.gray.bizinix');
+}
+
+.multiselect-tag {
+  white-space: normal !important;
+}
+
+.multiselect-option {
+    color: black !important;
+}
+
+.multiselect-clear-icon:hover {
+  background-color: white !important;
+}
 
 /* #help-input_1 {
   padding-top: 5px;
@@ -20,16 +44,7 @@
   background: #0d9488 !important;
 } */
 
-/**/
-/* 
-.multiselect-option {
-    color: black !important;
-}
-
-.multiselect-tags-search {
-    color: black;
-}
-
+/*
 #help-input_1 {
   padding-top: 5px;
 }

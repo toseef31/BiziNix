@@ -8,7 +8,16 @@ module.exports = {
     "./tailwind-theme.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        gray: {
+          bizinix: '#111827',
+        },
+        bizinix: {
+          border: '#006464'
+        }
+      }
+    },
   },
   plugins: [
     formKitTailwind
