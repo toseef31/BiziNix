@@ -71,14 +71,24 @@ const user = {
 let errorMsg = ref();
 
 function login(){
-  const previousRoute = router.currentRoute.value.redirectedFrom
   store
     .dispatch('loginUser', user)
     .then((res) => {
-      if(previousRoute){
-        router.push(previousRoute.fullPath)
+      store.dispatch("setUserDataAfterLogin")
+      const redirectPath = sessionStorage.getItem('redirectPath')
+      if(redirectPath){
+        sessionStorage.removeItem('redirectPath') // Clear the redirect path from sessionStorage
+        router.push(redirectPath)
       } else {
-        router.push({ name: 'Home'})
+        const publicPagePath = sessionStorage.getItem('publicPagePath')
+        
+        if(publicPagePath){
+          sessionStorage.removeItem('publicPagePath') // Clear the public page path from sessionStorage
+          router.push(publicPagePath)
+        }
+        else {
+          router.push({ name: 'Home'})
+        }
       }
     })
     .catch(err => {

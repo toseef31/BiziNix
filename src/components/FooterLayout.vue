@@ -37,7 +37,7 @@
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            <a href="/login">Prihlásenie</a>
+            <router-link to="/login" class="" >Prihlásiť sa</router-link>
           </div>
           <div
             class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"

@@ -32,7 +32,6 @@ import DocumentDetailsVue from "@/views/Backoffice/DocumentDetails.vue";
 import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
 import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
-import { ref } from "vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,7 +89,7 @@ const router = createRouter({
       name: "Auth",
       meta: { isGuest: true },
       children: [
-        { path: "/login", name: "Login", component: Login },
+        { path: "/login", name: "Login", component: Login, meta: { isLoginPage: true } },
         { path: "/register", name: "Register", component: Register },
       ],
     },
@@ -105,8 +104,13 @@ router.beforeEach((to, from, next) => {
 
   const previousRoute = from.fullPath;
   
-  if (to.meta.requiresAuth && !store.state.user.token && to.name != 'Login') {
-    next({ name: 'Login', query: { redirect: previousRoute } });
+  if (to.meta.requiresAuth && !store.state.user.token && to.path != '/login') {
+    sessionStorage.setItem('redirectPath', to.path)
+    next({ name: 'Login' });
+  } else if(to.path === '/login' && !from.meta.isLoginPage){
+    // If the user arrives on the login page from a public page, store the previous public page's path in sessionStorage
+    sessionStorage.setItem('publicPagePath', from.path)
+    next() // Continue navigation to the login page
   }
   else {
     next();

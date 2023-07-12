@@ -2,9 +2,11 @@
         <div class="text-4xl font-bold">Fakturácia a účet</div>
         <div class="my-2" v-if="!user.userId">
           Už máte u nás účet?
-          <a class="text-teal-500 hover:underline" href="/login"
-            >Prihláste sa</a
-          >
+          <router-link
+            to="/login"
+            class="text-teal-500 hover:underline"
+            >Prihlásiť sa</router-link
+          >.
         </div>
         <div>
           <div class="text-2xl font-bold py-4">Účet</div>
