@@ -32,6 +32,7 @@ import DocumentDetailsVue from "@/views/Backoffice/DocumentDetails.vue";
 import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
 import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
+import { ref } from "vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,7 @@ const router = createRouter({
       path: "/",
       redirect: "/home",
       component: DefaultLayout,
+      meta: { isGuest: true },
       children: [
         { path: '/home', name: "Home", component: HomePage },
         { path: '/contact', name: "Contact", component: ContactPageVue },
@@ -100,13 +102,16 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !store.state.user.token) {
-    next({ name: "Login" });
-  } else if (store.state.user.token && to.meta.isGuest) {
-    next({ name: "Dashboard" });
-  } else {
+
+  const previousRoute = from.fullPath;
+  
+  if (to.meta.requiresAuth && !store.state.user.token && to.name != 'Login') {
+    next({ name: 'Login', query: { redirect: previousRoute } });
+  }
+  else {
     next();
   }
+
 });
 
 export default router;
