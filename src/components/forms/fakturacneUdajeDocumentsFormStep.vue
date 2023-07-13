@@ -130,8 +130,8 @@
                       <button type="button"
                         @click="currentTab(1)"
                         :class="[
-                          activeTab == 1 ? 'text-teal-500' : 'text-gray-400',
-                          'inline-block px-4 py-3 text-white bg-teal-500 rounded-lg font-bold hover:bg-gray-700',
+                          activeTab == 1 ? 'bg-teal-500' : 'bg-gray-600',
+                          'inline-block px-4 py-3 text-white rounded-lg font-bold hover:bg-gray-400',
                         ]"
                       >Firma</button>
                     </li>
@@ -139,8 +139,8 @@
                       <button type="button"
                         @click="currentTab(2)"
                         :class="[
-                          activeTab == 2 ? 'text-teal-500' : 'text-gray-400',
-                          'inline-block px-4 py-3 text-white bg-teal-500 rounded-lg font-bold hover:bg-gray-700',
+                          activeTab == 2 ? 'bg-teal-500' : 'bg-gray-600',
+                          'inline-block px-4 py-3 text-white rounded-lg font-bold hover:bg-gray-400',
                         ]"
                       >Súkromná osoba</button>
                     </li>
