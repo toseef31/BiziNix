@@ -363,46 +363,54 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
 
 const newSustmiApp = async (formdata: any, node: any) => {
 
-  const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
+  try {
 
-  const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
-  
-  const hqAddressRes = await registerHqAddress(userAddressUserInfoCompanyNameAndRegDate.value.hqAddress); 
+    const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
-  const regHqRes = await addHeadquarter(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, hqAddressRes.address_id);
-  
-  const companyRes = await addCompany(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, regUserRes.user_id, regHqRes.id);
-
-  let invoiceAddressRes: any;
-  if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
-  {
-    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
-  }
-  else if(invoiceData.value.orderingAsCompany)
-  {
-    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
-  }
-
-  const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
-
-  if(orderRes.id){
-
-    console.log("SUPER! Objednávka bola spracovaná.")
+    const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
     
-    if(invoiceData.value.paymentOptions == "stripe"){
-      await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
+    const hqAddressRes = await registerHqAddress(userAddressUserInfoCompanyNameAndRegDate.value.hqAddress); 
+
+    const regHqRes = await addHeadquarter(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, hqAddressRes.address_id);
+    
+    const companyRes = await addCompany(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, regUserRes.user_id, regHqRes.id);
+
+    let invoiceAddressRes: any;
+    if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
+    {
+      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+    }
+    else if(invoiceData.value.orderingAsCompany)
+    {
+      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
     }
 
-    await router.push({
-        name:"Thanks You New Order",
-        params: {
-          orderId: orderRes.id,
-          }
-    })
+    const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
 
-  }  
-  else {
-    errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
+    if(orderRes.id){
+
+      console.log("SUPER! Objednávka bola spracovaná.")
+      
+      if(invoiceData.value.paymentOptions == "stripe"){
+        await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
+      }
+
+      await router.push({
+          name:"Thanks You New Order",
+          params: {
+            orderId: orderRes.id,
+            }
+      })
+
+    }  
+    else {
+      errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
+    }
+    node.clearErrors()
+  } catch(err: any) {
+    errorMsg.value = err
+    console.log(err)
+    node.setErrors(err.formErrors, err.fieldErrors)
   }
 
   //const results = await Promise.allSettled([registerAddress()]);

@@ -37,7 +37,7 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  border: 0;
+  border-width: 1px;
   border-radius: 4px;
   -webkit-text-fill-color: white;
   -webkit-box-shadow: 0 0 0px 1000px theme('colors.gray.bizinix') inset;
