@@ -94,13 +94,13 @@
                   type="checkbox"
                   v-model="invoiceAddressIsSame"
                   :ignore="true"
-                  label="Fakturačné údaje sú rovnaké ako podnikateľské?"
+                  label="Fakturačné údaje sú rovnaké ako podnikateľské"
                   name="invoiceAddressIsSame"
                 />
               </div>
               <div v-show="!invoiceAddressIsSame">
                 <div v-show="user.userId">
-                  <div class="py-4">Zvoľte iný fakturačný profil alebo si vytvorte nový</div>
+                  <div class="py-4">Vyberte iný fakturačný profil alebo si vytvorte nový</div>
                   <div class="relative w-full pb-4">
                     <select
                       id="profiles"
@@ -123,17 +123,30 @@
                     </div>
                   </div>
                 </div>
-                <div class="w-fit">
-                  <FormKit
-                    type="checkbox"
-                    v-model="orderingAsCompany"
-                    :ignore="true"
-                    label="Objednávate ako firma?"
-                    id="orderingAsCompany"
-                    name="orderingAsCompany"
-                  />
+                <div class="py-4">Vytvoriť nový fakturačný profil</div>
+                <div class="pb-4">
+                  <ul class="flex flex-wrap text-sm font-medium text-center text-gray-400">
+                    <li class="mr-2">
+                      <button type="button"
+                        @click="currentTab(1)"
+                        :class="[
+                          activeTab == 1 ? 'text-teal-500' : 'text-gray-400',
+                          'inline-block px-4 py-3 text-white bg-teal-500 rounded-lg font-bold hover:bg-gray-700',
+                        ]"
+                      >Firma</button>
+                    </li>
+                    <li class="mr-2">
+                      <button type="button"
+                        @click="currentTab(2)"
+                        :class="[
+                          activeTab == 2 ? 'text-teal-500' : 'text-gray-400',
+                          'inline-block px-4 py-3 text-white bg-teal-500 rounded-lg font-bold hover:bg-gray-700',
+                        ]"
+                      >Súkromná osoba</button>
+                    </li>
+                </ul>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center" v-show="!orderingAsCompany">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center" v-show="activeTab == 2">
                   <FormKit
                     type="text"
                     name="first_name"
@@ -147,7 +160,7 @@
                     v-model="userData.last_name"
                   />
                 </div>
-                <div v-show="orderingAsCompany">
+                <div v-show="activeTab == 1">
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name"/>
                     <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
@@ -191,7 +204,7 @@
                   v-model="invoiceAddress.country"
                   label="Krajina"
                 />
-                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="orderingAsCompany"/>
+                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="activeTab == 1"/>
               </div>
             </div>
           </FormKit>
@@ -246,6 +259,7 @@ import type Company from "@/types/Company";
 import type User from "@/types/User";
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 
+const activeTab = ref(1);
 const documentsStripeComponentRef = ref();
 const user = computed(() => store.state.user);
 const company = computed(() => store.state.selectedCompany as Company);
@@ -258,7 +272,6 @@ const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
-const orderingAsCompany = ref(false);
 const invoiceAddressIsSame = ref(true);
 const paymentOptions = ref("");
 const paymentOptionsLength = ref();
@@ -277,6 +290,10 @@ const fakturacne_udaje = ref({
 
 const invoiceProfiles = ref([] as any);
 const currentInvoiceProfile = ref({} as any);
+
+function currentTab(tabNumber: any) {
+  activeTab.value = tabNumber;
+}
 
 function isInvoiceAddressSameAsCompany() {
   if(invoiceAddressIsSame.value == true) {
