@@ -253,7 +253,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
@@ -342,7 +342,7 @@ async function switchSelect(event: any) {
   });
 }
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
     await store
       .dispatch("getFakturacneUdajeByUserId", store.state.user.userId)

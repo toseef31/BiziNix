@@ -164,16 +164,6 @@ function closeModal() {
   isVisible = setModal("loadingDocumentsModal", false);
 }
 
-async function isIcoAlreadyRegistered() {
-  try {
-    const res = await store.dispatch("isIcoAlreadyRegistered", companyDataRef.value.currentCompany.ico);
-    console.log(res);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
 function addOrder(): Promise<Response> {
   order.value.payment_method = invoiceDataRef.value.paymentOptions;
 
@@ -314,7 +304,7 @@ async function submitApp(formData: any){
 async function continueFirstTimeActivation() {
   try {
     if(user.value.userId) {
-      const result = await isIcoAlreadyRegistered();
+      const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
       if(result) {
         await registerAddress().then(async () => {
           invoiceDataRef.value.fakturacne_udaje.address_id = addressFromResponse.address_id;
@@ -386,7 +376,7 @@ async function continueWithoutPayment() {
       invoiceDataRef.value.fakturacne_udaje.address_id = invoiceDataRef.value.invoiceAddress.id;
     }
 
-    const result = await isIcoAlreadyRegistered();
+    const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
     if(result) {
       await addCompany().then(async (res) => {
             if(companyFromResponse) {
@@ -428,7 +418,7 @@ async function continueToPayment() {
       invoiceDataRef.value.fakturacne_udaje.address_id = invoiceDataRef.value.invoiceAddress.id;
     }
 
-    const result = await isIcoAlreadyRegistered();
+    const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
     if(result) {
       await addCompany().then(async (res) => {
             if(companyFromResponse) {
