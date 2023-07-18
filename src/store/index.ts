@@ -70,7 +70,7 @@ export const store = createStore({
     },
     getSelectedCompanyAddress: (state) => {
       return state.selectedCompanyAddress;
-    },
+    }
   },
   actions: {
     async registerUser(_, user) {
@@ -328,14 +328,18 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getAllForUser`);
       return data;
     },
-    addOrder({ commit }, order) {
-      return axiosClient.post("/orders/add", order).then(({ data }) => {
-        commit("setOrder", data); // setOrder is defined as muttation below
-        return data;
-      });
+    async addOrder({ commit }, order) {
+      const { data } = await axiosClient.post("/orders/add", order);
+      commit("setOrder", data); // setOrder is defined as muttation below
+      return data;
     },
     async getOrderById({ commit }, id) {
       const { data } = await axiosClient.get(`/orders/${id}/get`);
+      return data;
+    },
+    async updateOrderById({ commit }, order) {
+      const { data } = await axiosClient.put(`/orders/${order.id}/update`, order);
+      commit("setOrder", data); // setOrder is defined as muttation below 
       return data;
     },
     //#endregion
@@ -470,7 +474,7 @@ export const store = createStore({
     },
     setSelectedCompanyAddress: (state, data) => {
       state.selectedCompanyAddress = data.data;
-    },
+    }
   },
   modules: {},
 });

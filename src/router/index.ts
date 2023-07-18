@@ -16,6 +16,7 @@ import CounselingCenterPageVue from "@/views/Common/CounselingCenterPage.vue";
 import store from "@/store";
 import PostPageVue from "@/views/Info/PostPage.vue";
 import ThanksYouNewOrderVue from "@/views/Common/ThanksYouNewOrder.vue";
+import Payment from "@/views/Common/Payment.vue";
 import CompanyDetailsVue from "@/views/Backoffice/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHQ/VirtualHqPage.vue";
 import OrderVirtualHqPageVue from "@/views/VirtualHQ/OrderVirtualHqPage.vue";
@@ -51,6 +52,7 @@ const router = createRouter({
         { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
+        { path: '/payment/:orderId/:paymentMethod', name: "Payment", component: Payment },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },
         { path: '/password/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },
         { path: '/user/find/:token', name: "Set new Password", component: ForgotPasswordSetNewPassword },

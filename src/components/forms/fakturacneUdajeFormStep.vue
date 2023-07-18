@@ -48,29 +48,13 @@
         help="Číslo za lomítkom"
       />
   </div>
-
-  <div>
-    <FormKit type="radio" v-model="paymentOptions" label="Spôsob platby?" name="payment_method"
-    :options="
-    [
-      { value: 'iban', label: 'Priamy vklad na účet', help: 'Pošlite vašu platbu priamo na náš bankový účet, ktorý nájdete na ďakovnej stránke po dokončení objednávky.' },
-      { value: 'stripe', label: 'Online kartou', help: 'Platba prostredníctvom platobnej brány Stripe.' }
-    ]"
-    validation="required" />
-
-    <div v-if="paymentOptions == 'stripe'" class="bg-gray-100 my-5 p-4">
-      <stripePaymentComponent ref="childRefComponentForPay"></stripePaymentComponent>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import type Order from '@/types/Order';
 import type Address from '@/types/Address';
 
-const childRefComponentForPay = ref()
 let invoiceAddressIsSame = ref(true);
 const orderingAsCompany = ref(false);
 
@@ -111,7 +95,6 @@ let invoiceAddressForCompany = ref({
 } as Address)
 
 defineExpose({
-  childRefComponentForPay,
   fakturacne_udaje,
   invoiceAddressIsSame,
   orderingAsCompany,

@@ -167,9 +167,6 @@ function newLogSubmit(){
   console.log(subjects_of_business.value?.subjects_of_business);
   console.log("UserAddresssssss original");
   console.log(userAddress.value);
-  console.log()
-  console.log(invoiceData.value.childRefComponentForPay.payWithStripe(1,1))
-
 }
 
 let headquarter = ref({
@@ -391,14 +388,10 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
       console.log("SUPER! Objednávka bola spracovaná.")
       
-      if(invoiceData.value.paymentOptions == "stripe"){
-        await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
-      }
-
       await router.push({
           name:"Thanks You New Order",
           params: {
-            orderId: orderRes.id,
+            orderId: orderRes.id
             }
       })
 
@@ -407,10 +400,12 @@ const newSustmiApp = async (formdata: any, node: any) => {
       errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
     }
     node.clearErrors()
+
   } catch(err: any) {
     errorMsg.value = err
     console.log(err)
     node.setErrors(err.formErrors, err.fieldErrors)
   }
+}
 
 </script>

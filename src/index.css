@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+a {
+  color: theme('colors.bizinix.link');
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 .multiselect {
   border: 1px solid theme('colors.bizinix.border') !important;
   background: theme('colors.gray.bizinix') !important;
@@ -43,6 +51,10 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px theme('colors.gray.bizinix') inset;
   box-shadow: 0 0 0px 1000px theme('colors.gray.bizinix') inset;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill {
+  caret-color: white;
 }
 
 /* #help-input_1 {

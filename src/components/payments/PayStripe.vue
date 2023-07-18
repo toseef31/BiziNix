@@ -25,7 +25,6 @@ import router from "@/router";
 
 const stripeKey = ref('pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi') // test key
 let clientSecret = '';
-let orderId: any;
 let totalForPay = ref(0);
 
 const instanceOptions = ref({
@@ -79,7 +78,7 @@ onBeforeMount(() => {
 })
 
 
-const payWithStripe = (totalForPay: number, orderId: any) => {
+const payWithStripe = (order: any) => {
     // Get stripe element
     const cardElement = card.value.stripeElement
   
@@ -89,7 +88,7 @@ const payWithStripe = (totalForPay: number, orderId: any) => {
       console.log(result)
     })
   
-    payForOrder(totalForPay).then(() => {
+    payForOrder(order.amount).then(() => {
       //console.log("Ja som client secreet: " + clientSecret)
       elms.value.instance.confirmCardPayment(clientSecret, {
         payment_method: {
@@ -102,11 +101,17 @@ const payWithStripe = (totalForPay: number, orderId: any) => {
             toast.error("Platba neprešla, skúste znova zaplatiť, ak sa problem zopakuje prosím kontaktujte nás.")
       } else {
         if (result.paymentIntent.status === 'succeeded') {
+
+          order.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          order.is_paid = true
+          store.dispatch('updateOrderById', order)
+
           toast.success("Platba bola úspešna.")
           router.push({
-            name:"Thanks You New Order",
+            name:"Payment",
             params: {
-              orderId: orderId,
+              orderId: order.id,
+              paymentMethod: 'stripe'
             }
           })
           // Show your customer that the payment has succeeded

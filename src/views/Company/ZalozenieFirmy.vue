@@ -108,9 +108,6 @@
 
 import store from "@/store";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
-import useSteps from "@/components/forms/useStep";
-import { createInput } from '@formkit/vue'
-import formkitCustomMultiSelectVue from "@/components/forms/formkitCustomMultiSelect.vue";
 import router from "@/router";
 import type User from "@/types/User";
 import FooterLayout from "@/components/FooterLayout.vue";
@@ -172,117 +169,9 @@ let headquartersTypes = ref([
 ])
 
 let companyRegDateCheckboxValue = ref("")
-let paymentOptions = ref("")
 let obchodneSidlo = ref("")
 
 let priceForBusinessCategories = ref(0);
-
-// let zakladateliaSpolocnici = ref({
-//   members: [{
-//     company_id: 0,
-//     obchodne_meno: '',
-//     ico: '',
-//     typ_zakladatela: 0, // 1 Fyz Osoba, 2 Prav Osoba
-//     first_name: '',
-//     last_name: '',
-//     title_before: '',
-//     title_after: '',
-//     gender: '',
-//     date_of_birth: '',
-//     rodne_cislo: '',
-//     street: '',
-//     street_number: '',
-//     street_number2: '',
-//     city: '',
-//     psc: '',
-//     country: '',
-//     typ_dokladu_totoznosti: '',
-//     cislo_dokladu_totoznosti: '',
-//     vyska_vkladu: 0,
-//     podiel_v_spolocnosti: 0,
-//     rozsah_splatenia_vkladu: 0,
-//     je_spravca_vkladu: true,
-//     je_zakladatel: false,
-//     je_konatel: false
-//   }]
-// })
-
-// let konatelia = ref({
-//   members: [{
-//     company_id: 0,
-//     first_name: '',
-//     last_name: '',
-//     title_before: '',
-//     title_after: '',
-//     gender: '',
-//     date_of_birth: '',
-//     rodne_cislo: '',
-//     street: '',
-//     street_number: '',
-//     street_number2: '',
-//     city: '',
-//     psc: '',
-//     country: '',
-//     je_konatel: true
-//   }]
-// })
-
-// let fakturacne_udaje = ref({
-//   first_name: '',
-//   last_name: '',
-//   name: '',
-//   ico: '',
-//   dic: '',
-//   ic_dph: '',
-//   address_id: 12
-//   // to do address id
-// })
-
-// let sidloCompanyAddress = ref({
-//   street: '',
-//   street_number: '',
-//   street_number2: '',
-//   city: '',
-//   psc: '',
-//   country: '',
-//   ownerName: ''
-// })
-
-// let companyOrZivnostModel = ref({
-//   name: '',
-//   headquarters_id: 0,
-//   type: 1, // type 1 sro, type 2 živnosť
-//   status: 2, // Zakladanie spoločnosti je v priebehu
-//   ičo: '',
-//   dič: '',
-//   icdph: '',
-//   is_dph: false,
-//   registration_date: '',
-//   owner: 0,
-//   konecny_uzivatelia_vyhod: 0,
-//   sposob_konania_konatelov: 0,
-//   subjects_of_business: [{
-//     id: '',
-//     title: '',
-//     price: 0,
-//     description: '',
-//     category_id: 0
-//   }]
-// })
-// let headquarter = ref({
-//   name: '',
-//   description: 'test',
-//   headquarters_type: 1, // 1 Nebytový priestor, 2 Byt, 3 iná budova, 4 rod dom, 5 Samost stoj garaž
-//   owner_name: '',
-//   price: 0,
-//   registry: false,
-//   forwarding: false,
-//   scanning: false,
-//   shredding: false,
-//   is_virtual: false,
-//   img: 'test',
-//   address_id: 0
-// })
 
 let order = ref({
   payment_date: '' as any,
@@ -318,37 +207,6 @@ let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusine
 
 onBeforeMount( () => {
 
-  // companyOrZivnostModel.value.subjects_of_business.pop()
-
-  // store.dispatch("getAllSubjectOfBusiness")
-  // .then(res => {
-  //   businessCategori.value.shift()
-  //   res.data.data.forEach((element: any) => {
-  //     businessCategori.value.push({
-  //       label: element.title,
-  //       value: element
-  //     })
-  //   })
-
-  //   //businessCategori.value.shift()
-  //   //businessCategori.value = [ ...businessCategori.value ]
-
-  // })
-  //   .catch(err => {
-  //   // sucessMsg.value = false
-  //   // errorMsg.value = err.response.data.errors // response data is from store actions
-  // })
-
-  // store.dispatch("getHeadquartersTypes")
-  // .then(res => {
-  //   headquartersTypes.value.shift()
-  //   res.data.data.forEach((element: any) => {
-  //     headquartersTypes.value.push({
-  //       value: element.id,
-  //       label: element.name
-  //     })
-  //   });
-  // })
 })
 
 function logujData(){
@@ -358,21 +216,8 @@ function logujData(){
   console.log(headquarter.value)
   console.log(companyOrZivnostModel.value)
   //console.log(fakturacne_udaje.value)
-  console.log(paymentOptions.value)
   //console.log(zakladateliaSpolocnici.value)
   //console.log(konatelia.value)
-}
-
-function priceForBusinessOfcategories(){
-  //let val: any = getNode("PredmetPodnikania")?.value;
-  let total = 0;  
-  if(companyOrZivnostModel.value.subjects_of_business){
-    companyOrZivnostModel.value.subjects_of_business.forEach((element: any) => {
-      total = total + element.price;
-      console.log(element.price)
-    });
-  }
-  priceForBusinessCategories.value = total
 }
 
 /* Submiting form and Api calls */
@@ -519,7 +364,6 @@ async function registerInvoiceAddress(invoiceAddress: Address) {
   }
 }
 
-
 async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceAddressId?: any): Promise<any> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceData.value.paymentOptions
@@ -559,77 +403,53 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
 
 }
 
-// async function isEmailAlreadyRegistered(node: any) {
-//   try {
-//     const res = await store.dispatch("isEmailAlreadyRegistered", node);
-//     console.log(res);
-//     return true;
-//   }
-//   catch (error) {
-//     return false;
-//   }
-// }
-
-// async function emailIsUnique(node: any){
-//   const result = await isEmailAlreadyRegistered(node.value)
-//   return result
-// }
-
-// const childRefComponentForPay = ref()
-// const callStripePayment = (totalForPay: number, orderId: any) => {
-//   childRefComponentForPay.value.payWithStripe(totalForPay, orderId)
-// }
-
 const newSustmiApp = async (formdata: any, node: any) => {
 
   try {
 
-  const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
+    const userAddressRes = await registerAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress);
 
-  const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
+    const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
 
-  const hqAddressRes = await registerHqAddress(sidloCompanyAddress.value.hqAddress);
+    const hqAddressRes = await registerHqAddress(sidloCompanyAddress.value.hqAddress);
 
-  const regHqRes = await addHeadquarter(hqAddressRes.address_id);
+    const regHqRes = await addHeadquarter(hqAddressRes.address_id);
 
-  const companyRes = await addCompany(regUserRes.user_id, regHqRes.id);
-  
-  await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
-  await addMultipleCompanyMembersKonatelia(companyRes.company.id)
+    const companyRes = await addCompany(regUserRes.user_id, regHqRes.id);
+    
+    await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
+    await addMultipleCompanyMembersKonatelia(companyRes.company.id)
 
 
-  let invoiceAddressRes: any;
-  if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
-  {
-    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
-  }
-  else if(invoiceData.value.orderingAsCompany)
-  {
-    invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
-  }
-
-  const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
-  
-  if(orderRes.id){
-
-    console.log("SUPER! Objednávka bola spracovaná.")
-
-    if(invoiceData.value.paymentOptions == "stripe"){
-      await invoiceData.value.childRefComponentForPay.payWithStripe(totalForPay.value, orderRes.id)
+    let invoiceAddressRes: any;
+    if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
+    {
+      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+    }
+    else if(invoiceData.value.orderingAsCompany)
+    {
+      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
     }
 
-    await router.push({
-        name:"Thanks You New Order",
-        params: {
-          orderId: orderRes.id,
-          }
-    })
+    const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
+    
+    if(orderRes.id){
 
-    }  
-    else {
-    errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
-    }
-    node.clearErrors()
+      console.log("SUPER! Objednávka bola spracovaná.")
+
+      await router.push({
+          name:"Thanks You New Order",
+          params: {
+            orderId: orderRes.id
+            }
+      })
+
+      }  
+      else {
+      errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'
+      }
+      node.clearErrors()
+            
   } catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors);
     console.error(err);
