@@ -8,7 +8,7 @@
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div class="py-8 px-4 shadow border border-bizinix-border sm:rounded-lg sm:px-10">
 
-        <div v-if="errorMsg" class="flex items-center justify-between py-3 mb-3 px-4 bg-red-500 text-white rounded">
+        <div v-if="errorMsg" class="flex items-center justify-between py-3 mb-3 px-4 bg-red-500 rounded">
           {{ errorMsg }}
           <span @click="errorMsg=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -16,7 +16,7 @@
             </svg>
           </span>
         </div>
-        <div v-if="emailWithPasswordWasSend" class="flex items-center justify-between py-3 mb-3 px-4 bg-green-500 text-white rounded">
+        <div v-if="emailWithPasswordWasSend" class="flex items-center justify-between py-3 mb-3 px-4 bg-green-500 rounded">
           {{ emailWithPasswordWasSend }}
           <span @click="emailWithPasswordWasSend=''" class="rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
