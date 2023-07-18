@@ -63,9 +63,15 @@
               <FormKit
                 type="text"
                 name="name"
-                validation="required"
                 v-model="currentCompany.ico"
                 label="IČO"
+                :validation-rules="{ icoIsUnique }"
+                validation="required|icoIsUnique"
+                :validation-messages="{
+                  icoIsUnique: 'Táto firma už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
+                }"
+                validation-visibility="live"
+                v-on:input="checkIcoOwner"
               />
               <FormKit
                 type="text"
@@ -137,9 +143,8 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { computed, ref, onBeforeMount } from "vue";
+import { computed, ref, onMounted } from "vue";
 import type Address from "@/types/Address";
-import type Company from "@/types/Company";
 import type Mail from "@/types/Mail";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
 
@@ -150,19 +155,19 @@ const companyAddress = computed(
 
 const newCompany = ref({
   id: 0,
-  name: "Pridať novú spoločnosť",
+  name: "Nová spoločnosť",
   type: 1,
   status: 1,
   ico: "Zadajte IČO",
-  dic: "Zadajte DIČ",
+  dic: "",
   headquarters_id: 0,
   is_dph: false,
-  owner: 0,
-  is_hq_virtual: true
+  owner: user.value.userId? Number(user.value.userId): 0,
+  is_hq_virtual: false
 });
 
 const companies = ref([] as any);
-const currentCompany = ref({} as Company);
+const currentCompany = ref({} as any);
 const mails = ref([] as Mail[]);
 
 const firstTimeActivation = computed(() => {
@@ -182,6 +187,31 @@ const address = ref({
   country: "",
   psc: "",
 });
+
+async function isIcoAlreadyRegistered(node: any) {
+  try {
+      const res = await store.dispatch("isIcoAlreadyRegistered", node);
+      return res;
+  } catch (error) {
+      return false;
+  }
+}
+
+async function icoIsUnique(node: any) {
+  const result = await isIcoAlreadyRegistered(node.value);
+  return result;
+}
+
+async function checkIcoOwner(node: any) {
+  const companyRes = companies.value.find(
+    (item: any) => item.ico == node
+  );
+  if(companyRes) {
+    currentCompany.value = companyRes;
+  } else {
+    currentCompany.value = newCompany.value;
+  }
+}
 
 async function switchSelect(event: any) {
   currentCompany.value = companies.value.find(
@@ -210,7 +240,7 @@ async function switchSelect(event: any) {
 
 }
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
     await store
       .dispatch("getAllCompaniesByUserId", store.state.user.userId)
@@ -229,6 +259,9 @@ onBeforeMount(async () => {
                 store.state.selectedCompanyAddress = address.value;
               });
           });
+      }).catch((err) => {
+        currentCompany.value = newCompany.value;
+        console.log(err)
       });
     companies.value.push(newCompany.value);
   } catch (err){
@@ -237,6 +270,7 @@ onBeforeMount(async () => {
 });
 
 defineExpose({
+  isIcoAlreadyRegistered,
   companyAddress,
   currentCompany,
   headquarter
