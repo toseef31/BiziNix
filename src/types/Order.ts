@@ -29,4 +29,5 @@ export default interface Order {
     price_vat: number,
     description: string
   }[],
+  order_type: string
 }

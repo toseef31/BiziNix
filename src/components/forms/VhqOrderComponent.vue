@@ -89,7 +89,7 @@ let addressFromResponse: any,
 const headquarter = ref({
   name: "",
   description: "test",
-  headquarters_type: 1, // 1 Nebytový priestor, 2 Byt, 3 iná budova, 4 rod dom, 5 Samost stoj garaž
+  headquarters_type: 1,
   owner_name: "",
   price: 0,
   registry: false,
@@ -103,9 +103,10 @@ const headquarter = ref({
 const order = ref({
   payment_date: "" as any,
   payment_method: "",
-  description: "test",
-  amount: 12, // final cena s dph
-  amount_vat: 2, // vat je čisto len dph
+  order_type: 'vhq',
+  description: "Objednávka virtuálneho sídla",
+  amount: 12,
+  amount_vat: 2,
   is_paid: false,
   user_id: 0,
   company_id: 0,
@@ -114,8 +115,8 @@ const order = ref({
   items: [
     {
       description: "Zakúpenie virtuálneho sídla",
-      price: 12, // finalna cena za polozku s dph
-      price_vat: 2, // toto je len dph
+      price: 12,
+      price_vat: 2,
     },
   ],
   fakturacne_udaje: [
@@ -163,7 +164,6 @@ function registerAddress(): Promise<Response> {
   return store
     .dispatch("registerAddress", invoiceDataRef.value.userAddress)
     .then((res) => {
-      console.log("Registering address: " + JSON.stringify(res));
       addressFromResponse = res;
       return addressFromResponse;
     })
@@ -176,10 +176,9 @@ function registerUser(): Promise<Response> {
   invoiceDataRef.value.userData.address_id = addressFromResponse.address_id;
 
   return store
-    .dispatch("registerUser", invoiceDataRef.value.userData) // dispatch -> register action in store
+    .dispatch("registerUser", invoiceDataRef.value.userData)
     .then((res) => {
       userFromResponse = res;
-      console.log("Registering user: " + JSON.stringify(res));
       return userFromResponse;
     })
     .catch((err) => {
@@ -206,7 +205,6 @@ function addHeadquarter(): Promise<Response> {
   return store
     .dispatch("addHeadquarter", headquarter.value)
     .then((res) => {
-      console.log("Adding hq: " + JSON.stringify(res));
       hqFromResponse = res.headquarters;
       return hqFromResponse;
     })
@@ -222,9 +220,7 @@ function addCompany(): Promise<Response> {
   return store
     .dispatch("addCompany", companyDataRef.value.company)
     .then((res) => {
-      console.log("Adding company: " + JSON.stringify(res));
       companyFromResponse = res;
-      console.log("Company from Res " + JSON.stringify(companyFromResponse));
       return companyFromResponse;
     })
     .catch((err) => {
@@ -237,7 +233,6 @@ function addOrder(): Promise<Response> {
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
-  order.value.payment_method = invoiceDataRef.value.paymentOptions;
   order.value.company_id = companyFromResponse.company.id;
   order.value.user_id = userFromResponse.user_id;
 
@@ -256,7 +251,6 @@ function addOrder(): Promise<Response> {
   return store
     .dispatch("addOrder", order.value)
     .then((res) => {
-      console.log("Adding order: " + JSON.stringify(res));
       orderFromRes = res.order;
       return orderFromRes;
     })
@@ -266,7 +260,6 @@ function addOrder(): Promise<Response> {
 }
 
 const submitApp = async (formData: any, node: any) => {
-  console.log(formData);
   showModal();
   try {
     registerAddress().then(() => {

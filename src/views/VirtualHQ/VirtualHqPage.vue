@@ -173,7 +173,7 @@
               </div>
               <div class="text-white px-2 mb-2 text-sm">
                 {{ vhq.address.street }} {{ vhq.address.street_number }} /
-                {{ currentVhq.address.street_number2 }}, {{ vhq.address.psc }}
+                {{ vhq.address.street_number2 }}, {{ vhq.address.psc }}
                 {{ vhq.address.city }}
               </div>
               <!---->

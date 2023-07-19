@@ -121,6 +121,7 @@ const firstTimeActivation = computed(() => {
 
 let order = ref({
   payment_method: '',
+  order_type: 'documents',
   description: 'test',
   amount: 0,
   amount_vat: 0,

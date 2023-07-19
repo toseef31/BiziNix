@@ -157,28 +157,6 @@
               />
             </div>
             <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="orderingAsCompany"/>
-
-            <div class="w-full">
-              <FormKit
-                type="radio"
-                v-model="paymentOptions"
-                label="Spôsob platby?"
-                name="payment_method"
-                :options="[
-                  {
-                    value: 'iban',
-                    label: 'Priamy vklad na účet',
-                    help: 'Pošlite vašu platbu priamo na náš bankový účet, ktorý nájdete na ďakovnej stránke po dokončení objednávky.',
-                  },
-                  {
-                    value: 'stripe',
-                    label: 'Online kartou',
-                    help: 'Platba prostredníctvom platobnej brány Stripe.',
-                  },
-                ]"
-                validation="required"
-              />
-            </div>
           </FormKit>
         </div>
         </div>
@@ -203,8 +181,6 @@ const userAddress = ref({} as Address);
 const orderingAsCompany = ref(false);
 
 const invoiceAddressIsSame = ref(true);
-const paymentOptions = ref("iban");
-const paymentOptionsLength = ref("mesiac");
 
 const fakturacne_udaje = ref({
   first_name: "",
@@ -247,8 +223,6 @@ async function emailIsUnique(node: any) {
 
 defineExpose({
   isInvoiceAddressSameAsCompany,
-  paymentOptions,
-  paymentOptionsLength,
   invoiceAddressIsSame,
   invoiceAddress,
   fakturacne_udaje,
