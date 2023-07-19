@@ -165,8 +165,6 @@ function closeModal() {
 }
 
 function addOrder(): Promise<Response> {
-  order.value.payment_method = invoiceDataRef.value.paymentOptions;
-
   if(companyFromResponse) {
     order.value.company_id = companyFromResponse.company.id;
   } else {
@@ -196,60 +194,24 @@ function addOrder(): Promise<Response> {
     },
   ];
 
-  if (invoiceDataRef.value.paymentOptions == "iban") {
-    switch (invoiceDataRef.value.paymentOptionsLength[0]) {
-      case "mesiac":
-        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = monthlyPaymentDate;
-        order.value.amount = 5;
-        order.value.amount_vat = 5 * 0.2;
-        items = [
-          {
-            price: 5,
-            price_vat: 5 * 0.2,
-            description: "Objednávka balíčku dokladov na 1 mesiac",
-          },
-        ];
-        break;
-      case "rok":
-        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-        order.value.amount = 50;
-        order.value.amount_vat = 50 * 0.2;
-        items = [
+  if(firstTimeActivation.value) {
+    items = [
+      {
+        price: 0,
+        price_vat: 0,
+        description: "Objednávka balíčku dokladov na 3 mesiace zadarmo",
+      },
+    ];
+  } else {
+    order.value.amount = 50;
+    order.value.amount_vat = 50 * 0.2;
+    items = [
           {
             price: 50,
             price_vat: 50 * 0.2,
             description: "Objednávka balíčku dokladov na rok",
           },
         ];
-        break;
-    }
-  } else if (invoiceDataRef.value.paymentOptions == "stripe") {
-    switch (invoiceDataRef.value.paymentOptionsLength[0]) {
-      case "mesiac":
-        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = monthlyPaymentDate;
-        order.value.amount = 5;
-        order.value.amount_vat = 5 * 0.2;
-        items = [
-          {
-            price: 5,
-            price_vat: 5 * 0.2,
-            description: "Objednávka balíčku dokladov na 1 mesiac",
-          },
-        ];
-        break;
-      case "rok":
-        companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-        order.value.amount = 50;
-        order.value.amount_vat = 50 * 0.2;
-        items = [
-          {
-            price: 50,
-            price_vat: 50 * 0.2,
-            description: "Objednávka balíčku dokladov na rok",
-          },
-        ];
-        break;
-    }
   }
 
   order.value.items = items;
@@ -260,7 +222,6 @@ function addOrder(): Promise<Response> {
   order.value.description = "Objednávka balíčku dokladov";
   order.value.is_paid = false;
 
-  console.log(order.value);
   return store
     .dispatch("addOrder", order.value)
     .then((res) => {
@@ -290,9 +251,7 @@ async function submitApp(formData: any){
     invoiceDataRef.value.isInvoiceAddressSameAsCompany();
     if (firstTimeActivation.value) {
       await continueFirstTimeActivation();
-    } else if (invoiceDataRef.value.paymentOptions == "iban") {
-      await continueWithoutPayment();
-    } else if(invoiceDataRef.value.paymentOptions == "stripe") {
+    } else {
       await continueToPayment();
     }
   } catch (err: any) {
@@ -368,48 +327,6 @@ async function continueFirstTimeActivation() {
   }
 }
 
-async function continueWithoutPayment() {
-  try {
-    if(invoiceDataRef.value.invoiceAddressIsSame) {
-      invoiceDataRef.value.fakturacne_udaje.address_id = companyDataRef.value.companyAddress.id;
-    } else {
-      invoiceDataRef.value.fakturacne_udaje.address_id = invoiceDataRef.value.invoiceAddress.id;
-    }
-
-    const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
-    if(result) {
-      await addCompany().then(async (res) => {
-            if(companyFromResponse) {
-              addOrder().then(() => {
-                closeModal();
-                router.push({
-                  name: "Thanks You New Order",
-                  params: {
-                    orderId: orderFromRes.id,
-                  },
-                });
-            });
-            } else {
-              console.log(res)
-            }
-          });
-    } else {
-      addOrder().then(() => {
-        closeModal();
-        router.push({
-          name: "Thanks You New Order",
-          params: {
-            orderId: orderFromRes.id,
-          },
-        });
-      });
-    }    
-  } catch (err: any) {
-    console.log(err);
-    closeModal();
-  }
-}
-
 async function continueToPayment() {
   try {
     if(invoiceDataRef.value.invoiceAddressIsSame) {
@@ -423,21 +340,13 @@ async function continueToPayment() {
       await addCompany().then(async (res) => {
             if(companyFromResponse) {
               addOrder().then(async () => {
-                if (invoiceDataRef.value.paymentOptionsLength[0] == 'mesiac') {
-                  companyFromResponse.company.fakturacia_zaplatene_do = monthlyPaymentDate;
-                  const totalForPay = order.value.amount;
-                  await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+                  companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
                   router.push({
                     name: "Thanks You New Order",
                     params: {
                       orderId: orderFromRes.id,
                     },
                   });
-                } else {
-                  companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
-                  const totalForPay = order.value.amount;
-                  await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
-                }
                 store
                   .dispatch("updateCompany", companyFromResponse.company)
                   .then(() => {
@@ -460,21 +369,13 @@ async function continueToPayment() {
           });
     } else {
       addOrder().then(async () => {
-        if (invoiceDataRef.value.paymentOptionsLength == 'mesiac') {
-          companyDataRef.value.currentCompany.fakturacia_zaplatene_do = monthlyPaymentDate;
-          const totalForPay = order.value.amount;
-          await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
+          companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
           router.push({
             name: "Thanks You New Order",
             params: {
               orderId: orderFromRes.id,
             },
           });
-        } else {
-          companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-          const totalForPay = order.value.amount;
-          await invoiceDataRef.value.documentsStripeComponentRef.payWithStripe(totalForPay, orderFromRes.id);
-        }
         store
           .dispatch("updateCompany", companyDataRef.value.currentCompany)
           .then(() => {

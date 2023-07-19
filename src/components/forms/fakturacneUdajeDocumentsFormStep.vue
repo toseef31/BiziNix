@@ -208,46 +208,6 @@
               </div>
             </div>
           </FormKit>
-          <div class="w-full" v-show="!firstTimeActivation">
-            <div class="flex flex-row gap-11">
-              <FormKit
-                type="radio"
-                v-model="paymentOptions"
-                label="Spôsob platby?"
-                name="payment_method"
-                :options="[
-                  {
-                    value: 'iban',
-                    label: 'Priamy vklad na účet',
-                  },
-                  {
-                    value: 'stripe',
-                    label: 'Online kartou',
-                  },
-                ]"
-              />
-              <FormKit
-                type="checkbox"
-                v-model="paymentOptionsLength"
-                label="Na ako dlho chcete zaplatiť?"
-                name="payment_method_length"
-                validation="max:1"
-                :options="[
-                  {
-                    value: 'mesiac',
-                    label: 'Platba na 1 mesiac',
-                  },
-                  {
-                    value: 'rok',
-                    label: 'Platba na rok',
-                  },
-                ]"
-              />
-            </div>
-            <div v-if="paymentOptions == 'stripe'" class="bg-gray-100 my-5 p-4">
-              <stripePaymentComponent ref="documentsStripeComponentRef"></stripePaymentComponent>
-            </div>
-          </div>
         </div>
 </template>
 
@@ -257,10 +217,8 @@ import { ref, computed, onMounted } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
-import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 
 const activeTab = ref(1);
-const documentsStripeComponentRef = ref();
 const user = computed(() => store.state.user);
 const company = computed(() => store.state.selectedCompany as Company);
 const hqAddress = computed(() => store.state.selectedCompanyAddress as Address);
@@ -268,13 +226,7 @@ const hqAddress = computed(() => store.state.selectedCompanyAddress as Address);
 const userData = computed(() => store.state.user.data as User);
 const invoiceAddress = ref({} as Address);
 
-const firstTimeActivation = computed(() => {
-  return company.value.fakturacia_zaplatene_do ? false : true;
-});
-
 const invoiceAddressIsSame = ref(true);
-const paymentOptions = ref("");
-const paymentOptionsLength = ref();
 
 const fakturacne_udaje = ref({
   first_name: "",
@@ -363,13 +315,10 @@ onMounted(async () => {
 
 defineExpose({
   isInvoiceAddressSameAsCompany,
-  paymentOptions,
-  paymentOptionsLength,
   invoiceAddressIsSame,
   invoiceAddress,
   fakturacne_udaje,
-  userData,
-  documentsStripeComponentRef
+  userData
 })
 
 </script>
