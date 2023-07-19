@@ -2,11 +2,16 @@
     <main class="bg-gray-bizinix text-white">
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div v-if="order">
-          <div class="text-center">
-            <BadgeCheckIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
-            <h1 class="text-6xl my-6 font-bold">Ďakujeme vám.</h1>
-            <div class="text-xl">
+          <div class="flex p-4">
+            <div>
+              <BadgeCheckIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
+              <h1 class="text-6xl my-6 font-bold">Ďakujeme vám.</h1>
+              <div class="text-xl">
                 Vaša objednávka <b>#{{ order.id }}</b> bola prijatá na spracovanie o ďalšom postupe Vás budeme informovať.
+              </div>
+            </div>
+            <div>
+              <img src="../../assets/bizinix thank u robot.png" class="w-52">
             </div>
           </div>
           <div class="flex my-6 flex-col md:flex-row">
@@ -51,12 +56,16 @@
                 <fieldset class="mt-4">
                   <div class="space-y-4">
                     <label class="flex items-center mb-4">
-                      <input type="radio" name="paymentMethod" value="iban" v-model="selectedOptionForPay" @change="handleRadioChange" class="w-5 h-5">
+                      <input type="radio" name="paymentMethod" value="iban"
+                        v-model="selectedOptionForPay" @change="handleRadioChange"
+                        class="w-5 h-5" required >
                       <span class="ml-2 text-lg">Bankovým prevodom</span>
                       <img src="../../assets/logo-small.png" alt="Bankovým prevodom" class="ml-2 h-12">
                     </label>
                     <label class="flex items-center mb-4">
-                      <input type="radio" value="stripe" v-model="selectedOptionForPay" @change="handleRadioChange" class="w-5 h-5" name="paymentMethod">
+                      <input type="radio" value="stripe" v-model="selectedOptionForPay"
+                        @change="handleRadioChange" class="w-5 h-5" 
+                        name="paymentMethod" required >
                       <span class="ml-2 text-lg">Platba kartou</span>
                       <img src="../../assets/stripe.png" alt="Platba kartou" class="ml-2 w-32">
                     </label>
