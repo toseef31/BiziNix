@@ -338,6 +338,7 @@ async function continueToPayment() {
 
     const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
     if(result) {
+      
       await addCompany().then(async (res) => {
             if(companyFromResponse) {
               addOrder().then(async () => {

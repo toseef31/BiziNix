@@ -1,5 +1,5 @@
 <template>
-        <div class="text-4xl font-bold">Fakturácia a účet</div>
+        <div class="text-4xl font-bold">Účet a Fakturacia</div>
         <div class="my-2" v-if="!user.userId">
           Už máte u nás účet?
           <router-link

@@ -26,7 +26,6 @@ interface PaymentResult {
 
 const stripeKey = ref('pk_test_51MITbvGgtUfdovJEpJnABGplaqRoPVkj91G43vWG9d9wCD3KIWdQCU7SgQ6Ux35xG1QCt4Y0C18M8nagqfyRPmIB00tNZZq9Hi')
 let clientSecret = ''
-let totalForPay = ref(0)
 
 const instanceOptions = ref({
   // Stripe instance options here
