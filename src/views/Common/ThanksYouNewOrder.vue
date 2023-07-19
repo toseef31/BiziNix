@@ -11,7 +11,7 @@
               </div>
             </div>
             <div>
-              <img src="../../assets/bizinix thank u robot.png" class="w-52">
+              <img src="../../assets/bizinix-robot-heart.png" class="w-52">
             </div>
           </div>
           <div class="flex my-6 flex-col md:flex-row">
