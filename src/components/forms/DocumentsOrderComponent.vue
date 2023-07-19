@@ -338,8 +338,8 @@ async function continueToPayment() {
 
     const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
     if(result) {
-      
-      await addCompany().then(async (res) => {
+      try {
+        await addCompany().then(async (res) => {
             if(companyFromResponse) {
               addOrder().then(async () => {
                   companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
@@ -366,9 +366,21 @@ async function continueToPayment() {
                   });
               });
             } else {
-              console.log(res)
+              console.log(res);
             }
           });
+      } catch {
+        addOrder().then(async () => {
+                  companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
+              });
+      }
+      
     } else {
       addOrder().then(async () => {
           companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
