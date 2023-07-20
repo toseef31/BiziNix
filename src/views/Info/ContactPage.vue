@@ -29,15 +29,15 @@
         </p>
       </div>
       <div class="flex mt-20 w-full">
-        <div class="flex-1 flex flex-col py-10 items-center justify-center">
-          <div class="text-3xl font-bold text-teal-500">
+        <div class="flex-1 flex flex-col py-10 justify-center pl-10">
+          <div class="text-3xl font-bold">
             Zákaznícka<br />
             podpora
           </div>
-          <div class="text-white text-base mt-4 text-grey-800">
+          <div class=" text-base mt-4">
             <a href="tel:+421908478270">+421 908 478 270</a>
           </div>
-          <div class="text-white text-base mt-4 text-grey-800">
+          <div class="text-base mt-4">
             <a href="mailto:support@bizinix.sk">support@bizinix.sk</a>
           </div>
         </div>

@@ -303,11 +303,11 @@
                 <input
                   :checked="preberanie"
                   type="checkbox"
-                  id="checkbox"
+                  id="preberanie"
                   class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                   @change="preberanieChanged($event)"
                 />
-                <label for="checkbox" class="pl-2">4€/mesiac</label>
+                <label for="preberanie" class="pl-2">4€/mesiac</label>
               </div>
             </div>
             <!------>
@@ -333,11 +333,11 @@
                 <input
                   :checked="preposlanie"
                   type="checkbox"
-                  id="checkbox"
+                  id="preposielanie"
                   @change="preposielanieChanged($event)"
                   class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
-                <label for="checkbox" class="pl-2">1€/mesiac</label>
+                <label for="preposielanie" class="pl-2">1€/mesiac</label>
               </div>
             </div>
             <!------>
@@ -363,11 +363,11 @@
                 <input
                   :checked="scanovanie"
                   type="checkbox"
-                  id="checkbox"
+                  id="scanovanie"
                   @change="scanovanieChanged($event)"
                   class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
-                <label for="checkbox" class="pl-2">5€/mesiac</label>
+                <label for="scanovanie" class="pl-2">5€/mesiac</label>
               </div>
             </div>
             <!------>
@@ -393,11 +393,11 @@
                 <input
                   :checked="skartovanie"
                   type="checkbox"
-                  id="checkbox"
+                  id="skartovanie"
                   @change="skartovanieChanged($event)"
                   class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
-                <label for="checkbox" class="pl-2">2€/mesiac</label>
+                <label for="skartovanie" class="pl-2">2€/mesiac</label>
               </div>
             </div>
             <!------>
@@ -418,13 +418,13 @@
                     d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
                   />
                 </svg>
-                <span class="shrink pr-10">Založiť novú firmu</span>
+                <span class="shrink pr-10">Chcem sídlo na firmu, která ešte neexistuje</span>
               </div>
               <div>
                 <input
                   :checked="newCompany"
                   type="checkbox"
-                  id="checkbox"
+                  id="nova"
                   @change="newCompanyChanged($event)"
                   class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
                 />
@@ -452,7 +452,7 @@
                 v-on:click="createNewOrder()"
                 class="px-6 py-2 hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 hover:border hover:border-teal-500 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center"
               >
-                Vybrať
+                Pokračovať
               </button>
             </div>
           </div>
