@@ -61,7 +61,7 @@
   </div>
 
   <!-- DRUHA SEKCIA -->
-  <div class="bg-gray-900 pt-40">
+  <div class="bg-gray-900 pt-40 relative -z-10">
     <img src="@/assets/dots_h.png" class="absolute right-8 max-w-xl" />
     <div>
       <div class="container flex-col justify-center mx-auto flex h-full">
@@ -83,19 +83,18 @@
 
   <!-- TRETIA SEKCIA -->
   <div
-    class="relative z-0 h-full w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
+    class="w-full bg-cover bg-local bg-no-repeat bg-center"
     style="
-      height: calc(85vh);
       background-image: url('../src/assets/3.png');
     "
   >
     <div
-      class="w-full flex h-full"
+      class="w-full"
       style="
         background-image: linear-gradient(to top,rgba(17, 24, 39, 0.85) 0%,rgba(17, 24, 39, 1) 100%);
       "
     >
-      <div class="mx-auto flex pb-8 w-full justify-center">
+      <div class="mx-auto flex w-full justify-center">
         <!--NAJOBLUBENEJSIE-->
         <div>
           <section>
@@ -296,7 +295,7 @@
   </div>
 
   <!-- STVRTA SEKCIA -->
-  <div class="bg-gray-800 text-white z-2 py-6">
+  <div class="bg-gray-800 text-white py-6">
     <div class="flex flex-row container justify-center mx-auto py-6">
       <div class="flex flex-col px-16 self-center">
         <span class="text-2xl font-bold"
