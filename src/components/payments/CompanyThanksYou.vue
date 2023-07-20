@@ -3,8 +3,8 @@
         <div v-if="order">
             <div class="flex p-4">
                 <div>
-                    <BadgeCheckIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
-                    <h1 class="text-6xl my-6 font-bold">Ďakujeme vám.</h1>
+                    <CurrencyEuroIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
+                    <h1 class="text-6xl my-6 font-bold">Ďakujeme Vám.</h1>
                     <div class="text-xl">
                         Vaša objednávka <b>#{{ order.id }}</b> bola prijatá na spracovanie o ďalšom postupe Vás budeme informovať.
                     </div>
@@ -88,7 +88,7 @@
 import store from "@/store";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { BadgeCheckIcon } from "@heroicons/vue/outline";
+import { CurrencyEuroIcon } from "@heroicons/vue/outline";
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import router from "@/router";
 

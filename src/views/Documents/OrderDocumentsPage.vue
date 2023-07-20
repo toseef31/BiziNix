@@ -76,13 +76,11 @@
   <div class="bg-gray-800 text-white">
     <CounselingCenter></CounselingCenter>
     <Reviews></Reviews>
-    <FooterLayout></FooterLayout>
   </div>
 </template>
 
 <script setup lang="ts">
 import DocumentsOrderComponent from "../../components/forms/DocumentsOrderComponent.vue";
-import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 </script>

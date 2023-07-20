@@ -464,14 +464,13 @@
   <div class="bg-gray-800 text-white">
     <CounselingCenter></CounselingCenter>
     <Reviews></Reviews>
-    <FooterLayout></FooterLayout>
   </div>
 </template>
 
 <script setup lang="ts">
 import store from "@/store";
 import { ref, computed, onBeforeMount, reactive } from "vue";
-import FooterLayout from "@/components/FooterLayout.vue";
+
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import { ChevronDownIcon } from "@heroicons/vue/outline";

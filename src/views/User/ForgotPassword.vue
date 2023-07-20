@@ -37,13 +37,12 @@
       </div>
     </div>
   </div>
-  <FooterLayout></FooterLayout>
+  
 </template>
 
 <script setup lang="ts">
 import store from '@/store';
 import { ref } from 'vue';
-import FooterLayout from '@/components/FooterLayout.vue';
 
 const user = {
   email: '',

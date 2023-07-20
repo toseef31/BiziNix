@@ -38,14 +38,14 @@
       </div>
     </div>
   </div>
-  <FooterLayout></FooterLayout>  
+    
 </template>
 
 <script setup lang="ts">
 import store from '@/store';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import FooterLayout from "@/components/FooterLayout.vue";
+
 
 const router = useRouter();
 

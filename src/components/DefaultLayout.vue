@@ -517,6 +517,7 @@
     </transition>
   </Popover>
   <router-view></router-view>
+  <FooterLayout></FooterLayout>
 </template>
 
 <script setup lang="ts">
@@ -543,11 +544,12 @@ import {
 
 import { ChevronDownIcon } from "@heroicons/vue/solid";
 import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
-
+import FooterLayout from "@/components/FooterLayout.vue";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
 import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+
 
 const store = useStore();
 const router = useRouter();

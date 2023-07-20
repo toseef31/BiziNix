@@ -101,7 +101,6 @@
       </div> 
     </div>
   </div>
-  <FooterLayout></FooterLayout>
 </template>
 
 <script setup lang="ts">
@@ -110,7 +109,6 @@ import store from "@/store";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
-import FooterLayout from "@/components/FooterLayout.vue";
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
 import obchodneSidloFormStep from "@/components/forms/obchodneSidloFormStep.vue";

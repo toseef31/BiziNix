@@ -22,9 +22,9 @@
           <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </template>
+      <div class="p-4 text-center">Ďakujeme za dôveru.</div>
     </div>
   </main>
-  <FooterLayout></FooterLayout>
 </template>
 
 <script setup lang="ts">
@@ -32,7 +32,6 @@ import store from "@/store";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { EmojiSadIcon } from "@heroicons/vue/outline";
-import FooterLayout from "@/components/FooterLayout.vue";
 import CompanyThanksYou from "@/components/payments/CompanyThanksYou.vue";
 import DocumentsThanksYou from "@/components/payments/DocumentsThanksYou.vue";
 import VhqThanksYouVue from "@/components/payments/VhqThanksYou.vue";

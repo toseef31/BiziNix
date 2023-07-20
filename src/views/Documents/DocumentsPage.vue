@@ -448,12 +448,10 @@
 
   <div class="bg-gray-800 text-white">
     <Reviews></Reviews>
-    <FooterLayout></FooterLayout>
   </div>
 </template>
 
 <script setup lang="ts">
-import FooterLayout from "@/components/FooterLayout.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import { CheckIcon, XIcon } from "@heroicons/vue/outline";
 import Reviews from "@/components/Reviews.vue";
