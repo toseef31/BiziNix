@@ -1,52 +1,41 @@
 <template>
   <footer>
-    <div class="w-full bg-[url('../src/assets/footer-2.png')] bg-cover bg-no-repeat bg-top pt-36 pb-8">
-      <div class="container mx-auto flex">
-        <div class="flex-1 text-white font-bold text-xl">
-          <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
-            Firmy a ich správa
+    <div class="text-white w-full bg-gradient-to-b from-gray-bizinix to-gray-800 pt-36 pb-8">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row">
+        <div class="flex-1 p-4 font-bold text-xl">
+            <router-link to="/moj/dashboard" class="block flink">Firmy a ich správa</router-link>
+            <router-link to="/documents" class="block flink">Faktúry, zmluvy a iné dokumenty</router-link>
+            <router-link to="/counseling-center" class="block flink">Centrum poradenstva</router-link>
+        </div>
+        <div class="flex-1 p-4 text-base">
+          <div
+            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
+          >
+            <router-link to="/contact" class="flink">Kontakt</router-link>
           </div>
           <div
-            class="hover:cursor-pointer hover:opacity-75 my-4 hover:underline"
+            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
           >
-            <a href="/documents"
-              >Faktúry, zmluvy a iné <br />
-              dokumenty</a
-            >
+            <router-link to="/o-nas" class="flink">O firme</router-link>
           </div>
-          <div class="hover:cursor-pointer hover:opacity-75 hover:underline">
-            <a href="/counseling-center">Centrum poradenstva</a>
+          <div
+            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
+          >
+            <router-link to="/pricelist" class="flink">Cenník</router-link>
+          </div>
+          <div
+            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
+          >
+            <router-link to="/login" class="flink">Prihlásiť sa</router-link>
+          </div>
+          <div
+            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
+          >
+            <router-link to="/posts" class="flink">Články</router-link>
           </div>
         </div>
-        <div class="flex-1 text-white text-base">
-          <div
-            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
-          >
-            <a href="/contact">Kontakt</a>
-          </div>
-          <div
-            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
-          >
-            <a href="/o-nas">O firme</a>
-          </div>
-          <div
-            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
-          >
-            <a href="/pricelist">Cenník</a>
-          </div>
-          <div
-            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
-          >
-            <router-link to="/login" class="" >Prihlásiť sa</router-link>
-          </div>
-          <div
-            class="hover:cursor-pointer hover:opacity-75 mt-2 hover:underline"
-          >
-            <a href="/posts">Články</a>
-          </div>
-        </div>
-        <div class="flex-1 relative">
-          <div class="text-white text-base font-medium">Novinky</div>
+        <div class="flex-1 p-4 relative">
+          <div class="text-base font-medium">Novinky</div>
           <div class="w-[350px]">
             <div class="mt-2">
               <input
@@ -55,12 +44,12 @@
               />
             </div>
             <div class="flex mt-1">
-              <div class="shrink text-sm text-white">
+              <div class="shrink text-sm">
                 Buďte informovaný o všetkom, čo sa deje vo svete podnikania
               </div>
               <button>
                 <div
-                  class="bg-teal-500 shrink-0 flex items-center justify-center text-white rounded-lg ml-2"
+                  class="bg-teal-500 shrink-0 flex items-center justify-center rounded-lg ml-2"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -82,17 +71,9 @@
           </div>
 
           <div class="flex items-center justify-between mt-16">
-            <div class="text-white text-lg">
-              <div
-                class="hover:cursor-pointer hover:opacity-75 hover:underline"
-              >
-                <a href="/obchodne-podmienky">Obchodné podmienky</a>
-              </div>
-              <div
-                class="hover:cursor-pointer hover:opacity-75 hover:underline"
-              >
-                <a href="/gdpr">Ochrana osobných údajov</a>
-              </div>
+            <div class="text-lg">
+                <router-link to="/obchodne-podmienky" class="block flink">Obchodné podmienky</router-link>
+                <router-link to="/gdpr" class="block flink">Ochrana osobných údajov</router-link>
             </div>
             <img src="../assets/logo-small.png" class="w-12 h-auto" />
           </div>

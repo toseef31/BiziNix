@@ -1,26 +1,18 @@
 <template>
-  <div
-    class="relative z-0 h-full w-full max-h-full"
-    style="
-      height: calc(75vh);
-      background: url('../src/assets/pozadie.png') 0% 0% / cover no-repeat fixed;
-    "
+  <div class="w-full justify-center bg-center items-center bg-black bg-opacity-70 bg-cover bg-blend-overlay
+    bg-[url('../src/assets/pozadie.png')]"
   >
-    <div
-      class="w-full pb-24 flex h-full"
-      style="background-color: rgba(0, 0, 0, 0.75)"
-    >
-      <div class="flex-1 flex items-center justify-center">
-        <div class="text-5xl text-white font-bold">
-          Čo hovoria naši <br />
-          zákazníci?
-        </div>
+    <div class="text-white max-w-7xl mx-auto flex flex-col md:flex-row py-28">
+      <div class="flex-1 flex p-4 items-center">
+        <p class="text-center md:text-left text-5xl font-extrabold leading-snug">
+          Čo hovoria naši zákazníci?
+        </p>
       </div>
-      <div class="flex-1 flex items-center justify-center">
+      <div class="flex-1 p-4 items-center justify-center">
         <vue-horizontal
           v-if="reviews.length > 0"
           responsive
-          class="horizontal absolute w-[420px]"
+          class="horizontal"
           :items="reviews"
           :options="options"
         >
@@ -47,12 +39,12 @@
             </div>
             <div class="flex mt-5">
               <div
-                class="flex-1 px-2 text-center text-white font-light shrink-0"
+                class="flex-1 px-2 text-center font-light shrink-0"
               >
                 {{ review.content }}
               </div>
             </div>
-            <div class="font-medium text-white text-center mt-4">
+            <div class="font-medium text-center mt-4">
               {{ review.name }}
             </div>
           </section>

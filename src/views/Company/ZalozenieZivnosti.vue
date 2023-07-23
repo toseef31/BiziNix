@@ -20,7 +20,7 @@
       </div>
     </div>
   </div>
-  <div class="py-12 mb-12 bg-gray-900 text-white">
+  <div class="py-12 bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-center mb-8 text-4xl font-extrabold sm:text-5xl sm:tracking-tight lg:text-6xl">Poďme na to</h2>
 

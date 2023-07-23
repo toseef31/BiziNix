@@ -10,6 +10,16 @@ a:hover {
   text-decoration: underline;
 }
 
+a.flink {
+  color: white;
+}
+
+
+a.flink:hover {
+  text-decoration: underline;
+  color: theme('colors.bizinix.link');
+}
+
 .multiselect {
   border: 1px solid theme('colors.bizinix.border') !important;
   background: theme('colors.gray.bizinix') !important;

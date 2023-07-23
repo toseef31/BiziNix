@@ -1,22 +1,17 @@
 <template>
-  <div class="bg-dark-700 relative py-28">
-    <div class="container justify-center flex mx-auto">
-      <div class="w-full xl:w-2/3 relative">
-        <img
-          src="@/assets/robot-call.png"
-          class="h-[520px] shrink-0 z-10 w-auto absolute right-[-12px] top-[-150px]"
-        />
-        <div class="text-5xl text-white font-bold">
-          Potrebujete v <br />
-          niečom poradiť ?
+  <div class="mx-auto max-w-7xl bg-dark-700 relative py-20">
+    <div class="flex flex-col md:flex-row justify-center items-center">
+      <div class="flex-1 p-4">
+        <div class="text-5xl text-white font-extrabold leading-snug">
+          Potrebujete s niečim poradiť?
         </div>
-        <div class="text-base text-white my-4">
+        <div class="text-white my-6 text-xl font-bold">
           Naše centrum poradenstva Vám pomôže.
         </div>
-        <div class="mt-5">
+        <div>
           <div
             @click="redirect()"
-            class="w-[200px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+            class="w-[200px] shadow flex justify-between border items-center py-4 px-6 rounded-lg bg-teal-500 font-bold border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
           >
             <span class="text-center w-full">Mám otázku</span>
             <svg
@@ -35,6 +30,12 @@
             </svg>
           </div>
         </div>
+      </div>
+      <div class="flex-1 p-4">
+        <img
+          src="@/assets/robot-call.png"
+          class="w-4/5"
+        />
       </div>
     </div>
   </div>
