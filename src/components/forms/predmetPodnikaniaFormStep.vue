@@ -14,7 +14,8 @@
       help="Môžete vybrať aj viac predmetov podnikania."
       validation="required"
     />
-      <div>Cena za zavolené predmety podnikania <b>{{ finalPriceForBusinessCategori }} €.</b></div>
+    <div>Cena za zavolené predmety podnikania <b>{{ finalPriceForBusinessCategori }} €.</b></div>
+
   </template>
 
 <script setup lang="ts">
