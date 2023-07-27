@@ -1,9 +1,9 @@
 <template>
-    <div class="w-60">
+    <div class="flex flex-col items-center pr-5">
         <!-- Display the image -->
-        <img :src="image" :alt="title" class="w-36" />
+        <img :src="image" :alt="title" class="w-36 cursor-pointer" />
         <!-- Display the title -->
-        <h4 class="my-4 font-bold">{{ title }}</h4>
+        <h4 class="my-4 font-bold cursor-pointer">{{ title }}</h4>
     </div>
 </template>
 

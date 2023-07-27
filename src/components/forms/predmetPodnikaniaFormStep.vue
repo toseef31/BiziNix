@@ -11,7 +11,6 @@
       :list-items="businessCategori"
       @input="calculatePriceForBusinessOfcategories"
       placeholder="Example placeholder"
-      help="Môžete vybrať aj viac predmetov podnikania."
       validation="required"
     />
     <div>Cena za zavolené predmety podnikania <b>{{ finalPriceForBusinessCategori }} €.</b></div>
