@@ -57,7 +57,7 @@
             <li v-for="message in messages">{{ message }}</li>
           </ul>
         </div>
-          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" tab-style="tab">
+          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" use-local-storage tab-style="tab">
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>

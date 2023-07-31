@@ -9,7 +9,7 @@ import type { DefaultConfigOptions } from '@formkit/vue';
 import { plugin, defaultConfig } from '@formkit/vue';
 import { generateClasses } from '@formkit/themes'
 import { createProPlugin, inputs } from '@formkit/pro';
-import { createMultiStepPlugin } from '@formkit/addons';
+import { createMultiStepPlugin, createLocalStoragePlugin  } from '@formkit/addons';
 import { genesisIcons } from '@formkit/icons'
 import '@formkit/addons/css/multistep';
 import 'vue3-toastify/dist/index.css';
@@ -20,7 +20,18 @@ import myTailwindTheme from '../tailwind-formkit-theme.js';
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
 const config: DefaultConfigOptions  = {
-  plugins: [ pro, createMultiStepPlugin() ],
+  plugins: [ pro,
+    createMultiStepPlugin(),
+    createLocalStoragePlugin({
+      prefix: 'formkit',
+      key: undefined,
+      control: undefined,
+      maxAge: 15778463000, // half year
+      debounce: 200,
+      beforeSave: undefined,
+      beforeLoad: undefined
+    }),
+   ],
   icons: {
     ...genesisIcons
   },
