@@ -70,8 +70,8 @@
                 name="phone"
                 v-model="userData.phone"
                 autocomplete="phone"
-                label="Telefonné číslo (nepovinné)"
-                validation="length:9"
+                label="Telefonné číslo"
+                validation="required|length:9"
               />
             </div>
           </div>
@@ -172,19 +172,7 @@
                   type="text"
                   name="street"
                   v-model="invoiceAddress.street"
-                  label="Ulica"
-                />
-                <FormKit
-                  type="text"
-                  name="street_number"
-                  v-model="invoiceAddress.street_number"
-                  label="Súpisne číslo"
-                />
-                <FormKit
-                  type="text"
-                  name="street_number2"
-                  v-model="invoiceAddress.street_number2"
-                  label="Orientačné číslo"
+                  label="Ulica a číslo"
                 />
                 <FormKit
                   type="text"

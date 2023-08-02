@@ -85,21 +85,7 @@
                 type="text"
                 name="street"
                 v-model="companyAddress.street"
-                label="Ulica"
-                validation="required"
-              />
-              <FormKit
-                type="text"
-                name="street_number"
-                v-model="companyAddress.street_number"
-                label="Súpisne číslo"
-                validation="required"
-              />
-              <FormKit
-                type="text"
-                name="street_number2"
-                v-model="companyAddress.street_number2"
-                label="Orientačné číslo"
+                label="Ulica a číslo"
                 validation="required"
               />
               <FormKit
