@@ -50,7 +50,7 @@ async function search({ search }: any) {
   </FormKit>
 </template>
 
-<style>
+<style scoped>
 .formkit-listbox-button {
   display: none;
   visibility: hidden;

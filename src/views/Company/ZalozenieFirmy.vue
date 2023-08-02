@@ -57,7 +57,12 @@
             <li v-for="message in messages">{{ message }}</li>
           </ul>
         </div>
-          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" use-local-storage tab-style="tab">
+          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" use-local-storage="true" tab-style="tab">
+
+            <FormKit type="step" name="selectAuto" label="Predmet podnikanie auto" next-label="Pokračovať">
+              <formkitNewMultiSelect ref="" />
+            </FormKit>
+
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
@@ -78,9 +83,9 @@
               <fakturacneUdajeFormStep ref="invoiceData" />
             </FormKit>
           </FormKit>
-          <!-- <details>
+          <details>
             <pre>{{ value }}</pre>
-          </details> -->          
+          </details>    
             <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
               Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
             </div>
@@ -114,6 +119,7 @@ import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFor
 import obchodneSidloFormStep from "@/components/forms/obchodneSidloFormStep.vue";
 import udajeSpolocnostiFormStep from "@/components/forms/udajeSpolocnostiFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
+import formkitNewMultiSelect from "@/components/forms/formkitNewMultiSelect.vue"
 import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";

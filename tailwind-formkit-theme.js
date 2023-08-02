@@ -56,7 +56,7 @@ export default {
     placeholder: 'p-2.5 text-gray-400',
     selector: 'flex w-full justify-between items-center [&u]',
     selectedIcon: 'block absolute top-1/2 left-2 w-3 -translate-y-1/2',
-    selectIcon: 'flex box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
+    selectIcon: 'flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
   },
   'family:text': {
     inner: 'flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>label:first-child]:focus-within:text-blue-500 rounded mb-1',
@@ -99,7 +99,7 @@ export default {
   select: {
     inner: 'flex relative max-w-md items-center rounded mb-1 ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>span:first-child]:focus-within:text-blue-500',
     input: 'w-full pl-3 pr-8 py-2 border-none text-base text-white placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
-    selectIcon: 'text-white flex p-[3px] shrink-0 w-5 mr-2 -ml-[1.5em] h-full pointer-events-none [&>svg]:w-[1em]',
+    selectIcon: 'flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
     option: 'formkit-multiple:p-3 formkit-multiple:text-sm text-gray-700'
   },
   textarea: {
@@ -109,10 +109,11 @@ export default {
 
   // PRO input styles
   autocomplete: {
-    closeIcon: 'block grow-0 shrink-0 w-3 mr-3.5',
+    closeIcon: 'flex grow-0 shrink-0 w-3 mr-3.5 self-stretch',
     inner: '[&>div>[data-value]]:absolute [&>div>[data-value]]:mb-0',
     option: 'grow text-ellipsis',
-    selection: 'static flex left-0 top-0 right-0 bottom-0 mt-0 mb-2 rounded bg-gray-100',
+    selection: 'flex bg-gray-800 mt-2 rounded-sm',
+    removeSelection: 'flex',
   },
   datepicker: {
     inner: 'relative',
