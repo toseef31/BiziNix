@@ -18,7 +18,7 @@ async function search({ search }: any) {
         label: result.Name,
         value: result,
         city: result.City,
-        ico: result.Ico,
+        ico: result.Ico
       };
     });
   }

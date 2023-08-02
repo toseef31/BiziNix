@@ -17,13 +17,8 @@
             name="Podnikatelské údaje"
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <FormKit
-                type="text"
-                name="name"
-                validation="required"
-                v-model="company.name"
-                label="Názov spoločnosti"
-              />
+              <Autocomplete v-model="finstatCompany"></Autocomplete>
+              {{ finstatCompany }}
             </div>
           </FormKit>
         </div>
@@ -66,19 +61,7 @@
                 type="text"
                 name="street"
                 v-model="companyAddress.street"
-                label="Ulica"
-              />
-              <FormKit
-                type="text"
-                name="street_number"
-                v-model="companyAddress.street_number"
-                label="Súpisne číslo"
-              />
-              <FormKit
-                type="text"
-                name="street_number2"
-                v-model="companyAddress.street_number2"
-                label="Orientačné číslo"
+                label="Ulica a číslo"
               />
               <FormKit
                 type="text"
@@ -109,10 +92,12 @@ import store from "@/store";
 import { ref, computed } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
+import Autocomplete from "@/components/Autocomplete.vue";
 
-const company = ref({} as Company);
 const companyAddress = ref({} as Address);
 const data = computed(() => store.state.orderVhqData);
+const finstatCompany = ref({} as any);
+const company = ref({} as Company);
 
 defineExpose({
   companyAddress,
