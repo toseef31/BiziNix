@@ -69,7 +69,8 @@
               name="phone"
               v-model="userData.phone"
               autocomplete="phone"
-              label="Telefonné číslo (nepovinné)"
+              label="Telefonné číslo"
+              validation="required|length:9"
             />
           </div>
 

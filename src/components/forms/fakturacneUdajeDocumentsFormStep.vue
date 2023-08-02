@@ -70,8 +70,8 @@
                 name="phone"
                 v-model="userData.phone"
                 autocomplete="phone"
-                label="Telefonné číslo (nepovinné)"
-                validation="length:9"
+                label="Telefonné číslo"
+                validation="required|length:9"
               />
             </div>
           </div>
