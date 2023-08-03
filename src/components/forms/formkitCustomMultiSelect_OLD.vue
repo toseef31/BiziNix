@@ -17,15 +17,16 @@
 
     </Multiselect>
 
-    <div class="mt-4 font-bold">Alebo nahrajte všetky potrebné predmety jedným klikom podľa toho, akému oboru sa chcete venovať.</div>
-
-    <div class="mt-4">
-        <vue-horizontal v-if="context.listItems.length" responsive>
-            <section v-for="(component, index) in components" :key="index">
-                <!-- Render the components from the array with props -->
-                <component :is="component.component" :image="component.image" :title="component.title" @click.prevent="selectTag(component.obj)" />
-            </section>
-        </vue-horizontal>
+    <div class="my-4">
+        <div class="font-bold">Alebo nahrajte všetky potrebné predmety jedným klikom podľa toho, akému oboru sa chcete venovať.</div>
+        <div class="mt-4">
+            <vue-horizontal v-if="context.listItems.length" responsive>
+                <section v-for="(component, index) in components" :key="index">
+                    <!-- Render the components from the array with props -->
+                    <component :is="component.component" :image="component.image" :title="component.title" @click.prevent="selectTag(component.obj)" />
+                </section>
+            </vue-horizontal>
+        </div>
     </div>
 
     <!-- <div class="flex flex-row gap-8 items-center justify-center">
