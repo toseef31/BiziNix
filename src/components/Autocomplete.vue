@@ -39,11 +39,9 @@ async function search({ search }: any) {
       required
     >
       <template #option="{ option }">
-        <div class="formkit-option">
-          <div class="text-container">
+        <div class="formkit-option grow p-2">
             <div class="font-bold">{{ option.label }}, {{ option.city }}</div>
             <p class="option-overview">IČO: {{ option.ico }}</p>
-          </div>
         </div>
       </template>
     </FormKit>
@@ -51,27 +49,4 @@ async function search({ search }: any) {
 </template>
 
 <style scoped>
-.formkit-listbox-button {
-  display: none;
-  visibility: hidden;
-}
-
-.formkit-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.option-overview {
-  font-size: 11px;
-}
-
-.text-container {
-  width: 100%;
-}
-
-#i_autocomplete_inner {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
 </style>
