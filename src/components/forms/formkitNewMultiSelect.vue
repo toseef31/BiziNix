@@ -13,16 +13,17 @@
       :options="loadCurrentlyPopularMovies"
       placeholder="Example: United States"
       multiple
+      open-on-click
       selection-appearance="option"
       :filter="(option:any, search: any) =>
-        option.value.label.toLowerCase().startsWith(search.toLowerCase())"
+        option.label.toLowerCase().startsWith(search.toLowerCase())"
     >
-
-        <template #option="{ option }">
+      <template #option="{ option }">
         <div class="formkit-option grow p-2">
           <span>{{ option.label }}</span> <span class="font-medium">({{ option.__original.price }} €)</span>
         </div>
       </template>
+
     </FormKit>
     <pre wrap>{{ value }}</pre>
     <button @click.prevent="logujem">Nastav hodnoty</button>
@@ -53,42 +54,29 @@ function logujem() {
 
 
 onBeforeMount(() => {
-  // //businessCategori.value.pop()
-  // subjects_of_business.value.pop()
-  // store.dispatch("getAllSubjectOfBusiness")
-  // .then(res => {
-  //   res.data.data.forEach((element: any) => {
-  //       subjects_of_business.value.push({
-  //       label: element.title,
-  //       value: element.title
-  //     })
-  //   })
-  // })
-  // .catch(err => {
-  //     console.log(err);
-  // })
+
 })
 
 async function loadCurrentlyPopularMovies({ search, page, hasNextPage }: any) {
 
-  // to do search
-  //if (!search) return []
-
   const res = await store.dispatch("getAllSubjectOfBusiness")
   if(res.data.data){
-    return res.data.data.map((item: any) => ({ label: item.title, value: item }))    
+    if(!search){
+      return res.data.data.map((item: any) => ({ label: item.title, value: item }))  
+    }
+    else {
+      const filteredData = res.data.data.filter((item: any) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+      const mappedData = filteredData.map((item: any) => ({
+        label: item.title,
+        value: item,
+      }));
+      return mappedData
+    }  
   }
   return []
 
-  // const res = await fetch(
-  //   `https://api.themoviedb.org/3/movie/popular?api_key=f48bcc9ed9cbce41f6c28ea181b67e14&language=en-US&page=${page}`
-  // )
-  // if (res.ok) {
-  //   const data = await res.json()
-  //   if (page !== data.total_pages) hasNextPage()
-  //   return data.results.map((item: any) => ({ label: item.title, value: item.id }))
-  // }
-  // return []
 }
 
 </script>
