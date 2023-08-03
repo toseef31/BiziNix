@@ -53,7 +53,7 @@
           </FormKit>
 
           <div class="p-4 mb-4  bg-gray-900 text-white border rounded-md border-bizinix-border border-solid">
-            Celkom k platbe <b>{{ totalForPay }} €</b>. Vybratých živností <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
+            Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
           </div>
           <FormKit
             type="checkbox"
