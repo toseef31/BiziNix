@@ -1,22 +1,15 @@
 <template>
-  <FormKit
-    type="form"
-    #default="{ value }"
-    name="customSect"
-    :actions="false"
-    use-local-storage="true"
-  >
+
     <FormKit
-    type="autocomplete"
+      type="autocomplete"
       name="autocomplete"
-      label="Search for a country"
+      label="Predmet podnikania"
       :options="loadCurrentlyPopularMovies"
-      placeholder="Example: United States"
+      placeholder="Vyhľadajte alebo vyberte predmet podnikania"
       multiple
       open-on-click
+      v-model="subjects_of_business"
       selection-appearance="option"
-      :filter="(option:any, search: any) =>
-        option.label.toLowerCase().startsWith(search.toLowerCase())"
     >
       <template #option="{ option }">
         <div class="formkit-option grow p-2">
@@ -25,41 +18,59 @@
       </template>
 
     </FormKit>
-    <pre wrap>{{ value }}</pre>
-    <button @click.prevent="logujem">Nastav hodnoty</button>
-  </FormKit>
+
+    <div class="mt-4 font-bold">Alebo nahrajte všetky potrebné predmety jedným klikom podľa toho, akému oboru sa chcete venovať.</div>
+
+    <div class="mt-4">
+      <vue-horizontal responsive v-if="!loading">
+          <section v-for="(component, index) in components" :key="index">
+              <!-- Render the components from the array with props -->
+              <component :is="component.component" :image="component.image" :title="component.title" @click.prevent="logujem()" />
+          </section>
+      </vue-horizontal>
+      <div v-else>
+        <div class="flex flex-col items-center py-12">
+        <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="mt-4">Načítavanie...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- <button @click.prevent="logujem">Nastav hodnoty</button> -->
+
 </template>
 
 <script setup lang="ts">
 import store from '@/store';
 import { getNode } from '@formkit/core';
-import { map } from 'lodash';
 import { onBeforeMount, ref } from 'vue';
+import SignleSubjectOfBusinnesWithImg from './SignleSubjectOfBusinnesWithImg.vue'
+import VueHorizontal from "vue-horizontal";
 
-const subjects_of_business = ref([
-  {
-    label: '',
-    value: ''
-  }
-]);
-const myModelForVal = ref(['US', 'AF', 'AX'])
-const carBrands = [{ label: 'Audi', value: 'audi', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/audi-logo.png' },{ label: 'BMW', value: 'bmw', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/bmw-logo.png' },{ label: 'Citroen', value: 'citroen', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/citroen-logo.png' },{ label: 'Dacia', value: 'dacia', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/dacia-logo.png' },{ label: 'Fiat', value: 'fiat', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/fiat-logo.png' },{ label: 'Ford', value: 'ford', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/ford-logo.png' },{ label: 'Ferrari', value: 'ferrari', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/ferrari-logo.png' },{ label: 'Honda', value: 'honda', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/honda-logo.png' },{ label: 'Hyundai', value: 'hyundai', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/hyundai-logo.png' },{ label: 'Jaguar', value: 'jaguar', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/jaguar-logo.png' },{ label: 'Jeep', value: 'jeep', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/jeep-logo.png' },{ label: 'Kia', value: 'kia', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/kia-logo.png' },{ label: 'Land Rover', value: 'land rover', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/land-rover-logo.png' },{ label: 'Mazda', value: 'mazda', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/mazda-logo.png' },{ label: 'Mercedes', value: 'mercedes', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/mercedes-logo.png' },{ label: 'Mini', value: 'mini', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/mini-logo.png' },{ label: 'Mitsubishi', value: 'mitsubishi', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/mitsubishi-logo.png' },{ label: 'Nissan', value: 'nissan', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/nissan-logo.png' },{ label: 'Opel', value: 'opel', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/opel-logo.png' },{ label: 'Peugeot', value: 'peugeot', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/peugeot-logo.png' },{ label: 'Porsche', value: 'porsche', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/porsche-logo.png' },{ label: 'Renault', value: 'renault', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/renault-logo.png' },{ label: 'Saab', value: 'saab', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/saab-logo.png' },{ label: 'Skoda', value: 'skoda', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/skoda-logo.png' },{ label: 'Subaru', value: 'subaru', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/subaru-logo.png' },{ label: 'Suzuki', value: 'suzuki', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/suzuki-logo.png' },{ label: 'Toyota', value: 'toyota', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/toyota-logo.png' },{ label: 'Volkswagen', value: 'volkswagen', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/volkswagen-logo.png' },{ label: 'Volvo', value: 'volvo', logo: 'https://s3.amazonaws.com/cdn.formk.it/example-assets/car-brands/volvo-logo.png' }];
-function logujem() {
-
-    console.log("aa")
-    const node = getNode('multiSelId')
-    myModelForVal.value.push('CZ')
-    console.log(subjects_of_business.value)
-}
-
+const loading = ref(true);
+const imgSource = "src/assets/predmety-podnikania/"
+const subjects_of_business = ref<any[]>([]);
 
 onBeforeMount(() => {
-
 })
+
+function logujem() {
+
+  subjects_of_business.value.push({ id: 1, title: 'Administratívne služby', price: 0, description: null, category_id: 1 })
+  console.log("aa")
+    // console.log("aa")
+    // const node = getNode('multiSelId')
+    // myModelForVal.value.push('CZ')
+    // console.log(subjects_of_business.value)
+}
 
 async function loadCurrentlyPopularMovies({ search, page, hasNextPage }: any) {
 
   const res = await store.dispatch("getAllSubjectOfBusiness")
+  loading.value = false
   if(res.data.data){
     if(!search){
       return res.data.data.map((item: any) => ({ label: item.title, value: item }))  
@@ -75,8 +86,22 @@ async function loadCurrentlyPopularMovies({ search, page, hasNextPage }: any) {
       return mappedData
     }  
   }
-  return []
 
+  loading.value = false
+  return []
 }
+
+const components = [ 
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "grafika.png", title: "Grafika a design", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "doprava.png", title: "Doprava", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "administrativa.png", title: "Administratíva", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "stavba.png", title: "Stavbárčina", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "edukacia.png", title: "Edukácia", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "polnohospo.png", title: "Poľnohospodárstvo", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "zdravie.png", title: "Zdravie", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "marketing.png", title: "Marketing", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "obchod.png", title: "Obchod", obj: subjects_of_business },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "handmade.png", title: "Handmade", obj: subjects_of_business },
+ ];
 
 </script>
