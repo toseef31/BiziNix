@@ -1,87 +1,11 @@
 <template>
-        <div class="text-4xl font-bold">Účet a Fakturacia</div>
-        <div class="my-2" v-if="!user.userId">
-          Už máte u nás účet?
-          <router-link
-            to="/login"
-            class="text-teal-500 hover:underline"
-            >Prihlásiť sa</router-link
-          >.
-        </div>
+        <div class="text-4xl font-bold pb-4">Fakturácia</div>
         <div>
-          <div class="text-2xl font-bold py-4">Účet</div>
-          <div class="my-2" v-if="user.userId">
-            <a class="text-teal-500 hover:underline" href="/moj/dashboard"
-              >Prihlásený ako {{ userData.first_name }}
-              {{ userData.last_name }}</a
-            >
-          </div>
-          <div v-if="!user.userId">
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <FormKit
-                type="text"
-                name="first_name"
-                v-model="userData.first_name"
-                id="first_name"
-                label="Krstné meno"
-                validation="required|length:2"
-              />
-              <FormKit
-                type="text"
-                name="last_name"
-                v-model="userData.last_name"
-                label="Priezvisko"
-                validation="required|length:2"
-              />
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <FormKit
-                type="email"
-                name="email"
-                v-model="userData.email"
-                label="Emailová adresa"
-                :validation-rules="{ emailIsUnique }"
-                validation="required|email|emailIsUnique"
-                :validation-messages="{
-                  emailIsUnique: 'E-mail sa už používa!',
-                }"
-                validation-visibility="live"
-              />
-              <FormKit
-                type="password"
-                autocomplete="new-password"
-                v-model="userData.password"
-                name="password"
-                label="Heslo"
-                validation="required|length:8"
-              />
-              <FormKit
-                type="password"
-                autocomplete="new-password"
-                v-model="userData.password_confirmation"
-                name="password_confirmation"
-                label="Zopakujte heslo"
-                validation="required|confirm:password"
-              />
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <FormKit
-                type="text"
-                name="phone"
-                v-model="userData.phone"
-                autocomplete="phone"
-                label="Telefonné číslo"
-                validation="required|length:9"
-              />
-            </div>
-          </div>
-
           <FormKit
             type="group"
             id="Fakturačné údaje"
             name="Fakturačné údaje"
           >
-            <div class="text-2xl font-bold pt-4 pb-2">Fakturácia</div>
               <div class="pb-4" v-if="user.userId">
                 Vypíšte údaje firmy, ktorou chcete zaplatiť službu Bizinix
                 Doklady, Alebo zvoľte jeden z Fakturačných profilov.
@@ -101,25 +25,29 @@
               <div v-show="!invoiceAddressIsSame">
                 <div v-show="user.userId">
                   <div class="py-4">Vyberte iný fakturačný profil alebo si vytvorte nový</div>
-                  <div class="relative w-full pb-4">
-                    <select
-                      id="profiles"
-                      name="profiles"
-                      class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
-                      @change="switchSelect($event)"
-                    >
-                      <option
-                        v-for="profile in invoiceProfiles"
-                        :value="profile.id"
-                        :key="profile.id"
-                      >
-                        {{ profile.name }}
-                      </option>
-                    </select>
-                    <div
-                      class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
-                    >
-                      <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                  <div class="flex flex-row">
+                    <div class="flex basis-1/3">
+                      <div class="relative w-full">
+                        <select
+                          id="profiles"
+                          name="profiles"
+                          class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+                          @change="switchSelect($event)"
+                        >
+                          <option
+                            v-for="profile in invoiceProfiles"
+                            :value="profile.id"
+                            :key="profile.id"
+                          >
+                            {{ profile.name? profile.name : profile.first_name+" "+profile.last_name }}
+                          </option>
+                        </select>
+                        <div
+                          class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
+                        >
+                          <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -162,7 +90,8 @@
                 </div>
                 <div v-show="activeTab == 1">
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name"/>
+                    <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name" v-if="user.userId"/>
+                    <Autocomplete v-model="finstatCompany" v-else ></Autocomplete>
                     <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
                     <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
                   </div>
@@ -192,7 +121,7 @@
                   v-model="invoiceAddress.country"
                   label="Krajina"
                 />
-                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="activeTab == 1"/>
+                <FormKit type="text" name="ic_dph" label="IČ DPH (nepovinné)" v-show="activeTab == 1" v-model="currentInvoiceProfile.ic_dph"/>
               </div>
             </div>
           </FormKit>
@@ -201,10 +130,12 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
+import { ChevronDownIcon } from "@heroicons/vue/outline";
+import Autocomplete from "@/components/Autocomplete.vue";
 
 const activeTab = ref(1);
 const user = computed(() => store.state.user);
@@ -228,8 +159,64 @@ const fakturacne_udaje = ref({
   company_id: 0
 });
 
+const finstatCompany = ref({} as any);
+const finstatCompanyDetails = ref({} as any);
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany.Spoločnosť !== undefined) {
+      getCompanyDetails();
+    }
+});
+
+async function getCompanyDetails() {
+  let ico = {
+    ico: ""
+  }
+  
+  if(finstatCompany.value.Spoločnosť.Ico !== undefined) {
+    ico = {
+      ico: finstatCompany.value.Spoločnosť.Ico
+    }
+
+    await store
+      .dispatch("getDetailsOfCompanyFinstat", ico)
+      .then((res: any) => {
+        finstatCompanyDetails.value = res.data;
+        invoiceAddress.value.city = finstatCompanyDetails.value.City;
+        invoiceAddress.value.street = finstatCompanyDetails.value.Street+" "+finstatCompanyDetails.value.StreetNumber;
+        invoiceAddress.value.psc = finstatCompanyDetails.value.ZipCode;
+        invoiceAddress.value.country = "Slovensko";
+
+        currentInvoiceProfile.value.name = finstatCompanyDetails.value.Name;
+        currentInvoiceProfile.value.ico = finstatCompanyDetails.value.Ico;
+        currentInvoiceProfile.value.dic = finstatCompanyDetails.value.Dic;
+        currentInvoiceProfile.value.ic_dph = finstatCompanyDetails.value.IcDPH;
+
+        fakturacne_udaje.value.name = finstatCompanyDetails.value.Name;
+        fakturacne_udaje.value.ico = finstatCompanyDetails.value.Ico;
+        fakturacne_udaje.value.dic = finstatCompanyDetails.value.Dic;
+        fakturacne_udaje.value.ic_dph = finstatCompanyDetails.value.IcDPH;
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+} 
+
+
 const invoiceProfiles = ref([] as any);
-const currentInvoiceProfile = ref({} as any);
+const currentInvoiceProfile = ref({
+  first_name: "",
+  last_name: "",
+  name: "",
+  ico: "",
+  dic: "",
+  ic_dph: "",
+  address_id: 0,
+  user_id: 0,
+  company_id: 0
+});
 
 function currentTab(tabNumber: any) {
   activeTab.value = tabNumber;
@@ -246,27 +233,12 @@ function isInvoiceAddressSameAsCompany() {
   } else {
     fakturacne_udaje.value.ico = currentInvoiceProfile.value.ico;
     fakturacne_udaje.value.dic = currentInvoiceProfile.value.dic;
-    fakturacne_udaje.value.ic_dph = currentInvoiceProfile.value.icdph;
+    fakturacne_udaje.value.ic_dph = currentInvoiceProfile.value.ic_dph;
     fakturacne_udaje.value.name = currentInvoiceProfile.value.name;
     fakturacne_udaje.value.company_id = currentInvoiceProfile.value.company_id;
     fakturacne_udaje.value.address_id = currentInvoiceProfile.value.address_id;
     fakturacne_udaje.value.user_id = Number(user.value.userId);
   }
-}
-
-async function isEmailAlreadyRegistered(node: any) {
-  try {
-    const res = await store.dispatch("isEmailAlreadyRegistered", node);
-    console.log(res);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-async function emailIsUnique(node: any) {
-  const result = await isEmailAlreadyRegistered(node.value);
-  return result;
 }
 
 async function switchSelect(event: any) {
@@ -283,21 +255,23 @@ async function switchSelect(event: any) {
 }
 
 onMounted(async () => {
-  try {
-    await store
-      .dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
-      .then((response) => {
-        invoiceProfiles.value = response.data;
-        currentInvoiceProfile.value = invoiceProfiles.value.at(0);
-        store
-          .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
-            .then((response) => {
-              invoiceAddress.value = response.data;
-              fakturacne_udaje.value.address_id = response.data.id;
-            });
-      });
-  } catch (err){
-    console.log(err)
+  if(store.state.user.userId) {
+    try {
+      await store
+        .dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
+        .then((response) => {
+          invoiceProfiles.value = response.data;
+          currentInvoiceProfile.value = invoiceProfiles.value.at(0);
+          store
+            .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
+              .then((response) => {
+                invoiceAddress.value = response.data;
+                fakturacne_udaje.value.address_id = response.data.id;
+              });
+        });
+    } catch (err){
+      console.log(err)
+    }
   }
 });
 
@@ -306,7 +280,8 @@ defineExpose({
   invoiceAddressIsSame,
   invoiceAddress,
   fakturacne_udaje,
-  userData
+  finstatCompanyDetails,
+  finstatCompany
 })
 
 </script>

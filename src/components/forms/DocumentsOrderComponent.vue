@@ -18,8 +18,12 @@
               <PodnikatelskeUdajeDocumentsFormStep ref="companyDataRef" />
             </FormKit>
 
+            <FormKit type="step" name="ucet" label="Účet" next-label="Pokračovať" previous-label="Naspäť">
+              <UcetDocumentsFormStep ref="accountDataRef" />
+            </FormKit>
+
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-            <FakturacneUdajeDocumentsFormStep ref="invoiceDataRef" />
+              <FakturacneUdajeDocumentsFormStep ref="invoiceDataRef" />
             </FormKit>
           </FormKit>
           <FormKit
@@ -32,9 +36,8 @@
               <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
             </template>
           </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" v-show="!firstTimeActivation" />
+          <FormKit type="submit" label="Objednať" />
           <div v-show="firstTimeActivation">
-            <FormKit type="submit" label="Objednať na 3 mesiace zdarma"/>
             <label class="text-xs italic text-gray-300">Prvú faktúru obdržíte o 3 mesiace.<br>Dovtedy Vám nebudeme nič účtovať.</label>
           </div>
         </FormKit>
@@ -80,9 +83,11 @@ import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import { getValidationMessages } from '@formkit/validation'
 import FakturacneUdajeDocumentsFormStep from "./fakturacneUdajeDocumentsFormStep.vue";
+import UcetDocumentsFormStep from "./ucetDocumentsFormStep.vue";
 import PodnikatelskeUdajeDocumentsFormStep from "./podnikatelskeUdajeDocumentsFormStep.vue"
 
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
+let accountDataRef = ref<InstanceType<typeof UcetDocumentsFormStep>>(null as any);
 let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeDocumentsFormStep>>(null as any);
 
 const company = computed(() => store.state.selectedCompany as Company);
@@ -175,7 +180,7 @@ function addOrder(): Promise<Response> {
   if(userFromResponse) {
     order.value.user_id = userFromResponse.user_id;
   } else {
-    order.value.user_id = invoiceDataRef.value.userData.id;
+    order.value.user_id = accountDataRef.value.userData.id;
   }
 
   if(addressFromResponse) {

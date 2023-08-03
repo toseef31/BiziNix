@@ -274,6 +274,13 @@ export const store = createStore({
           return res.data;
         });
     },
+    async getDetailsOfCompanyFinstat({ commit, dispatch }, ico) {
+      return axiosClient
+        .post("/companies/getDetailsOfCompanyFinstat", ico)
+        .then((res) => {
+          return res.data;
+        });
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {

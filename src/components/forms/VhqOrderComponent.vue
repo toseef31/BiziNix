@@ -18,6 +18,10 @@
               <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
             </FormKit>
 
+            <FormKit type="step" name="ucet" label="Účet" previous-label="Naspäť">
+            <UcetVhqFormStep ref="accountDataRef" />
+            </FormKit>
+
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
             <FakturacneUdajeVhqFormStep ref="invoiceDataRef" />
             </FormKit>
@@ -32,7 +36,7 @@
               <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
             </template>
           </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
+          <FormKit type="submit" label="Objednať" />
         </FormKit>
         <Modal
           name="loadingModal"
@@ -72,10 +76,12 @@ import { ref, computed, reactive } from "vue";
 import router from "@/router";
 import { getValidationMessages } from '@formkit/validation'
 import FakturacneUdajeVhqFormStep from "./fakturacneUdajeVhqFormStep.vue";
+import UcetVhqFormStep from "./ucetVhqFormStep.vue";
 import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import { useModal, Modal } from "usemodal-vue3";
 
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
+let accountDataRef = ref<InstanceType<typeof UcetVhqFormStep>>(null as any);
 let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeVhqFormStep>>(null as any);
 const messages = ref([]);
 const data = computed(() => store.state.orderVhqData);
@@ -162,7 +168,7 @@ function closeModal() {
 
 function registerAddress(): Promise<Response> {
   return store
-    .dispatch("registerAddress", invoiceDataRef.value.userAddress)
+    .dispatch("registerAddress", invoiceDataRef.value.invoiceAddress)
     .then((res) => {
       addressFromResponse = res;
       return addressFromResponse;
@@ -173,10 +179,10 @@ function registerAddress(): Promise<Response> {
 }
 
 function registerUser(): Promise<Response> {
-  invoiceDataRef.value.userData.address_id = addressFromResponse.address_id;
+  accountDataRef.value.userData.address_id = addressFromResponse.address_id;
 
   return store
-    .dispatch("registerUser", invoiceDataRef.value.userData)
+    .dispatch("registerUser", accountDataRef.value.userData)
     .then((res) => {
       userFromResponse = res;
       return userFromResponse;

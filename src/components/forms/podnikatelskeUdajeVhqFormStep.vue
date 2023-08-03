@@ -17,8 +17,13 @@
             name="Podnikatelské údaje"
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <Autocomplete v-model="finstatCompany"></Autocomplete>
-              {{ finstatCompany }}
+              <FormKit
+                type="text"
+                name="name"
+                validation="required"
+                v-model="company.name"
+                label="Názov spoločnosti"
+              />
             </div>
           </FormKit>
         </div>
@@ -41,20 +46,14 @@
             name="Podnikatelské údaje"
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+              <Autocomplete v-model="finstatCompany"></Autocomplete>
               <FormKit
                 type="text"
                 name="name"
-                validation="required"
-                v-model="company.name"
-                label="Názov spoločnosti"
-              />
-              <FormKit
-                type="text"
-                name="name"
-                v-model="company.ico"
+                v-model="finstatCompanyDetails.Ico"
                 label="IČO"
               />
-              <FormKit type="text" name="dic" label="DIČ" v-model="company.dic"/>
+              <FormKit type="text" name="dic" label="DIČ" v-model="finstatCompanyDetails.Dic"/>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
               <FormKit
@@ -89,7 +88,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import Autocomplete from "@/components/Autocomplete.vue";
@@ -99,7 +98,43 @@ const data = computed(() => store.state.orderVhqData);
 const finstatCompany = ref({} as any);
 const company = ref({} as Company);
 
+const finstatCompanyDetails = ref({} as any);
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany.Spoločnosť !== undefined) {
+      getCompanyDetails();
+    }
+});
+
+async function getCompanyDetails() {
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompany.value.Spoločnosť.Ico !== undefined) {
+    ico = {
+      ico: finstatCompany.value.Spoločnosť.Ico
+    }
+  }
+  
+  await store
+      .dispatch("getDetailsOfCompanyFinstat", ico)
+      .then((res: any) => {
+        finstatCompanyDetails.value = res.data;
+        companyAddress.value.city = finstatCompanyDetails.value.City;
+        companyAddress.value.street = finstatCompanyDetails.value.Street+" "+finstatCompanyDetails.value.StreetNumber;
+        companyAddress.value.psc = finstatCompanyDetails.value.ZipCode;
+        companyAddress.value.country = "Slovensko";
+
+        company.value.name = finstatCompanyDetails.value.Name;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+} 
+
 defineExpose({
+  finstatCompanyDetails,
   companyAddress,
   company
 })
