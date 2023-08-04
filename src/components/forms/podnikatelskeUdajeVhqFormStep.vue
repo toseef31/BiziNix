@@ -50,8 +50,15 @@
               <FormKit
                 type="text"
                 name="name"
-                v-model="finstatCompanyDetails.Ico"
+                v-model="company.ico"
                 label="IČO"
+                :validation-rules="{ icoIsUnique }"
+                validation="required|icoIsUnique"
+                :validation-messages="{
+                  icoIsUnique: 'Táto firma už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
+                }"
+                validation-visibility="live"
+                v-on:input="checkIcoOwner"
               />
               <FormKit type="text" name="dic" label="DIČ" v-model="finstatCompanyDetails.Dic"/>
             </div>
@@ -88,7 +95,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import Autocomplete from "@/components/Autocomplete.vue";
@@ -97,6 +104,7 @@ const companyAddress = ref({} as Address);
 const data = computed(() => store.state.orderVhqData);
 const finstatCompany = ref({} as any);
 const company = ref({} as Company);
+const companies = ref([] as any);
 
 const finstatCompanyDetails = ref({} as any);
 
@@ -105,6 +113,29 @@ watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
       getCompanyDetails();
     }
 });
+
+async function isIcoAlreadyRegistered(node: any) {
+  try {
+      const res = await store.dispatch("isIcoAlreadyRegistered", node);
+      return res;
+  } catch (error) {
+      return false;
+  }
+}
+
+async function icoIsUnique(node: any) {
+  const result = await isIcoAlreadyRegistered(node.value);
+  return result;
+}
+
+async function checkIcoOwner(node: any) {
+  const companyRes = companies.value.find(
+    (item: any) => item.ico == node
+  );
+  if(companyRes) {
+    company.value = companyRes;
+  }
+}
 
 async function getCompanyDetails() {
   let ico = {
@@ -116,7 +147,7 @@ async function getCompanyDetails() {
       ico: finstatCompany.value.Spoločnosť.Ico
     }
   }
-  
+
   await store
       .dispatch("getDetailsOfCompanyFinstat", ico)
       .then((res: any) => {
@@ -127,11 +158,28 @@ async function getCompanyDetails() {
         companyAddress.value.country = "Slovensko";
 
         company.value.name = finstatCompanyDetails.value.Name;
+        company.value.ico = finstatCompanyDetails.value.Ico;
       })
       .catch((err) => {
         console.log(err);
       });
-} 
+}
+
+onMounted(async () => {
+  if(store.state.user.userId){
+    try {
+      await store
+        .dispatch("getAllCompaniesByUserId", store.state.user.userId)
+        .then((response) => {
+          companies.value = response.data;
+        }).catch((err) => {
+          console.log(err)
+        });
+    } catch (err){
+      console.log(err)
+    }
+  }
+});
 
 defineExpose({
   finstatCompanyDetails,

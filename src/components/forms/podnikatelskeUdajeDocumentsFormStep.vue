@@ -60,7 +60,7 @@
             </div> 
           </div>
         </div>
-        <div v-show="showAddNewCompany || !user.userId">
+        <div v-if="showAddNewCompany || !user.userId">
           <FormKit
             type="group"
             id="Podnikatelské údaje"
@@ -86,7 +86,7 @@
                 :validation-rules="{ icoIsUnique }"
                 validation="required|icoIsUnique"
                 :validation-messages="{
-                  icoIsUnique: 'Táto firma už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
+                  icoIsUnique: 'Táto spoločnosť už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
                 }"
                 validation-visibility="live"
                 v-on:input="checkIcoOwner"
