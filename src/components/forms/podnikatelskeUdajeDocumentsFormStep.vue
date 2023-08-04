@@ -25,7 +25,7 @@
               Vyberte si zo zoznamu Vašu firmu, pre ktorú chcete službu aktivovať, alebo pridajte inú.
             </div>
             <div class="flex flex-row gap-8">
-              <div class="flex basis-1/3">
+              <div class="flex basis-2/4">
                 <div class="relative w-full">
                   <select
                     id="companies"
@@ -39,7 +39,7 @@
                       :key="company.id"
                       :selected="company.id == currentCompany.id"
                     >
-                      {{ company.name }}
+                      {{ company.name }} {{ company.fakturacia_free? "(Skúšobná verzia zdarma)" : !company.fakturacia_free && company.fakturacia_zaplatene_do? "(Služba je aktívna)" : "" }}
                     </option>
                   </select>
                   <div
