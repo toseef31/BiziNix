@@ -25,7 +25,7 @@
               Vyberte si zo zoznamu Vašu firmu, pre ktorú chcete službu aktivovať, alebo pridajte inú.
             </div>
             <div class="flex flex-row gap-8">
-              <div class="flex basis-1/3">
+              <div class="flex basis-2/4">
                 <div class="relative w-full">
                   <select
                     id="companies"
@@ -39,7 +39,7 @@
                       :key="company.id"
                       :selected="company.id == currentCompany.id"
                     >
-                      {{ company.name }}
+                      {{ company.name }} {{ company.fakturacia_free? "(Skúšobná verzia zdarma)" : !company.fakturacia_free && company.fakturacia_zaplatene_do? "(Služba je aktívna)" : "" }}
                     </option>
                   </select>
                   <div
@@ -60,7 +60,7 @@
             </div> 
           </div>
         </div>
-        <div v-show="showAddNewCompany || !user.userId">
+        <div v-if="showAddNewCompany || !user.userId">
           <FormKit
             type="group"
             id="Podnikatelské údaje"
@@ -68,7 +68,10 @@
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
               <div v-if="!user.userId">
-                <Autocomplete v-model="finstatCompany"></Autocomplete>
+                <div class="flex flex-col">
+                  <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                  <Autocomplete v-model="finstatCompany"></Autocomplete>
+                </div>
               </div>
               <FormKit
                 v-else
@@ -86,7 +89,7 @@
                 :validation-rules="{ icoIsUnique }"
                 validation="required|icoIsUnique"
                 :validation-messages="{
-                  icoIsUnique: 'Táto firma už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
+                  icoIsUnique: 'Táto spoločnosť už používa služby Bizinix. Je to Vaša firma? Ak áno PRIHLÁSTE SA',
                 }"
                 validation-visibility="live"
                 v-on:input="checkIcoOwner"

@@ -32,7 +32,6 @@ async function search({ search }: any) {
     <FormKit
       id="i_autocomplete"
       name="Spoločnosť"
-      label="Názov spoločnosti"
       type="autocomplete"
       placeholder="Meno alebo IČO spoločnosti"
       :options="search"

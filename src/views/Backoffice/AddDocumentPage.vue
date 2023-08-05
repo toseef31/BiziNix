@@ -67,12 +67,12 @@
 
             <div class="flex">
               <section class="flex flex-col w-full">
-                <label for="client-name" class="flex text-black font-bold"
+                <label for="client-name" class="flex text-black font-bold pb-2"
                   >Odberateľ</label
                 >
-                <div class="flex py-2 w-full">
+                <div class="flex w-full gap-4">
                   <div class="w-full">
-                    <Autocomplete v-model="odberatel"></Autocomplete>
+                    <Autocomplete v-model="finstatCompany"></Autocomplete>
                   </div>
                   <div class="w-full">
                     <FormKit
@@ -608,8 +608,6 @@ const submitted = ref(false);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const isOpen = ref(false);
 
-const odberatel = ref({} as any);
-
 const company = ref({} as Company);
 const address = ref({
   id: 0,
@@ -697,6 +695,44 @@ watch(
     refreshData();
   }
 );
+
+const finstatCompany = ref({} as any);
+const finstatCompanyDetails = ref({} as any);
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany.Spoločnosť !== undefined) {
+      getCompanyDetails();
+    }
+});
+
+async function getCompanyDetails() {
+  let ico = {
+    ico: ""
+  }
+  
+  if(finstatCompany.value.Spoločnosť.Ico !== undefined) {
+    ico = {
+      ico: finstatCompany.value.Spoločnosť.Ico
+    }
+
+    await store
+      .dispatch("getDetailsOfCompanyFinstat", ico)
+      .then((res: any) => {
+        finstatCompanyDetails.value = res.data;
+        console.log(finstatCompanyDetails.value)
+        document.value.ico = finstatCompanyDetails.value.Ico;
+        document.value.dic = finstatCompanyDetails.value.Dic;
+        document.value.icdph = finstatCompanyDetails.value.IcDPH;
+        document.value.address = finstatCompanyDetails.value.Street+" "+finstatCompanyDetails.value.StreetNumber;
+        document.value.psc = finstatCompanyDetails.value.ZipCode;
+        document.value.city = finstatCompanyDetails.value.City;
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+} 
 
 async function setSerialNumber() {
   store
@@ -832,7 +868,7 @@ function cancelAddition() {
 
 function submitHandler() {
   submitted.value = true;
-  document.value.odberatel = odberatel.value.Spoločnosť.Name;
+  document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
   document.value.items = items.value;
   document.value.paid = document.value.total;
 
