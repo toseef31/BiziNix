@@ -65,11 +65,11 @@
     <img src="@/assets/dots_h.png" class="absolute right-8 max-w-xl" />
     <div>
       <div class="container flex-col justify-center mx-auto flex h-full">
-        <div class="text-5xl text-white leading-normal font-bold">
+        <div class="text-6xl text-white leading-normal font-bold">
           Jedinečný pomer ceny<br />
           a kvality
         </div>
-        <div class="text-base text-white my-4">
+        <div class="text-white my-4 text-xl">
           <div class="flex items-center space-x-2">
             <div>
               Ručíme za najnižšiu cenu v pomere za<br />
@@ -94,7 +94,7 @@
         background-image: linear-gradient(to top,rgba(17, 24, 39, 0.85) 0%,rgba(17, 24, 39, 1) 100%);
       "
     >
-      <div class="mx-auto flex w-full justify-center">
+      <div class="mx-auto flex w-full justify-center pb-16">
         <!--NAJOBLUBENEJSIE-->
         <div>
           <section>
