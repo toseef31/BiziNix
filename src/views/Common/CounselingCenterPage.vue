@@ -1,36 +1,15 @@
 <template>
   <div class="bg-gray-800 text-white">
-    <div
-      class="relative z-0 h-full w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
-      style="
-        height: calc(100vh - 200px);
-        background-image: url('../src/assets/5.png');
-      "
-    >
-      <div
-        class="w-full flex h-full"
-        style="background-color: rgba(0, 0, 0, 0.75)"
-      >
-        <div class="container flex-col justify-center mx-auto flex h-full">
-          <div class="flex flex-row justify-between">
-            <div class="flex basis-1/2">
-              <div class="flex flex-col">
-                <div class="text-5xl text-white font-bold">
-                  Poradíme,<br />
-                  vysvetlíme a <br />
-                  vyrešime
+    <div class="flex min-h-[50vh] bg-black bg-opacity-70 bg-cover bg-blend-overlay w-full bg-no-repeat bg-center bg-[url('../src/assets/5.png')]" >
+        <div class="flex-col justify-center mx-auto flex">
+            <div class="flex flex-col items-center">
+                <div class="text-3xl md:text-5xl text-white font-bold">
+                  Poradíme vysvetlíme a vyrešime
                 </div>
                 <div class="text-base text-white mt-4 mb-4">
                   Vyhľadajte odpoveď podľa kľúčových slov
                 </div>
-              </div>
             </div>
-            <div class="flex basis-1/2 relative">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-4">
-                <img class="max-h-[480px] z-0" src="@/assets/robot-mobile.png" />
-              </div>
-            </div>
-          </div>
           <div class="flex w-full flex-row">
             <div class="flex grow relative">
               <div
@@ -68,18 +47,16 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
     <div class="bg-gray-900 py-20">
       <div class="container mx-auto">
-        <div class="flex">
+        <div class="flex flex-col md:flex-row p-4">
           <div class="flex-1 pr-20">
             <div
-              class="text-5xl text-white leading-normal font-bold"
+              class="text-4xl md:text-5xl text-white leading-normal font-bold"
               id="faqsDiv"
             >
-              Často kladené <br />
-              otázky
+              Často kladené otázky
             </div>
             <div v-for="faq in searchedFaqs" :key="faq.id">
               <button
@@ -139,9 +116,8 @@
             </div>
           </div>
           <div class="flex-1">
-            <div class="text-5xl text-white leading-normal font-bold">
-              Články k vašej <br />
-              otázke
+            <div class="text-4xl md:text-5xl text-white leading-normal font-bold mt-4 md:mt-0">
+              Články k vašej otázke
             </div>
             <div class="flex flex-wrap mt-6">
               <div
@@ -170,24 +146,22 @@
       </div>
     </div>
     <div class="bg-gray-800 py-20">
-      <div class="container mx-auto">
-        <div class="text-5xl text-center text-white leading-normal font-bold">
-          Nenašli ste svoju <br />
-          odpoveď?
+      <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 bg-gray-800">
+        <div class="text-4xl md:text-5xl text-center text-white leading-normal font-bold">
+          Nenašli ste svoju odpoveď?
         </div>
         <div class="text-base text-center text-white mt-4">
           Spojte sa s nami
         </div>
-        <div class="flex mt-20 w-full">
-          <div class="flex-1 flex flex-col py-10 justify-center ml-10">
+        <div class="flex mt-20">
+          <div class="flex-1 flex flex-col justify-center">
             <div class="text-3xl font-bold text-white">
-              Zákaznícka<br />
-              podpora
+              Zákaznícka podpora
             </div>
             <div class="text-base mt-4">
               <a href="tel:+421908478270">+421 908 478 270</a>
             </div>
-            <div class="text-base mt-4">
+            <div class="text-base">
               <a href="mailto:support@bizinix.sk">support@bizinix.sk</a>
             </div>
           </div>

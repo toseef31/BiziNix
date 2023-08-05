@@ -3,8 +3,8 @@
     bg-[url('../src/assets/pozadie.png')]"
   >
     <div class="text-white max-w-7xl mx-auto flex flex-col md:flex-row py-28">
-      <div class="flex-1 flex p-4 items-center">
-        <p class="text-center md:text-left text-5xl font-extrabold leading-snug">
+      <div class="flex-1 flex p-4 items-center justify-center">
+        <p class="text-3xl md:text-5xl font-extrabold leading-snug">
           Čo hovoria naši zákazníci?
         </p>
       </div>

@@ -4,7 +4,6 @@
       <h1 class="text-3xl font-bold text-white text-center">Články</h1>
     </div>
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <!-- Replace with your content -->
       <div class="flex w-full flex-row">
         <div class="flex grow relative">
           <div

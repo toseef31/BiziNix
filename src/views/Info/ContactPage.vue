@@ -2,11 +2,7 @@
   <div class="bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <h1 class="text-3xl font-bold text-center">Kontakt</h1>
-    </div>
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <!-- Replace with your content -->
-      <div class="px-4 py-6 sm:px-0">
-        <p class="text-xl font-bold py-2">Kontaktné údaje</p>
+      <p class="text-xl font-bold py-2">Kontaktné údaje</p>
         <p>
           Nová kancelária v Bratislave (New office in Bratislava)<br />
           bizinix.sk, s.r.o. <br />
@@ -27,17 +23,16 @@
           15-minutové stretnutie na konkrétny deň a čas. (Make an appointment in
           advance for your visit)
         </p>
-      </div>
-      <div class="flex mt-20 w-full">
-        <div class="flex-1 flex flex-col py-10 justify-center pl-10">
+
+        <div class="flex my-8">
+        <div class="flex-1 flex flex-col justify-center">
           <div class="text-3xl font-bold">
-            Zákaznícka<br />
-            podpora
-          </div>
-          <div class=" text-base mt-4">
-            <a href="tel:+421908478270">+421 908 478 270</a>
+            Zákaznícka podpora
           </div>
           <div class="text-base mt-4">
+            <a href="tel:+421908478270">+421 908 478 270</a>
+          </div>
+          <div class="text-base">
             <a href="mailto:support@bizinix.sk">support@bizinix.sk</a>
           </div>
         </div>
@@ -67,14 +62,10 @@
           </div>
         </div>
       </div>
-      <!-- /End replace -->
     </div>
   </div>
-
-  <div class="bg-gray-800 text-white">
-    <CounselingCenter></CounselingCenter>
-    <Reviews></Reviews>
-  </div>
+  <CounselingCenter></CounselingCenter>
+  <Reviews></Reviews>
 </template>
 
 <script setup lang="ts">
