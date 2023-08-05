@@ -101,7 +101,10 @@
                   <div v-show="activeTab == 1">
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name" v-if="user.userId"/>
-                      <Autocomplete v-model="finstatCompany" v-else ></Autocomplete>
+                      <div class="flex flex-col" v-else>
+                        <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                        <Autocomplete v-model="finstatCompany"></Autocomplete>
+                      </div>
                       <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
                       <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
                     </div>

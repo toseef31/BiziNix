@@ -68,7 +68,10 @@
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
               <div v-if="!user.userId">
-                <Autocomplete v-model="finstatCompany"></Autocomplete>
+                <div class="flex flex-col">
+                  <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                  <Autocomplete v-model="finstatCompany"></Autocomplete>
+                </div>
               </div>
               <FormKit
                 v-else
