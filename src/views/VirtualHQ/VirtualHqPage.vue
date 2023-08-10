@@ -109,39 +109,16 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import VhqOrderComponent from "../../components/forms/VhqOrderComponent.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import VirtualHqSlider from "@/components/VirtualHqSlider.vue";
 
-const vhqs: any = computed(() => {
-  return store.state.vhqs;
-});
-
-const currentVhq = ref({
-  id: 0,
-  base_price: 0,
-  name: "test",
-  description: "test",
-  img: "https://beta.bizinix.sk/img/vcompany.jpg",
-  address: {
-    id: 0,
-    street: "Ulica",
-    street_number: "1",
-    street_number2: "2",
-    city: "Bratislava",
-    country: "Slovensko",
-    psc: "04001",
-    created_at: "",
-    updated_at: "",
-  },
-  address_id: 0,
-});
+const currentVhq = ref({});
 
 onBeforeMount(async () => {
-  await store.dispatch("vhqs");
-  currentVhq.value = vhqs.value.at(0);
+  currentVhq.value = store.state.selectedVhq;
 });
 </script>
 

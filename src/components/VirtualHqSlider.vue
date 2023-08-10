@@ -75,7 +75,7 @@
 </template>
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, onBeforeMount } from "vue";
+import { computed, onBeforeMount } from "vue";
 import VueHorizontal from "vue-horizontal";
 
 const vhqs: any = computed(() => {
@@ -91,43 +91,14 @@ let options: {
   ];
 };
 
-const currentVhq = ref({
-  id: 0,
-  base_price: 0,
-  name: "test",
-  description: "test",
-  img: "https://beta.bizinix.sk/img/vcompany.jpg",
-  address: {
-    id: 0,
-    street: "Ulica",
-    street_number: "1",
-    street_number2: "2",
-    city: "Bratislava",
-    country: "Slovensko",
-    psc: "04001",
-    created_at: "",
-    updated_at: "",
-  },
-  address_id: 0,
-});
-
-const final_price = ref(0);
-const newCompany = ref(false);
-
 function changeVhq(id: any) {
-    currentVhq.value = vhqs.value.find((item: any) => item.id == id);
-    final_price.value = currentVhq.value.base_price;
-    newCompany.value = false;
+    store.state.selectedVhq = vhqs.value.find((item: any) => item.id == id);
 }
 
 onBeforeMount(async () => {
   await store.dispatch("vhqs");
-
-  currentVhq.value = vhqs.value.at(0);
-  final_price.value = currentVhq.value.base_price;
 });
 
 defineExpose({
-    currentVhq
 })
 </script>

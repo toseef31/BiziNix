@@ -27,6 +27,7 @@ export const store = createStore({
     selectedCompanyMails: [],
     selectedCompanyAddress: {},
     document: {},
+    selectedVhq: {} as any
   },
   getters: {
     getDocument: (state) => {
@@ -61,6 +62,9 @@ export const store = createStore({
     },
     getSelectedCompanyAddress: (state) => {
       return state.selectedCompanyAddress;
+    },
+    getSelectedVhq: (state) => {
+      return state.selectedVhq;
     }
   },
   actions: {

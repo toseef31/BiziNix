@@ -47,7 +47,7 @@
           <div
             class="flex basis-3/6 flex-col items-center text-center"
           >
-            <VirtualHqPackageVue></VirtualHqPackageVue>
+            <VirtualHqPackageVue @update-package="updatePackage"></VirtualHqPackageVue>
           </div>
           <div
             class="flex basis-2/6 flex-col items-center justify-center"
@@ -58,7 +58,7 @@
 </template>
 <script setup lang="ts">
 import store from "@/store";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
 import VirtualHqPackageVue from "../VirtualHqPackage.vue";
 
@@ -66,43 +66,33 @@ const vhqs: any = computed(() => {
   return store.state.vhqs;
 });
 
-const currentVhq = ref({
-  id: 0,
-  base_price: 0,
-  name: "test",
-  description: "test",
-  img: "https://beta.bizinix.sk/img/vcompany.jpg",
-  address: {
-    id: 0,
-    street: "Ulica",
-    street_number: "1",
-    street_number2: "2",
-    city: "Bratislava",
-    country: "Slovensko",
-    psc: "04001",
-    created_at: "",
-    updated_at: "",
-  },
-  address_id: 0,
+const currentVhq: any = computed(() => {
+  return store.state.selectedVhq;
 });
 const newCompany = ref(false);
+const vhq_package = ref({
+  name: "Mini",
+  name_desc: "Základ, bez prehľadu o pošte",
+  desc: "Zriadenie sídla a označenie schránky.",
+  price: 7
+});
+
+const updatePackage = (updatedPackage: any) => {
+  vhq_package.value = updatedPackage;
+};
 
 function switchSelect(event: any) {
-  newCompany.value = false;
-
-  currentVhq.value = vhqs.value.find(
+  store.state.selectedVhq = vhqs.value.find(
     (item: any) => item.id == event.target.value
   );
 }
 
 onBeforeMount(async () => {
   await store.dispatch("vhqs");
-
-  currentVhq.value = vhqs.value.at(0);
 });
 
 defineExpose({
-    currentVhq,
-    newCompany
+    newCompany,
+    vhq_package
 })
 </script>
