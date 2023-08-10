@@ -3,10 +3,10 @@
     <div class="max-w-7xl flex flex-col md:flex-row items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
       <div class="max-w-full">
         <h1 class="!leading-tight text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Najlepšie virtuálne sídlo
+          Najlepšie<br>virtuálne sídlo
         </h1>
         <div class="text-base text-white my-4">
-          <ul class="list-disc list-inside">
+          <ul class="list-disc list-inside text-2xl">
             <li>Ukladanie všetkých doručených listín na jednom mieste, v digitálnej podobe</li>
             <li>Expresné preposielanie originálov</li>
             <li>Preberanie pošty z úradov</li>
@@ -27,7 +27,7 @@
           <div class="text-4xl md:text-5xl text-white font-bold leading-normal">
             Vieme, čo potrebujete
           </div>
-          <div class="text-white text-base mt-4">
+          <div class="text-white mt-4 text-xl">
             Všetka korešpondencia prichádzajúca na sídlo <br />
             firmy (virtuálne sídlo firmy) sa uchováva. Následne sa z virtuálneho
             <br />
@@ -70,7 +70,7 @@
         <div class="text-5xl mt-4 text-white font-bold leading-normal">
           Vyberte si lukratívne sídlo
         </div>
-        <div class="text-white text-base mt-4 mb-10">
+        <div class="text-white mt-4 mb-10 text-xl">
           Základná cena obsahuje zriadenie sídla označenie schránky a email
           notifikácie o prijatej <br />
           pošte. V prípade záujmu k sídlu doplnte ďalšie služby (napríklad
