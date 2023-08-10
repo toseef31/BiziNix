@@ -27,15 +27,6 @@ export const store = createStore({
     selectedCompanyMails: [],
     selectedCompanyAddress: {},
     document: {},
-    orderVhqData: {
-      createCompany: false,
-      skartovanie: false,
-      preposlanie: false,
-      scanovanie: false,
-      preberanie: false,
-      price: 0,
-      vhq: {} as any,
-    },
   },
   getters: {
     getDocument: (state) => {

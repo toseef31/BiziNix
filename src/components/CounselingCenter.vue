@@ -44,12 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ChevronDownIcon,
-  ChevronDoubleRightIcon,
-} from "@heroicons/vue/outline";
-import CounselingCenter from "@/components/CounselingCenter.vue";
-import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

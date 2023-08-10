@@ -1,6 +1,6 @@
 <template>
       <!-- Podnikatelské údaje New company-->
-      <div v-show="data.createCompany">
+      <div v-show="createCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete založiť
@@ -29,7 +29,7 @@
         </div>
       </div>
       <!-- Podnikatelské údaje Existing company-->
-      <div v-show="!data.createCompany">
+      <div v-show="!createCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete
@@ -104,7 +104,6 @@ import type Company from "@/types/Company";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const companyAddress = ref({} as Address);
-const data = computed(() => store.state.orderVhqData);
 const finstatCompany = ref({} as any);
 const company = ref({} as Company);
 const companies = ref([] as any);

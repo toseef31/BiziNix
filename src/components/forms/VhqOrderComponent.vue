@@ -14,6 +14,10 @@
           </ul>
         </div>
           <FormKit type="multi-step" name="vhqOrderMultiStepPlugin" tab-style="tab">
+            <FormKit type="step" name="sidloUdaje" label="Výber sídla" next-label="Pokračovať" previous-label="Naspäť">
+              <SidloVhqFormStepVue ref="hqDataRef" />
+            </FormKit>
+
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
               <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
             </FormKit>
@@ -26,6 +30,9 @@
             <FakturacneUdajeVhqFormStep ref="invoiceDataRef" />
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+              Celkom k platbe <b>{{ totalForPay }} €</b>.
+          </div>
           <FormKit
             type="checkbox"
             label="Všeobecné obchodné podmienky"
@@ -79,12 +86,14 @@ import FakturacneUdajeVhqFormStep from "./fakturacneUdajeVhqFormStep.vue";
 import UcetVhqFormStep from "./ucetVhqFormStep.vue";
 import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import { useModal, Modal } from "usemodal-vue3";
+import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
 
+let hqDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
 let accountDataRef = ref<InstanceType<typeof UcetVhqFormStep>>(null as any);
 let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeVhqFormStep>>(null as any);
 const messages = ref([]);
-const data = computed(() => store.state.orderVhqData);
+let totalForPay = computed(() => order.value.amount)
 
 let addressFromResponse: any,
   userFromResponse: any,
@@ -196,17 +205,16 @@ function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.company.name;
   headquarter.value.name = "VS-" + companyDataRef.value.company.name;
-  headquarter.value.price = data.value.price;
-
-  headquarter.value.registry = data.value.preberanie;
-  headquarter.value.forwarding = data.value.preposlanie;
-  headquarter.value.scanning = data.value.scanovanie;
-  headquarter.value.shredding = data.value.skartovanie;
+  
+  //treba podla balika updatnut
+  headquarter.value.price = 0;
+  headquarter.value.registry = false;
+  headquarter.value.forwarding = false;
+  headquarter.value.scanning = false;
+  headquarter.value.shredding = false;
   headquarter.value.is_virtual = true;
-
-  headquarter.value.img = data.value.vhq.img;
-
-  headquarter.value.address_id = data.value.vhq.address.id;
+  headquarter.value.img = "";
+  headquarter.value.address_id = 0;
 
   return store
     .dispatch("addHeadquarter", headquarter.value)
@@ -242,10 +250,11 @@ function addOrder(): Promise<Response> {
   order.value.company_id = companyFromResponse.company.id;
   order.value.user_id = userFromResponse.user_id;
 
-  order.value.amount = data.value.price;
-  order.value.amount_vat = data.value.price*0.2;
-  order.value.items[0].price = data.value.price;
-  order.value.items[0].price_vat = data.value.price*0.2;
+  //treba updatnut podla balika
+  order.value.amount = 0;
+  order.value.amount_vat = 0*0.2;
+  order.value.items[0].price = 0;
+  order.value.items[0].price_vat = 0*0.2;
 
   order.value.fakturacne_udaje[0].first_name = invoiceDataRef.value.fakturacne_udaje.first_name;
   order.value.fakturacne_udaje[0].last_name = invoiceDataRef.value.fakturacne_udaje.last_name;

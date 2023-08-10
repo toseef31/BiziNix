@@ -19,7 +19,6 @@ import ThanksYouNewOrderVue from "@/views/Common/ThanksYouNewOrder.vue";
 import Payment from "@/views/Common/Payment.vue";
 import CompanyDetailsVue from "@/views/Backoffice/CompanyDetails.vue";
 import VirtualHqPageVue from "@/views/VirtualHQ/VirtualHqPage.vue";
-import OrderVirtualHqPageVue from "@/views/VirtualHQ/OrderVirtualHqPage.vue";
 import HqAndMailPageVue from "@/views/Backoffice/HqAndMailPage.vue";
 import ContactPageVue from "../views/Info/ContactPage.vue";
 import GdprPageVue from "@/views/Info/GdprPage.vue";
@@ -63,7 +62,6 @@ const router = createRouter({
         { path: "/posts", name: "Posts", component: PostsPageVue },
         { path: "/post/:id", name: "Post", component: PostPageVue },
         { path: '/virtualne-sidlo', name: "Virtual hq", component: VirtualHqPageVue },
-        { path: "/virtualne-sidlo/order", name: "Order vhq", component: OrderVirtualHqPageVue },
         { path: '/documents', name: "Documents", component: DocumentsPageVue },
         { path: "/documents/order", name: "Order documents", component: OrderDocumentsPageVue },
       ],
