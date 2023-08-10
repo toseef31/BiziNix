@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import Autocomplete from "@/components/Autocomplete.vue";
@@ -107,6 +107,7 @@ const companyAddress = ref({} as Address);
 const finstatCompany = ref({} as any);
 const company = ref({} as Company);
 const companies = ref([] as any);
+const createCompany = ref(false);
 
 const finstatCompanyDetails = ref({} as any);
 
@@ -186,6 +187,7 @@ onMounted(async () => {
 defineExpose({
   finstatCompanyDetails,
   companyAddress,
-  company
+  company,
+  createCompany
 })
 </script>
