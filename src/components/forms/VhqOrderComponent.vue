@@ -237,6 +237,7 @@ function addHeadquarter(): Promise<Response> {
 function addCompany(): Promise<Response> {
   companyDataRef.value.company.owner = userFromResponse.user_id;
   companyDataRef.value.company.headquarters_id = hqFromResponse.id;
+  companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   return store
     .dispatch("addCompany", companyDataRef.value.company)

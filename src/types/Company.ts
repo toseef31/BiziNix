@@ -26,6 +26,7 @@ export default interface Company {
   updated_at: Date
   is_hq_virtual: boolean
   sidlo_zaplatene_do: string
+  sidlo_typ_balika: string
   fakturacia_zaplatene_do: string
   doc_template_id: number
   doc_sncounters_id: number
