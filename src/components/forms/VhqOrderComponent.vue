@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, reactive, watch } from "vue";
+import { ref, computed, reactive } from "vue";
 import router from "@/router";
 import { getValidationMessages } from '@formkit/validation'
 import FakturacneUdajeVhqFormStep from "./fakturacneUdajeVhqFormStep.vue";
@@ -146,13 +146,6 @@ const order = ref({
     },
   ],
 });
-
-watch(
-  () => hqDataRef.value?.newCompany,
-  function () {
-    companyDataRef.value.createCompany = hqDataRef.value.newCompany;
-  }
-);
 
 function showErrors(node: any) {
   messages.value = []

@@ -27,21 +27,6 @@
               </div>
             </div>
             <!------>
-            <div class="flex flex-row py-5 gap-8">
-              <div class="flex flex-row">
-                <span class="shrink pr-10">Chcete sídlo pre <b>EŠTE NEZALOŽENÚ</b> firmu?</span>
-              </div>
-              <div>
-                <FormKit
-                  :checked="newCompany"
-                  type="checkbox"
-                  id="nova"
-                  v-model="newCompany"
-                  class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
-                />
-              </div>
-            </div>
-            <!------>
           </div>
           <!---->
           <div
@@ -58,7 +43,7 @@
 </template>
 <script setup lang="ts">
 import store from "@/store";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { ChevronDownIcon } from "@heroicons/vue/outline";
 import VirtualHqPackageVue from "../VirtualHqPackage.vue";
 
@@ -69,7 +54,7 @@ const vhqs: any = computed(() => {
 const currentVhq: any = computed(() => {
   return store.state.selectedVhq;
 });
-const newCompany = ref(false);
+
 const vhq_package = ref({
   name: "Mini",
   name_desc: "Základ, bez prehľadu o pošte",
@@ -92,7 +77,6 @@ onBeforeMount(async () => {
 });
 
 defineExpose({
-    newCompany,
     vhq_package
 })
 </script>
