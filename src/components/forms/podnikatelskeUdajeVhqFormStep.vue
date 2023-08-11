@@ -1,6 +1,20 @@
 <template>
+      <div class="flex flex-row py-5 gap-8">
+        <div class="flex flex-row">
+          <span class="shrink pr-10">Chcete sídlo pre <b>EŠTE NEZALOŽENÚ</b> firmu?</span>
+        </div>
+        <div>
+          <FormKit
+            :checked="newCompany"
+            type="checkbox"
+            id="nova"
+            v-model="newCompany"
+            class="focus:ring-teal-500 focus:border-teal-500 text-teal-500"
+          />
+        </div>
+      </div>
       <!-- Podnikatelské údaje New company-->
-      <div v-show="data.createCompany">
+      <div v-show="newCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete založiť
@@ -29,7 +43,7 @@
         </div>
       </div>
       <!-- Podnikatelské údaje Existing company-->
-      <div v-show="!data.createCompany">
+      <div v-show="!newCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete
@@ -98,16 +112,16 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const companyAddress = ref({} as Address);
-const data = computed(() => store.state.orderVhqData);
 const finstatCompany = ref({} as any);
 const company = ref({} as Company);
 const companies = ref([] as any);
+const newCompany = ref(false);
 
 const finstatCompanyDetails = ref({} as any);
 
@@ -187,6 +201,7 @@ onMounted(async () => {
 defineExpose({
   finstatCompanyDetails,
   companyAddress,
-  company
+  company,
+  newCompany
 })
 </script>

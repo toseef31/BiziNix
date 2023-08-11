@@ -14,6 +14,10 @@
           </ul>
         </div>
           <FormKit type="multi-step" name="vhqOrderMultiStepPlugin" tab-style="tab">
+            <FormKit type="step" name="sidloUdaje" label="Výber sídla" next-label="Pokračovať" previous-label="Naspäť">
+              <SidloVhqFormStepVue ref="hqDataRef" />
+            </FormKit>
+
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
               <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
             </FormKit>
@@ -26,6 +30,9 @@
             <FakturacneUdajeVhqFormStep ref="invoiceDataRef" />
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+              Celkom k platbe <b>{{ totalForPay }} €</b>.
+          </div>
           <FormKit
             type="checkbox"
             label="Všeobecné obchodné podmienky"
@@ -79,12 +86,14 @@ import FakturacneUdajeVhqFormStep from "./fakturacneUdajeVhqFormStep.vue";
 import UcetVhqFormStep from "./ucetVhqFormStep.vue";
 import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import { useModal, Modal } from "usemodal-vue3";
+import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
 
+let hqDataRef = ref<InstanceType<typeof SidloVhqFormStepVue>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
 let accountDataRef = ref<InstanceType<typeof UcetVhqFormStep>>(null as any);
 let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeVhqFormStep>>(null as any);
 const messages = ref([]);
-const data = computed(() => store.state.orderVhqData);
+const totalForPay = computed(() => hqDataRef.value?.vhq_package.price)
 
 let addressFromResponse: any,
   userFromResponse: any,
@@ -111,8 +120,8 @@ const order = ref({
   payment_method: "",
   order_type: 'vhq',
   description: "Objednávka virtuálneho sídla",
-  amount: 12,
-  amount_vat: 2,
+  amount: 0,
+  amount_vat: 0,
   is_paid: false,
   user_id: 0,
   company_id: 0,
@@ -121,8 +130,8 @@ const order = ref({
   items: [
     {
       description: "Zakúpenie virtuálneho sídla",
-      price: 12,
-      price_vat: 2,
+      price: 0,
+      price_vat: 0,
     },
   ],
   fakturacne_udaje: [
@@ -196,17 +205,16 @@ function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.company.name;
   headquarter.value.name = "VS-" + companyDataRef.value.company.name;
-  headquarter.value.price = data.value.price;
-
-  headquarter.value.registry = data.value.preberanie;
-  headquarter.value.forwarding = data.value.preposlanie;
-  headquarter.value.scanning = data.value.scanovanie;
-  headquarter.value.shredding = data.value.skartovanie;
+  
+  //treba podla balika updatnut
+  headquarter.value.price = hqDataRef.value.vhq_package.price;
   headquarter.value.is_virtual = true;
-
-  headquarter.value.img = data.value.vhq.img;
-
-  headquarter.value.address_id = data.value.vhq.address.id;
+  headquarter.value.img = store.state.selectedVhq.img;
+  headquarter.value.address_id = store.state.selectedVhq.address_id;
+  headquarter.value.registry = false;
+  headquarter.value.forwarding = false;
+  headquarter.value.scanning = false;
+  headquarter.value.shredding = false;
 
   return store
     .dispatch("addHeadquarter", headquarter.value)
@@ -222,6 +230,7 @@ function addHeadquarter(): Promise<Response> {
 function addCompany(): Promise<Response> {
   companyDataRef.value.company.owner = userFromResponse.user_id;
   companyDataRef.value.company.headquarters_id = hqFromResponse.id;
+  companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   return store
     .dispatch("addCompany", companyDataRef.value.company)
@@ -242,10 +251,10 @@ function addOrder(): Promise<Response> {
   order.value.company_id = companyFromResponse.company.id;
   order.value.user_id = userFromResponse.user_id;
 
-  order.value.amount = data.value.price;
-  order.value.amount_vat = data.value.price*0.2;
-  order.value.items[0].price = data.value.price;
-  order.value.items[0].price_vat = data.value.price*0.2;
+  order.value.amount = hqDataRef.value.vhq_package.price;
+  order.value.amount_vat = hqDataRef.value.vhq_package.price*0.2;
+  order.value.items[0].price = hqDataRef.value.vhq_package.price;
+  order.value.items[0].price_vat = hqDataRef.value.vhq_package.price*0.2;
 
   order.value.fakturacne_udaje[0].first_name = invoiceDataRef.value.fakturacne_udaje.first_name;
   order.value.fakturacne_udaje[0].last_name = invoiceDataRef.value.fakturacne_udaje.last_name;
