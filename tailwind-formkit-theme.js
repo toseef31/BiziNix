@@ -98,8 +98,8 @@ export default {
   },
   select: {
     inner: 'flex relative max-w-md items-center rounded mb-1 ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>span:first-child]:focus-within:text-blue-500',
-    input: 'w-full pl-3 pr-8 py-2 border-none text-base text-white placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
-    selectIcon: 'flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
+    input: 'w-full pl-3 pr-4 py-2 border-none text-base text-white placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
+    selectIcon: 'text-white dark:text-white flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
     option: 'formkit-multiple:p-3 formkit-multiple:text-sm text-gray-700'
   },
   textarea: {

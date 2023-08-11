@@ -914,7 +914,7 @@ onBeforeMount(async () => {
 });
 </script>
 
-<style>
+<style scoped>
 .modal-vue3-footer {
   display: none !important;
 }

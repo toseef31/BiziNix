@@ -16,6 +16,8 @@ import 'vue3-toastify/dist/index.css';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 import { sk } from '@formkit/i18n'
 import myTailwindTheme from '../tailwind-formkit-theme.js';
+import { createVfm } from 'vue-final-modal'
+import 'vue-final-modal/style.css'
 
 const pro = createProPlugin('fk-d5888c6a7f', inputs)
 //extend defaultConfig for formkit
@@ -44,6 +46,7 @@ const config: DefaultConfigOptions  = {
 };
 
 const app = createApp(App);
+const vfm = createVfm()
 app.use(store);
 app.use(createPinia());
 app.use(router);
@@ -52,6 +55,7 @@ app.use(Vue3Toastify, {
   autoclose: 3000,
   position: "bottom-center",
 } as ToastContainerOptions);
+app.use(vfm)
 
 app.mount("#app");
 

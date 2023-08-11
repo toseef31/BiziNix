@@ -323,12 +323,12 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
 
 async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any> {
 
-  companyMembersAndDetails.value.zakladateliaSpolocnici.members.forEach((item, index: any) => {
-    companyMembersAndDetails.value.zakladateliaSpolocnici.members[index].company_id = companyId
+  companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: any) => {
+    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
   })
 
   try {
-    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.zakladateliaSpolocnici)
+    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.zakladateliaSpolocniciList)
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
     return res
   } catch(err) {
@@ -338,12 +338,12 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
 
 async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> {
 
-  companyMembersAndDetails.value.konatelia.members.forEach((item, index: any) => {
-    companyMembersAndDetails.value.konatelia.members[index].company_id = companyId
+  companyMembersAndDetails.value.konateliaList.forEach((item, index: any) => {
+    companyMembersAndDetails.value.konateliaList[index].company_id = companyId
   })
 
   try {
-    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.konatelia)
+    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.konateliaList)
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
     return res
   } catch (err: any){

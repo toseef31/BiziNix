@@ -30,6 +30,7 @@
     "usemodal-vue3": "^0.3.7",
     "vee-validate": "^4.6.7",
     "vue": "^3.2.37",
+    "vue-final-modal": "^4.4.5",
     "vue-horizontal": "^1.0.2",
     "vue-router": "^4.1.2",
     "vue-tsc": "^1.8.3",
