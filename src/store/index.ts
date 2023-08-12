@@ -119,7 +119,7 @@ export const store = createStore({
     updateUser({ commit, dispatch }, userProfile) {
       if (userProfile.id) {
         return axiosClient
-          .put(`/users/${userProfile.id}/update`, userProfile)
+          .patch(`/users/${userProfile.id}/update`, userProfile)
           .then((res) => {
             // console.log("Res from userProfile: " + JSON.stringify(res))
             commit("setCurrentUserProfile", res.data);
@@ -140,7 +140,7 @@ export const store = createStore({
     updateUserAddress({ commit, dispatch }, userAddress) {
       if (userAddress.id) {
         return axiosClient
-          .put(`/address/${userAddress.id}/update`, userAddress)
+          .patch(`/address/${userAddress.id}/update`, userAddress)
           .then((res) => {
             commit("setUserAddressAfterUpdate", res.data);
             return res;
@@ -232,7 +232,7 @@ export const store = createStore({
     async updateCompany({ commit, dispatch }, company) {
       if (company.id) {
         return axiosClient
-          .put(`/companies/${company.id}/update`, company)
+          .patch(`/companies/${company.id}/update`, company)
           .then((res) => {
             commit("setCompany", res.data);
             return res;
@@ -315,7 +315,7 @@ export const store = createStore({
     updateDocument({ commit, dispatch }, document) {
       if (document.id) {
         return axiosClient
-          .put(`/documents/${document.id}/update`, document)
+          .patch(`/documents/${document.id}/update`, document)
           .then((res) => {
             return res;
           });
@@ -340,7 +340,7 @@ export const store = createStore({
       return data;
     },
     async updateOrderById({ commit }, order) {
-      const { data } = await axiosClient.put(`/orders/${order.id}/update`, order);
+      const { data } = await axiosClient.patch(`/orders/${order.id}/update`, order);
       commit("setOrder", data); // setOrder is defined as muttation below 
       return data;
     },
@@ -385,7 +385,7 @@ export const store = createStore({
     },
     updateMail({ commit, dispatch }, mail) {
       if (mail.id) {
-        return axiosClient.put(`/mails/${mail.id}/update`, mail).then((res) => {
+        return axiosClient.patch(`/mails/${mail.id}/update`, mail).then((res) => {
           commit("setMailsAfterUpdate", res.data);
           return res;
         });
@@ -394,7 +394,7 @@ export const store = createStore({
     updateMultipleMails({ commit, dispatch }, mails) {
       console.log(mails);
       return axiosClient
-        .put(`/mails/updateMultiple`, { mails: mails })
+        .patch(`/mails/updateMultiple`, { mails: mails })
         .then((res) => {
           commit("setMailsAfterUpdate", res.data);
           return res;
