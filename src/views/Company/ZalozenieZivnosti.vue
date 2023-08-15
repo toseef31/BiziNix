@@ -186,6 +186,7 @@ let headquarter = ref({
 let order = ref({
   payment_date: '' as any,
   payment_method: '',
+  order_type: 'company',
   description: 'test',
   amount: 0, // final cena s dph
   amount_vat: 0, // vat je čisto len dph
