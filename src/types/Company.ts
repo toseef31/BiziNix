@@ -16,11 +16,11 @@ export default interface Company {
   owner: number
   last_step: number
   subjects_of_business:[{
-    id: number,
-    title: string,
-    price: number,
-    description:string,
-    category_id: number
+    id: number | null | undefined,
+    title: string | null | undefined,
+    price: number | null | undefined,
+    description:string | null | undefined,
+    category_id: number | null | undefined
   }],
   note: string
   updated_at: Date
