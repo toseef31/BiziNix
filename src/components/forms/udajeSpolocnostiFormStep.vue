@@ -1,9 +1,15 @@
 <template>
-<div class="text-4xl font-bold">Vyplňte údaje o spoločnosti</div>
-<div class="mt-2 mb-6">vyplňte zakladne údaje a pridajte zakladateľov (spoločnikov) a konateľov.</div>
-  <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" />
+  <div class="text-4xl font-bold">Vyplňte údaje o spoločnosti</div>
+  <div class="mt-2 mb-6">vyplňte zakladne údaje a pridajte zakladateľov (spoločnikov) a konateľov.</div>
+  
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" />
+    <FormKit type="select" name="pravnaForma" label="Právna forma" placeholder="Vybrať" v-model="pravnaForma"
+      :options="['s. r. o.',', s. r. o.',', spol. s r. o.']" validation="required" validation-visibility="dirty"
+    />
+  </div>
   <h2 class="text-xl my-4">Základné imanie </h2>
-  <div class="grid grid-cols-2 gap-4 my-4">
+  <div class="grid grid-cols-3 gap-4 my-4">
     <FormKit type="number" name="vyska" label="Výška €" validation="required|min:5000" v-model="companyOrZivnostModel.imanie_vyska"
     help="Od 1.1.2016 finančné prostriedky do výšky 5000 eur nemusia byť vkladané ná účet v banke. Minimálna výška základného imania pri s.r.o. je podľa zákona 5000,- Eur. Môžete zadať aj viac."
     />
@@ -281,6 +287,7 @@ const modalIdAddOrEdit = Symbol('modalIdAddOrEdit')
 const buttonModalText = ref<string>()
 const titleModalText = ref<string>()
 let isFormValid = false
+const pravnaForma = ref('');
 
 let companyOrZivnostModel = ref({
   name: '',
@@ -585,6 +592,7 @@ function closeAndSaveOrDeleteOrEditModal() {
 }
 
 function logValueForZakladatelia(){
+  console.log(companyOrZivnostModel.value)
   console.log(currentOperation)
   console.log("Zakladatelia list")
   console.log(zakladateliaSpolocniciList.value)
@@ -617,6 +625,7 @@ function logNodeFromKonatelia(){
 
 defineExpose({
   companyOrZivnostModel,
+  pravnaForma,
   zakladateliaSpolocniciList,
   konateliaList
 })

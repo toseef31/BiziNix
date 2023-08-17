@@ -327,9 +327,9 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
 
   companyOrZivnostModel.value.subjects_of_business.forEach(element => {
     order.value.items.push({
-      description: element.title,
-      price: element.price,
-      price_vat: element.price * 0.2
+      description: element.title as string,
+      price: element.price as number,
+      price_vat: (element.price as number) * 0.2
     })
   });
 

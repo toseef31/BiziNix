@@ -299,7 +299,7 @@ async function addHeadquarter(hqAddressId: any): Promise<any> {
 async function addCompany(userId: any, hqId: any): Promise<any> {
 
   const companyOrZivnostModelData = {
-    name: companyMembersAndDetails.value.companyOrZivnostModel.name,
+    name: companyMembersAndDetails.value.companyOrZivnostModel.name + companyMembersAndDetails.value.pravnaForma,
     type: companyMembersAndDetails.value.companyOrZivnostModel.type,
     status: companyMembersAndDetails.value.companyOrZivnostModel.status,
     owner: userId,

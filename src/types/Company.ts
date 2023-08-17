@@ -15,13 +15,13 @@ export default interface Company {
   sposob_konania_konatelov: number
   owner: number
   last_step: number
-  subjects_of_business:[{
-    id: number,
-    title: string,
-    price: number,
-    description:string,
-    category_id: number
-  }],
+  subjects_of_business: Array<{
+    id: number | null,
+    title: string | null,
+    price: number | null,
+    description:string | null,
+    category_id: number | null
+  }>,
   note: string
   updated_at: Date
   is_hq_virtual: boolean
