@@ -58,8 +58,11 @@
             <li v-for="message in messages">{{ message }}</li>
           </ul>
         </div>
-          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" use-local-storage="true" tab-style="tab">
-
+          <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" id="multiStepPluginFirma"
+            :allow-incomplete="false"              
+            use-local-storage="true"
+            tab-style="tab"
+          >
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
@@ -68,7 +71,7 @@
               <obchodneSidloFormStep ref="sidloCompanyAddress" />
             </FormKit>
 
-            <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" next-label="Pokračovať" previous-label="Naspäť">
+            <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" next-label="Pokračovať" previous-label="Naspäť">
               <udajeSpolocnostiFormStep ref="companyMembersAndDetails" />
             </FormKit>
 
@@ -97,9 +100,8 @@
               </template>
             </FormKit>
           <FormKit type="submit" label="Objednať s povinnosťou platby" />
-
         </FormKit>
-        <!-- <button @click="logujData">New log Submit</button> -->
+        <button @click="logujData">New log Submit</button>
       </div> 
     </div>
   </div>
@@ -108,7 +110,7 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { ref, onBeforeMount, onMounted, computed, toRef } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
@@ -120,6 +122,7 @@ import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
 import { getValidationMessages } from '@formkit/validation'
+import { getNode } from '@formkit/core';
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);
@@ -206,11 +209,18 @@ let order = ref({
 
 let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
 
-onBeforeMount( () => {
+const isUdajeSpolocnostiStepValid = ref()
+
+onMounted( () => {
+  // const node = getNode('udajeSpolocnostiStep')
+  // if (!node) return;
+  
+  // isUdajeSpolocnostiStepValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
 
 })
 
 function logujData(){
+  console.log('Formdata Udaje Spolocnosti', isUdajeSpolocnostiStepValid.value)
   console.log(companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress)
   console.log(user.value)

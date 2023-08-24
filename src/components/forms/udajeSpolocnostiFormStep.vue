@@ -3,9 +3,9 @@
   <div class="mt-2 mb-6">vyplňte zakladne údaje a pridajte zakladateľov (spoločnikov) a konateľov.</div>
   
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" />
+    <FormKit type="text" name="name" v-model="companyOrZivnostModel.name" label="Názov spoločnosti" validation="required"/>
     <FormKit type="select" name="pravnaForma" label="Právna forma" placeholder="Vybrať" v-model="pravnaForma"
-      :options="['s. r. o.',', s. r. o.',', spol. s r. o.']" validation="required" validation-visibility="dirty"
+      :options="['s. r. o.',', s. r. o.',', spol. s r. o.']" validation="required"
     />
   </div>
   <h2 class="text-xl my-4">Základné imanie </h2>
@@ -28,6 +28,7 @@
       Pridať zakladateľa
     </button>
   </div>
+  <!-- Zakladatelia table -->
   <template v-if="zakladateliaSpolocniciList.length === 0">
     <div class="font-bold">Zatiaľ nebol pridaný žiadný zakladateľ (spoločník).</div>
   </template>
@@ -58,7 +59,7 @@
             </td>
             <td class="hidden px-3 py-4 text-sm lg:table-cell">{{ item.vyska_vkladu }} €</td>
             <td class="hidden px-3 py-4 text-sm sm:table-cell">{{ item.podiel_v_spolocnosti }} %</td>
-            <td class="px-3 py-4 text-sm">{{ item.je_konatel }}</td>
+            <td class="px-3 py-4 text-sm">{{ item.je_konatel ? 'Áno' : 'Nie' }}</td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
               <button class="flex items-center justify-center w-full" @click.prevent="editItem(index, 'zakladatelia')"><PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
@@ -80,6 +81,7 @@
         Pridať konateľa
       </button>
   </div>
+  <!-- Konatelia table -->
   <template v-if="konateliaList.length === 0">
     <div class="font-semibold">Zatiaľ nebol pridaný žiadný konateľ.</div>
   </template>
@@ -102,37 +104,18 @@
               </dl>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button :disabled="item.je_konatel" class="flex items-center justify-center w-full" @click.prevent="editItem(index, 'konatelia')"><PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
+              <button :disabled="item.addedFromZakladatelia" class="flex items-center justify-center w-full disabled:text-gray-500" @click.prevent="editItem(index, 'konatelia')"><PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button class="flex items-center justify-center w-full" @click.prevent="confirmRemoveItem(index, 'konatelia')"><XIcon class="h-5 w-5" aria-hidden="true" /></button>
+              <button :disabled="item.addedFromZakladatelia" class="flex items-center justify-center w-full disabled:text-gray-500" @click.prevent="confirmRemoveItem(index, 'konatelia')"><XIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </template>
-    <!-- <ul>
-      <li v-for="(item, index) in zakladateliaSpolocniciList" :key="index">
-        {{ item.first_name }} {{ item.last_name }} {{ item.je_konatel }}
-        <button
-          @click.prevent="editItem(index, 'zakladatelia')">Upraviť</button> | 
-        <button @click.prevent="confirmRemoveItem(index, 'zakladatelia')">Odobrať</button>
-      </li>
-    </ul> -->
-
-    <!-- <ul>
-      <li v-for="(item, index) in konateliaList" :key="index">
-        {{ item.first_name }} {{ item.last_name }}
-        <button :disabled="item.addedFromZakladatelia" @click.prevent="editItem(index, 'konatelia')">Upraviť</button>
-        <button @click.prevent="confirmRemoveItem(index, 'konatelia')">Odobrať</button>
-      </li>
-    </ul> -->
-    <!-- <button @click.prevent="logValueForKonatelia">Log for list konatelia.</button> -->
-
-    
-    <!-- Modal for Edit -->
-
+  <!-- <button @click.prevent="logValueForKonatelia">Log for list konatelia.</button> -->    
+  <!-- Modal for Add/Edit/Remove -->
     <VueFinalModal
       :modal-id="modalIdAddOrEdit"
       display-directive="if"
@@ -145,37 +128,41 @@
       <h1 class="text-white text-2xl">
         {{ titleModalText }}
       </h1>
-      <!-- <button @click.prevent="logNewItemVal" class="text-white">LogNewItemVal</button> -->
-        <!-- Spoločníci -->
-        <template v-if="currentOperation.type === 'add' || currentOperation.type=== 'edit'">
+      <button @click.prevent="isRodneCisloUnique" class="text-white">LogNewItemVal</button>
+        <!-- Group form for Spoločníci and Konatelia -->
+        <template v-if="currentOperation.type === 'add' || currentOperation.type === 'edit'">
           <FormKit id="group_spolocnici" name="members_spolocnici"
             type="group"
             #default="{ index, value }"
+            :config="{ validationVisibility: 'live' }"
             v-model="newItem"
           >
-            <FormKit type="select" name="typ_zakladatela" id="typ_zakladatela" label="Typ zakladateľa" placeholder="Vyberte typ zakladateľa"
-                :options="[{value: 1, label: 'Fyzická osoba' }, {value: 2, label: 'Právnicka osoba' }]" validation="required" validation-visibility="dirty"
-              />
+            <FormKit v-if="currentOperation.list === 'zakladatelia'" type="select" name="typ_zakladatela" label="Typ zakladateľa" placeholder="Vyberte typ zakladateľa"
+                :options="[ { value: 1, label: 'Fyzická osoba' }, { value: 2, label: 'Právnicka osoba' } ]" validation="required"
+            />
             <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
               <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
               <FormKit type="text" name="ico" label="IČO" validation="required" />
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <FormKit type="text" name="first_name" v-model="newItem.first_name" label="Krstné meno" validation="required|length:2" />
-              <FormKit type="text" name="last_name" v-model="newItem.last_name" label="Priezvisko" validation="required|length:2" />
+              <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
+              <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
               <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
               <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
-                :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
+                :options="['Muž','Žena']" validation="required"
               />
-              <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" placeholder="Vyberte typ dokladu tožnosti"
-                :options="['Občiansky preukaz','Cestovný pas','Vodičský preukaz']" validation="required" validation-visibility="dirty"
+              <FormKit type="text" name="nationality" label="Štátna príslušnosť " validation="required|length:2" />
+              <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" validation-visibility="live" placeholder="Vyberte typ dokladu tožnosti"
+                :options="['Občiansky preukaz','Cestovný pas','Vodičský preukaz']" validation="required"
               />
               <FormKit type="text" name="cislo_dokladu_totoznosti" label="Číslo dokladu totožnosti" validation="required|length:5" />
-              <FormKit type="text" name="title_before_zakladatel" label="Titul pred menom" />
-              <FormKit type="text" name="title_after_zakladatel" label="Titul za menom" />
-              <FormKit type="text" name="rodne_cislo" label="Rodné číslo" validation="required|length:10" />
+              <FormKit type="text" name="title_before" label="Titul pred menom" />
+              <FormKit type="text" name="title_after" label="Titul za menom" />
+              <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
+                validation="required|length:9"
+              />
               <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
-                :options="['Slovensko','Česká republika']" validation="required" validation-visibility="dirty"
+                :options="['Slovensko','Česká republika']" validation="required"
               />
               <FormKit type="text" name="city" label="Mesto" validation="required" />
               <FormKit type="text" name="psc" label="PSČ" validation="required" />
@@ -183,23 +170,31 @@
               <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required" />
               <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required" />
             </div>
-            <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-              <FormKit type="number" name="vyska_vkladu" label="Výška vkladu €" validation="required" help="Zadajte hodnotu napr. 1000 alebo 0" />
-              <FormKit type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti %" validation="required" help="Zadajte hodnotu 0 - 100" />
-              <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu €" validation="required" help="Zadajte hodnotu napr. 3000 alebo 0" />
-            </div>
-            <div>
-              <FormKit type="checkbox" name="je_konatel" label="Tento zakladateľ (spoločník) bude aj konateľom" validation-visibility="dirty" />
-              <FormKit type="checkbox" name="je_spravca_vkladu" :value="true" label="Tento zakladateľ (spoločník) bude aj správcom vkladu" validation-visibility="dirty" />
+            <div v-if="currentOperation.list === 'zakladatelia'">
+              <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormKit type="number" name="vyska_vkladu" label="Výška vkladu €" validation="required|min:750" help="Zadajte hodnotu napr. 1000 alebo 0" />
+                <FormKit type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti %" validation="required" help="Zadajte hodnotu 0 - 100" />
+                <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu €" validation="required" help="Zadajte hodnotu napr. 3000 alebo 0" />
+              </div>
+              <div>
+                <FormKit type="checkbox" name="je_konatel" label="Tento zakladateľ (spoločník) bude aj konateľom" />
+                <FormKit type="checkbox" name="je_spravca_vkladu" :value="true" label="Tento zakladateľ (spoločník) bude aj správcom vkladu" />
+              </div>
             </div>
           </FormKit>
       </template>
       <template v-else>
-        <div class="text-white py-4">
-          Naozaj si prajete odstrániť zakladateľa?          
+        <div v-if="currentOperation.list === 'zakladatelia'" class="text-white py-4">
+          Naozaj si prajete odobrať zakladateľa?
+        </div>
+        <div v-else class="text-white py-4">
+          Naozaj si prajete odobrať konateľa?
         </div>
       </template>
       <!-- <div class="text-white">Is form value in main {{ isFormValid }}</div> -->
+      <div v-if="!isFormValid" class="text-red-700 p-1 text-center text-lg rounded font-bold bg-red-50">
+        Prosím vyplnte všetky povinné polia.
+      </div>
       <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
         <button class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded" @click.prevent="() => vfm.closeAll()">
           Zrušiť
@@ -209,35 +204,6 @@
           </button>
       </div>
     </VueFinalModal>
-
-  <!-- Konatelia -->
-  <!-- <FormKit id="group_konatelia" name="members_konatelia"
-    type="group"
-    v-model="konateliaList"
-    :config="{ validationVisibility: 'live' }"
-    #default="{ index, value }"
-  >
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
-      <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
-      <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required|length:10" />
-      <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie"
-        :options="['Muž','Žena']" validation="required" validation-visibility="dirty"
-      />
-      <FormKit type="text" name="title_before_konatel" label="Titul pred menom" />
-      <FormKit type="text" name="title_after_konatel" label="Titul za menom" />
-      <FormKit type="text" name="rodne_cislo" label="Rodné číslo" validation="required|length:10" />
-      <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
-        :options="['Slovensko','Česká republika']" validation="required" validation-visibility="dirty"
-      />
-      <FormKit type="text" name="city" label="Mesto" validation="required" />
-      <FormKit type="text" name="psc" label="PSČ" validation="required" />
-      <FormKit type="text" name="street" label="Ulica" validation="required" />
-      <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required" />
-      <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required" />
-    </div>
-  </FormKit> -->
-
   <div class="my-4">
     <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú" 
       :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod"
@@ -276,17 +242,20 @@
 
 <script setup lang="ts">
 import type Company from '@/types/Company';
-import { onBeforeMount, onMounted, reactive } from 'vue';
+import { onBeforeMount, onMounted, reactive, type Ref } from 'vue';
 import { ref, toRef } from 'vue';
 import { PencilIcon, XIcon } from '@heroicons/vue/outline'
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import { getNode } from '@formkit/core'
+import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
+import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 
 const vfm = useVfm()
 const modalIdAddOrEdit = Symbol('modalIdAddOrEdit')
 const buttonModalText = ref<string>()
 const titleModalText = ref<string>()
-let isFormValid = false
+const isFormValid = ref()
+let rodneCislo = ref();
 const pravnaForma = ref('');
 
 let companyOrZivnostModel = ref({
@@ -314,95 +283,52 @@ let companyOrZivnostModel = ref({
   }]
 })
 
-let zakladateliaSpolocniciList = ref([
-  {
-    company_id: 0,
-    obchodne_meno: '',
-    ico: '',
-    typ_zakladatela: 0, // 1 Fyz Osoba, 2 Prav Osoba
-    first_name: 'xxx',
-    last_name: 'gggg',
-    title_before: '',
-    title_after: '',
-    gender: '',
-    date_of_birth: '',
-    rodne_cislo: '',
-    street: '',
-    street_number: '',
-    street_number2: '',
-    city: '',
-    psc: '',
-    country: '',
-    typ_dokladu_totoznosti: '',
-    cislo_dokladu_totoznosti: '',
-    vyska_vkladu: 0,
-    podiel_v_spolocnosti: 0,
-    rozsah_splatenia_vkladu: 0,
-    je_spravca_vkladu: true,
-    je_zakladatel: false,
-    je_konatel: false
-  }
-])
+let zakladateliaSpolocniciList: Ref<CompanyMemberSpolocnik[]> = ref<CompanyMemberSpolocnik[]>([])
+let konateliaList: Ref<CompanyMemberKonatel[]> = ref<CompanyMemberKonatel[]>([])
 
-let konateliaList = ref([
-  {
-    company_id: 0,
-    first_name: 'konatelA' as string,
-    last_name: 'konatelB' as string,
-    title_before: '',
-    title_after: '',
-    gender: '',
-    date_of_birth: '',
-    rodne_cislo: '',
-    street: '',
-    street_number: '',
-    street_number2: '',
-    city: '',
-    psc: '',
-    country: '',
-    je_konatel: true,
-    addedFromZakladatelia: false
-  }
-])
+const defaultNewItem: CompanyMemberSpolocnik | CompanyMemberKonatel = {
+  company_id: null,
+  ico: '',
+  typ_zakladatela: null,
+  obchodne_meno: '',
+  first_name: '',
+  last_name: '',
+  title_before: '',
+  title_after: '',
+  gender: '',
+  nationality: '',
+  date_of_birth: '',
+  rodne_cislo: '',
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+  typ_dokladu_totoznosti: '',
+  cislo_dokladu_totoznosti: '',
+  vyska_vkladu: null,
+  podiel_v_spolocnosti: null,
+  rozsah_splatenia_vkladu: null,
+  je_spravca_vkladu: true,
+  je_zakladatel: false,
+  je_konatel: false,
+  addedFromZakladatelia: false
+};
 
-const newItem = ref({
-  company_id: 0 as number,
-  obchodne_meno: '' as string,
-  ico: ''  as string,
-  typ_zakladatela: 0 as number, // 1 Fyz Osoba, 2 Prav Osoba
-  first_name: 'NewItemFirstName' as string,
-  last_name: 'NewItemLastName' as string,
-  title_before: '' as string,
-  title_after: '' as string,
-  gender: '' as string,
-  date_of_birth: '' as string,
-  rodne_cislo: '' as string,
-  street: '' as string,
-  street_number: '' as string,
-  street_number2: '' as string,
-  city: '' as string,
-  psc: '' as string,
-  country: '' as string,
-  typ_dokladu_totoznosti: '' as string,
-  cislo_dokladu_totoznosti: '' as string,
-  vyska_vkladu: 0 as number,
-  podiel_v_spolocnosti: 0 as number,
-  rozsah_splatenia_vkladu: 0 as number,
-  je_spravca_vkladu: true as boolean,
-  je_zakladatel: false as boolean,
-  je_konatel: false as boolean
-});
+const newItem: Ref<CompanyMemberSpolocnik | CompanyMemberKonatel> = ref<CompanyMemberSpolocnik | CompanyMemberKonatel>(defaultNewItem);
+
+function resetNewItem() {
+  Object.assign(newItem.value, defaultNewItem);
+}
 
 const currentOperation = reactive({
   type: null as string | null,
   list: null as string | null,
   index: null as number | null,
 });
-
-const selectedList = ref('zakladatelia');
-const removeItemIndex = ref();
-
 onBeforeMount( () => {
+  
 })
 
 onMounted(() => {
@@ -417,13 +343,10 @@ function editItem(index: number, list: string) {
   buttonModalText.value = 'Upraviť'
   if (list === 'zakladatelia') {
     titleModalText.value = 'Upraviť zakladateľa (spoločníka)'
-    newItem.value.first_name = zakladateliaSpolocniciList.value[index].first_name;
-    newItem.value.last_name = zakladateliaSpolocniciList.value[index].last_name;
-    newItem.value.je_konatel = zakladateliaSpolocniciList.value[index].je_konatel;
+    newItem.value = zakladateliaSpolocniciList.value[index] as CompanyMemberSpolocnik
   } else if (list === 'konatelia') {
     titleModalText.value = 'Upraviť konateľa'
-    newItem.value.first_name = konateliaList.value[index].first_name;
-    newItem.value.last_name = konateliaList.value[index].last_name;
+    newItem.value = konateliaList.value[index] as CompanyMemberKonatel
   }
   currentOperation.type = 'edit'
   currentOperation.list = list;
@@ -431,30 +354,42 @@ function editItem(index: number, list: string) {
   vfm.open(modalIdAddOrEdit)?.then(() => {
     const node = getNode('group_spolocnici');
     if (!node) return;
-    isFormValid = toRef(node.context?.state as object, 'valid' as never)
+    isFormValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
+    rodneCislo.value = getNode('rodne_cislo')
   });
-  //modalVisible = setModal('modalForEdit', true)
+
   console.log("Finish edit");
 }
 
 function removeItem(list: string) {
   if (list === 'zakladatelia') {
-    zakladateliaSpolocniciList.value.splice(currentOperation.index as number, 1);
-  } else if (list === 'konatelia') {
-    konateliaList.value.splice(currentOperation.index as number, 1);
-  } else if (list === 'both') {
-    zakladateliaSpolocniciList.value.splice(currentOperation.index as number, 1);
-    konateliaList.value.splice(currentOperation.index as number, 1);
+    if (currentOperation.index !== null) {
+      const index = currentOperation.index as number;
+      // store removed item
+      const removedItem = zakladateliaSpolocniciList.value[index];
+      zakladateliaSpolocniciList.value.splice(index, 1);
+
+      // find and remove item from konateliaList
+      const konateliaIndex = konateliaList.value.findIndex(item => item.rodne_cislo === removedItem.rodne_cislo);
+      if (konateliaIndex !== -1) {
+        konateliaList.value.splice(konateliaIndex, 1);
+      }
   }
-    //modalVisible = setModal('modalForDeleteConfirmation', false);
-    vfm.closeAll();
-    currentOperation.type = null;
-    currentOperation.list = null;
-    currentOperation.index = null;
+  } else if (list === 'konatelia') {
+    if (currentOperation.index !== null) {
+      const index = currentOperation.index as number;
+      konateliaList.value.splice(index, 1);
+    }
+  }
+
+  vfm.closeAll();
+  currentOperation.type = null;
+  currentOperation.list = null;
+  currentOperation.index = null;
 }
 
+
 async function confirmRemoveItem(index: number, list: string) {
-  isFormValid = true
   titleModalText.value = 'Potvrdenie odobratia'
   buttonModalText.value = 'Odobrať'
   currentOperation.type = 'delete';
@@ -462,119 +397,75 @@ async function confirmRemoveItem(index: number, list: string) {
   currentOperation.index = index;
   console.log("CurrentOperation: ", currentOperation)
   await vfm.open(modalIdAddOrEdit);
-  //modalVisible = setModal('modalForDeleteConfirmation', true);
-
-      // if (list === 'zakladatelia' && zakladateliaSpolocniciList.value[index].je_konatel) {
-      //   modalVisible = setModal('modalForDeleteConfirmation', true);
-      //   removeItemIndex.value = index;
-      // } else if (list === 'konatelia' && konateliaList.value[index].addedFromZakladatelia) {
-      //   modalVisible = setModal('modalForDeleteConfirmation', true);
-      //   removeItemIndex.value = index;
-      // } else {
-      //   removeItem(index, list);
-      // }
 }
 
-async function addItem(list: string) {
-  console.log("CurrentOperation:", currentOperation)
+function addItem(list: string) {
+
   currentOperation.type = 'add';
   currentOperation.list = list;
+  console.log("CurrentOperation:", currentOperation)
   if(list == 'zakladatelia'){
     titleModalText.value = 'Nový zakladateľ (spoločník)'
   } else {
     titleModalText.value = 'Nový Konateľ'
   }
   buttonModalText.value = 'Pridať'
-  await vfm.open(modalIdAddOrEdit)?.then(() => {
+  
+  vfm.open(modalIdAddOrEdit);
+      // Reset newItem after opening the modal
+    //resetNewItem()
+    console.log("BeforeNode")
     const node = getNode('group_spolocnici');
+    console.log("Nodeeeee: ", node)
     if (!node) return;
-    isFormValid = toRef(node.context?.state as object, 'valid' as never)
-  });
+    isFormValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
+    console.log("After Form node")
+    rodneCislo.value = getNode('rodne_cislo')
+
 }
 
 function saveItem() {
   if (currentOperation.list === 'zakladatelia') {
     if(currentOperation.type === 'edit'){
-      zakladateliaSpolocniciList.value[currentOperation.index as number].first_name = newItem.value.first_name
-      zakladateliaSpolocniciList.value[currentOperation.index as number].last_name = newItem.value.last_name
-      zakladateliaSpolocniciList.value[currentOperation.index as number].je_konatel = newItem.value.je_konatel
+      zakladateliaSpolocniciList.value[currentOperation.index as number] = newItem.value as CompanyMemberSpolocnik;
+      // check if je_konatel is false
+      if (!newItem.value.je_konatel) {
+        // find and remove item from konateliaList
+        const index = konateliaList.value.findIndex(item => item.rodne_cislo === newItem.value.rodne_cislo);
+        if (index !== -1) {
+          konateliaList.value.splice(index, 1);
+        }
+      } else {
+        // check if item is already in konateliaList
+        const index = konateliaList.value.findIndex(item => item.rodne_cislo === newItem.value.rodne_cislo);
+        if (index === -1) {
+          // add item to konateliaList
+          (newItem.value as CompanyMemberKonatel).addedFromZakladatelia = true;
+          konateliaList.value.push(newItem.value as CompanyMemberKonatel);
+        } else {
+          // update item in konateliaList
+          konateliaList.value[index] = newItem.value as CompanyMemberKonatel;
+        }
+      }
     } else {        
-      zakladateliaSpolocniciList.value.push({
-        company_id: 0,
-        obchodne_meno: '',
-        ico: '',
-        typ_zakladatela: 0, // 1 Fyz Osoba, 2 Prav Osoba
-        first_name: newItem.value.first_name,
-        last_name: newItem.value.last_name,
-        title_before: '',
-        title_after: '',
-        gender: '',
-        date_of_birth: '',
-        rodne_cislo: '',
-        street: '',
-        street_number: '',
-        street_number2: '',
-        city: '',
-        psc: '',
-        country: '',
-        typ_dokladu_totoznosti: '',
-        cislo_dokladu_totoznosti: '',
-        vyska_vkladu: 0,
-        podiel_v_spolocnosti: 0,
-        rozsah_splatenia_vkladu: 0,
-        je_spravca_vkladu: true,
-        je_zakladatel: true,
-        je_konatel: newItem.value.je_konatel,
-      });
+      zakladateliaSpolocniciList.value.push(newItem.value as CompanyMemberSpolocnik);
       if (newItem.value.je_konatel) {
-        konateliaList.value.push({
-          company_id: 0,
-          first_name: newItem.value.first_name,
-          last_name: newItem.value.last_name,
-          title_before: newItem.value.title_before,
-          title_after: newItem.value.title_after,
-          gender: newItem.value.gender,
-          date_of_birth: newItem.value.date_of_birth,
-          rodne_cislo: newItem.value.rodne_cislo,
-          street: newItem.value.street,
-          street_number: newItem.value.street_number,
-          street_number2: newItem.value.street_number2,
-          city: newItem.value.city,
-          psc: newItem.value.psc,
-          country: newItem.value.country,
-          je_konatel: newItem.value.je_konatel,
-          addedFromZakladatelia: true
-        });
+        (newItem.value as CompanyMemberKonatel).addedFromZakladatelia = true
+        konateliaList.value.push(newItem.value as CompanyMemberKonatel);
       }
     }
   } else if (currentOperation.list === 'konatelia') {
-
     if(currentOperation.type === 'edit'){
-      konateliaList.value[currentOperation.index as number].first_name = newItem.value.first_name
-      konateliaList.value[currentOperation.index as number].last_name = newItem.value.last_name
+      //(newItem.value as CompanyMemberKonatel).addedFromZakladatelia = false
+      konateliaList.value[currentOperation.index as number] = newItem.value as CompanyMemberKonatel
     } else {
-      konateliaList.value.push({
-        company_id: 0,
-        first_name: newItem.value.first_name,
-        last_name: newItem.value.last_name,
-        title_before: newItem.value.title_before,
-        title_after: newItem.value.title_after,
-        gender: newItem.value.gender,
-        date_of_birth: newItem.value.date_of_birth,
-        rodne_cislo: newItem.value.rodne_cislo,
-        street: newItem.value.street,
-        street_number: newItem.value.street_number,
-        street_number2: newItem.value.street_number2,
-        city: newItem.value.city,
-        psc: newItem.value.psc,
-        country: newItem.value.country,
-        je_konatel: newItem.value.je_konatel,
-        addedFromZakladatelia: false
-      });
+      //(newItem.value as CompanyMemberKonatel).addedFromZakladatelia = false
+      konateliaList.value.push(newItem.value as CompanyMemberKonatel);
     }
   }
+
   closeAndSaveOrDeleteOrEditModal();
-  //modalVisible = setModal('modalForEdit', false)
+
   currentOperation.type = null
   currentOperation.list = null
   currentOperation.index = null
@@ -589,6 +480,23 @@ function closeAndSaveOrDeleteOrEditModal() {
       saveItem()
     }
   })
+}
+
+async function isRodneCisloUnique() {
+  //node = rodneCislo.value.value
+  console.log("Node on click: ", getNode('group_spolocnici'))
+  console.log(rodneCislo.value)
+  console.log(isFormValid)
+  console.log(zakladateliaSpolocniciList.value as CompanyMemberSpolocnik[])
+  const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === rodneCislo.value.value as string).length;
+  console.log("Count is: ", count)
+  if(count){
+    console.log("Rodne cislo nie je uniq")
+    return true
+  } else {
+    console.log("Rodne cislo JE uniq")
+    return false
+  }
 }
 
 function logValueForZakladatelia(){

@@ -44,7 +44,7 @@
         content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
       >
       <h1 class="text-white text-2xl">
-        Potvrdenie odstránenie
+        Potvrdenie odstránenia
       </h1>
       <p class="text-white mb-4" >Naozaj chcete odstrániť všetky predmety podnikania?</p>
       <div class="flex flex-col gap-4 md:flex-row items-center justify-between">

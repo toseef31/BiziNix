@@ -1,4 +1,17 @@
 <template>
+
+<div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(0, 0, 0, 0.85) 40%, rgba(0, 0, 0, 0.523) 100%), url('../src/assets/pages/about-us/onasbg.png') ">
+    <div class="max-w-7xl flex flex-row min-h-[80vh] items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
+      <div class="max-w-full">
+        <h1 class="!leading-tight text-5xl font-extrabold text-white sm:tracking-tight lg:text-8xl">Bizinix<br>a jeho <span class="text-bizinix-teal">misia</span></h1>
+      </div>
+      <!-- Second div of flex -->
+      <div>
+        <img src="@/assets/robot.png" class="max-w-[16rem] lg:max-w-md">
+      </div>
+    </div>
+  </div>
+
   <div class="bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <h1 class="text-3xl font-bold text-center">O nás</h1>
