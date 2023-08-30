@@ -110,8 +110,8 @@ const route = useRoute()
 
 onBeforeMount( () => {
 
-  const form = getNode('zalZivnostiMultiStepForm');
-  console.log(form?.value);
+  // const form = getNode('zalZivnostiMultiStepForm');
+  // console.log(form?.value);
 
   if(route.fullPath.includes('zivnosti')){    
     isZivnostForm.value = true  

@@ -13,11 +13,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@formkit/addons": "latest",
-    "@formkit/icons": "^0.17.4",
-    "@formkit/pro": "^0.112.7",
-    "@formkit/themes": "^0.17.4",
-    "@formkit/vue": "^0.18.5",
+    "@formkit/addons": "^0.19.2",
+    "@formkit/icons": "^0.19.2",
+    "@formkit/pro": "^0.115.1",
+    "@formkit/themes": "^0.19.2",
+    "@formkit/vue": "^0.19.2",
     "@headlessui/vue": "^1.7.13",
     "@heroicons/vue": "^1.0.6",
     "@vue-stripe/vue-stripe": "^4.5.0",

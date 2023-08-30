@@ -159,7 +159,9 @@
               <FormKit type="text" name="title_before" label="Titul pred menom" />
               <FormKit type="text" name="title_after" label="Titul za menom" />
               <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-                validation="required|length:9"
+                :validation-rules="{ isRodneCisloUnique }"  
+                validation="required|length:9|isRodneCisloUnique"
+                :validation-messages="{ isRodneCisloUnique: 'Rodne číslo sa už používa!'}"
               />
               <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
                 :options="['Slovensko','Česká republika']" validation="required"
@@ -192,14 +194,15 @@
         </div>
       </template>
       <!-- <div class="text-white">Is form value in main {{ isFormValid }}</div> -->
-      <div v-if="!isFormValid" class="text-red-700 p-1 text-center text-lg rounded font-bold bg-red-50">
+      <div class="text-white">Rod. cislo: {{ rodneCislo.cislo }}</div>
+      <div v-if="!isFormValid.valid" class="text-red-700 p-1 text-center text-lg rounded font-bold bg-red-50">
         Prosím vyplnte všetky povinné polia.
       </div>
       <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
         <button class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded" @click.prevent="() => vfm.closeAll()">
           Zrušiť
         </button>
-        <button :disabled="!isFormValid" class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded" @click.prevent="closeAndSaveOrDeleteOrEditModal">
+        <button :disabled="!isFormValid.valid" class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded" @click.prevent="closeAndSaveOrDeleteOrEditModal">
           {{ buttonModalText }}
           </button>
       </div>
@@ -238,25 +241,40 @@
       />
     </div>
   </div>
+  <button @click.prevent="logCount">Log count of kontatelia</button><br>
+  Count of konatelia {{ countOfKonatelia }}
+  Count of Zakldatelia {{countOfZakladatelia }}
 </template>
 
 <script setup lang="ts">
 import type Company from '@/types/Company';
-import { onBeforeMount, onMounted, reactive, type Ref } from 'vue';
+import { onBeforeMount, onMounted, reactive, watch, type Ref } from 'vue';
 import { ref, toRef } from 'vue';
 import { PencilIcon, XIcon } from '@heroicons/vue/outline'
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import { getNode } from '@formkit/core'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
+import { computed } from 'vue';
 
 const vfm = useVfm()
 const modalIdAddOrEdit = Symbol('modalIdAddOrEdit')
 const buttonModalText = ref<string>()
 const titleModalText = ref<string>()
-const isFormValid = ref()
-let rodneCislo = ref();
+const isFormValid = ref({
+  valid: false
+})
+const rodneCislo = ref({
+  cislo: ''
+});
 const pravnaForma = ref('');
+
+const countOfZakladatelia =  computed(() => {
+  return zakladateliaSpolocniciList.value.length
+})
+const countOfKonatelia = computed(() => {
+  return konateliaList.value.length
+})
 
 let companyOrZivnostModel = ref({
   name: '',
@@ -327,8 +345,9 @@ const currentOperation = reactive({
   list: null as string | null,
   index: null as number | null,
 });
+
 onBeforeMount( () => {
-  
+
 })
 
 onMounted(() => {
@@ -354,8 +373,8 @@ function editItem(index: number, list: string) {
   vfm.open(modalIdAddOrEdit)?.then(() => {
     const node = getNode('group_spolocnici');
     if (!node) return;
-    isFormValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
-    rodneCislo.value = getNode('rodne_cislo')
+    isFormValid.value.valid = toRef(node.context?.state, 'valid')
+    rodneCislo.value.cislo = toRef(getNode('rodne_cislo'), 'value')
   });
 
   console.log("Finish edit");
@@ -411,16 +430,19 @@ function addItem(list: string) {
   }
   buttonModalText.value = 'Pridať'
   
-  vfm.open(modalIdAddOrEdit);
-      // Reset newItem after opening the modal
-    //resetNewItem()
+
+  vfm.open(modalIdAddOrEdit)?.then(() => {
+    // Reset newItem after opening the modal
+    resetNewItem()
     console.log("BeforeNode")
     const node = getNode('group_spolocnici');
     console.log("Nodeeeee: ", node)
     if (!node) return;
-    isFormValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
+    isFormValid.value.valid = toRef(node.context?.state, 'valid')
     console.log("After Form node")
-    rodneCislo.value = getNode('rodne_cislo')
+    console.log("isFormValid? ", isFormValid.value.valid)
+    rodneCislo.value.cislo = toRef(getNode('rodne_cislo'), 'value')
+  });
 
 }
 
@@ -482,21 +504,41 @@ function closeAndSaveOrDeleteOrEditModal() {
   })
 }
 
-async function isRodneCisloUnique() {
-  //node = rodneCislo.value.value
-  console.log("Node on click: ", getNode('group_spolocnici'))
-  console.log(rodneCislo.value)
-  console.log(isFormValid)
-  console.log(zakladateliaSpolocniciList.value as CompanyMemberSpolocnik[])
-  const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === rodneCislo.value.value as string).length;
-  console.log("Count is: ", count)
-  if(count){
-    console.log("Rodne cislo nie je uniq")
-    return true
-  } else {
-    console.log("Rodne cislo JE uniq")
-    return false
+async function isRodneCisloUnique(node: any) {
+
+  console.log("Konatelia: ", konateliaList.value)
+  console.log("Zakladatelia: ", zakladateliaSpolocniciList.value)
+  
+  if(currentOperation.type === 'add'){
+    const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === node.value as string).length;
+    console.log("Count is: ", count)
+    if(count){
+      console.log("Rodne cislo nie je uniq")
+      return false
+    } else {
+      console.log("Rodne cislo JE uniq")
+      return true
+    }
   }
+  if(currentOperation.type === 'edit'){
+    const index = currentOperation.index as number;
+    const currentItem = zakladateliaSpolocniciList.value[index];
+
+    if(currentItem.rodne_cislo === node.value){
+      return true
+    } else {
+      const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === node.value as string).length;
+      console.log("Count is: ", count)
+      if(count){
+        console.log("Rodne cislo nie je uniq")
+        return false
+      } else {
+        console.log("Rodne cislo JE uniq")
+        return true
+      }
+    }
+  }
+
 }
 
 function logValueForZakladatelia(){
@@ -524,11 +566,16 @@ function logNewItemVal(){
   //isFormValid = toRef(node?.context?.state as object, 'valid' as never)
   //console.log(isFormValid)
   //console.log(getNode('group_spolocnici')?.context?.state)
-  console.log(isFormValid)
+  console.log(isFormValid.value.valid)
 }
 
 function logNodeFromKonatelia(){
   //console.log(getNode('group_konatelia')?.context?.state)
+}
+
+function logCount(){
+  console.log("Count of konatelia", konateliaList.value.length)
+  console.log("Count of zakladatelia", zakladateliaSpolocniciList.value.length)
 }
 
 defineExpose({

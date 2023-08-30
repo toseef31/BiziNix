@@ -112,7 +112,8 @@ export default {
     closeIcon: 'flex grow-0 shrink-0 w-3 mr-3.5 self-stretch',
     inner: '[&>div>[data-value]]:absolute [&>div>[data-value]]:mb-0',
     option: 'grow text-ellipsis',
-    selection: 'flex bg-gray-800 mt-2 rounded-sm',
+    selectionWrapper: 'flex bg-gray-800 rounded-sm mt-2',
+    selection: 'flex w-full',
     removeSelection: 'flex',
   },
   datepicker: {

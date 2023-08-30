@@ -32,7 +32,6 @@ import DocumentDetailsVue from "@/views/Backoffice/DocumentDetails.vue";
 import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
 import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
-import listTestVue from "@/views/Common/listTest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,7 +45,6 @@ const router = createRouter({
         { path: '/home', name: "Home", component: HomePage },
         { path: '/contact', name: "Contact", component: ContactPageVue },
         { path: '/gdpr', name: "Gdpr", component: GdprPageVue },
-        { path: '/listtest', name: "Gdpr", component: listTestVue },
         { path: '/pricelist', name: "Pricelist", component: PricelistPageVue },
         { path: '/obchodne-podmienky', name: "Obchodne podmienky", component: ObchodnePodmienkyPageVue },
         { path: '/o-nas', name: "About us", component: AboutUsPageVue },
