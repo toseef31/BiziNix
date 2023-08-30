@@ -3,7 +3,7 @@
       type="autocomplete"
       name="subjects_of_business"
       label="Predmet podnikania"
-      :options="loadCurrentlyPopularMovies"
+      :options="loadSubjectOfBusiness"
       placeholder="Vyhľadajte alebo vyberte predmet podnikania"
       multiple
       open-on-click
@@ -11,6 +11,7 @@
       selection-appearance="option"
       @input="calculatePriceForBusinessOfcategories"
       validation="required"
+      load-on-created="true"
     >
     <template #option="{ option }">
       <div class="formkit-option grow p-2">
@@ -256,7 +257,7 @@ function addSubjectOfBusinessToAutoselect(objOfArray: any) {
     // console.log(subjects_of_business.value)
 }
 
-async function loadCurrentlyPopularMovies({ search, page, hasNextPage }: any) {
+async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
 
   const res = await store.dispatch("getAllSubjectOfBusiness")
   loading.value = false

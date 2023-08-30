@@ -59,7 +59,7 @@
           </ul>
         </div>
           <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" id="multiStepPluginFirma"
-            :allow-incomplete="false"              
+            :allow-incomplete="true"              
             use-local-storage="true"
             tab-style="tab"
           >
@@ -212,6 +212,14 @@ let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusine
 const isUdajeSpolocnostiStepValid = ref()
 
 onMounted( () => {
+
+  // console.log("Before node onmounted")
+  // const node = getNode("multiStepPluginFirma");
+  // if (!node) return;
+  // console.log("Nodeeeeee")
+  // isFormValid.value = toRef(node?.context?.state as object, 'valid' as never)
+  // console.log('Node on mounted: ',node)
+
   // const node = getNode('udajeSpolocnostiStep')
   // if (!node) return;
   
