@@ -517,26 +517,10 @@ async function isRodneCisloUnique(node: any) {
       console.log("Rodne cislo JE uniq")
       return true
     }
-
-async function isRodneCisloUnique() {
-  //node = rodneCislo.value.value
-  console.log("Node on click: ", getNode('group_spolocnici'))
-  console.log(rodneCislo.value)
-  console.log("isFormValid? ", isFormValid.value.valid)
-  console.log(zakladateliaSpolocniciList.value as CompanyMemberSpolocnik[])
-  const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === rodneCislo.value.value as string).length;
-  console.log("Count is: ", count)
-  if(count){
-    console.log("Rodne cislo nie je uniq")
-    return true
-  } else {
-    console.log("Rodne cislo JE uniq")
-    return false
   }
-  if(currentOperation.type === 'edit'){
+  else if(currentOperation.type === 'edit'){
     const index = currentOperation.index as number;
     const currentItem = zakladateliaSpolocniciList.value[index];
-
     if(currentItem.rodne_cislo === node.value){
       return true
     } else {
@@ -550,6 +534,9 @@ async function isRodneCisloUnique() {
         return true
       }
     }
+  }
+  else {
+    return true
   }
 
 }
