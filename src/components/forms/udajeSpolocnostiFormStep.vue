@@ -428,8 +428,7 @@ function addItem(list: string) {
   } else {
     titleModalText.value = 'Nový Konateľ'
   }
-  buttonModalText.value = 'Pridať'
-  
+  buttonModalText.value = 'Pridať'  
 
   vfm.open(modalIdAddOrEdit)?.then(() => {
     // Reset newItem after opening the modal
@@ -444,6 +443,9 @@ function addItem(list: string) {
     rodneCislo.value.cislo = toRef(getNode('rodne_cislo'), 'value')
     //rodneCislo.value = getNode('rodne_cislo')
   });
+  
+}
+
 function saveItem() {
   if (currentOperation.list === 'zakladatelia') {
     if(currentOperation.type === 'edit'){
