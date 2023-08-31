@@ -442,10 +442,8 @@ function addItem(list: string) {
     console.log("After Form node")
     console.log("isFormValid? ", isFormValid.value.valid)
     rodneCislo.value.cislo = toRef(getNode('rodne_cislo'), 'value')
+    //rodneCislo.value = getNode('rodne_cislo')
   });
-
-}
-
 function saveItem() {
   if (currentOperation.list === 'zakladatelia') {
     if(currentOperation.type === 'edit'){
@@ -519,6 +517,21 @@ async function isRodneCisloUnique(node: any) {
       console.log("Rodne cislo JE uniq")
       return true
     }
+
+async function isRodneCisloUnique() {
+  //node = rodneCislo.value.value
+  console.log("Node on click: ", getNode('group_spolocnici'))
+  console.log(rodneCislo.value)
+  console.log("isFormValid? ", isFormValid.value.valid)
+  console.log(zakladateliaSpolocniciList.value as CompanyMemberSpolocnik[])
+  const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === rodneCislo.value.value as string).length;
+  console.log("Count is: ", count)
+  if(count){
+    console.log("Rodne cislo nie je uniq")
+    return true
+  } else {
+    console.log("Rodne cislo JE uniq")
+    return false
   }
   if(currentOperation.type === 'edit'){
     const index = currentOperation.index as number;
