@@ -443,7 +443,7 @@ function addItem(list: string) {
     rodneCislo.value.cislo = toRef(getNode('rodne_cislo'), 'value')
     //rodneCislo.value = getNode('rodne_cislo')
   });
-  
+
 }
 
 function saveItem() {
@@ -510,6 +510,7 @@ async function isRodneCisloUnique(node: any) {
   console.log("Zakladatelia: ", zakladateliaSpolocniciList.value)
   
   if(currentOperation.type === 'add'){
+    console.log("Som v Add");
     const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === node.value as string).length;
     console.log("Count is: ", count)
     if(count){
@@ -519,25 +520,7 @@ async function isRodneCisloUnique(node: any) {
       console.log("Rodne cislo JE uniq")
       return true
     }
-  }
-  else if(currentOperation.type === 'edit'){
-    const index = currentOperation.index as number;
-    const currentItem = zakladateliaSpolocniciList.value[index];
-    if(currentItem.rodne_cislo === node.value){
-      return true
-    } else {
-      const count = zakladateliaSpolocniciList.value.filter(item => item.rodne_cislo === node.value as string).length;
-      console.log("Count is: ", count)
-      if(count){
-        console.log("Rodne cislo nie je uniq")
-        return false
-      } else {
-        console.log("Rodne cislo JE uniq")
-        return true
-      }
-    }
-  }
-  else {
+  } else {
     return true
   }
 
