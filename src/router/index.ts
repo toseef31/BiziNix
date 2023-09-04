@@ -72,14 +72,15 @@ const router = createRouter({
       meta: { isGuest: false },
       children: [
         { path: '/moj/user/profile', name: "User Profil", component: UserProfile, meta: { requiresAuth: true } },
+        { path: '/moj/user/fakturacne', name: "Fakturačné profily", component: UserProfile, meta: { requiresAuth: true } },
         { path: '/moj/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/moj/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
         { path: '/moj/detail-spolocnosti/:id', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
         { path: '/moj/add-document/:subtype', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true }, props: true },
         { path: '/moj/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
-        { path: '/moj/my-documents', name: "My documents", component: DocumentsListPageVue, meta: { requiresAuth: true } },
-        { path: '/moj/document', name: "My document", component: DocumentDetailsVue, meta: { requiresAuth: true } },
-        { path: '/moj/sidlo-a-posta', name: "Hq and mail", component: HqAndMailPageVue, meta: { requiresAuth: true } },
+        { path: '/moj/my-documents', name: "Doklady", component: DocumentsListPageVue, meta: { requiresAuth: true } },
+        { path: '/moj/doklad', name: "Doklad", component: DocumentDetailsVue, meta: { requiresAuth: true } },
+        { path: '/moj/sidlo-a-posta', name: "Sídlo a pošta", component: HqAndMailPageVue, meta: { requiresAuth: true } },
       ]
     },
     {

@@ -545,9 +545,9 @@ import {
 import { ChevronDownIcon } from "@heroicons/vue/solid";
 import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/vue/outline";
+import { MenuIcon, XIcon } from "@heroicons/vue/outline";
 import { useStore } from "vuex";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
 
@@ -592,8 +592,8 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Nástenka", to: { name: "Dashboard" } },
-  { name: "Sídlo a pošta", to: { name: "Hq and mail" } },
-  { name: "Doklady", to: { name: "My documents" } },
+  { name: "Sídlo a pošta", to: { name: "Sídlo a pošta" } },
+  { name: "Doklady", to: { name: "Doklady" } },
   { name: "Dizajn dokladov", to: { name: "Document designs" } },
   { name: "Úprava firmy", to: { name: "Edit Company" } },
   { name: "Váš profil", to: { name: "User Profil" } },

@@ -607,7 +607,7 @@ function toggleAccordion() {
 
 function cancelEdit() {
   router.push({
-    name: "My documents",
+    name: "Doklady",
   });
 }
 
@@ -669,7 +669,7 @@ function submitHandler() {
     .dispatch("updateDocument", document.value)
     .then((res) => {
       router.push({
-        name: "My documents",
+        name: "Doklady",
       });
     })
     .catch((err) => {

@@ -3,7 +3,7 @@
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Replace with your content -->
         <div class="px-4 py-6 sm:px-0">
-          <h1 class="mb-4 text-2xl font-bold text-gray-900">Moje spoločnosti</h1>
+          <h1 class="mb-4 text-2xl font-bold text-gray-900">Fakturačné profily</h1>
           <MyCompanies></MyCompanies>
         </div>
         <!-- /End replace -->
@@ -12,15 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import MyCompanies from '@/components/MyCompanies.vue';
-import { onMounted } from 'vue';
-import { useStore } from 'vuex'
-
-const store = useStore();
-
-onMounted(() => {
-  store
-    .dispatch('setUserDataAfterLogin')
-})
-
+import MyInvoiceProfiles from '@/components/MyInvoiceProfiles.vue';
 </script>

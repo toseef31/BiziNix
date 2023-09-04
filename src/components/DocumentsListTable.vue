@@ -408,7 +408,7 @@ function saveAs(filename: string, blob: Blob) {
 function editDocument(document: Doklad) {
   store.dispatch("setDocument", document).then(() => {
     return router.push({
-      name: "My document",
+      name: "Doklad",
     });
   });
 }
@@ -431,7 +431,7 @@ async function duplicateDocument(document: any) {
     .then(() => {
       store.dispatch("setDocument", document).then(() => {
         return router.push({
-          name: "My document",
+          name: "Doklad",
         });
       });
     })

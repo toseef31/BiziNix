@@ -862,7 +862,7 @@ function removeItem(index: number) {
 
 function cancelAddition() {
   router.push({
-    name: "My documents",
+    name: "Doklady",
   });
 }
 
@@ -904,7 +904,7 @@ function addNew() {
 function closeModal() {
   isVisible = setModal("submitted1", false);
   router.push({
-    name: "My documents",
+    name: "Doklady",
   });
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen flex justify-center bg-gray-900">
+  <div class="w-full min-h-screen flex justify-center bg-gray-800">
     <img src="@/assets/logo_b.png" class="absolute center min-h-screen z-0" />
     <div class="flex py-20 w-full px-20 z-10">
       <div class="flex flex-col basis-2/3">
