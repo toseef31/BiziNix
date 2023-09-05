@@ -3,6 +3,7 @@ export default interface Company {
   name: string
   type: number
   status: number
+  sub_status: number
   ico: string
   dic: string
   icdph: string

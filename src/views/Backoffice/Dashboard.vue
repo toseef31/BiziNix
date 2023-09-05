@@ -1,10 +1,18 @@
 <template>
+  
     <main>
       <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Replace with your content -->
         <div class="px-4 py-6 sm:px-0">
-          <h1 class="mb-4 text-2xl font-bold text-gray-900">Moje spoločnosti</h1>
+          <h1 class="text-3xl font-bold text-gray-600 pb-10">
+            Moje spoločnosti
+          </h1>
           <MyCompanies></MyCompanies>
+          <div class="py-8">
+            <button @click="addCompany" class="w-fit shadow flex justify-center border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white font-bold hover:text-white hover:cursor-pointer hover:bg-gray-500 hover:border-gray-500 space-x-2">
+              <span class="pr-2">Pridať firmu</span>
+            </button>
+          </div>
         </div>
         <!-- /End replace -->
       </div>
@@ -17,6 +25,10 @@ import { onMounted } from 'vue';
 import { useStore } from 'vuex'
 
 const store = useStore();
+
+function addCompany() {
+    //todo
+}
 
 onMounted(() => {
   store

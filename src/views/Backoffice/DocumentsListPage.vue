@@ -85,46 +85,45 @@
         </div>
       </div>
       <!--KONIEC MENU-->
-      <div class="flex flex-col w-full">
-        <div v-if="tab == 1 || tab == 2">
-          <div
-            class="foreground z-40"
-            v-show="
-              new Date(company.fakturacia_zaplatene_do) < new Date(today) ||
-              company.fakturacia_zaplatene_do == null ||
-              company.fakturacia_zaplatene_do == ''
-            "
-          >
-            <div class="flex flex-col w-full items-center h-full py-32">
-              <div class="text-4xl text-gray-900 font-bold">
-                K tejto službe<br />bohužiaľ nemáte<br />prístup...
-              </div>
-              <div class="py-8">
-                <div
-                  @click="redirectToOrder()"
-                  class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-                >
-                  <span class="text-center w-full">Kúpiť službu</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div class="text-sm">3 mesiace zadarmo. Potom 5€/mesiac</div>
+      <div v-if=" new Date(company.fakturacia_zaplatene_do) < new Date(today) ||
+                  company.fakturacia_zaplatene_do == null ||
+                  company.fakturacia_zaplatene_do == ''
+                "
+          class="flex flex-col w-full items-center"
+      >
+        <div class="flex flex-col w-full items-center h-full py-32">
+          <div class="text-4xl text-gray-900 font-bold">
+            K tejto službe<br />bohužiaľ nemáte<br />prístup...
+          </div>
+          <div class="py-8">
+            <div
+              @click="redirectToOrder()"
+              class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+            >
+              <span class="text-center w-full">Kúpiť službu</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+              </svg>
             </div>
           </div>
+          <div class="text-sm">3 mesiace zadarmo. Potom 5€/mesiac</div>
+        </div>
+      </div>
 
+      <div class="flex flex-col w-full" v-else>
+        <div v-if="tab == 1 || tab == 2">
+          
           <div class="flex justify-center z-10">
             <div
               class="flex flex-row bg-gray-700 text-gray-300 rounded-b-lg font-bold"

@@ -27,7 +27,7 @@
 import { ChevronDownIcon } from "@heroicons/vue/outline";
 import type Mail from "@/types/Mail";
 import store from "@/store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import type Company from "@/types/Company";
 
 const companies = ref([""] as any);
@@ -47,6 +47,13 @@ const address = ref({
   country: "",
   psc: "",
 });
+
+watch(
+  () => store.getters.getSelectedCompany,
+  function () {
+    refreshData();
+  }
+);
 
 onBeforeMount(async () => {
   await store
@@ -69,6 +76,32 @@ onBeforeMount(async () => {
         });
     });
 });
+
+async function refreshData() {
+  currentCompany.value = store.state.selectedCompany;
+  mails.value = [];
+
+  //aktualizovat adresu
+  await store
+    .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
+    .then((response) => {
+      headquarter.value = response.data;
+      store
+        .dispatch("getAddressById", headquarter.value.address_id)
+        .then((response) => {
+          address.value = response.data;
+          store.state.selectedCompanyAddress = address.value;
+        });
+    });
+
+  //vyhladat postu
+  await store
+    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .then((response) => {
+      mails.value = response.data;
+      store.commit("setSelectedCompanyMails", mails.value);
+    });
+}
 
 async function switchSelect(event: any) {
   currentCompany.value = companies.value.find(
@@ -99,6 +132,5 @@ async function switchSelect(event: any) {
       mails.value = response.data;
       store.commit("setSelectedCompanyMails", mails.value);
     });
-
 }
 </script>

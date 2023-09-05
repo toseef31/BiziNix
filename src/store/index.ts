@@ -276,6 +276,13 @@ export const store = createStore({
           return res.data;
         });
     },
+    async getCompanySubstatuses({commit, dispatch}) {
+      return axiosClient
+      .get("/companies/getCompanySubStatuses")
+      .then((res) => {
+        return res.data.data;
+      });
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {

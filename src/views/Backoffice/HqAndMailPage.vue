@@ -1,17 +1,73 @@
 <template>
   <div class="min-h-full">
     <div class="w-full min-h-full flex flex-row">
-      <div class="flex flex-col basis-2 bg-white text-black px-2 py-2">
-        Tu bude komponent na balik
+      <div class="flex flex-col basis-1/5 px-2 py-2 relative">
+        <div class="absolute bottom-0 inset-x-0">
+          <div class="text-sm px-8">
+            V prípade záujmu o
+            osobné vyzdvihnutie
+            pošty nás kontaktujte
+            na 0908478270
+          </div>
+          <div class="py-4 px-8">
+            <hr>
+          </div>
+          <div class="font-bold px-8">
+            Využívate balík
+          </div>
+          <div class="font-bold px-8">
+            PREMIUM
+          </div>
+          <div class="py-4 px-8">
+            <button
+              class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+              v-on:click="redirectToOrder()"
+            >
+              Upraviť balík
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col w-full">
+      <div v-if=" selectedCompany && (new Date(selectedCompany.sidlo_zaplatene_do) < new Date(today) ||
+                  selectedCompany.sidlo_zaplatene_do == null ||
+                  selectedCompany.sidlo_zaplatene_do == '')
+                "
+          class="flex flex-col w-full items-center"
+      >
+        <div class="flex flex-col w-full items-center h-full py-32">
+          <div class="text-4xl text-gray-900 font-bold">
+            K tejto službe<br />bohužiaľ nemáte<br />prístup...
+          </div>
+          <div class="py-8">
+            <div
+              @click="redirectToOrder()"
+              class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+            >
+              <span class="text-center w-full">Kúpiť službu</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-full" v-else>
         <div class="w-full min-h-full">
           <div class="flex flex-col container mx-auto h-full text-gray-800">
-            <div
-              class="flex flex-row px-4 py-8 sm:px-0 font-bold text-5xl justify-center"
-            >
+            <h1 class="flex flex-row px-4 py-8 text-3xl font-bold text-gray-600 pb-10 justify-center">
               Doručená pošta
-            </div>
+            </h1>
             <div class="flex flex-row justify-between py-4">
               <div class="flex flex-1/4 flex-row">
                 <div class="flex relative">
@@ -546,29 +602,28 @@
                             title="Skartovanie zásielky"
                           >
                             <div
-                              class="bg-gray-800 rounded-lg border-teal-600 border-2"
+                              class="bg-gray-700 bg-opacity-95 rounded-lg"
                             >
                               <div
-                                class="flex flex-row justify-start py-4 px-4 text-white font-bold"
+                                class="flex flex-row justify-start py-8 px-8 text-white font-bold"
                               >
-                                Prosím potvrdte skartovanie zásielky od
-                                {{ selectedMail.sender }}
+                                Naozaj chcete túto zásielku skartovať?
                               </div>
-                              <div class="flex flex-row justify-end py-2 px-4">
-                                <div class="flex flex-1/4 px-4">
-                                  <button
-                                    class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                                    v-on:click="shredSingleMail(selectedMail)"
-                                  >
-                                    Skartovať
-                                  </button>
-                                </div>
+                              <div class="flex flex-row justify-end pb-4 px-4">
                                 <div class="flex flex-1/4">
                                   <button
-                                    class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                                    class="bg-gray-500 hover:bg-gray-800 h-8 px-6 rounded z-10 text-white"
                                     v-on:click="closeModal()"
                                   >
-                                    Zrušiť
+                                    Nie
+                                  </button>
+                                </div>
+                                <div class="flex flex-1/4 px-4">
+                                  <button
+                                    class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+                                    v-on:click="shredSingleMail(selectedMail)"
+                                  >
+                                    Áno
                                   </button>
                                 </div>
                               </div>
@@ -647,10 +702,14 @@ import axiosClient from "@/axios";
 import dayjs from "dayjs";
 import { useModal, Modal } from "usemodal-vue3";
 import * as _ from "lodash";
+import { useRouter } from "vue-router";
+import moment from "moment";
 
 const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
+const router = useRouter();
+const today = moment(new Date()).format("YYYY-MM-DD");
 
 let loading = true;
 
@@ -907,6 +966,12 @@ function downloadScanFile(id: any) {
         fileLink.click();
       });
   }
+}
+
+function redirectToOrder() {
+  return router.push({
+    name: "Virtual hq",
+  });
 }
 
 async function refreshData() {

@@ -1,12 +1,15 @@
 <template>
-  <div class="w-full min-h-screen flex justify-center bg-gray-800">
-    <img src="@/assets/logo_b.png" class="absolute center min-h-screen z-0" />
-    <div class="flex py-20 w-full px-20 z-10">
-      <div class="flex flex-col basis-2/3">
+  <div class="w-full min-h-screen flex justify-center">
+    <div class="flex flex-col py-20 w-full px-20 z-10">
+      <div class="flex flex-col text-4xl text-gray-600 pb-10">
+        Nastavenia dokladov
+      </div>
+      <div class="flex flex-row pb-10">
+        <div class="flex flex-col basis-2/3"> 
         <div
-          class="text-4xl text-white leading-normal font-bold text-center pt-8 pb-20"
+          class="text-2xl text-gray-600 pb-4"
         >
-          Vyberte si šablónu pre Vaše doklady
+          Design dokladov
         </div>
         <div
           class="container mx-auto space-y-2 lg:space-y-0 lg:gap-4 lg:grid lg:grid-cols-3"
@@ -35,63 +38,148 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-col basis-1/6 items-center px-8">
-        <div
-          class="max-w-sm bg-gray-800 border border-teal-500 rounded-lg shadow justify-center"
-        >
-          <img
-            class="rounded-t-lg p-6 max-w-sm"
-            v-bind:src="'data:image/png;base64,' + logoSrc"
-            alt=""
-          />
-          <button
-            class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-            v-on:click="showModal()"
-          >
-            <span class="font-bold w-full">Nahrať logo</span>
-          </button>
-        </div>
-        <Modal
-          name="uploadModal"
-          v-model:visible="isVisible"
-          :type="'clean'"
-          :closable="false"
-          title="Upload logo"
-        >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+        <div class="flex flex-col px-8">
+          <div class="flex flex-col basis-1/3 px-8">  
             <div
-              class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg"
+              class="text-2xl text-gray-600 pb-4"
             >
-              Prosím vyberte súbor
+              Logo firmy
             </div>
-            <div class="flex flex-row justify-end py-2 px-4">
-              <div class="flex flex-1/4 px-4">
-                <input
-                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-white"
-                  id="scan"
-                  accept="image/*"
-                  v-on:change="updateLogoData($event)"
-                  name="scan"
-                  type="file"
-                />
-                <button
-                  class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
-                  v-on:click="uploadLogo()"
-                >
-                  Nahrať
-                </button>
-              </div>
-              <div class="flex flex-1/4">
-                <button
-                  class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                  v-on:click="closeModal()"
-                >
-                  Zrušiť
-                </button>
-              </div>
+            <div
+              class="max-w-sm bg-gray-100 border border-teal-500 rounded-lg shadow justify-center"
+            >
+              <img
+                class="rounded-t-lg p-6 max-w-sm"
+                v-bind:src="'data:image/png;base64,' + logoSrc"
+                alt=""
+              />
+              <button
+                class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+                v-on:click="showModal()"
+              >
+                <span class="font-bold w-full px-2">Nahrať logo</span>
+              </button>
             </div>
+            <Modal
+              name="uploadModal"
+              v-model:visible="isVisible"
+              :type="'clean'"
+              :closable="false"
+              title="Upload logo"
+            >
+              <div class="bg-gray-100 rounded-lg border-teal-600 border-2">
+                <div
+                  class="flex flex-row justify-start py-4 px-4 text-gray-600 font-bold text-lg"
+                >
+                  Prosím vyberte súbor
+                </div>
+                <div class="flex flex-row justify-end py-2 px-4">
+                  <div class="flex flex-1/4 px-4">
+                    <input
+                      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-600"
+                      id="scan"
+                      accept="image/*"
+                      v-on:change="updateLogoData($event)"
+                      name="scan"
+                      type="file"
+                    />
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
+                      v-on:click="uploadLogo()"
+                    >
+                      Nahrať
+                    </button>
+                  </div>
+                  <div class="flex flex-1/4">
+                    <button
+                      class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-gray-600"
+                      v-on:click="closeModal()"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
           </div>
-        </Modal>
+          <div class="flex flex-col basis-1/3 px-8">
+            <div
+              class="text-2xl text-gray-600 pt-10 pb-4"
+            >
+              Podpis
+            </div>
+            <div
+              class="max-w-sm bg-gray-100 border border-teal-500 rounded-lg shadow justify-center"
+            >
+              <img
+                class="rounded-t-lg p-6 max-w-sm"
+                v-bind:src="'data:image/png;base64,' + logoSrc"
+                alt=""
+              />
+              <button
+                class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+                v-on:click="showModal()"
+              >
+                <span class="font-bold w-full px-2">Nahrať podpis</span>
+              </button>
+            </div>
+            <Modal
+              name="uploadModal"
+              v-model:visible="isVisible"
+              :type="'clean'"
+              :closable="false"
+              title="Upload logo"
+            >
+              <div class="bg-gray-100 rounded-lg border-teal-600 border-2">
+                <div
+                  class="flex flex-row justify-start py-4 px-4 text-gray-600 font-bold text-lg"
+                >
+                  Prosím vyberte súbor
+                </div>
+                <div class="flex flex-row justify-end py-2 px-4">
+                  <div class="flex flex-1/4 px-4">
+                    <input
+                      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-600"
+                      id="scan"
+                      accept="image/*"
+                      v-on:change="updateLogoData($event)"
+                      name="scan"
+                      type="file"
+                    />
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
+                      v-on:click="uploadLogo()"
+                    >
+                      Nahrať
+                    </button>
+                  </div>
+                  <div class="flex flex-1/4">
+                    <button
+                      class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-gray-600"
+                      v-on:click="closeModal()"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row">
+        <div class="flex flex-col">
+          <div class="text-2xl text-gray-600 pb-4">
+            Formát číslovania dokladov
+          </div>
+          <FormKit
+            v-model="company.doc_sncounters_id"
+            type="select"
+            label="Formát čísla"  
+            :options="sncounters"
+            @change="snCounterChanged()"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -109,6 +197,7 @@ const company = ref({} as Company);
 const templates = ref([] as any[]);
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
 const logoSrc = ref();
+const sncounters = ref([] as any);
 
 const setModal = useModal({
   uploadModal: 1,
@@ -128,6 +217,10 @@ async function changeTemplate(id: any) {
     .catch((err) => {
       console.log(err);
     });
+}
+
+function snCounterChanged() {
+  //
 }
 
 function showModal() {
@@ -170,6 +263,17 @@ async function refreshData() {
 
   await store.dispatch("getDocumentTemplates").then((response) => {
     templates.value = response.data;
+  });
+
+  await store.dispatch("getDocumentSnCounters").then((response) => {
+    sncounters.value = [];
+    response.data.data.forEach((sncounter: any) => {
+      sncounters.value.push({
+        label: sncounter.name,
+        value: sncounter.id.toString(),
+        description: sncounter.description
+      });
+    });
   });
 }
 
