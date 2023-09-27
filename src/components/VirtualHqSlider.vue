@@ -15,7 +15,7 @@
               </div>
               <div>
                 <button
-                  v-on:click="changeVhq(vhq.id)"
+                  v-on:click.prevent="changeVhq(vhq.id)"
                   class="w-[110px] hover:cursor-pointer hover:bg-gray-800 hover:text-teal-500 py-1 text-sm bg-teal-500 mx-auto rounded text-gray-800 font-bold text-center absolute left-0 right-0 bottom-20"
                 >
                   Vybrať

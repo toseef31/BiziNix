@@ -4,7 +4,8 @@
   <FormKit type="radio" v-model="obchodneSidlo" label="O aké sídlo máte záujem?" name="obchodneSidlo"
   :options="
       [
-        { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' }
+        { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
+        { value: 'virtualne', label: 'Virtuálne' }
       ]"
       validation="required" />
   <div v-if="obchodneSidlo === 'vlastnePrenajate'">
@@ -38,7 +39,8 @@
 </div>
 <div v-if="obchodneSidlo === 'virtualne'">
   <div>
-    <p>Prosím pri registrácii zatial použi len Vlastné alebo prenajaté sídlo.</p>
+    <VirtualHqSlider></VirtualHqSlider>
+    <VirtualHqPackage></VirtualHqPackage>
   </div>
 </div>
 </template>
@@ -48,6 +50,8 @@ import store from '@/store';
 import type Address from '@/types/Address';
 import { onBeforeMount } from 'vue';
 import { ref } from 'vue';
+import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
+import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 
 onBeforeMount( () => {
 
