@@ -222,6 +222,13 @@ export const store = createStore({
       const { data } = await axiosClient.post(`/companies/checkIco`, body);
       return data;
     },
+    async addSingleCompanyMember({ commit }, member) {
+      const { data } = await axiosClient.post(
+        "/companyMembers/add",
+        member
+      );
+      return data;
+    },
     async addMultipleCompanyMembers({ commit }, members) {
       const { data } = await axiosClient.post(
         "/companyMembers/addMultiple",

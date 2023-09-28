@@ -16,5 +16,4 @@ export default interface CompanyMemberKonatel {
   psc: string
   je_konatel: boolean
   addedFromZakladatelia: boolean
-  jenco: boolean
 }

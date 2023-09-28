@@ -31,8 +31,16 @@
       </p>
     </div>
     <div class="flex flex-col md:flex-row md:space-x-4">
-      <FormKit type="select" name="headquarters_type" id="headquarters_type" label="Druh priestoru" v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
-        :options=headquartersTypes validation="required" validation-visibility="dirty"
+      <FormKit type="select" name="headquarters_type" id="headquarters_type_company" label="Druh priestoru"
+        v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
+        :options="[
+          { label: 'Nebytový priestor', value: 1 },
+          { label: 'Byt v bytovom dome', value: 2 },
+          { label: 'Iná budova', value: 3 },
+          { label: 'Rodinný dom', value: 4 },
+          { label: 'Samostatne stojaca garáž', value: 5 }
+        ]"
+        validation="required" validation-visibility="dirty"
       />
       <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
     </div>
@@ -48,16 +56,17 @@
 <script setup lang="ts">
 import store from '@/store';
 import type Address from '@/types/Address';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, onMounted } from 'vue';
 import { ref } from 'vue';
 import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 
-onBeforeMount( () => {
+/*
+onMounted( () => {
 
+  headquartersTypes.value.length = 0
   store.dispatch("getHeadquartersTypes")
   .then(res => {
-    headquartersTypes.value.shift()
     res.data.data.forEach((element: any) => {
       headquartersTypes.value.push({
         value: element.id,
@@ -67,14 +76,14 @@ onBeforeMount( () => {
   })
   
 })
-
+*/
 
 let isVirtual = ref(false)
 let obchodneSidlo = ref("")
 let headquartersTypes = ref([
   {
-    label: '' as string,
-    value: ''
+    label: '',
+    value: 0 as number
   }
 ])
 

@@ -114,6 +114,7 @@ import type Order from "@/types/Order";
 import type Company from "@/types/Company";
 import { getValidationMessages } from '@formkit/validation'
 import { getNode } from '@formkit/core'
+import type CompanyMemberSpolocnik from "@/types/CompanyMemberSpolocnik";
 
 let errorMsg = ref('');
 let errorMsgHq = ref('');
@@ -307,6 +308,47 @@ async function addCompany(user: User, userId: any, hqId: any) {
 
 }
 
+async function addCompanyMember(companyId: number){
+
+  let member: CompanyMemberSpolocnik = {
+    company_id: companyId,
+    first_name: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.first_name,
+    last_name: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.last_name,
+    title_before: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.title_before,
+    title_after: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.title_after,
+    gender: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.gender,
+    rodne_cislo: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.rodne_cislo,
+    date_of_birth: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.date_of_birth,
+    ico: 'ičo',
+    street: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.street,
+    street_number: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.street_number,
+    street_number2: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.street_number2,
+    country: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.country,
+    city: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.city,
+    psc: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress.psc,
+    nationality: userAddressUserInfoCompanyNameAndRegDate.value.nationality,
+    typ_zakladatela: 1,
+    obchodne_meno: userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.first_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.user.last_name + " " + userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.companyData.name,
+    vyska_vkladu: 0,
+    podiel_v_spolocnosti: 0,
+    rozsah_splatenia_vkladu: 0,
+    je_spravca_vkladu: false,
+    je_zakladatel: true,
+    je_konatel: false,
+    typ_dokladu_totoznosti: 'živnosť',
+    cislo_dokladu_totoznosti: 'živnosť'
+  }
+
+  return store.dispatch('addSingleCompanyMember', member)
+  .then((res) => {
+    console.log("Adding single company member: " + JSON.stringify(res))
+    return res
+  }).catch( err => {
+    console.log(err)
+  })
+
+}
+
 async function registerInvoiceAddress(invoiceAddress: Address) {
   try {
     const res = await store.dispatch('registerAddress', invoiceAddress);
@@ -371,6 +413,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
     const regHqRes = await addHeadquarter(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, hqAddressRes.address_id);
     
     const companyRes = await addCompany(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, regUserRes.user_id, regHqRes.id);
+    
+    await addCompanyMember(companyRes.company.id);
 
     let invoiceAddressRes: any;
     if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
@@ -381,6 +425,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
     {
       invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
     }
+
+
 
     const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
 

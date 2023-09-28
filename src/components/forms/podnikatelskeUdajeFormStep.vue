@@ -16,10 +16,11 @@
     <FormKit type="text" name="title_after" v-model="user.title_after" label="Titul za menom" />
   </div>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-2 gap-4">
   <FormKit type="text" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
   <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" v-model="user.date_of_birth" autocomplete="date_of_birth" label="Dátum narodenia" validation="required" />
   <FormKit type="text" name="rodne_cislo" v-model="user.rodne_cislo" label="Rodné číslo" validation="required|length:10" />
+  <FormKit type="text" name="nationality" v-model="nationality" label="Štátna príslušnosť " validation="required|length:2" />
 </div>
 <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
   <FormKit type="text" name="city" v-model="userAddress.city" label="Mesto" validation="required" />
@@ -122,6 +123,7 @@ const hasTitle = ref(false);
 const isZivnostForm = ref(false);
 let companyRegDateCheckboxValue = ref("");
 const placeOfBusinness = ref("");
+const nationality = ref("");
 
 let companyData = ref({
   name: '',
@@ -152,7 +154,7 @@ let user = ref({
     password_confirmation: '',
 } as User)
 
-let userAddressUserInfoCompanyNameAndRegDate = ref({userAddress, user, companyData})
+let userAddressUserInfoCompanyNameAndRegDate = ref({ userAddress, user, companyData })
 
 let hqAddress = ref({
   street: '',
@@ -181,7 +183,8 @@ let headquarterInfo = ref({
 defineExpose({
   placeOfBusinness,
   userAddressUserInfoCompanyNameAndRegDate,
-  hqAddress
+  nationality,
+  hqAddress,
 })
 
 async function isEmailAlreadyRegistered(node: any) {

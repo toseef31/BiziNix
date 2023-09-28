@@ -60,7 +60,7 @@
         </div>
           <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" id="multiStepPluginFirma"
             :allow-incomplete="true"              
-            use-local-storage="true"
+            use-local-storage="false"
             tab-style="tab"
           >
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
@@ -71,8 +71,17 @@
               <obchodneSidloFormStep ref="sidloCompanyAddress" />
             </FormKit>
 
-            <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" next-label="Pokračovať" previous-label="Naspäť">
+            <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" previous-label="Naspäť">
               <udajeSpolocnostiFormStep ref="companyMembersAndDetails" />
+              <template #stepNext="{ handlers, node }">
+                <!-- incrementStep returns a callable function -->
+                <FormKit
+                  type="button"
+                  @click="handlers.incrementStep(1)()"
+                  label="Pokračovať"
+                  data-next="true"
+                />
+              </template>
             </FormKit>
 
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
@@ -122,7 +131,7 @@ import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
 import { getValidationMessages } from '@formkit/validation'
-import { getNode } from '@formkit/core';
+import { getNode } from '@formkit/core'
 
 const hasTitle = ref(false);
 const hasTitleZakladatel = ref(false);
@@ -144,6 +153,9 @@ let user = ref<User>();
 let headquarter = ref<Headquarters>({} as Headquarters);
 let companyOrZivnostModel = ref<Company>({} as any);
 
+const isNextButtonDisabled = computed(() => {
+
+})
 
 const messages = ref([])
 
@@ -180,7 +192,7 @@ let order = ref({
   payment_date: '' as any,
   payment_method: '',
   order_type: 'company',
-  description: 'test',
+  description: 'založenie firmy',
   amount: 0, // final cena s dph
   amount_vat: 0, // vat je čisto len dph
   is_paid: false,
@@ -209,7 +221,9 @@ let order = ref({
 
 let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
 
-const isUdajeSpolocnostiStepValid = ref()
+const isUdajeSpolocnostiStepValid = ref({
+  valid: false
+})
 
 onMounted( () => {
 
@@ -220,16 +234,15 @@ onMounted( () => {
   // isFormValid.value = toRef(node?.context?.state as object, 'valid' as never)
   // console.log('Node on mounted: ',node)
 
-  // const node = getNode('udajeSpolocnostiStep')
-  // if (!node) return;
-  
-  // isUdajeSpolocnostiStepValid.value = toRef(node.context?.state as Object, 'valid' as keyof Object)
+  const node = getNode('udajeSpolocnostiStep')
+  if (!node) return;  
+  isUdajeSpolocnostiStepValid.value.valid = toRef(node.context?.state, 'valid')
 
 })
 
 function logujData(){
   console.log('Formdata Udaje Spolocnosti', isUdajeSpolocnostiStepValid.value)
-  console.log(companyOrZivnostModel.value.subjects_of_business)
+  console.log('Subject of business',companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress)
   console.log(user.value)
   console.log(headquarter.value)
@@ -346,8 +359,12 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
   })
 
+  let zakladatelia = ref({
+    members: companyMembersAndDetails.value.zakladateliaSpolocniciList
+  })
+
   try {
-    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.zakladateliaSpolocniciList)
+    const res = await store.dispatch('addMultipleCompanyMembers', zakladatelia.value)
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
     return res
   } catch(err) {
@@ -361,8 +378,12 @@ async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> 
     companyMembersAndDetails.value.konateliaList[index].company_id = companyId
   })
 
+  let konatelia = ref({
+    members: companyMembersAndDetails.value.konateliaList
+  })
+
   try {
-    const res = await store.dispatch('addMultipleCompanyMembers', companyMembersAndDetails.value.konateliaList)
+    const res = await store.dispatch('addMultipleCompanyMembers', konatelia.value)
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
     return res
   } catch (err: any){
@@ -389,8 +410,8 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
   order.value.company_id = companyId
   order.value.user_id = userId
   order.value.address_id = userAddressId
-
-  companyOrZivnostModel.value.subjects_of_business.forEach(element => {
+  
+  subjects_of_business.value.subjects_of_business.forEach(element => {
     order.value.items.push({
       description: element.title as string,
       price: element.price as number,
@@ -470,6 +491,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       node.clearErrors()
             
   } catch (err: any) {
+    errorMsg.value = err
     node.setErrors(err.formErrors, err.fieldErrors);
     console.error(err);
   }

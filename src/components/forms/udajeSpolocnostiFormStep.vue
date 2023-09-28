@@ -85,6 +85,9 @@
   <template v-if="konateliaList.length === 0">
     <div class="font-semibold">Zatiaľ nebol pridaný žiadný konateľ.</div>
   </template>
+  <div v-if="countOfKonatelia == 0 || countOfZakladatelia == 0" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+      <b>Prosím pridajte minimálne jedného zakladateľa alebo konateľa spoločnosťi.</b>
+  </div>
   <template v-else>
     <div class="mt-4 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg">
       <table class="min-w-full divide-y divide-bizinix-border">
@@ -240,10 +243,11 @@
         rows="3"
       />
     </div>
+
   </div>
   <button @click.prevent="logCount">Log count of kontatelia</button><br>
   Count of konatelia {{ countOfKonatelia }}
-  Count of Zakldatelia {{countOfZakladatelia }}
+  Count of Zakldatelia {{ countOfZakladatelia }}
 </template>
 
 <script setup lang="ts">
@@ -272,9 +276,19 @@ const pravnaForma = ref('');
 const countOfZakladatelia =  computed(() => {
   return zakladateliaSpolocniciList.value.length
 })
+
 const countOfKonatelia = computed(() => {
   return konateliaList.value.length
 })
+
+const isKonOrZakladEmpty = computed(() => {
+  if(true){
+    return true
+  } else {
+    return false
+  }
+})
+
 
 let companyOrZivnostModel = ref({
   name: '',
@@ -567,7 +581,10 @@ defineExpose({
   companyOrZivnostModel,
   pravnaForma,
   zakladateliaSpolocniciList,
-  konateliaList
+  konateliaList,
+  countOfKonatelia,
+  countOfZakladatelia,
+  isKonOrZakladEmpty
 })
 
 </script>

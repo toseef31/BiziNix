@@ -7,7 +7,7 @@ export default {
     fieldset: 'max-w-md border border-gray-400 rounded px-2 pb-1',
     help: 'text-xs text-gray-500',
     inner: 'formkit-disabled:bg-gray-200 formkit-disabled:cursor-not-allowed formkit-disabled:pointer-events-none',
-    input: 'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none',
+    input: 'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none !text-white',
     label: 'block mb-1 font-bold text-sm text-white',
     legend: 'font-bold text-sm text-white',
     loaderIcon: 'inline-flex items-center w-4 text-gray-600 animate-spin',
@@ -99,7 +99,7 @@ export default {
   select: {
     inner: 'flex relative max-w-md items-center rounded mb-1 ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>span:first-child]:focus-within:text-blue-500',
     input: 'w-full pl-3 pr-4 py-2 border-none text-base text-white placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
-    selectIcon: 'text-white dark:text-white flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
+    selectIcon: '!text-white dark:!text-white flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
     option: 'formkit-multiple:p-3 formkit-multiple:text-sm text-gray-700'
   },
   textarea: {
@@ -115,6 +115,7 @@ export default {
     selectionWrapper: 'flex bg-gray-800 rounded-sm mt-2',
     selection: 'flex w-full',
     removeSelection: 'flex',
+    selectIcon: '!text-white'
   },
   datepicker: {
     inner: 'relative',
