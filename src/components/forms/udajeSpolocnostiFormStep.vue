@@ -64,7 +64,7 @@
               <button class="flex items-center justify-center w-full" @click.prevent="editItem(index, 'zakladatelia')"><PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button class="flex items-center justify-center w-full" @click.prevent="confirmRemoveItem(index, 'zakladatelia')"><XIcon class="h-5 w-5" aria-hidden="true" /></button>
+              <button class="flex items-center justify-center w-full" @click.prevent="confirmRemoveItem(index, 'zakladatelia')"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
           </tr>
         </tbody>
@@ -110,7 +110,7 @@
               <button :disabled="item.addedFromZakladatelia" class="flex items-center justify-center w-full disabled:text-gray-500" @click.prevent="editItem(index, 'konatelia')"><PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button :disabled="item.addedFromZakladatelia" class="flex items-center justify-center w-full disabled:text-gray-500" @click.prevent="confirmRemoveItem(index, 'konatelia')"><XIcon class="h-5 w-5" aria-hidden="true" /></button>
+              <button :disabled="item.addedFromZakladatelia" class="flex items-center justify-center w-full disabled:text-gray-500" @click.prevent="confirmRemoveItem(index, 'konatelia')"><XMarkIcon class="h-5 w-5" aria-hidden="true" /></button>
             </td>
           </tr>
         </tbody>
@@ -254,7 +254,7 @@
 import type Company from '@/types/Company';
 import { onBeforeMount, onMounted, reactive, watch, type Ref } from 'vue';
 import { ref, toRef } from 'vue';
-import { PencilIcon, XIcon } from '@heroicons/vue/outline'
+import { PencilIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import { getNode } from '@formkit/core'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';

@@ -88,7 +88,7 @@
 import store from "@/store";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { CurrencyEuroIcon } from "@heroicons/vue/outline";
+import { CurrencyEuroIcon } from "@heroicons/vue/24/outline";
 import stripePaymentComponent from '@/components/payments/PayStripe.vue'
 import router from "@/router";
 

@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import store from "@/store";
 import { computed, onBeforeMount, ref } from "vue";
-import { ChevronDownIcon } from "@heroicons/vue/outline";
+import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 import VirtualHqPackageVue from "../VirtualHqPackage.vue";
 
 const vhqs: any = computed(() => {

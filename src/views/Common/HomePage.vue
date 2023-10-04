@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { ChevronDownIcon, ChevronDoubleRightIcon } from '@heroicons/vue/outline'
+import { ChevronDownIcon, ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
 import { ref } from 'vue';
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";

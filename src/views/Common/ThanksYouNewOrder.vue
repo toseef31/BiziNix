@@ -17,7 +17,7 @@
       </template>
       <template v-else>
         <div class="text-center py-12">
-          <EmojiSadIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
+          <FaceFrownIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
           <h1 class="text-6xl my-6 font-bold">Ups, niečo sa pokazilo.</h1>
           <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
@@ -31,7 +31,7 @@
 import store from "@/store";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { EmojiSadIcon } from "@heroicons/vue/outline";
+import { FaceFrownIcon } from "@heroicons/vue/24/outline";
 import CompanyThanksYou from "@/components/payments/CompanyThanksYou.vue";
 import DocumentsThanksYou from "@/components/payments/DocumentsThanksYou.vue";
 import VhqThanksYouVue from "@/components/payments/VhqThanksYou.vue";

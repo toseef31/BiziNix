@@ -53,7 +53,7 @@
             class="inline-flex items-center justify-center rounded-md bg-teal-600 p-2 text-white hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
           >
             <span class="sr-only">Open menu</span>
-            <MenuIcon class="h-6 w-6" aria-hidden="true" />
+            <Bars3Icon class="h-6 w-6" aria-hidden="true" />
           </PopoverButton>
         </div>
         <PopoverGroup as="nav" class="hidden space-x-6 md:flex">
@@ -452,7 +452,7 @@
                   class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
                 >
                   <span class="sr-only">Close menu</span>
-                  <XIcon class="h-6 w-6" aria-hidden="true" />
+                  <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                 </PopoverButton>
               </div>
             </div>
@@ -540,12 +540,12 @@ import {
   PhoneIcon,
   PlayIcon,
   ShieldCheckIcon,
-} from "@heroicons/vue/outline";
+} from "@heroicons/vue/24/outline";
 
-import { ChevronDownIcon } from "@heroicons/vue/solid";
+import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
-import { MenuIcon, XIcon } from "@heroicons/vue/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { useStore } from "vuex";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";

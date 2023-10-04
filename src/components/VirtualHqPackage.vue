@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
-import { StarIcon } from "@heroicons/vue/solid"
+import { StarIcon } from "@heroicons/vue/24/solid"
 
 const emit = defineEmits(['updatePackage']);
 

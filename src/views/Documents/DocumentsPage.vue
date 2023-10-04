@@ -201,7 +201,7 @@
                   >
                     <div class="flex justify-center">
                       <div class="flex justify-center">
-                        <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                        <XMarkIcon class="w-12 text-red-500" aria-hidden="true" />
                       </div>
                     </div>
                   </td>
@@ -224,7 +224,7 @@
                     class="text-white font-bold py-4 bg-gray-800 border-b-gray-600 border-b-2"
                   >
                     <div class="flex justify-center">
-                      <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                      <XMarkIcon class="w-12 text-red-500" aria-hidden="true" />
                     </div>
                   </td>
                 </tr>
@@ -242,7 +242,7 @@
                   </td>
                   <td class="text-white font-bold py-4 bg-gray-800">
                     <div class="flex justify-center">
-                      <XIcon class="w-12 text-red-500" aria-hidden="true" />
+                      <XMarkIcon class="w-12 text-red-500" aria-hidden="true" />
                     </div>
                   </td>
                 </tr>
@@ -452,7 +452,7 @@
 
 <script setup lang="ts">
 import CounselingCenter from "@/components/CounselingCenter.vue";
-import { CheckIcon, XIcon } from "@heroicons/vue/outline";
+import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";

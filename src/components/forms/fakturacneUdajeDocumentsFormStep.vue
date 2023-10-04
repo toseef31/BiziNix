@@ -148,7 +148,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import type Address from "@/types/Address";
 import type Company from "@/types/Company";
 import type User from "@/types/User";
-import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/outline";
+import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const activeTab = ref(1);
@@ -238,7 +238,7 @@ async function getCompanyDetails() {
         fakturacne_udaje.value.ic_dph = finstatCompanyDetails.value.IcDPH;
 
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
       });
   }

@@ -12,7 +12,7 @@
         </template>
         <template v-else-if="!loading && order">
           <div class="text-center">
-            <BadgeCheckIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
+            <CheckBadgeIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
             <h1 class="text-6xl my-6 font-bold">Ďakujeme Vám.</h1>
             <div class="text-xl">
                 Platba za objednávku <b>#{{ order.id }}</b> prebehla úspešne o ďalšom postupe Vás budeme informovať.
@@ -35,7 +35,7 @@
           </div>
         </template>
         <template v-else class="text-center">
-            <EmojiSadIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
+            <FaceFrownIcon class="text-red-500 w-24 h-24 stroke-1 inline" />
             <h1 class="text-6xl my-6 font-bold">Ups, niečo sa pokazilo.</h1>
             <p class="text-xl">Objednávka sa nenašla, alebo nebola zaplatená.</p>
         </template>
@@ -49,7 +49,7 @@
 import store from "@/store";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { BadgeCheckIcon, EmojiSadIcon } from "@heroicons/vue/outline";
+import { CheckBadgeIcon, FaceFrownIcon } from "@heroicons/vue/24/outline";
 
 const loading = ref(true);
 const route = useRoute();

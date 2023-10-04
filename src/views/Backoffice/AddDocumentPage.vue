@@ -57,7 +57,7 @@
                   </div>
                 </div>
                 <div class="py-10 px-2">
-                  <OfficeBuildingIcon
+                  <BuildingOfficeIcon
                     class="w-12 text-black"
                     aria-hidden="true"
                   />
@@ -598,7 +598,7 @@ import { useRoute, useRouter } from "vue-router";
 import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
-import { OfficeBuildingIcon } from "@heroicons/vue/outline";
+import { BuildingOfficeIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const route = useRoute();

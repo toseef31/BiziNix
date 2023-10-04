@@ -153,7 +153,7 @@ import store from "@/store";
 import { computed, ref, onMounted, watch } from "vue";
 import type Address from "@/types/Address";
 import type Mail from "@/types/Mail";
-import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/outline";
+import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 

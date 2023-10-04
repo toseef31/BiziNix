@@ -15,7 +15,7 @@
                     <div class="absolute top-0 right-0 -mr-12 pt-2">
                       <button type="button" class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" @click="sidebarOpen = false">
                         <span class="sr-only">Close sidebar</span>
-                        <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                        <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
                   </TransitionChild>
@@ -337,7 +337,7 @@ import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/outline'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 const sidebarOpen = ref(false)
 const router = useRouter();

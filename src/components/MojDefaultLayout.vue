@@ -19,7 +19,7 @@
             <div class="flex items-center">
               <button type="button" class="px-4 text-teal-500" v-on:click="redirectToByName('Counseling center')">
                 <span class="sr-only">Counseling center</span>
-                <AnnotationIcon class="h-6 w-6" aria-hidden="true" />
+                <NewspaperIcon class="h-6 w-6" aria-hidden="true" />
               </button>
               <button type="button" class="px-4 text-teal-500" v-on:click="redirectToByName('Contact')">
                 <span class="sr-only">Contact us</span>
@@ -83,8 +83,8 @@ import {
 } from '@headlessui/vue'
 import {
   PhoneIcon,
-  AnnotationIcon
-} from '@heroicons/vue/outline'
+  NewspaperIcon
+} from '@heroicons/vue/24/outline'
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";

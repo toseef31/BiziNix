@@ -24,11 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDownIcon } from "@heroicons/vue/outline";
 import type Mail from "@/types/Mail";
 import store from "@/store";
 import { onBeforeMount, ref, watch } from "vue";
 import type Company from "@/types/Company";
+import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 
 const companies = ref([""] as any);
 const mails = ref([] as Mail[]);

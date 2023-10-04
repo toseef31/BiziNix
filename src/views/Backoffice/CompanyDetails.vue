@@ -15,7 +15,7 @@
                     <div class="absolute top-0 right-0 -mr-12 pt-2">
                       <button type="button" class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" @click="sidebarOpen = false">
                         <span class="sr-only">Close sidebar</span>
-                        <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                        <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
                   </TransitionChild>
@@ -145,6 +145,7 @@ import type Company from "@/types/Company";
 import FinancnyReport from '@/components/FinancnyReport.vue';
 import FiremneUdaje from '@/components/FiremneUdaje.vue';
 import BankoveUcty from '@/components/BankoveUcty.vue';
+import type { XMarkIcon } from "@heroicons/vue/20/solid";
 
 const router = useRouter();
 const company = ref({} as Company);
