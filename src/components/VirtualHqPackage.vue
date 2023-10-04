@@ -34,19 +34,37 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { StarIcon } from "@heroicons/vue/24/solid"
+import store from "@/store";
+
+onMounted(() => {
+    // default selected package should be Ideal with index 1
+    changeVhqPackage(1);
+})
 
 const emit = defineEmits(['updatePackage']);
 
-let activeCard = ref(0);
+let activeCard = ref(1);
 
 function toggleActive(index: number) {
     switch(index) {
-        case 0: activeCard.value = 0; break
-        case 1: activeCard.value = 1; break
-        case 2: activeCard.value = 2; break
-        case 3: activeCard.value = 3; break
+        case 0:
+            activeCard.value = 0;
+            changeVhqPackage(0);
+            break
+        case 1:
+            activeCard.value = 1;
+            changeVhqPackage(1);
+            break
+        case 2:
+            activeCard.value = 2;
+            changeVhqPackage(2);
+            break
+        case 3:
+            activeCard.value = 3;
+            changeVhqPackage(3);
+            break
     }
 }
 
@@ -80,5 +98,10 @@ const packages = [
         icon: false
     },
 ];
+
+function changeVhqPackage(indexToFind: any) {
+    console.log("Infex for Find: ", indexToFind)
+    store.state.selectedVhqPackage = packages.find((_,index: any) => index === indexToFind);
+}
 
 </script>

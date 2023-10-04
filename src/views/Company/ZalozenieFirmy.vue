@@ -111,6 +111,10 @@
           <FormKit type="submit" label="Objednať s povinnosťou platby" />
         </FormKit>
         <button @click="logujData">New log Submit</button>
+        <p>Selected Vhq:</p>
+        <p>{{ selectedVhqFromStore }}</p>
+        <p>Selected VhqPacage:</p>
+        <p>{{ selectedVhqPackageFromStore }}</p>
       </div> 
     </div>
   </div>
@@ -152,6 +156,9 @@ let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>
 let user = ref<User>();
 let headquarter = ref<Headquarters>({} as Headquarters);
 let companyOrZivnostModel = ref<Company>({} as any);
+const selectedVhqFromStore = ref();
+const selectedVhqPackageFromStore = ref();
+
 
 const isNextButtonDisabled = computed(() => {
 
@@ -227,13 +234,6 @@ const isUdajeSpolocnostiStepValid = ref({
 
 onMounted( () => {
 
-  // console.log("Before node onmounted")
-  // const node = getNode("multiStepPluginFirma");
-  // if (!node) return;
-  // console.log("Nodeeeeee")
-  // isFormValid.value = toRef(node?.context?.state as object, 'valid' as never)
-  // console.log('Node on mounted: ',node)
-
   const node = getNode('udajeSpolocnostiStep')
   if (!node) return;  
   isUdajeSpolocnostiStepValid.value.valid = toRef(node.context?.state, 'valid')
@@ -251,6 +251,9 @@ function logujData(){
   //console.log(zakladateliaSpolocnici.value)
   //console.log(konatelia.value)
 }
+
+selectedVhqFromStore.value = computed(() => store.getters.getSelectedVhq)
+selectedVhqPackageFromStore.value = computed(() => store.getters.getSelectedVhqPackage)
 
 /* Submiting form and Api calls */
 

@@ -31,7 +31,7 @@
             </FormKit>
           </FormKit>
           <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              Celkom k platbe <b>{{ totalForPay }} €</b>.
+              Celkom k platbe <b>{{ totalForPay * 12 }} € / rok</b>.
           </div>
           <FormKit
             type="checkbox"
@@ -251,10 +251,10 @@ function addOrder(): Promise<Response> {
   order.value.company_id = companyFromResponse.company.id;
   order.value.user_id = userFromResponse.user_id;
 
-  order.value.amount = hqDataRef.value.vhq_package.price;
-  order.value.amount_vat = hqDataRef.value.vhq_package.price*0.2;
-  order.value.items[0].price = hqDataRef.value.vhq_package.price;
-  order.value.items[0].price_vat = hqDataRef.value.vhq_package.price*0.2;
+  order.value.amount = hqDataRef.value.vhq_package.price * 12;
+  order.value.amount_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
+  order.value.items[0].price = hqDataRef.value.vhq_package.price * 12;
+  order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
 
   order.value.fakturacne_udaje[0].first_name = invoiceDataRef.value.fakturacne_udaje.first_name;
   order.value.fakturacne_udaje[0].last_name = invoiceDataRef.value.fakturacne_udaje.last_name;
