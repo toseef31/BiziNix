@@ -15,7 +15,7 @@
     >
     <template #option="{ option }">
       <div class="formkit-option grow p-2">
-        <span>{{ option.label }}</span> <span class="font-medium">({{ option.__original.price }} €)</span>
+        <span>{{ option.label }}</span> <span class="font-medium">({{ option.__original?.price }} €)</span>
       </div>
     </template>
 

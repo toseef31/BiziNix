@@ -1,14 +1,14 @@
 <template>
 <div class="text-4xl font-bold">Vyberte si sídlo spoločnosti</div>
 <div class="mt-2 mb-6">Na tomto mieste vám pomôžeme s výberom sídla spoločnosti.</div>
-  <FormKit type="radio" v-model="obchodneSidlo" label="O aké sídlo máte záujem?" name="obchodneSidlo"
+  <FormKit type="radio" v-model="obchodneSidloVirtuOrNormal" label="O aké sídlo máte záujem?" name="obchodneSidloVirtuOrNormal"
   :options="
       [
         { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
         { value: 'virtualne', label: 'Virtuálne' }
       ]"
       validation="required" />
-  <div v-if="obchodneSidlo === 'vlastnePrenajate'">
+  <div v-if="obchodneSidloVirtuOrNormal === 'vlastnePrenajate'">
     <div class="grid grid-cols-3 gap-4">
       <FormKit type="select" name="country" id="country" label="Štát" v-model="hqAddress.country" placeholder="Vyberte štát"
         :options="['Slovensko','Česká republika']" validation="required" validation-visibility="dirty"
@@ -45,7 +45,7 @@
       <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
     </div>
 </div>
-<div v-if="obchodneSidlo === 'virtualne'">
+<div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
   <div>
     <VirtualHqSlider></VirtualHqSlider>
     <VirtualHqPackage></VirtualHqPackage>
@@ -78,8 +78,7 @@ onMounted( () => {
 })
 */
 
-let isVirtual = ref(false)
-let obchodneSidlo = ref("")
+let obchodneSidloVirtuOrNormal = ref("")
 let headquartersTypes = ref([
   {
     label: '',
@@ -106,7 +105,7 @@ let headquarterInfo = ref({
   forwarding: false,
   scanning: false,
   shredding: false,
-  is_virtual: false, // to do reg virtual
+  is_virtual: false,
   img: '',
   address_id: 0
 })
@@ -115,7 +114,7 @@ let headquarterInfo = ref({
 defineExpose({
   hqAddress,
   headquarterInfo,
-  isVirtual
+  obchodneSidloVirtuOrNormal
 })
 
 </script>

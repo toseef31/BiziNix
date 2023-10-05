@@ -14,7 +14,6 @@ a.flink {
   color: white;
 }
 
-
 a.flink:hover {
   text-decoration: underline;
   color: theme('colors.bizinix.link');
