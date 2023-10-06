@@ -1,5 +1,5 @@
 export default interface Headquarters {
-  id: null
+  id?: string | number
   name: string
   price: number
   description: string

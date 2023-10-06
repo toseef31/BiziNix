@@ -54,7 +54,10 @@
           </FormKit>
 
           <div class="p-4 mb-4  bg-gray-900 text-white border rounded-md border-bizinix-border border-solid">
-            Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.
+              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
+              <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+              <p v-if="userAddressUserInfoCompanyNameAndRegDate?.placeOfBusinness == 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+              <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
           </div>
           <FormKit
             type="checkbox"
@@ -75,6 +78,11 @@
         </FormKit>
         <!-- <button @click="newLogSubmit">New log Submit</button> -->
       </div>
+
+      <p>Selected Vhq:</p>
+      <p>{{ selectedVhqFromStore }}</p>
+      <p>Selected VhqPacage:</p>
+      <p>{{ selectedVhqPackageFromStore }}</p>
 
       <div>
         <div v-if="errorMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
@@ -129,7 +137,7 @@ let userAddress = ref<Address>();
 let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
-let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price)
+let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
 
 onMounted(() => {
   const form = getNode('miesto');
@@ -213,6 +221,8 @@ let order = ref({
   }]
 })
 
+const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
+const selectedVhqPackageFromStore = computed(() => store.getters.getSelectedVhqPackage)
 
 /* Submiting form and Api calls */
 
@@ -246,18 +256,36 @@ async function registerUser(user: User, addressId: any): Promise<any> {
 }
 
 
-async function registerHqAddress(hqAddress: Address): Promise<any>  {
+async function registerHqAddress(): Promise<any>  {
 
-  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné'){
+  let hqAddress: Address = {
+      street: "",
+      street_number: "",
+      street_number2: "",
+      city: "",
+      psc: "",
+      country: ""
+  };
+
+  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'virtualne'){
+      hqAddress.street = selectedVhqFromStore.value.address.street
+      hqAddress.street_number = selectedVhqFromStore.value.address.street_number
+      hqAddress.street_number2 = selectedVhqFromStore.value.address.street_number2
+      hqAddress.city = selectedVhqFromStore.value.address.city
+      hqAddress.psc = selectedVhqFromStore.value.address.psc
+      hqAddress.country = selectedVhqFromStore.value.address.country
+  } else if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné') {
     hqAddress = userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress
+  } else {
+    hqAddress = userAddressUserInfoCompanyNameAndRegDate.value.hqAddress
   }
   
   return store.dispatch('registerAddress', hqAddress)
-    .then((res) => {
+    .then((res: any) => {
       console.log("Registering hq address: " + JSON.stringify(res))
       return res
     })
-    .catch(err => {
+    .catch((err: any) => {
       errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
     })
 }
@@ -265,8 +293,24 @@ async function registerHqAddress(hqAddress: Address): Promise<any>  {
 async function addHeadquarter(user: User, hqAddressId: any) {
 
   headquarter.value.address_id = hqAddressId
-
-  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné'){
+  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'virtualne'){
+    headquarter.value.name = selectedVhqFromStore.value.name
+    headquarter.value.owner_name = selectedVhqFromStore.value.name
+    headquarter.value.headquarters_type = 3
+    if(selectedVhqPackageFromStore.value.name == 'Mini'){
+      headquarter.value.registry = true
+    }
+    else if(selectedVhqPackageFromStore.value.name != 'Mini'){
+      headquarter.value.forwarding = true
+      headquarter.value.registry = true
+      headquarter.value.scanning = true
+      headquarter.value.shredding = true
+    }
+    headquarter.value.img = selectedVhqFromStore.value.img
+    headquarter.value.is_virtual = true
+    headquarter.value.price = selectedVhqPackageFromStore.value.price * 12 // ročna platba za balík
+  }
+  else if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'Totožné'){
     headquarter.value.owner_name = user.first_name + " " + user.last_name
   }
   else {
@@ -276,11 +320,11 @@ async function addHeadquarter(user: User, hqAddressId: any) {
   headquarter.value.description = "Miesto podnikania k živnosti " + user.first_name + " " + user.last_name
 
   return store.dispatch('addHeadquarter', headquarter.value)
-  .then((res) => {
+  .then((res: any) => {
     console.log("Adding hq: " + JSON.stringify(res))
     return res.headquarters
   })
-  .catch(err => {
+  .catch((err: any) => {
     console.log(err.response.data.errors)
     errorMsg.value = JSON.stringify(err.response.data.errors);
   })
@@ -366,7 +410,20 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
   order.value.company_id = companyId
   order.value.user_id = userId
   order.value.address_id = userAddressId
-
+    
+  if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'virtualne'){
+    order.value.items.push({
+      description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
+      price: 0,
+      price_vat: 0 * 0.2,
+    })
+    order.value.items.push({
+      description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
+      price: selectedVhqPackageFromStore.value.price * 12,
+      price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
+    })
+  }
+  
   companyOrZivnostModel.value.subjects_of_business.forEach(element => {
     order.value.items.push({
       description: element.title as string,
@@ -408,7 +465,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
     const regUserRes = await registerUser(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, userAddressRes.address_id);
     
-    const hqAddressRes = await registerHqAddress(userAddressUserInfoCompanyNameAndRegDate.value.hqAddress); 
+    const hqAddressRes = await registerHqAddress(); 
 
     const regHqRes = await addHeadquarter(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.user, hqAddressRes.address_id);
     

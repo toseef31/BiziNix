@@ -98,7 +98,7 @@
             <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
               <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
               <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price ?? 0 * 12 }} € rok.</p>
+              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
             </div>
             <FormKit
@@ -158,7 +158,6 @@ let sidloCompanyAddress = ref<InstanceType<typeof obchodneSidloFormStep>>(null a
 let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>>(null as any);
 
 let user = ref<User>();
-let headquarter = ref<Headquarters>({} as Headquarters);
 let companyOrZivnostModel = ref<Company>({} as any);
 
 const isNextButtonDisabled = computed(() => {
@@ -246,7 +245,6 @@ function logujData(){
   console.log('Subject of business',companyOrZivnostModel.value.subjects_of_business)
   console.log(userAddressUserInfoCompanyNameAndRegDate.value.userAddressUserInfoCompanyNameAndRegDate.userAddress)
   console.log(user.value)
-  console.log(headquarter.value)
   console.log(companyOrZivnostModel.value)
   //console.log(fakturacne_udaje.value)
   //console.log(zakladateliaSpolocnici.value)
@@ -341,7 +339,7 @@ async function addHeadquarter(hqAddressId: any): Promise<any> {
     img: hqInfo.img,
     is_virtual: hqInfo.is_virtual,
     price: hqInfo.price
-  };
+  } as Headquarters;
   
   // if virtual only
   if(sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'){
@@ -359,7 +357,7 @@ async function addHeadquarter(hqAddressId: any): Promise<any> {
     }
     headquarterData.img = selectedVhqFromStore.value.img
     headquarterData.is_virtual = true
-    headquarterData.price = selectedVhqFromStore.value.base_price
+    headquarterData.price = selectedVhqPackageFromStore.value.price * 12 // ročna platba za balík
     // base price only for HQ , other price for pcg to order.items?
   }
 

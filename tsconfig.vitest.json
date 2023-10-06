@@ -9,6 +9,6 @@
     "lib": [],
     "verbatimModuleSyntax": true,
     "types": ["node", "jsdom"]
-  },
+  }
 
 }

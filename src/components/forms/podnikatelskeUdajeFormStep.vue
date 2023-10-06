@@ -53,10 +53,15 @@
     <FormKit type="radio" v-model="placeOfBusinness" label="Miesto podnikania?" id="miesto" name="placeOfBusinness"
       :options="[
           { value: 'Totožné', label: 'Totožné s trvalým bydliskom' },
-          { value: 'Iné', label: 'Na inej adrese' },
+          { value: 'virtualne', label: 'Virtuálne sídlo' },
+          { value: 'Iné', label: 'Na inej adrese' }
       ]"
       validation="required"
     />
+    <div v-if="placeOfBusinness === 'virtualne'">
+      <VirtualHqSlider></VirtualHqSlider>
+      <VirtualHqPackage></VirtualHqPackage>
+    </div>
     <div v-if="placeOfBusinness == 'Iné'">
       <div class="mb-4">
         <p>
@@ -102,15 +107,17 @@ import type Address from '@/types/Address';
 import type Company from '@/types/Company';
 import type User from '@/types/User';
 import store from '@/store';
-import { onBeforeMount, onMounted } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, watch } from 'vue';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
+import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 import { getNode } from '@formkit/core'
+
 
 const route = useRoute()
 
 onBeforeMount( () => {
-
   // const form = getNode('zalZivnostiMultiStepForm');
   // console.log(form?.value);
 
@@ -119,10 +126,21 @@ onBeforeMount( () => {
   }
 })
 
+onUnmounted(() => {
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};
+})
+
 const hasTitle = ref(false);
 const isZivnostForm = ref(false);
 let companyRegDateCheckboxValue = ref("");
 const placeOfBusinness = ref("");
+watch(placeOfBusinness, (newValue) => {
+  if(newValue != 'virtualne'){
+    store.state.selectedVhq = {};
+    store.state.selectedVhqPackage = {};
+  }
+})
 const nationality = ref("");
 
 let companyData = ref({

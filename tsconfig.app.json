@@ -4,6 +4,7 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "verbatimModuleSyntax": true,
+    "noImplicitAny": false,
     "composite": true,
     "baseUrl": ".",
     "paths": {

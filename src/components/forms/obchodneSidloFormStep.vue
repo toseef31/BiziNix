@@ -5,7 +5,7 @@
   :options="
       [
         { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
-        { value: 'virtualne', label: 'Virtuálne' }
+        { value: 'virtualne', label: 'Virtuálne sídlo' }
       ]"
       validation="required" />
   <div v-if="obchodneSidloVirtuOrNormal === 'vlastnePrenajate'">
@@ -46,17 +46,15 @@
     </div>
 </div>
 <div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
-  <div>
     <VirtualHqSlider></VirtualHqSlider>
     <VirtualHqPackage></VirtualHqPackage>
-  </div>
 </div>
 </template>
 
 <script setup lang="ts">
 import store from '@/store';
 import type Address from '@/types/Address';
-import { onBeforeMount, onMounted } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, watch } from 'vue';
 import { ref } from 'vue';
 import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
@@ -78,7 +76,21 @@ onMounted( () => {
 })
 */
 
+
+onUnmounted(() => {
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};
+})
+
 let obchodneSidloVirtuOrNormal = ref("")
+watch(obchodneSidloVirtuOrNormal, (newValue) => {
+  if(newValue === 'vlastnePrenajate'){
+    store.state.selectedVhq = {};
+    store.state.selectedVhqPackage = {};
+  }
+})
+
+
 let headquartersTypes = ref([
   {
     label: '',
