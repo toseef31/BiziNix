@@ -56,10 +56,10 @@ const currentVhq: any = computed(() => {
 });
 
 const vhq_package = ref({
-  name: "Mini",
-  name_desc: "Základ, bez prehľadu o pošte",
-  desc: "Zriadenie sídla a označenie schránky.",
-  price: 7
+  name: "Ideal",
+  name_desc: "To čo v Mini, plus",
+  desc: "Online evidencia zásielok a pošty v našej aplikácii. Možnosť scanovania, preposielania a skartácie. Všetko prehľadne a na jednom mieste vrátane emailových notifikácií.",
+  price: 11
 });
 
 const updatePackage = (updatedPackage: any) => {

@@ -11,7 +11,7 @@
               <div
                 class="w-[110px] py-1 text-sm bg-gray-800/75 mx-auto rounded-b-lg text-white text-center absolute top-0 left-0 right-0"
               >
-                {{ vhq.base_price }}€ / mesiac
+                od 7 € / mesiac
               </div>
               <div>
                 <button

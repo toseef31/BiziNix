@@ -119,7 +119,7 @@ const arrOfObjDoprava: Company['subjects_of_business'] = [
   { id: 17, title: "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)", price: 0, description: null, category_id: 1 },
   { id: 63, title: "Sprostredkovateľská činnosť v oblasti obchodu, služieb, výroby", price: 0, description: null, category_id: 1 },
   { id: 27, title: "Počítačové služby a služby súvisiace s počítačovým spracovaním údajov", price: 0, description: null, category_id: 1 },
-  { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienk", price: 0, description: null, category_id: 1 },
+  { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienky", price: 0, description: null, category_id: 1 },
   { id: 1, title: "Administratívne služby", price: 0, description: null, category_id: 1 },
   { id: 4, title: "Čistiace a upratovacie služby", price: 0, description: null, category_id: 1 },
 ];
@@ -127,7 +127,7 @@ const arrOfObjDoprava: Company['subjects_of_business'] = [
 const arrOfObjAdministrativa: Company['subjects_of_business'] = [
   { id: 1, title: "Administratívne služby", price: 0, description: null, category_id: 1 },
   { id: 2, title: "Činnosť podnikateľských, organizačných a ekonomických poradcov", price: 0, description: null, category_id: 1 },
-  { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienk", price: 0, description: null, category_id: 1 },
+  { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienky", price: 0, description: null, category_id: 1 },
   { id: 72, title: "Vedenie účtovníctva", price: 0, description: null, category_id: 1 },
   { id: 27, title: "Počítačové služby a služby súvisiace s počítačovým spracovaním údajov", price: 0, description: null, category_id: 1 },
   { id: 17, title: "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)", price: 0, description: null, category_id: 1 },
