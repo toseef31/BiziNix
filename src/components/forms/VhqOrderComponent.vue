@@ -188,17 +188,17 @@ function registerAddress(): Promise<Response> {
 }
 
 function registerUser(): Promise<Response> {
-  accountDataRef.value.userData.address_id = addressFromResponse.address_id;
+    accountDataRef.value.userData.address_id = addressFromResponse.address_id;
 
-  return store
-    .dispatch("registerUser", accountDataRef.value.userData)
-    .then((res) => {
-      userFromResponse = res;
-      return userFromResponse;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    return store
+      .dispatch("registerUser", accountDataRef.value.userData)
+      .then((res) => {
+        userFromResponse = res;
+        return userFromResponse;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 }
 
 function addHeadquarter(): Promise<Response> {
@@ -228,7 +228,11 @@ function addHeadquarter(): Promise<Response> {
 }
 
 function addCompany(): Promise<Response> {
-  companyDataRef.value.company.owner = userFromResponse.user_id;
+  if(accountDataRef.value.user.user_id) {
+    companyDataRef.value.company.owner = accountDataRef.value.user.user_id;
+  } else {
+    companyDataRef.value.company.owner = userFromResponse.user_id;
+  }
   companyDataRef.value.company.headquarters_id = hqFromResponse.id;
   companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
@@ -249,7 +253,12 @@ function addOrder(): Promise<Response> {
     .slice(0, 19)
     .replace("T", " ");
   order.value.company_id = companyFromResponse.company.id;
-  order.value.user_id = userFromResponse.user_id;
+  
+  if(accountDataRef.value.user.user_id) {
+    order.value.user_id = accountDataRef.value.user.user_id;
+  } else {
+    order.value.user_id = userFromResponse.user_id;
+  }
 
   order.value.amount = hqDataRef.value.vhq_package.price * 12;
   order.value.amount_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
@@ -277,29 +286,51 @@ function addOrder(): Promise<Response> {
 const submitApp = async (formData: any, node: any) => {
   showModal();
   try {
-    registerAddress().then(() => {
-      registerUser().then(() => {
-        if (userFromResponse) {
-          addHeadquarter().then(() => {
-            addCompany().then(() => {
-              addOrder().then(() => {
-                userFromResponse = null;
-                hqFromResponse = null;
-                companyDataRef.value.company.owner = 0;
-                companyDataRef.value.company.headquarters_id = 0;
-                closeModal();
-                router.push({
-                  name: "Thanks You New Order",
-                  params: {
-                    orderId: orderFromRes.id,
-                  },
+    if(accountDataRef.value.user.userId) {
+      registerAddress().then(() => {
+            addHeadquarter().then(() => {
+              addCompany().then(() => {
+                addOrder().then(() => {
+                  hqFromResponse = null;
+                  companyDataRef.value.company.owner = 0;
+                  companyDataRef.value.company.headquarters_id = 0;
+                  closeModal();
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
                 });
               });
             });
-          });
-        }
       });
-    });
+    } else {
+      registerAddress().then(() => {
+        registerUser().then(() => {
+          if (userFromResponse) {
+            addHeadquarter().then(() => {
+              addCompany().then(() => {
+                addOrder().then(() => {
+                  userFromResponse = null;
+                  hqFromResponse = null;
+                  companyDataRef.value.company.owner = 0;
+                  companyDataRef.value.company.headquarters_id = 0;
+                  closeModal();
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
+                });
+              });
+            });
+          }
+        });
+      });
+    }
+    
     node.clearErrors();
   } catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors);

@@ -32,12 +32,12 @@
             'flex rounded-2xl',
           ]"
         >
-          <div class="flex flex-col basis-4/5 px-4">
+          <div class="flex flex-col basis-3/5 px-4">
             <div class="flex flex-col">
               <div
                 class="flex flex-row text-gray-300 pt-2 px-4 justify-between"
               >
-                <div class="text-4xl font-extrabold">
+                <div class="text-2xl font-extrabold">
                   {{ document.odberatel }}
                 </div>
                 <div class="flex flex-col">
@@ -49,7 +49,7 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-row justify-start">
+              <div class="flex flex-row justify-start pb-4">
                 <button
                   v-show="document.isIssued"
                   type="button"
@@ -99,19 +99,19 @@
             :class="[
               document.isIssued ? 'bg-gray-800' : 'bg-gray-600',
               document.isPaid ? 'bg-teal-700' : 'bg-gray-800',
-              'flex flex-col basis-1/4 rounded-2xl text-white py-2',
+              'flex flex-col basis-2/5 rounded-2xl text-white py-2',
             ]"
           >
             <div class="flex flex-row">
-              <div class="flex flex-col items-end basis-3/5 pr-8">
+              <div class="flex flex-col basis-3/4 px-6 py-1">
                 <div class="flex text-2xl font-extrabold">
                   {{ document.total }} €
                 </div>
                 <div class="flex text-xl">{{ document.total }} € s DPH</div>
                 <div class="flex text-sm">{{ document.overdue }}</div>
               </div>
-              <div class="flex flex-col items-center justify-center basis-2/5">
-                <div class="flex flex-col items-center">
+              <div class="flex flex-col items-center justify-center basis-1/4">
+                <div class="flex flex-col items-center pr-2">
                   <div>
                     <input
                       id="default-checkbox"

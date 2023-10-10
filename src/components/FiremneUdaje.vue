@@ -3,19 +3,47 @@
         <div class="flex flex-col py-10 items-center">
             <div class="flex flex-row gap-8">
                 <div class="flex flex-col">
+                  <label for="issue-date" class="text-black"
+                          >Názov spoločnosti</label
+                        >
                     <FormKit type="text" name="name" v-model="company.name"/>
+                    <label for="issue-date" class="text-black"
+                          >Adresa</label
+                        >
                     <FormKit type="text" name="address" v-model="address.street"/>
                     <div class="flex flex-row gap-4">
+                      <div class="flex flex-col">
+                        <label for="issue-date" class="text-black"
+                          >PSČ</label
+                        >
                         <FormKit type="text" name="psc" v-model="address.psc"/>
+
+                      </div>
+                      <div class="flex flex-col">
+                        <label for="issue-date" class="text-black"
+                          >Mesto</label
+                        >
                         <FormKit type="text" name="city" v-model="address.city"/>
+
+                      </div>
+                                          
                     </div>
-                    
+                    <label for="issue-date" class="text-black"
+                          >Krajina</label
+                        >
                     <FormKit type="text" name="country" v-model="address.country"/>
                 </div>
                 <div class="flex flex-col">
+                  <label for="issue-date" class="text-black"
+                          >IČO</label
+                        >
                     <FormKit type="text" name="ico" v-model="company.ico"/>
+                    <label for="issue-date" class="text-black"
+                          >DIČ</label
+                        >
                     <FormKit type="text" name="dic" v-model="company.dic"/>
                     <div class="flex flex-row gap-4">
+                      <div class="flex flex-col justify-end">
                         <FormKit
                             type="checkbox"
                             label="Platiteľ DPH?"
@@ -23,12 +51,20 @@
                             v-model="company.is_dph"
                             :classes="{label: '$reset text-sm text-black mt-1 select-none'}"
                         />
+                      </div>
+                      <div class="flex flex-col">
+                        <label for="issue-date" class="text-black"
+                          >DPH</label
+                        > 
                         <FormKit
                             type="select"
                             :options="[{label: 'Platca DPH', value: 'platca'}, {label: 'Neplatca DPH', value: 'neplatca'}]"
                         />
-                        
+                      </div>
                     </div>
+                    <label for="issue-date" class="text-black"
+                          >IČ DPH</label
+                        >
                     <FormKit type="text" name="icdph" v-model="company.icdph"/>
                     <FormKit
                         type="checkbox"

@@ -33,6 +33,9 @@
                 >
                 <div class="flex py-2 justify-between w-full">
                   <div class="w-full">
+                    <label for="issue-date" class="text-black"
+                          >Meno alebo IČO firmy</label
+                        >
                     <FormKit
                       v-model="document.odberatel"
                       autocomplete="nope"
@@ -44,6 +47,9 @@
                     />
                   </div>
                   <div class="w-full">
+                    <label for="issue-date" class="text-black"
+                          >Kontaktná osoba</label
+                        >
                     <FormKit
                       v-model="document.contact_person"
                       autocomplete="nope"
@@ -58,6 +64,9 @@
                 <div class="flex flex-row gap-4">
                   <div class="flex pb-2">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >Adresa</label
+                        >
                       <FormKit
                         v-model="document.address"
                         autocomplete="nope"
@@ -70,6 +79,9 @@
                   </div>
                   <div class="flex pb-2">
                     <div>
+                      <label for="issue-date" class="text-black"
+                          >PSČ</label
+                        >
                       <FormKit
                         v-model="document.psc"
                         autocomplete="nope"
@@ -82,6 +94,9 @@
                   </div>
                   <div class="flex pb-2">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >Mesto</label
+                        >
                       <FormKit
                         v-model="document.city"
                         autocomplete="nope"
@@ -94,6 +109,9 @@
                   </div>
                   <div class="flex pb-2">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >Krajina</label
+                        >
                       <FormKit
                         v-model="document.country"
                         type="select"
@@ -108,6 +126,9 @@
                 <div class="flex flex-row gap-4">
                   <div class="flex pb-2">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >IČO</label
+                        >
                       <FormKit
                         v-model="document.ico"
                         autocomplete="nope"
@@ -121,6 +142,9 @@
 
                   <div class="flex pb-2">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >DIČ</label
+                        >
                       <FormKit
                         v-model="document.dic"
                         autocomplete="nope"
@@ -134,6 +158,9 @@
 
                   <div class="flex">
                     <div class="w-full">
+                      <label for="issue-date" class="text-black"
+                          >IČ DPH</label
+                        >
                       <FormKit
                         v-model="document.icdph"
                         autocomplete="nope"
@@ -526,9 +553,8 @@
 
 <script setup lang="ts">
 import type Company from "@/types/Company";
-import type Doklad from "@/types/Document";
 import store from "@/store";
-import { ref, computed, onMounted, watch, onBeforeMount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";

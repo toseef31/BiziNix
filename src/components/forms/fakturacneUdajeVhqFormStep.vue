@@ -7,16 +7,7 @@
       id="Fakturačné údaje"
       name="Fakturačné údaje"
     >
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-          <FormKit
-            type="checkbox"
-            v-model="invoiceAddressIsSame"
-            :ignore="true"
-            label="Fakturačné údaje sú rovnaké ako podnikateľské"
-            name="invoiceAddressIsSame"
-          />
-        </div>
-        <div v-show="!invoiceAddressIsSame">
+        <div>
           <div v-show="user.userId">
             <div class="py-4">Vyberte iný fakturačný profil alebo si vytvorte nový</div>
             <div class="flex flex-row gap-8 pb-2">
@@ -140,21 +131,16 @@
 import store from "@/store";
 import { ref, computed, onMounted, watch } from "vue";
 import type Address from "@/types/Address";
-import type Company from "@/types/Company";
 import type User from "@/types/User";
 import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const activeTab = ref(1);
 const user = computed(() => store.state.user);
-const company = computed(() => store.state.selectedCompany as Company);
-const hqAddress = computed(() => store.state.selectedCompanyAddress as Address);
 let showAddNewProfile = ref(false);
 
 const userData = computed(() => store.state.user.data as User);
 const invoiceAddress = ref({} as Address);
-
-const invoiceAddressIsSame = ref(true);
 
 const fakturacne_udaje = ref({
     first_name: "",
@@ -257,25 +243,6 @@ function currentTab(tabNumber: any) {
   activeTab.value = tabNumber;
 }
 
-function isInvoiceAddressSameAsCompany() {
-    if(invoiceAddressIsSame.value == true) {
-      fakturacne_udaje.value.ico = company.value.ico;
-      fakturacne_udaje.value.dic = company.value.dic;
-      fakturacne_udaje.value.ic_dph = company.value.icdph;
-      fakturacne_udaje.value.name = company.value.name;
-      fakturacne_udaje.value.company_id = company.value.id;
-      fakturacne_udaje.value.address_id = hqAddress.value.id;
-    } else {
-      fakturacne_udaje.value.ico = currentInvoiceProfile.value.ico;
-      fakturacne_udaje.value.dic = currentInvoiceProfile.value.dic;
-      fakturacne_udaje.value.ic_dph = currentInvoiceProfile.value.ic_dph;
-      fakturacne_udaje.value.name = currentInvoiceProfile.value.name;
-      fakturacne_udaje.value.company_id = currentInvoiceProfile.value.company_id;
-      fakturacne_udaje.value.address_id = currentInvoiceProfile.value.address_id;
-      fakturacne_udaje.value.user_id = Number(user.value.userId);
-    }
-}
-
 async function switchSelect(event: any) {
     if(showAddNewProfile.value) {
       showAddNewProfile.value = false;
@@ -316,8 +283,6 @@ onMounted(async () => {
 });
 
 defineExpose({
-  isInvoiceAddressSameAsCompany,
-  invoiceAddressIsSame,
   invoiceAddress,
   fakturacne_udaje,
   finstatCompanyDetails,

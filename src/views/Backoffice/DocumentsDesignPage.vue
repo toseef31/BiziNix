@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen flex justify-center">
+  <div class="w-full min-h-screen flex justify-center bg-gray-400">
     <div class="flex flex-col py-20 w-full px-20 z-10">
       <div class="flex flex-col text-4xl text-gray-600 pb-10">
         Nastavenia dokladov
