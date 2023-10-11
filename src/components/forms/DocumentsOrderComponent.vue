@@ -209,12 +209,12 @@ function addOrder(): Promise<Response> {
       },
     ];
   } else {
-    order.value.amount = 50;
-    order.value.amount_vat = 50 * 0.2;
+    order.value.amount = 60;
+    order.value.amount_vat = 60 * 0.2;
     items = [
           {
-            price: 50,
-            price_vat: 50 * 0.2,
+            price: 60,
+            price_vat: 60 * 0.2,
             description: "Objednávka balíčku dokladov na rok",
           },
         ];
