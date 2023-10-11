@@ -14,7 +14,6 @@
           </ul>
         </div>
       </div>
-      <!-- Second div of flex -->
       <div>
         <img src="@/assets/robot_stripes.png" class="max-w-xs lg:max-w-md" />
       </div>
@@ -78,7 +77,6 @@
           ich scanovanie).
         </div>
         <VirtualHqSlider v-model="currentVhq"></VirtualHqSlider>
-        <!---->
       </div>
     </div>
   </div>
@@ -109,16 +107,31 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import VhqOrderComponent from "../../components/forms/VhqOrderComponent.vue";
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";
 import VirtualHqSlider from "@/components/VirtualHqSlider.vue";
+import { onMounted } from "vue";
 
 const currentVhq = ref({});
+let detailsDiv;
+
+watch(
+  () => store.state.selectedVhq,
+  function () {
+    if(detailsDiv) {
+      detailsDiv.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+);
 
 onBeforeMount(async () => {
   currentVhq.value = store.state.selectedVhq;
+});
+
+onMounted(() => {
+  detailsDiv = document.getElementById("detailsDiv");
 });
 </script>
 
