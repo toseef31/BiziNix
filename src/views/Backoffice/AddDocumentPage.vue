@@ -20,7 +20,7 @@
                 @change="documentSubtypeChanged()"
               />
               <button
-                class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded text-white"
                 v-on:click="cancelAddition()"
               >
                 X
