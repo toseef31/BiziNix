@@ -46,8 +46,13 @@
     </div>
 </div>
 <div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
+  <div class="">
     <VirtualHqSlider></VirtualHqSlider>
     <VirtualHqPackage></VirtualHqPackage>
+  </div>
+  <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+      <b>Prosím vyberte sídlo.</b>
+  </div>
 </div>
 </template>
 

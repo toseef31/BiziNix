@@ -44,8 +44,18 @@
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
-            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
+            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" previous-label="Naspäť">
               <podnikatelskeUdajeFormStep ref="userAddressUserInfoCompanyNameAndRegDate" />
+              <template #stepNext="{ handlers, node }">
+                <!-- incrementStep returns a callable function -->
+                <FormKit
+                  type="button"
+                  :disabled="isNextButtonDisabledHq"
+                  @click="handlers.incrementStep(1)()"
+                  label="Pokračovať"
+                  data-next="true"
+                />
+              </template>
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
@@ -161,6 +171,17 @@ function showErrors(node: any) {
     )
   })
 }
+
+
+const isNextButtonDisabledHq = computed(() => {
+  if(userAddressUserInfoCompanyNameAndRegDate.value?.placeOfBusinness == 'virtualne'){
+    if(!selectedVhqFromStore.value.name) {
+      return true
+    }
+  } else {
+    return false
+  }
+})
 
 function newLogSubmit(){
 

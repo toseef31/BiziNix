@@ -67,8 +67,18 @@
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
 
-            <FormKit type="step" name="obchodneSidlo" label="Obchodné sídlo" next-label="Pokračovať" previous-label="Naspäť">
+            <FormKit type="step" name="obchodneSidlo" label="Obchodné sídlo" previous-label="Naspäť">
               <obchodneSidloFormStep ref="sidloCompanyAddress" />
+              <template #stepNext="{ handlers, node }">
+                <!-- incrementStep returns a callable function -->
+                <FormKit
+                  type="button"
+                  :disabled="isNextButtonDisabledHq"
+                  @click="handlers.incrementStep(1)()"
+                  label="Pokračovať"
+                  data-next="true"
+                />
+              </template>
             </FormKit>
 
             <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" previous-label="Naspäť">
@@ -77,6 +87,7 @@
                 <!-- incrementStep returns a callable function -->
                 <FormKit
                   type="button"
+                  :disabled="isNextButtonDisabled"
                   @click="handlers.incrementStep(1)()"
                   label="Pokračovať"
                   data-next="true"
@@ -139,14 +150,7 @@ import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
 import { getValidationMessages } from '@formkit/validation'
 import { getNode } from '@formkit/core'
-import { head } from "lodash";
 
-const hasTitle = ref(false);
-const hasTitleZakladatel = ref(false);
-const invoiceAddressIsSame = ref(true);
-const placeOfBusinness = ref(true);
-const dateOfRegisterCompany = ref(true);
-const orderingAsCompany = ref(false);
 let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
@@ -161,7 +165,22 @@ let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
 const isNextButtonDisabled = computed(() => {
+  if(companyMembersAndDetails.value?.countOfZakladatelia >= 1 && companyMembersAndDetails.value?.countOfKonatelia >= 1){
+    return false
+  }
+  else {
+    return true
+  }
+})
 
+const isNextButtonDisabledHq = computed(() => {
+  if(sidloCompanyAddress.value?.obchodneSidloVirtuOrNormal === 'virtualne'){
+    if(!selectedVhqFromStore.value.name) {
+      return true
+    }
+  } else {
+    return false
+  }
 })
 
 const messages = ref([])
@@ -175,25 +194,6 @@ function showErrors(node: any) {
     )
   })
 }
-
-let businessCategori = ref([
-  {
-    label: '' as string,
-    value: ''
-  }
-])
-
-let headquartersTypes = ref([
-  {
-    label: '' as string,
-    value: ''
-  }
-])
-
-let companyRegDateCheckboxValue = ref("")
-let obchodneSidlo = ref("")
-
-let priceForBusinessCategories = ref(0);
 
 let order = ref({
   payment_date: '' as any,
