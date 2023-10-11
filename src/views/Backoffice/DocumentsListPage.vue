@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-400">
+  <div class="min-h-screen">
     <div class="w-full min-h-screen flex flex-row">
       <div class="flex flex-col w-full bg-gray-900 basis-1/5">
         <TransitionRoot as="template" :show="sidebarOpen">
@@ -139,20 +139,24 @@
           <div class="flex flex-col px-20 py-10">
             <div class="flex flex-row justify-between">
               <div class="flex flex-col">
-                <FormKit
-                  type="checkbox"
-                  name="vystavene"
-                  label="Vystavené"
-                  validation-visibility="dirty"
-                  v-model="isIssuedChecked"
-                />
-                <FormKit
-                  type="checkbox"
-                  name="prijate"
-                  label="Prijaté"
-                  validation-visibility="dirty"
-                  v-model="isReceivedChecked"
-                />
+                <div class="flex flex-row">
+                  <FormKit
+                    type="checkbox"
+                    name="vystavene"
+                    validation-visibility="dirty"
+                    v-model="isIssuedChecked"
+                  />
+                  <label for="due-in" class="text-black">Vystavené</label>
+                </div>
+                <div class="flex flex-row">
+                  <FormKit
+                    type="checkbox"
+                    name="prijate"
+                    validation-visibility="dirty"
+                    v-model="isReceivedChecked"
+                  />
+                  <label for="due-in" class="text-black">Prijaté</label>
+                </div>
                 <div class="pt-4">
                   Importujte prijaté doklady <br />
                   <button
