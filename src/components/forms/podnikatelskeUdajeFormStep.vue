@@ -123,6 +123,8 @@ import { getNode } from '@formkit/core'
 const route = useRoute()
 
 onBeforeMount( () => {
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};
   // const form = getNode('zalZivnostiMultiStepForm');
   // console.log(form?.value);
 

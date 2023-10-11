@@ -64,23 +64,10 @@ import { ref } from 'vue';
 import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 
-/*
 onMounted( () => {
-
-  headquartersTypes.value.length = 0
-  store.dispatch("getHeadquartersTypes")
-  .then(res => {
-    res.data.data.forEach((element: any) => {
-      headquartersTypes.value.push({
-        value: element.id,
-        label: element.name
-      })
-    });
-  })
-  
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};  
 })
-*/
-
 
 onUnmounted(() => {
   store.state.selectedVhq = {};
