@@ -72,11 +72,11 @@
                       </svg>
                     </DisclosureButton>
                     <DisclosurePanel class="space-y-1">
-                      <DisclosureButton v-for="subItem in item.children" :key="subItem.name" as="button" @click="currentDocTab(subItem.subTab, item.tab)" 
+                      <button v-for="subItem in item.children" :key="subItem.name" as="button" @click="currentDocTab(subItem.subTab, item.tab)" 
                         :class="[subItem.subTab == activeDocTab ? 'text-teal-500' : 'text-gray-300']"
                         class="group flex w-full items-center rounded-md py-2 pl-11 pr-2 text-sm font-medium hover:bg-gray-700 hover:text-white">
                         {{ subItem.name }}
-                      </DisclosureButton>
+                      </button>
                     </DisclosurePanel>
                   </Disclosure>
                 </template>
