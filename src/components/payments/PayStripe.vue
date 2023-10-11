@@ -7,8 +7,20 @@
     :instance-options="instanceOptions"
     :elements-options="elementsOptions"
   >
-    <StripeElement ref="card" :elements="elements" :options="cardOptions" />
-        
+  <div class="grid md:grid-cols-2 gap-4">
+    <div>
+      <span class="text-gray-600">Číslo karty</span>
+      <StripeElement type="cardNumber" ref="cardNumber" :elements="elements" :options="cardOptions" />
+    </div>
+    <div>
+      <span class="text-gray-600">Platnosť karty</span>
+      <StripeElement type="cardExpiry" ref="cardExp" :elements="elements" :options="cardOptions" />
+    </div>
+    <div>
+      <span class="text-gray-600">CVC kód</span>
+      <StripeElement type="cardCvc" ref="cardCvc" :elements="elements" :options="cardOptions" />
+    </div>
+  </div>
   </StripeElements>
 </template>
 
@@ -49,20 +61,22 @@ const cardOptions = ref({
         color: '#fce883',
       },
       '::placeholder': {
-        color: '#87BBFD',
+        color: '#c9c9c9',
       },
     },
     invalid: {
-      iconColor: '#FFC7EE',
-      color: '#FFC7EE',
+      iconColor: '#ff0000',
+      color: '#ff0000',
     },
-  },
-  hidePostalCode: true,
+  }
+  //hidePostalCode: true,
   // Other card options here
 })
 
 const stripeLoaded = ref(false)
-const card = ref()
+const cardNumber = ref()
+const cardCvc = ref()
+const cardExp = ref()
 const elms = ref()
 
 onBeforeMount(async () => {
@@ -77,8 +91,9 @@ onBeforeMount(async () => {
 
 const payWithStripe = async (order: any) => {
   try {
-    const cardElement = card.value.stripeElement
-    const result = await elms.value.instance.createToken(cardElement)
+    const cardNumElement = cardNumber.value.stripeElement
+    const cardExpElement = cardExp.value.stripeElement
+    const result = await elms.value.instance.createToken(cardNumElement)
     if (result.error) {
       console.log('Token problem')
       console.log(result)
@@ -90,7 +105,7 @@ const payWithStripe = async (order: any) => {
 
     const paymentResult = await elms.value.instance.confirmCardPayment(clientSecret, {
       payment_method: {
-        card: cardElement,
+        card: cardNumElement,
       },
       return_url: 'https://example.com/return_url',
     })
