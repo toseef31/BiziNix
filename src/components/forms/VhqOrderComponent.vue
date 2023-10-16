@@ -99,7 +99,8 @@ let addressFromResponse: any,
   userFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
-  orderFromRes: any;
+  orderFromRes: any,
+  invoiceProfileFromResponse: any;
 
 const headquarter = ref({
   name: "",
@@ -115,6 +116,7 @@ const headquarter = ref({
   img: "test",
   address_id: 0,
 });
+
 const order = ref({
   payment_date: "" as any,
   payment_method: "",
@@ -134,17 +136,7 @@ const order = ref({
       price_vat: 0,
     },
   ],
-  fakturacne_udaje: [
-    {
-      first_name: "",
-      last_name: "",
-      name: "",
-      ico: "",
-      dic: "",
-      ic_dph: "",
-      address_id: "",
-    },
-  ],
+  fakturacne_udaje_id: 0
 });
 
 function showErrors(node: any) {
@@ -174,6 +166,26 @@ function closeModal() {
 }
 
 /* Submiting form and Api calls */
+function addInvoiceProfile(): Promise<Response> {
+  invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+
+  if(accountDataRef.value.userData.id) {
+    invoiceDataRef.value.currentInvoiceProfile.user_id = accountDataRef.value.userData.id;
+  } else {
+    invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.id;
+  }
+
+  return store
+    .dispatch("addInvoiceProfile", invoiceDataRef.value.currentInvoiceProfile)
+    .then((res) => {
+      invoiceProfileFromResponse = res;
+      invoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
+      return invoiceProfileFromResponse;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 function registerAddress(): Promise<Response> {
   return store
@@ -228,8 +240,8 @@ function addHeadquarter(): Promise<Response> {
 }
 
 function addCompany(): Promise<Response> {
-  if(accountDataRef.value.user.user_id) {
-    companyDataRef.value.company.owner = accountDataRef.value.user.user_id;
+  if(accountDataRef.value.userData.id) {
+    companyDataRef.value.company.owner = accountDataRef.value.userData.id;
   } else {
     companyDataRef.value.company.owner = userFromResponse.user_id;
   }
@@ -254,8 +266,8 @@ function addOrder(): Promise<Response> {
     .replace("T", " ");
   order.value.company_id = companyFromResponse.company.id;
   
-  if(accountDataRef.value.user.user_id) {
-    order.value.user_id = accountDataRef.value.user.user_id;
+  if(accountDataRef.value.userData.id) {
+    order.value.user_id = accountDataRef.value.userData.id;
   } else {
     order.value.user_id = userFromResponse.user_id;
   }
@@ -265,12 +277,7 @@ function addOrder(): Promise<Response> {
   order.value.items[0].price = hqDataRef.value.vhq_package.price * 12;
   order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
 
-  order.value.fakturacne_udaje[0].first_name = invoiceDataRef.value.fakturacne_udaje.first_name;
-  order.value.fakturacne_udaje[0].last_name = invoiceDataRef.value.fakturacne_udaje.last_name;
-  order.value.fakturacne_udaje[0].dic = invoiceDataRef.value.fakturacne_udaje.dic;
-  order.value.fakturacne_udaje[0].ic_dph = invoiceDataRef.value.fakturacne_udaje.ic_dph;
-  order.value.fakturacne_udaje[0].ico = invoiceDataRef.value.fakturacne_udaje.ico;
-  order.value.fakturacne_udaje[0].address_id = addressFromResponse.address_id
+  order.value.fakturacne_udaje_id = invoiceDataRef.value.currentInvoiceProfile.id;
   
   return store
     .dispatch("addOrder", order.value)
@@ -286,45 +293,68 @@ function addOrder(): Promise<Response> {
 const submitApp = async (formData: any, node: any) => {
   showModal();
   try {
-    if(accountDataRef.value.user.userId) {
-      registerAddress().then(() => {
+    if(accountDataRef.value.userData.id) {
+      if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
+        registerAddress().then(() => {
+          addInvoiceProfile().then(() => {
             addHeadquarter().then(() => {
-              addCompany().then(() => {
-                addOrder().then(() => {
-                  hqFromResponse = null;
-                  companyDataRef.value.company.owner = 0;
-                  companyDataRef.value.company.headquarters_id = 0;
-                  closeModal();
-                  router.push({
-                    name: "Thanks You New Order",
-                    params: {
-                      orderId: orderFromRes.id,
-                    },
+                addCompany().then(() => {
+                  addOrder().then(() => {
+                    hqFromResponse = null;
+                    companyDataRef.value.company.owner = 0;
+                    companyDataRef.value.company.headquarters_id = 0;
+                    closeModal();
+                    router.push({
+                      name: "Thanks You New Order",
+                      params: {
+                        orderId: orderFromRes.id,
+                      },
+                    });
                   });
                 });
               });
+          });    
+        });
+      } else {
+        addHeadquarter().then(() => {
+          addCompany().then(() => {
+            addOrder().then(() => {
+              hqFromResponse = null;
+              companyDataRef.value.company.owner = 0;
+              companyDataRef.value.company.headquarters_id = 0;
+              closeModal();
+              router.push({
+                name: "Thanks You New Order",
+                params: {
+                  orderId: orderFromRes.id,
+                },
+              });
             });
-      });
+          });
+        });  
+      }
     } else {
       registerAddress().then(() => {
         registerUser().then(() => {
           if (userFromResponse) {
-            addHeadquarter().then(() => {
-              addCompany().then(() => {
-                addOrder().then(() => {
-                  userFromResponse = null;
-                  hqFromResponse = null;
-                  companyDataRef.value.company.owner = 0;
-                  companyDataRef.value.company.headquarters_id = 0;
-                  closeModal();
-                  router.push({
-                    name: "Thanks You New Order",
-                    params: {
-                      orderId: orderFromRes.id,
-                    },
+            addInvoiceProfile().then(() => {
+                addHeadquarter().then(() => {
+                  addCompany().then(() => {
+                    addOrder().then(() => {
+                      userFromResponse = null;
+                      hqFromResponse = null;
+                      companyDataRef.value.company.owner = 0;
+                      companyDataRef.value.company.headquarters_id = 0;
+                      closeModal();
+                      router.push({
+                        name: "Thanks You New Order",
+                        params: {
+                          orderId: orderFromRes.id,
+                        },
+                      });
+                    });
                   });
                 });
-              });
             });
           }
         });

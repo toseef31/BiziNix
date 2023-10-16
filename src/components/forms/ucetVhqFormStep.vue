@@ -102,8 +102,7 @@ async function emailIsUnique(node: any) {
 }
 
 defineExpose({
-  userData, 
-  user
+  userData
 })
 
 </script>

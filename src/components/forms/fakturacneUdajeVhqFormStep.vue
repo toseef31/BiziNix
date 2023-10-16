@@ -88,7 +88,7 @@
                 <FormKit type="text" name="name" label="Názov spoločnosti" v-model="currentInvoiceProfile.name" v-if="user.userId"/>
                 <div class="flex flex-col" v-else>
                   <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
-                  <Autocomplete v-model="finstatCompany"></Autocomplete>
+                  <Autocomplete v-model="finstatCompanyFu" id="fua"></Autocomplete>
                 </div>
                 <FormKit type="text" name="ico" label="IČO" v-model="currentInvoiceProfile.ico"/>
                 <FormKit type="text" name="dic" label="DIČ" v-model="currentInvoiceProfile.dic"/>
@@ -130,8 +130,8 @@
 <script setup lang="ts">
 import store from "@/store";
 import { ref, computed, onMounted, watch } from "vue";
-import type Address from "@/types/Address";
 import type User from "@/types/User";
+import type Address from "@/types/Address";
 import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
 
@@ -142,10 +142,14 @@ let showAddNewProfile = ref(false);
 const userData = computed(() => store.state.user.data as User);
 const invoiceAddress = ref({} as Address);
 
-const fakturacne_udaje = ref({
+const finstatCompanyFu = ref({} as any);
+const finstatCompanyDetailsFu = ref({} as any);
+
+const newProfile = ref({
+    id: 0,
     first_name: "",
     last_name: "",
-    name: "",
+    name: "Nový profil",
     ico: "",
     dic: "",
     ic_dph: "",
@@ -154,11 +158,12 @@ const fakturacne_udaje = ref({
     company_id: 0
 });
 
-const newProfile = ref({
+const invoiceProfiles = ref([] as any);
+const currentInvoiceProfile = ref({
     id: 0,
     first_name: "",
     last_name: "",
-    name: "Nový profil",
+    name: "",
     ico: "",
     dic: "",
     ic_dph: "",
@@ -179,65 +184,41 @@ function addNewProfile() {
     }
 }
 
-const finstatCompany = ref({} as any);
-const finstatCompanyDetails = ref({} as any);
-
-watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
-    if(newFinstatCompany.Spoločnosť !== undefined) {
+watch(finstatCompanyFu, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany.Spoločnosť !== undefined) {
       getCompanyDetails();
     }
 });
 
 async function getCompanyDetails() {
-    let ico = {
-      ico: ""
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompanyFu.value.Spoločnosť.Ico !== undefined) {
+    ico = {
+      ico: finstatCompanyFu.value.Spoločnosť.Ico
     }
+  }
 
-    if(finstatCompany.value.Spoločnosť.Ico !== undefined) {
-      ico = {
-        ico: finstatCompany.value.Spoločnosť.Ico
-      }
-
-      await store
+  await store
       .dispatch("getDetailsOfCompanyFinstat", ico)
       .then((res: any) => {
-        finstatCompanyDetails.value = res.data;
-        invoiceAddress.value.city = finstatCompanyDetails.value.City;
-        invoiceAddress.value.street = finstatCompanyDetails.value.Street+" "+finstatCompanyDetails.value.StreetNumber;
-        invoiceAddress.value.psc = finstatCompanyDetails.value.ZipCode;
+        finstatCompanyDetailsFu.value = res.data;
+        invoiceAddress.value.city = finstatCompanyDetailsFu.value.City;
+        invoiceAddress.value.street = finstatCompanyDetailsFu.value.Street+" "+finstatCompanyDetailsFu.value.StreetNumber;
+        invoiceAddress.value.psc = finstatCompanyDetailsFu.value.ZipCode;
         invoiceAddress.value.country = "Slovensko";
 
-        currentInvoiceProfile.value.name = finstatCompanyDetails.value.Name;
-        currentInvoiceProfile.value.ico = finstatCompanyDetails.value.Ico;
-        currentInvoiceProfile.value.dic = finstatCompanyDetails.value.Dic;
-        currentInvoiceProfile.value.ic_dph = finstatCompanyDetails.value.IcDPH;
-
-        fakturacne_udaje.value.name = finstatCompanyDetails.value.Name;
-        fakturacne_udaje.value.ico = finstatCompanyDetails.value.Ico;
-        fakturacne_udaje.value.dic = finstatCompanyDetails.value.Dic;
-        fakturacne_udaje.value.ic_dph = finstatCompanyDetails.value.IcDPH;
-
+        currentInvoiceProfile.value.name = finstatCompanyDetailsFu.value.Name;
+        currentInvoiceProfile.value.ico = finstatCompanyDetailsFu.value.Ico;
+        currentInvoiceProfile.value.dic = finstatCompanyDetailsFu.value.Dic;
+        currentInvoiceProfile.value.ic_dph = finstatCompanyDetailsFu.value.IcDPH;
       })
       .catch((err) => {
         console.log(err);
       });
-    }
-} 
-
-
-const invoiceProfiles = ref([] as any);
-const currentInvoiceProfile = ref({
-    id: 0,
-    first_name: "",
-    last_name: "",
-    name: "",
-    ico: "",
-    dic: "",
-    ic_dph: "",
-    address_id: 0,
-    user_id: 0,
-    company_id: 0
-});
+}
 
 function currentTab(tabNumber: any) {
   activeTab.value = tabNumber;
@@ -257,7 +238,7 @@ async function switchSelect(event: any) {
       .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
       .then((response) => {
         invoiceAddress.value = response.data;
-        fakturacne_udaje.value.address_id = response.data.id;
+        currentInvoiceProfile.value.address_id = response.data.id;
     });
 }
 
@@ -273,7 +254,7 @@ onMounted(async () => {
               .dispatch("getAddressById", currentInvoiceProfile.value.address_id)
                 .then((response) => {
                   invoiceAddress.value = response.data;
-                  fakturacne_udaje.value.address_id = response.data.id;
+                  currentInvoiceProfile.value.address_id = response.data.id;
                 });
           });
         } catch (err){
@@ -284,8 +265,8 @@ onMounted(async () => {
 
 defineExpose({
   invoiceAddress,
-  fakturacne_udaje,
-  finstatCompanyDetails,
-  finstatCompany
+  currentInvoiceProfile,
+  finstatCompanyDetailsFu,
+  finstatCompanyFu
 })
 </script>

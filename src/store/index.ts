@@ -151,6 +151,10 @@ export const store = createStore({
           });
       }
     },
+    async addInvoiceProfile({ commit, dispatch }, invoiceProfile) {
+      const { data } = await axiosClient.post("/users/fakturacneUdaje/add", invoiceProfile);
+      return data;
+    },
     //#region Company actions
     async getAllSubjectOfBusiness() {
       const response = await axiosClient.get(
@@ -345,7 +349,7 @@ export const store = createStore({
     //#endregion
     //#region orders
     async getFakturacneUdajeByUserId({ commit }, id) {
-      const { data } = await axiosClient.get(`/orders/fakturacneUdaje/${id}/getAllForUser`);
+      const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/getAllForUser`);
       return data;
     },
     async addOrder({ commit }, order) {

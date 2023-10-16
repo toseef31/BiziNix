@@ -187,6 +187,21 @@ const newProfile = ref({
   company_id: 0
 });
 
+const invoiceProfiles = ref([] as any);
+const currentInvoiceProfile = ref({
+  id: 0,
+  first_name: "",
+  last_name: "",
+  name: "",
+  ico: "",
+  dic: "",
+  ic_dph: "",
+  address_id: 0,
+  user_id: 0,
+  company_id: 0
+});
+
+
 function addNewProfile() {
   if(showAddNewProfile.value) {
     showAddNewProfile.value = false;
@@ -202,7 +217,7 @@ function addNewProfile() {
 const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
-watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+watch(finstatCompany.value, (newFinstatCompany, prevFinstatCompany) => {
   if(newFinstatCompany.Spoločnosť !== undefined) {
       getCompanyDetails();
     }
@@ -243,21 +258,6 @@ async function getCompanyDetails() {
       });
   }
 } 
-
-
-const invoiceProfiles = ref([] as any);
-const currentInvoiceProfile = ref({
-  id: 0,
-  first_name: "",
-  last_name: "",
-  name: "",
-  ico: "",
-  dic: "",
-  ic_dph: "",
-  address_id: 0,
-  user_id: 0,
-  company_id: 0
-});
 
 function currentTab(tabNumber: any) {
   activeTab.value = tabNumber;

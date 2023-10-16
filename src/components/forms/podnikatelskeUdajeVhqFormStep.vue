@@ -14,7 +14,7 @@
         </div>
       </div>
       <!-- Podnikatelské údaje New company-->
-      <div v-show="newCompany">
+      <div v-if="newCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete založiť
@@ -43,7 +43,7 @@
         </div>
       </div>
       <!-- Podnikatelské údaje Existing company-->
-      <div v-show="!newCompany">
+      <div v-if="!newCompany">
         <div class="text-4xl font-bold">Identifikujte firmu</div>
         <div class="my-2">
           Po zaplatení služby dostanete dokument, pomocou ktorého môžete
@@ -62,7 +62,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
               <div class="flex flex-col">
                 <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
-                <Autocomplete v-model="finstatCompany"></Autocomplete>
+                <Autocomplete v-model="finstatCompany" id="pua"></Autocomplete>
               </div>
               <FormKit
                 type="text"
