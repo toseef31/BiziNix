@@ -46,8 +46,13 @@
     </div>
 </div>
 <div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
+  <div class="">
     <VirtualHqSlider></VirtualHqSlider>
     <VirtualHqPackage></VirtualHqPackage>
+  </div>
+  <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+      <b>Prosím vyberte sídlo.</b>
+  </div>
 </div>
 </template>
 
@@ -59,23 +64,10 @@ import { ref } from 'vue';
 import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 
-/*
 onMounted( () => {
-
-  headquartersTypes.value.length = 0
-  store.dispatch("getHeadquartersTypes")
-  .then(res => {
-    res.data.data.forEach((element: any) => {
-      headquartersTypes.value.push({
-        value: element.id,
-        label: element.name
-      })
-    });
-  })
-  
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};  
 })
-*/
-
 
 onUnmounted(() => {
   store.state.selectedVhq = {};

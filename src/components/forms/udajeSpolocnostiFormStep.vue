@@ -211,8 +211,10 @@
       </div>
     </VueFinalModal>
   <div class="my-4">
-    <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú" 
-      :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod"
+    <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod"
+      type="radio" label="Konečným užívateľom výhod sú"
+      :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }"
+      name="konecny_uzivatelia_vyhod"
       validation="required"
     />
     <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
@@ -300,8 +302,8 @@ let companyOrZivnostModel = ref({
   imanie_splatene: 0,
   is_dph: false,
   zaciatok_opravnenia: '',
-  konecny_uzivatelia_vyhod: 0,
-  sposob_konania_konatelov: 0,
+  konecny_uzivatelia_vyhod: 1,
+  sposob_konania_konatelov: 1,
   owner: 0,
   note: '',
   type: 1, // type 1 sro, type 2 živnosť

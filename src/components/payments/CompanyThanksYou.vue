@@ -71,10 +71,10 @@
                         </div>
                         </fieldset>
                         <div v-if="selectedOptionForPay == 'stripe'">
-                        <stripePaymentComponent class="bg-gray-100 my-5 p-4" ref="childRefComponentForPay"></stripePaymentComponent>
+                        <stripePaymentComponent class="bg-gray-bizinix my-4 text-white" ref="childRefComponentForPay"></stripePaymentComponent>
                         </div>
-                        <div class="text-center mt-8">
-                        <FormKit class="!w-full" type="submit" label="Zaplatiť" />
+                        <div class="text-center mt-4">
+                        <FormKit class="!w-full font-bold" type="submit" label="Zaplatiť" />
                         </div>
                     </FormKit>
                     </div>

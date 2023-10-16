@@ -9,16 +9,16 @@
   >
   <div class="grid md:grid-cols-2 gap-4">
     <div>
-      <span class="text-gray-600">Číslo karty</span>
-      <StripeElement type="cardNumber" ref="cardNumber" :elements="elements" :options="cardOptions" />
+      <span class="">Číslo karty</span>
+      <StripeElement type="cardNumber" ref="cardNumber" class="p-2 border-bizinix-border border-2 rounded" :elements="elements" :options="cardOptions" />
     </div>
     <div>
-      <span class="text-gray-600">Platnosť karty</span>
-      <StripeElement type="cardExpiry" ref="cardExp" :elements="elements" :options="cardOptions" />
+      <span class="">Platnosť karty</span>
+      <StripeElement type="cardExpiry" ref="cardExp" class="p-2 border-bizinix-border border-2 rounded" :elements="elements" :options="cardOptions" />
     </div>
     <div>
-      <span class="text-gray-600">CVC kód</span>
-      <StripeElement type="cardCvc" ref="cardCvc" :elements="elements" :options="cardOptions" />
+      <span class="">CVC kód</span>
+      <StripeElement type="cardCvc" ref="cardCvc" class="p-2 border-bizinix-border border-2 rounded" :elements="elements" :options="cardOptions" />
     </div>
   </div>
   </StripeElements>
@@ -52,7 +52,7 @@ const cardOptions = ref({
   style: {
     base: {
       iconColor: '#c4f0ff',
-      color: '#333',
+      color: '#fff',
       fontWeight: '500',
       fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
       fontSize: '18px',
@@ -61,7 +61,7 @@ const cardOptions = ref({
         color: '#fce883',
       },
       '::placeholder': {
-        color: '#c9c9c9',
+        color: '#999',
       },
     },
     invalid: {

@@ -59,8 +59,13 @@
       validation="required"
     />
     <div v-if="placeOfBusinness === 'virtualne'">
-      <VirtualHqSlider></VirtualHqSlider>
-      <VirtualHqPackage></VirtualHqPackage>
+      <div class="">
+        <VirtualHqSlider></VirtualHqSlider>
+        <VirtualHqPackage></VirtualHqPackage>
+      </div>
+      <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+        <b>Prosím vyberte sídlo.</b>
+      </div>
     </div>
     <div v-if="placeOfBusinness == 'Iné'">
       <div class="mb-4">
@@ -118,6 +123,8 @@ import { getNode } from '@formkit/core'
 const route = useRoute()
 
 onBeforeMount( () => {
+  store.state.selectedVhq = {};
+  store.state.selectedVhqPackage = {};
   // const form = getNode('zalZivnostiMultiStepForm');
   // console.log(form?.value);
 
@@ -133,8 +140,8 @@ onUnmounted(() => {
 
 const hasTitle = ref(false);
 const isZivnostForm = ref(false);
-let companyRegDateCheckboxValue = ref("");
-const placeOfBusinness = ref("");
+let companyRegDateCheckboxValue = ref("Nezáleží");
+const placeOfBusinness = ref("Totožné");
 watch(placeOfBusinness, (newValue) => {
   if(newValue != 'virtualne'){
     store.state.selectedVhq = {};
