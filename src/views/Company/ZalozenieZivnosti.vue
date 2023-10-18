@@ -39,7 +39,11 @@
             <li v-for="message in messages">{{ message }}</li>
           </ul>
         </div>
-          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" tab-style="tab">
+          <FormKit type="multi-step" name="zalZivnostiMultiStepPlugin" id="multiStepPluginZivnost"
+            tab-style="tab"
+            :allow-incomplete="true"              
+            use-local-storage="true"
+          >
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
               <predmetPodnikaniaFormStep ref="subjects_of_business" />
             </FormKit>
@@ -86,7 +90,7 @@
 
 
         </FormKit>
-        <!-- <button @click="newLogSubmit">New log Submit</button> -->
+        <button @click="newLogSubmit">New log Submit</button>
       </div>
 
       <p>Selected Vhq:</p>
@@ -154,12 +158,6 @@ onMounted(() => {
   console.log(form?.value);
 })
 
-// const childRefComponentForPay = ref()
-// const callStripePayment = (totalForPay: number, orderId: any) => {
-//   childRefComponentForPay.value.payWithStripe(totalForPay, orderId)
-// }
-
-
 const messages = ref([])
 
 function showErrors(node: any) {
@@ -186,7 +184,7 @@ const isNextButtonDisabledHq = computed(() => {
 function newLogSubmit(){
 
   console.log("InvData");
-  console.log(invoiceData.value)
+  console.log(invoiceData.value.orderingAsCompany)
   console.log("CompanyModel");
   console.log(companyOrZivnostModel.value.subjects_of_business);
   console.log("UserAddresssssss");
@@ -217,7 +215,7 @@ let order = ref({
   payment_date: '' as any,
   payment_method: '',
   order_type: 'company',
-  description: 'test',
+  description: '',
   amount: 0, // final cena s dph
   amount_vat: 0, // vat je čisto len dph
   is_paid: false,
@@ -231,15 +229,7 @@ let order = ref({
       price: 12, // finalna cena za polozku s dph
       price_vat: 2 // toto je len dph
     }],
-  fakturacne_udaje: [{
-    first_name: '',
-    last_name: '',
-    name: '',
-    ico: '',
-    dic: '',
-    ic_dph: '',
-    address_id: ''
-  }]
+  fakturacne_udaje_id: 0
 })
 
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
@@ -260,8 +250,8 @@ async function registerAddress(userAddress: Address) {
 }
 
 async function registerUser(user: User, addressId: any): Promise<any> {
+  
   user.address_id = addressId;
-
   try {
     const res = await store.dispatch('registerUser', user);
     sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty.";
@@ -275,7 +265,6 @@ async function registerUser(user: User, addressId: any): Promise<any> {
     }
   }
 }
-
 
 async function registerHqAddress(): Promise<any>  {
 
@@ -424,13 +413,37 @@ async function registerInvoiceAddress(invoiceAddress: Address) {
   }
 }
 
-async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceAddressId?: any) {
+async function addInvoiceProfile(invoiceAddressId, userId) {
+  
+  let faktProfil = {
+    first_name: invoiceData.value.fakturacne_udaje.first_name,
+    last_name: invoiceData.value.fakturacne_udaje.last_name,
+    name: invoiceData.value.fakturacne_udaje.name,
+    ico: invoiceData.value.fakturacne_udaje.ico,
+    dic: invoiceData.value.fakturacne_udaje.dic,
+    ic_dph: invoiceData.value.fakturacne_udaje.ic_dph,
+    address_id: invoiceAddressId,
+    user_id: userId
+  }
+
+    return store.dispatch('addInvoiceProfile', faktProfil)
+    .then((res) => {
+      console.log("Adding invoice profile: ", JSON.stringify(res))
+      return res
+    })
+    .catch((error: any) => {
+      errorMsg.value = JSON.stringify(error.response.data.errors)
+    })
+}
+
+async function addOrder(companyId: any, userId: any, userAddressId: any, invoiceProfileId?: any) {
 
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceData.value.paymentOptions
   order.value.company_id = companyId
   order.value.user_id = userId
   order.value.address_id = userAddressId
+  order.value.description = "Objednávka založenie živnosti: " + companyId
     
   if(userAddressUserInfoCompanyNameAndRegDate.value.placeOfBusinness == 'virtualne'){
     order.value.items.push({
@@ -453,17 +466,8 @@ async function addOrder(companyId: any, userId: any, userAddressId: any, invoice
     })
   });
 
-  order.value.fakturacne_udaje[0].first_name = invoiceData.value.fakturacne_udaje[0].first_name
-  order.value.fakturacne_udaje[0].last_name = invoiceData.value.fakturacne_udaje[0].last_name
-  order.value.fakturacne_udaje[0].name = invoiceData.value.fakturacne_udaje[0].name
-  order.value.fakturacne_udaje[0].dic = invoiceData.value.fakturacne_udaje[0].dic
-  order.value.fakturacne_udaje[0].ic_dph = invoiceData.value.fakturacne_udaje[0].ic_dph
-  order.value.fakturacne_udaje[0].ico = invoiceData.value.fakturacne_udaje[0].ic_dph
-  if(invoiceData.value.invoiceAddressIsSame){
-    order.value.fakturacne_udaje[0].address_id = userAddressId
-  } else {
-    order.value.fakturacne_udaje[0].address_id = invoiceAddressId
-  }
+  order.value.fakturacne_udaje_id = invoiceProfileId
+
   order.value.amount = totalForPay.value
   order.value.amount_vat = totalForPay.value * 0.2
 
@@ -495,8 +499,11 @@ const newSustmiApp = async (formdata: any, node: any) => {
     await addCompanyMember(companyRes.company.id);
 
     let invoiceAddressRes: any;
-    if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany)
+    if(invoiceData.value.invoiceAddressIsSame)
     {
+      invoiceAddressRes = await registerInvoiceAddress(userAddressUserInfoCompanyNameAndRegDate.value?.userAddressUserInfoCompanyNameAndRegDate.userAddress)
+    }
+    else if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany){
       invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
     }
     else if(invoiceData.value.orderingAsCompany)
@@ -504,9 +511,9 @@ const newSustmiApp = async (formdata: any, node: any) => {
       invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
     }
 
+    const invoiceProfileId = await addInvoiceProfile(invoiceAddressRes.address_id, regUserRes.user_id)
 
-
-    const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceAddressRes?.address_id)
+    const orderRes = await addOrder(companyRes.company.id, regUserRes.user_id, userAddressRes.address_id, invoiceProfileId.id)
 
     if(orderRes.id){
 

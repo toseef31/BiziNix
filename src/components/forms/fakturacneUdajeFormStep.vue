@@ -2,8 +2,8 @@
 <div class="text-4xl font-bold">Fakturačné údaje</div>
 <div class="mt-2 mb-6">Na nasledujúce údaje vám budeme odosielať faktúri.</div>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-    <FormKit type="text" name="first_name" v-model="fakturacne_udaje[0].first_name" label="Meno" validation="required" />
-    <FormKit type="text" name="last_name" v-model="fakturacne_udaje[0].last_name" label="Priezvisko" validation="required" />
+    <FormKit type="text" name="first_name" v-model="fakturacne_udaje.first_name" label="Meno" validation="required" />
+    <FormKit type="text" name="last_name" v-model="fakturacne_udaje.last_name" label="Priezvisko" validation="required" />
   </div>
   <div>
     <FormKit type="checkbox" v-if="!orderingAsCompany" v-model="invoiceAddressIsSame" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
@@ -28,10 +28,10 @@
   <div class="w-fit">
   </div>    
   <div v-if="orderingAsCompany" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <FormKit type="text" name="name" v-model="fakturacne_udaje[0].name" label="Názov firmy" validation="required" />
-      <FormKit type="text" name="ico" v-model="fakturacne_udaje[0].ico" label="IČO" validation="required" />
-      <FormKit type="text" name="dic" v-model="fakturacne_udaje[0].dic" label="DIČ" validation="required" />
-      <FormKit type="text" name="ic_dph" v-model="fakturacne_udaje[0].ic_dph" label="IČ DPH" />
+      <FormKit type="text" name="name" v-model="fakturacne_udaje.name" label="Názov firmy" validation="required" />
+      <FormKit type="text" name="ico" v-model="fakturacne_udaje.ico" label="IČO" validation="required" />
+      <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" validation="required" />
+      <FormKit type="text" name="ic_dph" v-model="fakturacne_udaje.ic_dph" label="IČ DPH" />
 
       <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddressForCompany.country"
         :options="['Slovensko', 'Česko']" validation="required" validation-visibility="dirty"
@@ -65,7 +65,7 @@ function setFalseInvoiceAddressIsSame() {
 
 let paymentOptions = ref<string>('');
 // why array?
-let fakturacne_udaje = ref([{
+let fakturacne_udaje = ref({
   first_name: '',
   last_name: '',
   name: '',
@@ -73,7 +73,7 @@ let fakturacne_udaje = ref([{
   dic: '',
   ic_dph: '',
   address_id: 0
-}] as Order["fakturacne_udaje"] )
+})
 
 let invoiceAddress = ref({
   street: '',
