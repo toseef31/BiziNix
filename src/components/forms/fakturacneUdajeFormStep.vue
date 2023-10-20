@@ -6,7 +6,7 @@
     <FormKit type="text" name="last_name" v-model="fakturacne_udaje.last_name" label="Priezvisko" validation="required" />
   </div>
   <div>
-    <FormKit type="checkbox" v-if="!orderingAsCompany" v-model="invoiceAddressIsSame" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
+    <FormKit type="checkbox" v-if="!orderingAsCompany && !isFirmaFormOrder" v-model="invoiceAddressIsSame" label="Fakturačná adresa je rovnaká ako podnikateľská?" name="invoiceAddressIsSame" />
     <FormKit type="checkbox" v-model="orderingAsCompany" @click="setFalseInvoiceAddressIsSame" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
   </div>
   <div v-if="!invoiceAddressIsSame && !orderingAsCompany" class="grid grid-cols-3 gap-4">
@@ -51,17 +51,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import type Order from '@/types/Order';
 import type Address from '@/types/Address';
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 let invoiceAddressIsSame = ref(true);
 const orderingAsCompany = ref(false);
-
-function setFalseInvoiceAddressIsSame() {
-  invoiceAddressIsSame.value = false
-  console.log(invoiceAddressIsSame.value)
-}
+const isFirmaFormOrder = ref(false);
 
 let paymentOptions = ref<string>('');
 // why array?
@@ -93,6 +91,18 @@ let invoiceAddressForCompany = ref({
   psc: '',
   country: '',
 } as Address)
+
+onBeforeMount( () => {
+  if(route.fullPath.includes('firmy')){    
+    isFirmaFormOrder.value = true;
+    invoiceAddressIsSame.value = false;
+  }
+})
+
+function setFalseInvoiceAddressIsSame() {
+  invoiceAddressIsSame.value = false
+  console.log(invoiceAddressIsSame.value)
+}
 
 defineExpose({
   fakturacne_udaje,

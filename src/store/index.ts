@@ -31,6 +31,15 @@ export const store = createStore({
     selectedVhqPackage: {} as any
   },
   getters: {
+    getUserId: (state) => {
+      return state.user.userId
+    },
+    getUserAddressId: (state) => {
+      return state.user.addressId
+    },
+    getUserData: (state) => {
+      return state.user.data
+    },
     getDocument: (state) => {
       return state.document;
     },
