@@ -3,7 +3,6 @@
   <div>
     <FormKit
       type="group"
-      v-model="fakturacne_udaje"
       id="Fakturačné údaje"
       name="Fakturačné údaje"
     >

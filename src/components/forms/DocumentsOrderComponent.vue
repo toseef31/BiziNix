@@ -15,15 +15,15 @@
         </div>
           <FormKit type="multi-step" name="documentsOrderMultiStepPlugin" tab-style="tab">
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
-              <PodnikatelskeUdajeDocumentsFormStep ref="companyDataRef" />
+              <PodnikatelskeUdajeDocumentsFormStep ref="doCompanyDataRef" />
             </FormKit>
 
             <FormKit type="step" name="ucet" label="Účet" next-label="Pokračovať" previous-label="Naspäť">
-              <UcetDocumentsFormStep ref="accountDataRef" />
+              <UcetDocumentsFormStep ref="doAccountDataRef" />
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-              <FakturacneUdajeDocumentsFormStep ref="invoiceDataRef" />
+              <SimplifiedFakturacneUdajeFormStep ref="doInvoiceDataRef" />
             </FormKit>
           </FormKit>
           <FormKit
@@ -82,13 +82,13 @@ import type Company from "@/types/Company";
 import moment from "moment";
 import { useModal, Modal } from "usemodal-vue3";
 import { getValidationMessages } from '@formkit/validation'
-import FakturacneUdajeDocumentsFormStep from "./fakturacneUdajeDocumentsFormStep.vue";
+import SimplifiedFakturacneUdajeFormStep from "./simplifiedFakturacneUdajeFormStep.vue";
 import UcetDocumentsFormStep from "./ucetDocumentsFormStep.vue";
 import PodnikatelskeUdajeDocumentsFormStep from "./podnikatelskeUdajeDocumentsFormStep.vue"
 
-let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
-let accountDataRef = ref<InstanceType<typeof UcetDocumentsFormStep>>(null as any);
-let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeDocumentsFormStep>>(null as any);
+let doCompanyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
+let doAccountDataRef = ref<InstanceType<typeof UcetDocumentsFormStep>>(null as any);
+let doInvoiceDataRef = ref<InstanceType<typeof SimplifiedFakturacneUdajeFormStep>>(null as any);
 
 const company = computed(() => store.state.selectedCompany as Company);
 const user = computed(() => store.state.user);
@@ -113,7 +113,8 @@ let addressFromResponse: any,
   userFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
-  orderFromRes: any;
+  orderFromRes: any,
+  invoiceProfileFromResponse: any;
 
 const today = moment(new Date()).format("YYYY-MM-DD");
 const firstTimePaymentDate = moment(today).add(90, "days").format("YYYY-MM-DD");
@@ -141,17 +142,7 @@ let order = ref({
       price: 0,
       price_vat: 0
     }],
-  fakturacne_udaje: [{
-    first_name: "",
-    last_name: "",
-    name: "",
-    ico: "",
-    dic: "",
-    ic_dph: "",
-    address_id: 0,
-    user_id: 0,
-    company_id: 0
-  }]
+  fakturacne_udaje_id: 0
 })
 
 const setModal = useModal({
@@ -174,19 +165,19 @@ function addOrder(): Promise<Response> {
   if(companyFromResponse) {
     order.value.company_id = companyFromResponse.company.id;
   } else {
-    order.value.company_id = companyDataRef.value.currentCompany.id;
+    order.value.company_id = doCompanyDataRef.value.currentCompany.id;
   }
 
   if(userFromResponse) {
     order.value.user_id = userFromResponse.user_id;
   } else {
-    order.value.user_id = accountDataRef.value.userData.id;
+    order.value.user_id = doAccountDataRef.value.userData.id;
   }
 
   if(addressFromResponse) {
     order.value.address_id = addressFromResponse.address_id;
   } else {
-    order.value.address_id = invoiceDataRef.value.fakturacne_udaje.address_id;
+    order.value.address_id = doInvoiceDataRef.value.currentInvoiceProfile.address_id;
   }
 
   order.value.amount = 0;
@@ -221,7 +212,7 @@ function addOrder(): Promise<Response> {
   }
 
   order.value.items = items;
-  order.value.fakturacne_udaje[0] = invoiceDataRef.value.fakturacne_udaje;
+  order.value.fakturacne_udaje_id = doInvoiceDataRef.value.currentInvoiceProfile.id;
 
   order.value.is_tos_accepted = true;
   order.value.is_advocate_requested = false;
@@ -254,7 +245,6 @@ function showErrors(node: any) {
 async function submitApp(formData: any){
   showModal();
   try {
-    invoiceDataRef.value.isInvoiceAddressSameAsCompany();
     if (firstTimeActivation.value) {
       await continueFirstTimeActivation();
     } else {
@@ -269,28 +259,49 @@ async function submitApp(formData: any){
 async function continueFirstTimeActivation() {
   try {
     if(user.value.userId) {
-      const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
+      const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
       if(result) {
-        await registerAddress().then(async () => {
-          invoiceDataRef.value.fakturacne_udaje.address_id = addressFromResponse.address_id;
-            await addHeadquarter().then(async () => {
-                await addCompany().then(async () => {
-                  addOrder().then(() => {
-                    closeModal();
-                    router.push({
-                      name: "Thanks You New Order",
-                      params: {
-                        orderId: orderFromRes.id,
-                      },
+        if(doInvoiceDataRef.value.currentInvoiceProfile.id == 0) {
+          await registerAddress().then(async () => {
+            doInvoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+            await addInvoiceProfile().then(async () => {
+              await addHeadquarter().then(async () => {
+                  await addCompany().then(async () => {
+                    addOrder().then(() => {
+                      closeModal();
+                      router.push({
+                        name: "Thanks You New Order",
+                        params: {
+                          orderId: orderFromRes.id,
+                        },
+                      });
                     });
                   });
                 });
               });
-          });
+            });
+          } else {
+            await registerAddress().then(async () => {
+              doInvoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+                await addHeadquarter().then(async () => {
+                    await addCompany().then(async () => {
+                      addOrder().then(() => {
+                        closeModal();
+                        router.push({
+                          name: "Thanks You New Order",
+                          params: {
+                            orderId: orderFromRes.id,
+                          },
+                        });
+                      });
+                    });
+                  });
+              });
+          }
         } else {
-          companyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
+          doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
           await store
-            .dispatch("updateCompany", companyDataRef.value.currentCompany)
+            .dispatch("updateCompany", doCompanyDataRef.value.currentCompany)
             .then(async () => {
               addOrder().then(() => {
                 closeModal();
@@ -309,17 +320,19 @@ async function continueFirstTimeActivation() {
         }
     } else {
       await registerAddress().then(async () => {
-        invoiceDataRef.value.fakturacne_udaje.address_id = addressFromResponse.address_id;
+        doInvoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
         await registerUser().then(async () => {
-          await addHeadquarter().then(async () => {
-            await addCompany().then(async () => {
-              addOrder().then(() => {
-                closeModal();
-                router.push({
-                  name: "Thanks You New Order",
-                  params: {
-                    orderId: orderFromRes.id,
-                  },
+          await addInvoiceProfile().then(async () => {
+            await addHeadquarter().then(async () => {
+              await addCompany().then(async () => {
+                addOrder().then(() => {
+                  closeModal();
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
                 });
               });
             });
@@ -335,13 +348,7 @@ async function continueFirstTimeActivation() {
 
 async function continueToPayment() {
   try {
-    if(invoiceDataRef.value.invoiceAddressIsSame) {
-      invoiceDataRef.value.fakturacne_udaje.address_id = companyDataRef.value.companyAddress.id;
-    } else {
-      invoiceDataRef.value.fakturacne_udaje.address_id = invoiceDataRef.value.invoiceAddress.id;
-    }
-
-    const result = await companyDataRef.value.isIcoAlreadyRegistered(companyDataRef.value.currentCompany.ico);
+    const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
     if(result) {
       try {
         await addCompany().then(async (res) => {
@@ -376,7 +383,7 @@ async function continueToPayment() {
           });
       } catch {
         addOrder().then(async () => {
-                  companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
+                  doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
                   router.push({
                     name: "Thanks You New Order",
                     params: {
@@ -388,7 +395,7 @@ async function continueToPayment() {
       
     } else {
       addOrder().then(async () => {
-          companyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
+          doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
           router.push({
             name: "Thanks You New Order",
             params: {
@@ -396,7 +403,7 @@ async function continueToPayment() {
             },
           });
         store
-          .dispatch("updateCompany", companyDataRef.value.currentCompany)
+          .dispatch("updateCompany", doCompanyDataRef.value.currentCompany)
           .then(() => {
             closeModal();
             router.push({
@@ -418,17 +425,28 @@ async function continueToPayment() {
   }
 }
 
-async function registerAddress(): Promise<Response> {
-  if(invoiceDataRef.value.invoiceAddressIsSame){
-    invoiceDataRef.value.invoiceAddress.city = companyDataRef.value.companyAddress.city;
-    invoiceDataRef.value.invoiceAddress.street = companyDataRef.value.companyAddress.street;
-    invoiceDataRef.value.invoiceAddress.street_number = companyDataRef.value.companyAddress.street_number;
-    invoiceDataRef.value.invoiceAddress.street_number2 = companyDataRef.value.companyAddress.street_number2;
-    invoiceDataRef.value.invoiceAddress.psc = companyDataRef.value.companyAddress.psc;
-    invoiceDataRef.value.invoiceAddress.country = companyDataRef.value.companyAddress.country;
+async function addInvoiceProfile(): Promise<Response> {
+  if(doAccountDataRef.value.userData.id) {
+    doInvoiceDataRef.value.currentInvoiceProfile.user_id = doAccountDataRef.value.userData.id;
+  } else {
+    doInvoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
   }
+
   return store
-    .dispatch("registerAddress", invoiceDataRef.value.invoiceAddress)
+    .dispatch("addInvoiceProfile", doInvoiceDataRef.value.currentInvoiceProfile)
+    .then((res) => {
+      invoiceProfileFromResponse = res;
+      doInvoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
+      return invoiceProfileFromResponse;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+async function registerAddress(): Promise<Response> {
+  return store
+    .dispatch("registerAddress", doInvoiceDataRef.value.invoiceAddress)
     .then((res) => {
       addressFromResponse = res;
       return addressFromResponse;
@@ -456,8 +474,8 @@ async function registerUser(): Promise<Response> {
 async function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name =
     userData.value.first_name + " " + userData.value.last_name;
-  headquarter.value.description = "Sídlo pre spoločnosť: " + companyDataRef.value.currentCompany.name;
-  headquarter.value.name = companyDataRef.value.currentCompany.name;
+  headquarter.value.description = "Sídlo pre spoločnosť: " + doCompanyDataRef.value.currentCompany.name;
+  headquarter.value.name = doCompanyDataRef.value.currentCompany.name;
   headquarter.value.price = 0;
 
   headquarter.value.registry = false;
@@ -480,16 +498,16 @@ async function addHeadquarter(): Promise<Response> {
 }
 
 async function addCompany(): Promise<Response> {
-  companyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
+  doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
   if(userFromResponse) {
-    companyDataRef.value.currentCompany.owner = userFromResponse.user_id;
+    doCompanyDataRef.value.currentCompany.owner = userFromResponse.user_id;
   } else {
-    companyDataRef.value.currentCompany.owner = userData.value.id;
+    doCompanyDataRef.value.currentCompany.owner = userData.value.id;
   }
-  companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
+  doCompanyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
 
     return store
-    .dispatch("addCompany", companyDataRef.value.currentCompany)
+    .dispatch("addCompany", doCompanyDataRef.value.currentCompany)
     .then((res) => {
       companyFromResponse = res;
       return companyFromResponse;
