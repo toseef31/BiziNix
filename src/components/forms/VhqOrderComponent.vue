@@ -27,7 +27,7 @@
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-            <FakturacneUdajeVhqFormStep ref="invoiceDataRef" />
+            <SimplifiedFakturacneUdajeFormStep ref="invoiceDataRef" />
             </FormKit>
           </FormKit>
           <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
@@ -82,7 +82,7 @@ import store from "@/store";
 import { ref, computed, reactive } from "vue";
 import router from "@/router";
 import { getValidationMessages } from '@formkit/validation'
-import FakturacneUdajeVhqFormStep from "./fakturacneUdajeVhqFormStep.vue";
+import SimplifiedFakturacneUdajeFormStep from "./simplifiedFakturacneUdajeFormStep.vue";
 import UcetVhqFormStep from "./ucetVhqFormStep.vue";
 import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import { useModal, Modal } from "usemodal-vue3";
@@ -91,7 +91,7 @@ import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
 let hqDataRef = ref<InstanceType<typeof SidloVhqFormStepVue>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
 let accountDataRef = ref<InstanceType<typeof UcetVhqFormStep>>(null as any);
-let invoiceDataRef = ref<InstanceType<typeof FakturacneUdajeVhqFormStep>>(null as any);
+let invoiceDataRef = ref<InstanceType<typeof SimplifiedFakturacneUdajeFormStep>>(null as any);
 const messages = ref([]);
 const totalForPay = computed(() => hqDataRef.value?.vhq_package.price * 12)
 
@@ -166,13 +166,13 @@ function closeModal() {
 }
 
 /* Submiting form and Api calls */
-function addInvoiceProfile(): Promise<Response> {
+async function addInvoiceProfile(): Promise<Response> {
   invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
 
   if(accountDataRef.value.userData.id) {
     invoiceDataRef.value.currentInvoiceProfile.user_id = accountDataRef.value.userData.id;
   } else {
-    invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.id;
+    invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
   }
 
   return store
@@ -295,8 +295,9 @@ const submitApp = async (formData: any, node: any) => {
   try {
     if(accountDataRef.value.userData.id) {
       if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
-        registerAddress().then(() => {
-          addInvoiceProfile().then(() => {
+        registerAddress().then(async () => {
+          invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+          await addInvoiceProfile().then(() => {
             addHeadquarter().then(() => {
                 addCompany().then(() => {
                   addOrder().then(() => {
@@ -337,6 +338,7 @@ const submitApp = async (formData: any, node: any) => {
       registerAddress().then(() => {
         registerUser().then(() => {
           if (userFromResponse) {
+            invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
             addInvoiceProfile().then(() => {
                 addHeadquarter().then(() => {
                   addCompany().then(() => {
