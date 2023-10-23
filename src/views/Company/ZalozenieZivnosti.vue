@@ -424,14 +424,14 @@ async function addInvoiceProfile(invoiceAddressId, userId) {
     user_id: userId
   }
 
-    return store.dispatch('addInvoiceProfile', faktProfil)
-    .then((res) => {
-      console.log("Adding invoice profile: ", JSON.stringify(res))
-      return res
-    })
-    .catch((error: any) => {
-      errorMsg.value = JSON.stringify(error.response.data.errors)
-    })
+  return store.dispatch('addInvoiceProfile', faktProfil)
+  .then((res) => {
+    console.log("Adding invoice profile: ", JSON.stringify(res))
+    return res
+  })
+  .catch((error: any) => {
+    errorMsg.value = JSON.stringify(error.response.data.errors)
+  })
 }
 
 async function addOrder(companyId: any, userId: any, invoiceProfileId?: any) {
@@ -482,7 +482,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
   try {
     
-    let userId = 0;
+    let userId = null as unknown as number;
     if(!userIdFromStore.value){
       userId = await registerUserAndReturnUserId(userRegisterForm.value.user);
     } else {
@@ -497,34 +497,33 @@ const newSustmiApp = async (formdata: any, node: any) => {
     
     await addCompanyMember(companyRes.company.id);
 
-    let invoiceAddressRes: any;
-    if(invoiceData.value.invoiceAddressIsSame)
-    {
-      invoiceAddressRes = await registerInvoiceAddress(businessInfo.value.companyMemberAddress)
+    let invoiceProfileId = null as unknown as number;
+    if(invoiceData.value.createNewInvoiceProfile){
+      let invoiceAddressRes: any;
+      if(!invoiceData.value.orderingAsCompany){
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+      }
+      else if (invoiceData.value.orderingAsCompany) {
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
+      }
+      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
+      const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
+      invoiceProfileId = response.id
     }
-    else if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany){
-      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
-    }
-    else if(invoiceData.value.orderingAsCompany)
-    {
-      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
+    else {
+      invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const invoiceProfileId = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
-
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId.id)
+    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
 
     if(orderRes.id){
-
       console.log("SUPER! Objednávka bola spracovaná.")
-      
       await router.push({
           name:"Thanks You New Order",
           params: {
             orderId: orderRes.id
             }
       })
-
     }  
     else {
       errorMsg.value = 'Ups, niečo sa pokazilo. Objednávka nebola spracovaná, prosím skontrolujte vyplnený formuár alebo platbu.'

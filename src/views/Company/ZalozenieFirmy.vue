@@ -501,7 +501,7 @@ async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Pr
 const newSustmiApp = async (formdata: any, node: any) => {
 
   try {    
-    let userId = 0;
+    let userId = null as unknown as number;
     if(!userIdFromStore.value){
       userId = await registerUserAndReturnUserId(userRegisterForm.value.user);
     } else {
@@ -516,20 +516,24 @@ const newSustmiApp = async (formdata: any, node: any) => {
     await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
     await addMultipleCompanyMembersKonatelia(companyRes.company.id)
 
-    let invoiceAddressRes: any;
-    if(!invoiceData.value.invoiceAddressIsSame && !invoiceData.value.orderingAsCompany){
-      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+    let invoiceProfileId = null as unknown as number;
+    if(invoiceData.value.createNewInvoiceProfile){
+      let invoiceAddressRes: any;
+      if(!invoiceData.value.orderingAsCompany){
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+      }
+      else if (invoiceData.value.orderingAsCompany) {
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
+      }
+      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
+      const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
+      invoiceProfileId = response.id
     }
-    else if(invoiceData.value.orderingAsCompany)
-    {
-      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
-    } else {
-      invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)      
+    else {
+      invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const invoiceProfileId = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
-
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId.id)
+    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
     
     if(orderRes.id){
 

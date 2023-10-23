@@ -11,7 +11,7 @@
       selection-appearance="option"
       @input="calculatePriceForBusinessOfcategories"
       validation="required"
-      load-on-created="true"
+      load-on-created
     >
     <template #option="{ option }">
       <div class="formkit-option grow p-2">
