@@ -6,7 +6,7 @@ export default {
   global: {
     fieldset: 'max-w-md border border-gray-400 rounded px-2 pb-1',
     help: 'text-xs text-gray-500',
-    inner: 'formkit-disabled:bg-gray-200 formkit-disabled:cursor-not-allowed formkit-disabled:pointer-events-none',
+    inner: 'formkit-disabled:bg-gray-600 formkit-disabled:cursor-not-allowed formkit-disabled:pointer-events-none',
     input: 'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none !text-white',
     label: 'block mb-1 font-bold text-sm text-white',
     legend: 'font-bold text-sm text-white',
@@ -59,7 +59,7 @@ export default {
     selectIcon: 'flex !box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em]',
   },
   'family:text': {
-    inner: 'flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>label:first-child]:focus-within:text-blue-500 rounded mb-1',
+    inner: 'flex items-center max-w-xl ring-1 ring-gray-400 focus-within:ring-teal-500 focus-within:ring-2 [&>label:first-child]:focus-within:text-blue-500 rounded mb-1',
     input: 'w-full px-3 py-2 border-none text-base text-white placeholder-gray-400',
   },
   'family:date': {

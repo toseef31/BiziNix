@@ -125,8 +125,8 @@
       :clickToClose="false"
       :escToClose="false"
       :lockscroll="true"
-      class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
-      content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+      class="block md:flex md:justify-center overflow-auto"
+      content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2 overflow-auto h-fit"
     >
       <h1 class="text-white text-2xl">
         {{ titleModalText }}
