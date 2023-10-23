@@ -105,6 +105,11 @@ export const store = createStore({
         return data;
       });
     },
+    async getUserDataByUserId( { commit }, userId){
+      const { data } = await axiosClient.get(`/users/${userId}/get`);
+      commit("setUserDataFromUserId", data);
+      return data;
+    },
     setUserDataAfterLogin({ commit }, userData) {
       return axiosClient.get("/users/profile", userData).then(({ data }) => {
         commit("setUserData", data);
@@ -456,6 +461,10 @@ export const store = createStore({
     setUserData: (state, userData) => {
       state.user.addressId = userData.user.address_id;
       state.user.data = userData.user;
+    },
+    setUserDataFromUserId: (state, userData) => {
+      state.user.addressId = userData.data.address_id;
+      state.user.data = userData.data;
     },
     setCurrentUserProfile: (state, userProfile) => {
       state.user.data = userProfile.user;
