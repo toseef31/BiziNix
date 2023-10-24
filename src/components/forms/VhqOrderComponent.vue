@@ -21,14 +21,15 @@
             <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
               <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
             </FormKit>
-
-            <FormKit type="step" name="ucet" label="Účet" previous-label="Naspäť">
-            <UcetVhqFormStep ref="accountDataRef" />
+                        
+            <FormKit type="step" name="userRegister" label="Užívateľský účet" next-label="Pokračovať">
+              <userRegisterFormStep ref="userRegisterForm" />
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-            <SimplifiedFakturacneUdajeFormStep ref="invoiceDataRef" />
+              <fakturacneUdajeFormStep ref="invoiceData" />
             </FormKit>
+
           </FormKit>
           <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
               Celkom k platbe <b>{{ totalForPay }} € / rok</b>.
@@ -82,21 +83,20 @@ import store from "@/store";
 import { ref, computed, reactive } from "vue";
 import router from "@/router";
 import { getValidationMessages } from '@formkit/validation'
-import SimplifiedFakturacneUdajeFormStep from "./simplifiedFakturacneUdajeFormStep.vue";
-import UcetVhqFormStep from "./ucetVhqFormStep.vue";
 import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import { useModal, Modal } from "usemodal-vue3";
 import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
+import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
+import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
 
 let hqDataRef = ref<InstanceType<typeof SidloVhqFormStepVue>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
-let accountDataRef = ref<InstanceType<typeof UcetVhqFormStep>>(null as any);
-let invoiceDataRef = ref<InstanceType<typeof SimplifiedFakturacneUdajeFormStep>>(null as any);
+let userRegisterForm = ref<InstanceType<typeof userRegisterFormStep>>(null as any);
+let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any);
 const messages = ref([]);
 const totalForPay = computed(() => hqDataRef.value?.vhq_package.price * 12)
 
 let addressFromResponse: any,
-  userFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
   orderFromRes: any,
@@ -166,30 +166,52 @@ function closeModal() {
 }
 
 /* Submiting form and Api calls */
-async function addInvoiceProfile(): Promise<Response> {
-  invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
 
-  if(accountDataRef.value.userData.id) {
-    invoiceDataRef.value.currentInvoiceProfile.user_id = accountDataRef.value.userData.id;
-  } else {
-    invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
+  let faktProfil = {
+    first_name: invoiceData.value.fakturacne_udaje.first_name,
+    last_name: invoiceData.value.fakturacne_udaje.last_name,
+    name: invoiceData.value.fakturacne_udaje.name,
+    ico: invoiceData.value.fakturacne_udaje.ico,
+    dic: invoiceData.value.fakturacne_udaje.dic,
+    ic_dph: invoiceData.value.fakturacne_udaje.ic_dph,
+    address_id: invoiceAddressId,
+    user_id: userId
   }
 
-  return store
-    .dispatch("addInvoiceProfile", invoiceDataRef.value.currentInvoiceProfile)
-    .then((res) => {
-      invoiceProfileFromResponse = res;
-      invoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
-      return invoiceProfileFromResponse;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  return store.dispatch('addInvoiceProfile', faktProfil)
+  .then((res) => {
+    console.log("Adding invoice profile: ", JSON.stringify(res))
+    return res
+  })
+  .catch((error: any) => {
+    console.log(error)
+  })
+
+
+  // invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+
+  // if(userRegisterForm.value.userData.id) {
+  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userRegisterForm.value.userData.id;
+  // } else {
+  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
+  // }
+
+  // return store
+  //   .dispatch("addInvoiceProfile", invoiceDataRef.value.currentInvoiceProfile)
+  //   .then((res) => {
+  //     invoiceProfileFromResponse = res;
+  //     invoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
+  //     return invoiceProfileFromResponse;
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 }
 
 function registerAddress(): Promise<Response> {
   return store
-    .dispatch("registerAddress", invoiceDataRef.value.invoiceAddress)
+    .dispatch("registerAddress", invoiceData.value.invoiceAddress)
     .then((res) => {
       addressFromResponse = res;
       return addressFromResponse;
@@ -199,18 +221,22 @@ function registerAddress(): Promise<Response> {
     });
 }
 
-function registerUser(): Promise<Response> {
-    accountDataRef.value.userData.address_id = addressFromResponse.address_id;
+function registerUserAndReturnUserId(): Promise<any> {
+  
+  let user;
+  if(!userRegisterForm.value.userData.id){
+    user = userRegisterForm.value.user
+  }
 
-    return store
-      .dispatch("registerUser", accountDataRef.value.userData)
-      .then((res) => {
-        userFromResponse = res;
-        return userFromResponse;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  //userRegisterForm.value.userData.address_id = addressFromResponse.address_id;
+  return store
+    .dispatch("registerUser", user)
+    .then((res) => {
+      return res.user_id;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function addHeadquarter(): Promise<Response> {
@@ -239,11 +265,11 @@ function addHeadquarter(): Promise<Response> {
     });
 }
 
-function addCompany(): Promise<Response> {
-  if(accountDataRef.value.userData.id) {
-    companyDataRef.value.company.owner = accountDataRef.value.userData.id;
+function addCompany(userId): Promise<Response> {
+  if(userRegisterForm.value.userData.id) {
+    companyDataRef.value.company.owner = userRegisterForm.value.userData.id;
   } else {
-    companyDataRef.value.company.owner = userFromResponse.user_id;
+    companyDataRef.value.company.owner = userId;
   }
   companyDataRef.value.company.headquarters_id = hqFromResponse.id;
   companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
@@ -259,17 +285,18 @@ function addCompany(): Promise<Response> {
     });
 }
 
-function addOrder(): Promise<Response> {
+function addOrder(userId, invoiceProfileId): Promise<Response> {
+
   order.value.payment_date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
   order.value.company_id = companyFromResponse.company.id;
   
-  if(accountDataRef.value.userData.id) {
-    order.value.user_id = accountDataRef.value.userData.id;
+  if(userRegisterForm.value.userData.id) {
+    order.value.user_id = userRegisterForm.value.userData.id;
   } else {
-    order.value.user_id = userFromResponse.user_id;
+    order.value.user_id = userId;
   }
 
   order.value.amount = totalForPay.value;
@@ -277,7 +304,7 @@ function addOrder(): Promise<Response> {
   order.value.items[0].price = hqDataRef.value.vhq_package.price * 12;
   order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
 
-  order.value.fakturacne_udaje_id = invoiceDataRef.value.currentInvoiceProfile.id;
+  order.value.fakturacne_udaje_id = invoiceProfileId
   
   return store
     .dispatch("addOrder", order.value)
@@ -291,82 +318,117 @@ function addOrder(): Promise<Response> {
 }
 
 const submitApp = async (formData: any, node: any) => {
-  showModal();
+  //showModal();
   try {
-    if(accountDataRef.value.userData.id) {
-      if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
-        registerAddress().then(async () => {
-          invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-          await addInvoiceProfile().then(() => {
-            addHeadquarter().then(() => {
-                addCompany().then(() => {
-                  addOrder().then(() => {
-                    hqFromResponse = null;
-                    companyDataRef.value.company.owner = 0;
-                    companyDataRef.value.company.headquarters_id = 0;
-                    closeModal();
-                    router.push({
-                      name: "Thanks You New Order",
-                      params: {
-                        orderId: orderFromRes.id,
-                      },
-                    });
-                  });
-                });
-              });
-          });    
-        });
-      } else {
-        addHeadquarter().then(() => {
-          addCompany().then(() => {
-            addOrder().then(() => {
-              hqFromResponse = null;
-              companyDataRef.value.company.owner = 0;
-              companyDataRef.value.company.headquarters_id = 0;
-              closeModal();
-              router.push({
-                name: "Thanks You New Order",
-                params: {
-                  orderId: orderFromRes.id,
-                },
-              });
-            });
-          });
-        });  
-      }
+
+    let userId = null as unknown as number;
+    if(!userRegisterForm.value.userData.id){
+      userId = await registerUserAndReturnUserId();
     } else {
-      registerAddress().then(() => {
-        registerUser().then(() => {
-          if (userFromResponse) {
-            invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-            addInvoiceProfile().then(() => {
-                addHeadquarter().then(() => {
-                  addCompany().then(() => {
-                    addOrder().then(() => {
-                      userFromResponse = null;
-                      hqFromResponse = null;
-                      companyDataRef.value.company.owner = 0;
-                      companyDataRef.value.company.headquarters_id = 0;
-                      closeModal();
-                      router.push({
-                        name: "Thanks You New Order",
-                        params: {
-                          orderId: orderFromRes.id,
-                        },
-                      });
-                    });
-                  });
-                });
-            });
-          }
-        });
-      });
+      userId = userRegisterForm.value.userData.id
     }
+
+    let invoiceProfileId = null as unknown as number;
+    if(invoiceData.value.createNewInvoiceProfile){
+      let invoiceAddressRes: any;
+      if(!invoiceData.value.orderingAsCompany){
+        invoiceAddressRes = await registerAddress()
+      }
+      else if (invoiceData.value.orderingAsCompany) {
+        invoiceAddressRes = await registerAddress()
+      }
+      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
+
+      const response = await addInvoiceProfile(userId, invoiceAddressRes.address_id)
+      invoiceProfileId = response.id
+    }
+    else {
+      invoiceProfileId = invoiceData.value.invoiceProfileId
+    }
+    await addHeadquarter();
+    await addCompany(userId);
+    await addOrder(userId, invoiceProfileId).then(() => {
+      router.push({
+        name: "Thanks You New Order",
+        params: {
+          orderId: orderFromRes.id,
+        },
+      });
+    })
+
+    // if(userRegisterForm.value.userData.id) {
+    //   if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
+    //     registerAddress().then(async () => {
+    //       invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+    //       await addInvoiceProfile().then(() => {
+    //         addHeadquarter().then(() => {
+    //             addCompany().then(() => {
+    //               addOrder().then(() => {
+    //                 hqFromResponse = null;
+    //                 companyDataRef.value.company.owner = 0;
+    //                 companyDataRef.value.company.headquarters_id = 0;
+    //                 closeModal();
+    //                 router.push({
+    //                   name: "Thanks You New Order",
+    //                   params: {
+    //                     orderId: orderFromRes.id,
+    //                   },
+    //                 });
+    //               });
+    //             });
+    //           });
+    //       });    
+    //     });
+    //   } else {
+    //     addHeadquarter().then(() => {
+    //       addCompany().then(() => {
+    //         addOrder().then(() => {
+    //           hqFromResponse = null;
+    //           companyDataRef.value.company.owner = 0;
+    //           companyDataRef.value.company.headquarters_id = 0;
+    //           closeModal();
+    //           router.push({
+    //             name: "Thanks You New Order",
+    //             params: {
+    //               orderId: orderFromRes.id,
+    //             },
+    //           });
+    //         });
+    //       });
+    //     });  
+    //   }
+    // } else {
+    //   registerAddress().then(() => {
+    //     registerUser().then(() => {
+    //       if (userFromResponse) {
+    //         invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
+    //         addInvoiceProfile().then(() => {
+    //             addHeadquarter().then(() => {
+    //               addCompany().then(() => {
+    //                 addOrder().then(() => {
+    //                   userFromResponse = null;
+    //                   hqFromResponse = null;
+    //                   companyDataRef.value.company.owner = 0;
+    //                   companyDataRef.value.company.headquarters_id = 0;
+    //                   closeModal();
+    //                   router.push({
+    //                     name: "Thanks You New Order",
+    //                     params: {
+    //                       orderId: orderFromRes.id,
+    //                     },
+    //                   });
+    //                 });
+    //               });
+    //             });
+    //         });
+    //       }
+    //     });
+    //   });
+    // }
     
     node.clearErrors();
   } catch (err: any) {
     node.setErrors(err.formErrors, err.fieldErrors);
-    closeModal();
   }
 };
 

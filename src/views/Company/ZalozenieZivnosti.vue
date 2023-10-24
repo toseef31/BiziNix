@@ -236,19 +236,6 @@ const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 const selectedVhqPackageFromStore = computed(() => store.getters.getSelectedVhqPackage)
 
 /* Submiting form and Api calls */
-
-async function registerAddress(userAddress: Address) {
-
-  return store.dispatch('registerAddress', userAddress)
-    .then((res) => {
-      console.log("Registering address: " + JSON.stringify(res))
-      return res
-    })
-    .catch(err => {
-      errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions
-    })
-}
-
 async function registerUserAndReturnUserId(user: User): Promise<any> {
   try {
     const res = await store.dispatch('registerUser', user);
@@ -504,7 +491,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
         invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
       }
       else if (invoiceData.value.orderingAsCompany) {
-        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
       }
       console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
       const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)

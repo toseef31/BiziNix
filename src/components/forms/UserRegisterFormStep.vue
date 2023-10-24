@@ -66,13 +66,13 @@ import store from '@/store';
 import type User from '@/types/User';
 import { onMounted, computed, ref } from 'vue';
 
+const userData = computed(() => { return store.getters.getUserData as User });
 const isEmailUnique = ref(true)
 const disabledInputs = ref(false)
 const loading = ref(true);
 // Regular expression for matching email addresses
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userId = computed(() => { return store.getters.getUserId })
-const userData = computed(() => { return store.getters.getUserData })
 let errorMsg = ref();
 
 function btnLog(){
@@ -156,7 +156,8 @@ const login = async (formdata: any, node: any) => {
 }
 
 defineExpose({
-  user
+  user,
+  userData
 })
 
 </script>

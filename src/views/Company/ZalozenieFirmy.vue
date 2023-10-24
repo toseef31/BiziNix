@@ -523,7 +523,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
         invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
       }
       else if (invoiceData.value.orderingAsCompany) {
-        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddressForCompany)
+        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
       }
       console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
       const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)

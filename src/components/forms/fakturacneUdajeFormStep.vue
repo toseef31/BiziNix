@@ -53,17 +53,17 @@
           <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" validation="required" />
           <FormKit type="text" name="ic_dph" v-model="fakturacne_udaje.ic_dph" label="IČ DPH" />
 
-          <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddressForCompany.country"
+          <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
             :options="['Slovensko', 'Česko']" validation="required" validation-visibility="dirty"
           />
-          <FormKit type="text" name="city" v-model="invoiceAddressForCompany.city" label="Obec" validation="required" />
-          <FormKit type="text" name="psc" v-model="invoiceAddressForCompany.psc" label="PSČ" validation="required" />
-          <FormKit type="text" name="street" v-model="invoiceAddressForCompany.street" label="Ulica" validation="required" />
-          <FormKit type="text" name="inv_company_street_number" v-model="invoiceAddressForCompany.street_number" label="Súpisne číslo"
+          <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
+          <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
+          <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
+          <FormKit type="text" name="inv_company_street_number" v-model="invoiceAddress.street_number" label="Súpisne číslo"
             validation="require_one:inv_company_street_number2"
             help="Číslo pred lomítkom"
           />
-          <FormKit type="text" name="inv_company_street_number2" v-model="invoiceAddressForCompany.street_number2" label="Orientačné číslo"
+          <FormKit type="text" name="inv_company_street_number2" v-model="invoiceAddress.street_number2" label="Orientačné číslo"
             validation="require_one:inv_company_street_number"
             help="Číslo za lomítkom"
           />
@@ -106,15 +106,6 @@ let fakturacne_udaje = ref({
 })
 
 let invoiceAddress = ref({
-  street: '',
-  street_number: '',
-  street_number2: '',
-  city: '',
-  psc: '',
-  country: '',
-} as Address)
-
-let invoiceAddressForCompany = ref({
   street: '',
   street_number: '',
   street_number2: '',
@@ -170,7 +161,6 @@ defineExpose({
   orderingAsCompany,
   paymentOptions,
   invoiceAddress,
-  invoiceAddressForCompany,
   userHasInvoiceProfile,
   invoiceProfileId,
   createNewInvoiceProfile
