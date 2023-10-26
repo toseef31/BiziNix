@@ -2,9 +2,7 @@
     <vue-horizontal
         v-if="vhqs.length > 0"
             responsive
-            class="horizontal"
             :items="vhqs"
-            :options="options"
         >
             <section v-for="vhq in vhqs" :key="vhq.id" class="relative px-2">
               <!---->   
@@ -32,45 +30,6 @@
               </div>
               <!---->
             </section>
-        <template v-slot:btn-prev>
-            <button
-                style="align-self: start; padding-top: 24px; margin-right: 50px"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-12 h-12 text-teal-500"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.75 19.5L8.25 12l7.5-7.5"
-                  />
-                </svg>
-            </button>
-        </template>
-
-        <template v-slot:btn-next>
-            <button style="align-self: start; padding-top: 24px; margin-left: 50px">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-12 h-12 text-teal-500"
-                >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-                </svg>
-            </button>
-        </template>
     </vue-horizontal>
 </template>
 <script setup lang="ts">
@@ -82,15 +41,6 @@ const vhqs: any = computed(() => {
   return store.state.vhqs;
 });
 
-let options: {
-  responsive: [
-    { end: 576; size: 1 },
-    { start: 576; end: 768; size: 2 },
-    { start: 768; end: 992; size: 3 },
-    { size: 4 }
-  ];
-};
-
 function changeVhq(id: any) {
     store.state.selectedVhq = vhqs.value.find((item: any) => item.id == id);
 }
@@ -99,6 +49,4 @@ onBeforeMount(async () => {
   await store.dispatch("vhqs");
 });
 
-defineExpose({
-})
 </script>
