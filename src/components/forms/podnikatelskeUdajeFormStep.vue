@@ -44,9 +44,14 @@
       validation="required"
     />
     <div v-if="placeOfBusinness === 'virtualne'">
-      <div class="">
-        <VirtualHqSlider></VirtualHqSlider>
-        <VirtualHqPackage></VirtualHqPackage>
+      <div class="flex flex-col md:flex-row gap-8 mb-4">
+        <div>
+          <div class="pb-8 font-bold text-lg w-full text-left"> Vyberte si sídlo</div>
+          <VirtualHqSlider></VirtualHqSlider>
+        </div>
+        <div>
+          <VirtualHqPackage></VirtualHqPackage>
+        </div>
       </div>
       <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
         <b>Prosím vyberte sídlo.</b>
