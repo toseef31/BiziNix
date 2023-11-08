@@ -54,15 +54,13 @@
 <script setup lang="ts">
 import store from '@/store';
 import { useRouter, useRoute } from 'vue-router';
-import { onMounted, reactive, ref, shallowRef, toRaw } from 'vue';
-import type { Ref } from 'vue'
-import axiosClient from "@/axios";
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
 
 const router = useRouter();
 const route = useRoute();
 
-const newPassword = reactive({
+const newPassword = ref({
   email: '',
   password: '',
   password_confirmation: '',
@@ -80,8 +78,8 @@ onMounted(() => {
   return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
   .then(response => {
     // console.log(response);
-    newPassword.email = response.data.email
-    newPassword.token = response.data.token
+    newPassword.value.email = response.data.email
+    newPassword.value.token = response.data.token
     return response;
   })
   .catch(err => {
@@ -92,7 +90,7 @@ onMounted(() => {
 
 function forgotPasswordSetNewPassword(){
   store
-    .dispatch('forgotPasswordSetNewPassword', newPassword)
+    .dispatch('forgotPasswordSetNewPassword', newPassword.value)
     .then(res => {
         // console.log(res.data)
         errorMsg.value = null

@@ -558,7 +558,7 @@ import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
 import FooterLayout from "@/components/FooterLayout.vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { useStore } from "vuex";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const store = useStore();
@@ -568,11 +568,19 @@ user = computed(() => store.state.user);
 const isLoading = ref(true)
 
 onBeforeMount(async () => {
+  console.log("Default Layout with header OnBeforeMount")
   user = computed(() => store.state.user);
   if(user.value.userId){
     await store.dispatch('setUserDataAfterLogin')
     isLoading.value = false
    }
+})
+
+
+watch(user, (newValue, oldValue) => {
+  if(oldValue){
+    isLoading.value = false
+  }
 })
 
 const popoverHover = ref(false)

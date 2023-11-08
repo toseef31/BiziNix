@@ -4,7 +4,7 @@
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
   <FormKit type="text" name="first_name" v-model="companyMemberZivnost.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
   <FormKit type="text" name="last_name" v-model="companyMemberZivnost.last_name" label="Priezvisko" validation="required|length:2" />
-  <FormKit v-if="isZivnostForm" type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" help="Názov živnosti." />
+  <FormKit v-if="isZivnostForm" type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" placeholder="Názov živnosti" />
 </div>
 <div>
   <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
