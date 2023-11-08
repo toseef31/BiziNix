@@ -577,8 +577,10 @@ onBeforeMount(async () => {
 })
 
 
-watch(user, (newValue, oldValue) => {
-  if(oldValue){
+watch(user.value, (newValue, oldValue) => {
+  console.log("Watchh")
+  console.log(newValue)
+  if(newValue.userId){
     isLoading.value = false
   }
 })
