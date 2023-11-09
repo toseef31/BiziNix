@@ -8,7 +8,7 @@
             <button type="button" 
             v-on:click="emit('updatePackage', p)" 
             @click="toggleActive(index)" 
-            class="w-full block max-w-sm p-3  border rounded-lg shadow border-gray-700"
+            class="w-full block p-3  border rounded-lg shadow border-gray-700"
             :class="activeCard == index? 'bg-teal-700': 'bg-gray-800 hover:bg-gray-700'"
             >
                 <div class="flex flex-row justify-between gap-4">

@@ -4,7 +4,7 @@
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
   <FormKit type="text" name="first_name" v-model="companyMemberZivnost.first_name" id="first_name" label="Krstné meno" validation="required|length:2" />
   <FormKit type="text" name="last_name" v-model="companyMemberZivnost.last_name" label="Priezvisko" validation="required|length:2" />
-  <FormKit v-if="isZivnostForm" type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" help="Názov živnosti." />
+  <FormKit v-if="isZivnostForm" type="text" name="name" v-model="companyData.name" label="Dodatok k názvu živnosti" placeholder="Názov živnosti" />
 </div>
 <div>
   <FormKit type="checkbox" :ignore="true" v-model="hasTitle" label="Máte titul pred alebo za menom?" id="hasTitle" name="hasTitle" />
@@ -44,9 +44,14 @@
       validation="required"
     />
     <div v-if="placeOfBusinness === 'virtualne'">
-      <div class="">
-        <VirtualHqSlider></VirtualHqSlider>
-        <VirtualHqPackage></VirtualHqPackage>
+      <div class="flex flex-col md:flex-row gap-8 mb-4">
+        <div>
+          <div class="pb-8 font-bold text-lg w-full text-left"> Vyberte si sídlo</div>
+          <VirtualHqSlider></VirtualHqSlider>
+        </div>
+        <div>
+          <VirtualHqPackage></VirtualHqPackage>
+        </div>
       </div>
       <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
         <b>Prosím vyberte sídlo.</b>

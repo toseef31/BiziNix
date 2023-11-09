@@ -60,7 +60,7 @@
         </div>
           <FormKit type="multi-step" name="zalFirmyMultiStepPlugin" id="multiStepPluginFirma"
             :allow-incomplete="true"              
-            use-local-storage="true"
+            use-local-storage="false"
             tab-style="tab"
           >
             <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">

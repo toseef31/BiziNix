@@ -55,7 +55,7 @@
       <FormKit
         type="submit"
         label="Prihlásiť sa"
-        @click="login"
+        @click.prevent="login"
       />
   </div>
   </template>
