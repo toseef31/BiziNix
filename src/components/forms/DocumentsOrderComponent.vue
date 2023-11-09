@@ -123,6 +123,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
 
   order.value.amount = 0;
   order.value.amount_vat = 0;
+  order.value.is_paid = false;
 
   let items = [
     {
@@ -140,6 +141,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
         description: "Objednávka balíčku dokladov na 3 mesiace zadarmo",
       },
     ];
+    order.value.is_paid = true;
   } else {
     order.value.amount = 60;
     order.value.amount_vat = 60 * 0.2;
@@ -158,7 +160,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   order.value.is_tos_accepted = true;
   order.value.is_advocate_requested = false;
   order.value.description = "Objednávka balíčku dokladov";
-  order.value.is_paid = false;
+  
 
   return store
     .dispatch("addOrder", order.value)
