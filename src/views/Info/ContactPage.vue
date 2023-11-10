@@ -4,15 +4,14 @@
       <h1 class="text-3xl font-bold text-center">Kontakt</h1>
       <p class="text-xl font-bold py-2">Kontaktné údaje</p>
         <p>
-          Nová kancelária v Bratislave (New office in Bratislava)<br />
-          bizinix.sk, s.r.o. <br />
-          Tower 115 13. poschodie Pribinova 4195/25 811 09<br />
-          Bratislava
+          Bizinix, s.r.o. <br />
+          Ružinovská 18186/44,<br />
+          821 03 Bratislava - mestská časť Ružinov
         </p>
         <p class="py-2">
-          IČO: 46 488 995<br />
-          DIČ: 2820015759 <br />
-          IČ DPH: SK 2820015759
+          IČO: 55734367<br />
+          DIČ: 2122082391 <br />
+          IČ DPH: Nie je platca DPH
         </p>
         <p>
           Pracujeme ONLINE (We work ONLINE)<br />
