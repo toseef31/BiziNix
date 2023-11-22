@@ -82,6 +82,7 @@ import store from '@/store';
 const createNewInvoiceProfile = ref(false);
 const orderingAsCompany = ref(false);
 const invoiceProfileId = ref();
+const invoiceAddressId = ref();
 const userId = computed(() => { return store.getters.getUserId })
 const isLoading = ref(true)
 const userHasInvoiceProfile = ref(false)
@@ -101,8 +102,7 @@ let fakturacne_udaje = ref({
   name: '',
   ico: '',
   dic: '',
-  ic_dph: '',
-  address_id: 0
+  ic_dph: ''
 })
 
 let invoiceAddress = ref({
@@ -151,6 +151,13 @@ watch([userId, userHasInvoiceProfile], async ([newValUserId, newValUserHasInvoic
   }
 })
 
+watch(invoiceProfileId, async () => {
+  const res = await store.dispatch("getFakturacneUdajeById", invoiceProfileId.value)
+  if(res.data) {
+    invoiceAddressId.value = res.data.address_id;
+  }
+})
+
 function LogValForInfoiceProfile(){
   console.log("Valu for invoice profile: ", invoiceProfileId.value)
   console.log("Valu for createnewInvoice: ", createNewInvoiceProfile.value)
@@ -163,6 +170,7 @@ defineExpose({
   invoiceAddress,
   userHasInvoiceProfile,
   invoiceProfileId,
+  invoiceAddressId,
   createNewInvoiceProfile
 })
 

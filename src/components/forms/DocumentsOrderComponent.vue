@@ -118,7 +118,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   if (addressFromResponse) {
     order.value.address_id = addressFromResponse.address_id;
   } else {
-    order.value.address_id = doInvoiceDataRef.value.fakturacne_udaje.address_id;
+    order.value.address_id = doInvoiceDataRef.value.invoiceAddressId;
   }
 
   order.value.amount = 0;
@@ -203,8 +203,7 @@ async function submitApp(formData: any) {
       else if (doInvoiceDataRef.value.orderingAsCompany) {
         invoiceAddressRes = await registerAddress();
       }
-      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id);
-      doInvoiceDataRef.value.invoiceAddress.id = invoiceAddressRes.address_id;
+      doInvoiceDataRef.value.invoiceAddressId = invoiceAddressRes.address_id;
       const response = await addInvoiceProfile(userId, invoiceAddressRes.address_id);
       invoiceProfileId = response.id;
     }
@@ -213,7 +212,7 @@ async function submitApp(formData: any) {
     }
 
     if (firstTimeActivation.value) {
-      await continueFirstTimeActivation(userId, invoiceProfileId, doInvoiceDataRef.value.invoiceAddress.id);
+      await continueFirstTimeActivation(userId, invoiceProfileId, doInvoiceDataRef.value.invoiceAddressId);
     } else {
       await continueToPayment(userId, invoiceProfileId);
     }

@@ -169,6 +169,14 @@ export const store = createStore({
       const { data } = await axiosClient.post("/users/fakturacneUdaje/add", invoiceProfile);
       return data;
     },
+    async getFakturacneUdajeByUserId({ commit }, id) {
+      const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/getAllForUser`);
+      return data;
+    },
+    async getFakturacneUdajeById({ commit }, id) {
+      const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/get`);
+      return data;
+    },
     //#region Company actions
     async getAllSubjectOfBusiness() {
       const response = await axiosClient.get(
@@ -362,10 +370,7 @@ export const store = createStore({
     },
     //#endregion
     //#region orders
-    async getFakturacneUdajeByUserId({ commit }, id) {
-      const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/getAllForUser`);
-      return data;
-    },
+    
     async addOrder({ commit }, order) {
       const { data } = await axiosClient.post("/orders/add", order);
       commit("setOrder", data); // setOrder is defined as muttation below
