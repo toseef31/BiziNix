@@ -62,20 +62,10 @@
             name="Podnikatelské údaje"
           >
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
-              <div v-if="!user.userId">
-                <div class="flex flex-col">
-                  <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
-                  <Autocomplete v-model="finstatCompany"></Autocomplete>
-                </div>
+              <div class="flex flex-col">
+                <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                <Autocomplete v-model="finstatCompany"></Autocomplete>
               </div>
-              <FormKit
-                v-else
-                type="text"
-                name="name"
-                validation="required"
-                v-model="currentCompany.name"
-                label="Názov spoločnosti"
-              />
               <FormKit
                 type="text"
                 name="name"
