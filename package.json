@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "debugdev": "vite --port 4000",
     "build": "run-p type-check build-only",
     "preview": "vite preview --port 4173",
     "test:unit": "vitest --environment jsdom",
@@ -13,11 +14,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@formkit/addons": "^1.2.2",
-    "@formkit/icons": "^1.2.2",
-    "@formkit/pro": "^0.117.2",
-    "@formkit/themes": "^1.2.2",
-    "@formkit/vue": "^1.2.2",
+    "@formkit/addons": "^1.3.0",
+    "@formkit/icons": "^1.3.0",
+    "@formkit/pro": "^0.117.6",
+    "@formkit/themes": "^1.3.0",
+    "@formkit/vue": "^1.3.0",
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.0.18",
     "@vue-stripe/vue-stripe": "^4.5.0",
