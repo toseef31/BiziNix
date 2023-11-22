@@ -118,11 +118,12 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   if (addressFromResponse) {
     order.value.address_id = addressFromResponse.address_id;
   } else {
-    order.value.address_id = doInvoiceDataRef.value.fakturacne_udaje.address_id;
+    order.value.address_id = doInvoiceDataRef.value.invoiceAddressId;
   }
 
   order.value.amount = 0;
   order.value.amount_vat = 0;
+  order.value.is_paid = false;
 
   let items = [
     {
@@ -140,6 +141,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
         description: "Objednávka balíčku dokladov na 3 mesiace zadarmo",
       },
     ];
+    order.value.is_paid = true;
   } else {
     order.value.amount = 60;
     order.value.amount_vat = 60 * 0.2;
@@ -158,7 +160,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   order.value.is_tos_accepted = true;
   order.value.is_advocate_requested = false;
   order.value.description = "Objednávka balíčku dokladov";
-  order.value.is_paid = false;
+  
 
   return store
     .dispatch("addOrder", order.value)
@@ -201,8 +203,7 @@ async function submitApp(formData: any) {
       else if (doInvoiceDataRef.value.orderingAsCompany) {
         invoiceAddressRes = await registerAddress();
       }
-      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id);
-      doInvoiceDataRef.value.invoiceAddress.id = invoiceAddressRes.address_id;
+      doInvoiceDataRef.value.invoiceAddressId = invoiceAddressRes.address_id;
       const response = await addInvoiceProfile(userId, invoiceAddressRes.address_id);
       invoiceProfileId = response.id;
     }
@@ -211,7 +212,7 @@ async function submitApp(formData: any) {
     }
 
     if (firstTimeActivation.value) {
-      await continueFirstTimeActivation(userId, invoiceProfileId, doInvoiceDataRef.value.invoiceAddress.id);
+      await continueFirstTimeActivation(userId, invoiceProfileId, doInvoiceDataRef.value.invoiceAddressId);
     } else {
       await continueToPayment(userId, invoiceProfileId);
     }

@@ -14,11 +14,9 @@ export default interface User {
   date_of_birth?: string
   rodne_cislo?: string
   address_id?: number
-  typ_baliku: number
   created_at: string
   updated_at: string
   email_verified_at: string
   deleted_at: null
-  zaplatene_do: string
 }
 
