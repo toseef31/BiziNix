@@ -12,12 +12,19 @@
           <div class="py-4 px-8">
             <hr>
           </div>
-          <div class="font-bold px-8">
+          <div v-if="selectedCompany.sidlo_typ_balika">
+            <div class="font-bold px-8">
             Využívate balík
+            </div>
+            <div class="font-bold px-8">
+              {{ selectedCompany.sidlo_typ_balika }}
+            </div>
           </div>
-          <div class="font-bold px-8">
-            PREMIUM
-          </div>
+          <div v-else>
+            <div class="font-bold px-8">
+            Zatiaľ nevyužívate žiaden balík
+            </div>
+          </div>     
           <div class="py-4 px-8">
             <button
               class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"

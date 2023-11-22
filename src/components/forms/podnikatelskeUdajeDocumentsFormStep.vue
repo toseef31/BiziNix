@@ -24,7 +24,7 @@
               Dobrý deň {{user.data.first_name}}!<br>
               Vyberte si zo zoznamu Vašu firmu, pre ktorú chcete službu aktivovať, alebo pridajte inú.
             </div>
-            <div class="flex flex-row gap-8">
+            <div class="flex" v-if="!showAddNewCompany">
               <div class="flex basis-2/4">
                 <div class="relative w-full">
                   <select
@@ -49,16 +49,11 @@
                   </div>
                 </div>
               </div>
-              <div class="flex basis-1/3">
-                <button type="button" class="text-gray-800 bg-teal-500 hover:bg-teal-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
-                  v-on:click="addNewCompany()"
-                >
-                    <span class="pr-5">Pridať inú firmu</span>
-                    <PlusCircleIcon class="w-5 text-gray-800" aria-hidden="true" />
-                </button>
-              </div>
             </div> 
           </div>
+        </div>
+        <div class="flex basis-1/3">
+          <FormKit type="toggle" track-color-on="#319487" v-if="user.userId" v-model="showAddNewCompany" label="Pridať novú spoločnosť?" name="checkForNewCompany" />
         </div>
         <div v-if="showAddNewCompany || !user.userId">
           <FormKit
@@ -163,7 +158,6 @@ const companyAddress = computed(
 );
 
 let showAddNewCompany = ref(false);
-
 const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
@@ -172,6 +166,10 @@ watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
   if(newFinstatCompany.Spoločnosť !== undefined) {
       getCompanyDetails();
     }
+});
+
+watch(showAddNewCompany, () => {
+  addNewCompany();
 });
 
 async function getCompanyDetails() {
@@ -241,15 +239,13 @@ const address = ref({
 
 function addNewCompany() {
   if(showAddNewCompany.value) {
-    showAddNewCompany.value = false;
-    companies.value.pop();
-    store.state.selectedCompany = companies.value[0];
-    currentCompany.value = store.state.selectedCompany;
-  } else {
-    showAddNewCompany.value = true;
     companies.value.push(newCompany.value);
     currentCompany.value = newCompany.value;
     store.state.selectedCompany = currentCompany.value;
+  } else {
+    companies.value.pop();
+    store.state.selectedCompany = companies.value[0];
+    currentCompany.value = store.state.selectedCompany;
   }
 }
 

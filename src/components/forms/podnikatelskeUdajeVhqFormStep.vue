@@ -35,7 +35,7 @@
                 type="text"
                 name="name"
                 validation="required"
-                v-model="company.name"
+                v-model="currentCompany.name"
                 label="Názov spoločnosti"
               />
             </div>
@@ -53,7 +53,36 @@
           Chcete, aby sme prepis sídla zabezpečili tiež my?
           <a class="text-teal-500" href="#">Kliknite sem</a>
         </div>
-        <div>
+        <div class="flex" v-if="!showAddNewCompany && user.userId">
+              <div class="flex basis-2/4">
+                <div class="relative w-full">
+                  <select
+                    id="companies"
+                    name="companies"
+                    class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+                    @change="switchSelect($event)"
+                  >
+                    <option
+                      v-for="company in companies"
+                      :value="company.id"
+                      :key="company.id"
+                      :selected="company.id == currentCompany.id"
+                    >
+                      {{ company.name }} {{ company.fakturacia_free? "(Skúšobná verzia zdarma)" : !company.fakturacia_free && company.fakturacia_zaplatene_do? "(Služba je aktívna)" : "" }}
+                    </option>
+                  </select>
+                  <div
+                    class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
+                  >
+                    <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div class="flex basis-1/3 pt-4">
+          <FormKit type="toggle" track-color-on="#319487" v-if="user.userId" v-model="showAddNewCompany" label="Pridať novú spoločnosť?" name="checkForNewCompany" />
+        </div>
+        <div v-if="showAddNewCompany || !user.userId">
           <FormKit
             type="group"
             id="Podnikatelské údaje"
@@ -67,7 +96,7 @@
               <FormKit
                 type="text"
                 name="name"
-                v-model="company.ico"
+                v-model="currentCompany.ico"
                 label="IČO"
                 :validation-rules="{ icoIsUnique }"
                 validation="required|icoIsUnique"
@@ -112,24 +141,70 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import type Address from "@/types/Address";
-import type Company from "@/types/Company";
+import type Mail from "@/types/Mail";
 import Autocomplete from "@/components/Autocomplete.vue";
 
 const companyAddress = ref({} as Address);
 const finstatCompany = ref({} as any);
-const company = ref({} as Company);
+const currentCompany = ref({} as any);
 const companies = ref([] as any);
 const newCompany = ref(false);
-
+let showAddNewCompany = ref(false);
 const finstatCompanyDetails = ref({} as any);
+const user = computed(() => store.state.user);
+const mails = ref([] as Mail[]);
+
+const headquarter = ref({
+  id: 0,
+  address_id: 0,
+});
+
+const address = ref({
+  id: 0,
+  street: "",
+  street_number: 0,
+  city: "",
+  country: "",
+  psc: "",
+});
+
+const companyToAdd = ref({
+  id: 0,
+  name: "Nová spoločnosť",
+  type: 1,
+  status: 1,
+  ico: "",
+  dic: "",
+  headquarters_id: 0,
+  is_dph: false,
+  owner: user.value.userId? Number(user.value.userId): 0,
+  is_hq_virtual: false
+});
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
   if(newFinstatCompany.Spoločnosť !== undefined) {
       getCompanyDetails();
     }
 });
+
+watch(showAddNewCompany, () => {
+  addNewCompany();
+});
+
+
+function addNewCompany() {
+  if(showAddNewCompany.value) {
+    companies.value.push(companyToAdd.value);
+    currentCompany.value = companyToAdd.value;
+    store.state.selectedCompany = currentCompany.value;
+  } else {
+    companies.value.pop();
+    store.state.selectedCompany = companies.value[0];
+    currentCompany.value = store.state.selectedCompany;
+  }
+}
 
 async function isIcoAlreadyRegistered(node: any) {
   try {
@@ -150,7 +225,7 @@ async function checkIcoOwner(node: any) {
     (item: any) => item.ico == node
   );
   if(companyRes) {
-    company.value = companyRes;
+    currentCompany.value = companyRes;
   }
 }
 
@@ -174,12 +249,44 @@ async function getCompanyDetails() {
         companyAddress.value.psc = finstatCompanyDetails.value.ZipCode;
         companyAddress.value.country = "Slovensko";
 
-        company.value.name = finstatCompanyDetails.value.Name;
-        company.value.ico = finstatCompanyDetails.value.Ico;
+        currentCompany.value.name = finstatCompanyDetails.value.Name;
+        currentCompany.value.ico = finstatCompanyDetails.value.Ico;
       })
       .catch((err) => {
         console.log(err);
       });
+}
+
+async function switchSelect(event: any) {
+  if(showAddNewCompany.value) {
+    showAddNewCompany.value = false;
+    companies.value.pop();
+  }
+
+  currentCompany.value = companies.value.find(
+    (item: any) => item.id == event.target.value
+  );
+  store.state.selectedCompany = currentCompany.value;
+  mails.value = [];
+
+  await store
+    .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
+    .then((response) => {
+      headquarter.value = response.data;
+      store
+        .dispatch("getAddressById", headquarter.value.address_id)
+        .then((response) => {
+          address.value = response.data;
+          store.state.selectedCompanyAddress = address.value;
+        });
+    });
+  await store
+    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .then((response) => {
+      mails.value = response.data;
+      store.commit("setSelectedCompanyMails", mails.value);
+    });
+
 }
 
 onMounted(async () => {
@@ -201,7 +308,7 @@ onMounted(async () => {
 defineExpose({
   finstatCompanyDetails,
   companyAddress,
-  company,
+  currentCompany,
   newCompany
 })
 </script>
