@@ -1,4 +1,5 @@
 export default interface CompanyMemberSpolocnik {
+[x: string]: any
   id?: number | null | string
   company_id: number | null
   first_name: string
