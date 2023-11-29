@@ -47,9 +47,15 @@
             <td class="hidden px-3 py-4 text-sm sm:table-cell">{{ item.podiel_v_spolocnosti }} %</td>
             <td class="px-3 py-4 text-sm">{{ item.je_konatel ? 'Áno' : 'Nie' }}</td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button class="flex items-center justify-center w-full" @click.prevent="editSpolocnikZakladatel(index, item)">
-                <PencilIcon class="h-5 w-5" aria-hidden="true" />
-              </button>
+              <Tippy>
+                <button :disabled="item.je_zastupitel"
+                  class="flex items-center justify-center w-full  disabled:text-gray-500" @click.prevent="editSpolocnikZakladatel(index, item)">
+                  <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                </button>
+                <template #content v-if="item.je_zastupitel">
+                  Tohto zakladatela/spoločníka nie je možné upraviť, pretože je pridaný ako zastupujúca osoba.
+                </template>
+              </Tippy>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
               <button class="flex items-center justify-center w-full"
@@ -85,7 +91,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-teal-900 bg-gray-800">
-          <tr v-for="(item, index) in konateliaList.filter(item => item.je_zastupitel == false)" :key="index">
+          <tr v-for="(item, index) in konateliaList" :key="index">
             <td class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium sm:w-auto sm:max-w-none sm:pl-6">
               {{ item.first_name }} {{ item.last_name }}
               <!-- Stacked "column" for mobile -->
@@ -93,11 +99,17 @@
               </dl>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
-              <button :disabled="item.addedFromZakladatelia"
-                class="flex items-center justify-center w-full disabled:text-gray-500"
-                @click.prevent="editKonatel(index, item)">
-                <PencilIcon class="h-5 w-5" aria-hidden="true" />
-              </button>
+              <Tippy>
+                <button :disabled="item.addedFromZakladatelia"
+                  ref="btn"              
+                  class="flex items-center justify-center w-full disabled:text-gray-500"
+                  @click.prevent="editKonatel(index, item)">
+                  <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                </button>
+                <template #content v-if="item.addedFromZakladatelia">
+                  Tohto konateľa nie je možné upraviť, pretože je pridaný ako zakladateľ/spoločník.
+                </template>                
+              </Tippy>
             </td>
             <td class="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-6">
               <button :disabled="item.addedFromZakladatelia"
@@ -177,6 +189,7 @@
           <FormKit type="text" name="title_after" label="Titul za menom" />
           <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
             :validation-rules="{ isRodneCisloUnique }" validation="required|length:9|isRodneCisloUnique"
+            validation-visibility="live"
             :validation-messages="{ isRodneCisloUnique: 'Rodne číslo sa už používa!' }" />
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -208,12 +221,13 @@
         <div v-if="value.typ_zakladatela == 2">
           <h2 class="text-xl my-4 text-white">Zastúpenie osobou (konateľ)</h2>
           <div class="grid grid-cols-2 gap-4">
-            <FormKit type="text" v-model="newItemKonatel.first_name" label="Krstné meno" validation="required|length:2" />
-            <FormKit type="text" v-model="newItemKonatel.last_name" label="Priezvisko" validation="required|length:2" />
-            <FormKit type="date" style="color-scheme: dark;" v-model="newItemKonatel.date_of_birth" autocomplete="date_of_birth"
+            <FormKit type="text" v-model="zastupitel.first_name" label="Krstné meno" validation="required|length:2" />
+            <FormKit type="text" v-model="zastupitel.last_name" label="Priezvisko" validation="required|length:2" />
+            <FormKit type="date" style="color-scheme: dark;" v-model="zastupitel.date_of_birth" autocomplete="date_of_birth"
               label="Dátum narodenia" validation="required" />           
-            <FormKit type="text" v-model="newItemKonatel.rodne_cislo" label="Rodné číslo" id="rodne_cislo"
+            <FormKit type="text" v-model="zastupitel.rodne_cislo" label="Rodné číslo" id="rodne_cislo"
               :validation-rules="{ isRodneCisloUnique }" validation="required|length:9|isRodneCisloUnique"
+              validation-visibility="live"
               :validation-messages="{ isRodneCisloUnique: 'Rodne číslo sa už používa!' }"
             />            
           </div>    
@@ -299,6 +313,7 @@
         <FormKit type="text" name="title_after" label="Titul za menom" />
         <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
           :validation-rules="{ isRodneCisloUnique }" validation="required|length:9|isRodneCisloUnique"
+          validation-visibility="live"
           :validation-messages="{ isRodneCisloUnique: 'Rodne číslo sa už používa!' }" />
         <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
           :options="['Slovensko', 'Česká republika']" validation="required" />
@@ -386,6 +401,8 @@ import { getNode } from '@formkit/core'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 import { computed } from 'vue';
+import { Tippy } from "vue-tippy";
+import 'tippy.js/dist/tippy.css' // optional for styling
 
 const vfm = useVfm()
 const modalAddOrEditSpolocnikZakladatel = Symbol('modalAddOrEditSpolocnikZakladatel')
@@ -405,7 +422,7 @@ const countOfZakladatelia = computed(() => {
 })
 
 const countOfKonatelia = computed(() => {
-  return konateliaList.value.filter(konatel => konatel.je_zastupitel == false).length
+  return konateliaList.value.length
 })
 
 let companyOrZivnostModel = ref({
@@ -435,6 +452,35 @@ let companyOrZivnostModel = ref({
 
 let zakladateliaSpolocniciList: Ref<CompanyMemberSpolocnik[]> = ref<CompanyMemberSpolocnik[]>([])
 let konateliaList: Ref<CompanyMemberKonatel[]> = ref<CompanyMemberKonatel[]>([])
+  let zastupitel = ref({
+  company_id: null,
+  ico: '',
+  typ_zakladatela: 1,
+  obchodne_meno: '',
+  first_name: '',
+  last_name: '',
+  title_before: '',
+  title_after: '',
+  gender: '',
+  nationality: '',
+  date_of_birth: '',
+  rodne_cislo: '',
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+  typ_dokladu_totoznosti: '',
+  cislo_dokladu_totoznosti: '',
+  vyska_vkladu: 0,
+  podiel_v_spolocnosti: 0,
+  rozsah_splatenia_vkladu: 0,
+  je_spravca_vkladu: false,
+  je_zakladatel: false,
+  je_konatel: false,
+  je_zastupitel: true
+});
 
 function getDefaultNewItemSpolocnik(): CompanyMemberSpolocnik {
   return {
@@ -463,7 +509,8 @@ function getDefaultNewItemSpolocnik(): CompanyMemberSpolocnik {
     rozsah_splatenia_vkladu: 5000,
     je_spravca_vkladu: true,
     je_zakladatel: true,
-    je_konatel: true
+    je_konatel: true,
+    je_zastupitel: false
   };
 }
 
@@ -484,8 +531,7 @@ function getDefaultNewItemKonatel(): CompanyMemberKonatel {
     psc: '',
     country: '',
     je_konatel: true,
-    addedFromZakladatelia: false,
-    je_zastupitel: false
+    addedFromZakladatelia: false
   };
 }
 
@@ -568,6 +614,12 @@ function editSpolocnikZakladatel(index: number, currentItem: CompanyMemberSpoloc
   titleModalText.value = 'Upraviť zakladateľa (spoločníka)';
   currentOperation.index = index;
   currentOperation.type = OperationType.EDIT;
+
+  let currentKonatelIndex = -1; // Declare the variable here
+  if(newItemSpolocnik.value.typ_zakladatela == 2) {
+    newItemSpolocnik.value.rodne_cislo = newItemKonatel.value.rodne_cislo;
+    currentKonatelIndex = konateliaList.value.findIndex(item => item.rodne_cislo === newItemSpolocnik.value.rodne_cislo);
+  }
 
   vfm.open(modalAddOrEditSpolocnikZakladatel)?.then(() => {
     const node = getNode('form_spolocnici');
@@ -657,95 +709,96 @@ const closeModalAndSaveOrEditSpolocnikZakladatel = async () => {
 }
 
 function saveSpolocnikZakladatel() {
-  if (currentOperation.type === OperationType.EDIT)
-  {   
-    console.log("saveSpolocnikZakladatel() called");
-    console.log("Start edit function")
+  console.log("saveSpolocnikZakladatel() called");
+  console.log(`Start ${currentOperation.type === OperationType.EDIT ? "edit" : "add"} function`);
+
+  const isEditOperation = currentOperation.type === OperationType.EDIT;
+  const isAddOperation = currentOperation.type === OperationType.ADD;
+
+  let currentKonatelIndex = -1;
+  if (isEditOperation) {
     const currentItem = zakladateliaSpolocniciList.value[currentOperation.index as number];
-    const currentKonatelIndex = konateliaList.value.findIndex(item => item.rodne_cislo === currentItem.rodne_cislo);
+    currentKonatelIndex = konateliaList.value.findIndex(item => item.rodne_cislo === currentItem.rodne_cislo);
+  }
 
-    // Update the item in zakladateliaSpolocniciList    
+  if (isEditOperation || isAddOperation) {
     if(newItemSpolocnik.value.typ_zakladatela == 1){
-      zakladateliaSpolocniciList.value[currentOperation.index as number] = newItemSpolocnik.value as CompanyMemberSpolocnik;
-    }
-
-    // If je_konatel is false, remove the item from konateliaList
-    if (!newItemSpolocnik.value.je_konatel && currentKonatelIndex !== -1)
-    {
-      konateliaList.value.splice(currentKonatelIndex, 1);
-    }
-    else if (newItemSpolocnik.value.je_konatel)
-    {
-      // If je_konatel is true, add or update the item in konateliaList
-      let newKonatel: CompanyMemberKonatel = {
-        ...newItemSpolocnik.value, // This creates a shallow copy of newItemSpolocnik
-        je_konatel: true, // Set the properties that are unique to CompanyMemberKonatel
-        addedFromZakladatelia: true,
-        je_zastupitel: false
-      };
-      if (currentKonatelIndex === -1) {
-        konateliaList.value.push(newKonatel);
+      if (isEditOperation) {
+        zakladateliaSpolocniciList.value[currentOperation.index as number] = newItemSpolocnik.value as CompanyMemberSpolocnik;
       } else {
-        konateliaList.value[currentKonatelIndex] = newKonatel;
+        zakladateliaSpolocniciList.value.push(newItemSpolocnik.value as CompanyMemberSpolocnik);
       }
-    }
-    if(newItemSpolocnik.value.typ_zakladatela == 2)
-    {      
-      console.log("New Item spolocnik konatel je prav. osoba in edit mode." + newItemSpolocnik.value)
-      // add same rodne cislo due to delete same rodne cislo
-      newItemSpolocnik.value.rodne_cislo = newItemKonatel.value.rodne_cislo
-      zakladateliaSpolocniciList.value[currentOperation.index as number] = newItemSpolocnik.value as CompanyMemberSpolocnik;
 
-      konateliaList.value.splice(currentKonatelIndex, 1);
-      konateliaList.value.push({
-        ...newItemKonatel.value,
-        je_konatel: false,
-        addedFromZakladatelia: true,
-        je_zastupitel: true
-      })
-    }
-  }
-  else if (currentOperation.type = OperationType.ADD)
-  {
-    console.log("Start Add function");
-    if(newItemSpolocnik.value.typ_zakladatela == 1){
-      zakladateliaSpolocniciList.value.push(newItemSpolocnik.value as CompanyMemberSpolocnik)
+      let newKonatel: CompanyMemberKonatel = {
+        ...newItemSpolocnik.value,
+        je_konatel: newItemSpolocnik.value.je_konatel as boolean,
+        addedFromZakladatelia: true
+      };
+
       if (newItemSpolocnik.value.je_konatel) {
-        let newKonatel: CompanyMemberKonatel = {
-          ...newItemSpolocnik.value,
-          je_konatel: true,
-          addedFromZakladatelia: true,
-          je_zastupitel: false
-        };
-        konateliaList.value.push(newKonatel);
+        if (currentKonatelIndex === -1) {
+          konateliaList.value.push(newKonatel);
+        } else {
+          konateliaList.value[currentKonatelIndex] = newKonatel;
+        }
+      } else if (currentKonatelIndex !== -1) {
+        konateliaList.value.splice(currentKonatelIndex, 1);
       }
     }
-    else if(newItemSpolocnik.value.typ_zakladatela == 2){
-      zakladateliaSpolocniciList.value.push({
-        ...newItemSpolocnik.value as CompanyMemberSpolocnik,
-        /// add same rodne cislo as current added konatel due to removing from list notif Michal about this for CRM
-        rodne_cislo: newItemKonatel.value.rodne_cislo,      
-      })
-      let newKonatel: CompanyMemberKonatel = {
-        ...newItemKonatel.value,
-        je_konatel: false,
-        addedFromZakladatelia: true,
-        je_zastupitel: true
-      };
-      konateliaList.value.push(newKonatel);                  
+    if(newItemSpolocnik.value.typ_zakladatela == 2){
+    // Ensure newItemSpolocnik consumes rodne_cislo from zastupitel
+    newItemSpolocnik.value.rodne_cislo = zastupitel.value.rodne_cislo;
+
+    // Create a copy of zastupitel.value
+    let zastupitelCopy = {...zastupitel.value};
+
+    // Push the copy to zakladateliaSpolocniciList
+    zakladateliaSpolocniciList.value.push(zastupitelCopy);
+
+    // Push newItemSpolocnik to zakladateliaSpolocniciList
+    zakladateliaSpolocniciList.value.push(newItemSpolocnik.value as CompanyMemberSpolocnik);
     }
-    else {
-      console.error("Nastala chyba pri vkladani spoločníka/zakladatela!")
+    if(currentOperation.type === OperationType.EDIT && newItemSpolocnik.value.typ_zakladatela == 2){
+      // Find the corresponding zastupitel and CompanyMemberSpolocnik in zakladateliaSpolocniciList
+      let indexes = zakladateliaSpolocniciList.value.reduce((acc, item, index) => {
+        if (item.rodne_cislo === newItemSpolocnik.value.rodne_cislo && item.je_zastupitel) {
+          acc.push(index);
+        }
+        return acc;
+      }, [] as number[]);
+
+      // Remove the old zastupitel and CompanyMemberSpolocnik from zakladateliaSpolocniciList
+      for (let i = indexes.length -1; i >= 0; i--)
+        zakladateliaSpolocniciList.value.splice(indexes[i],1);
+
+      // Ensure newItemSpolocnik consumes rodne_cislo from zastupitel
+      newItemSpolocnik.value.rodne_cislo = zastupitel.value.rodne_cislo;
+
+      // Create a copy of zastupitel.value
+      let zastupitelCopy = {...zastupitel.value};
+
+      // Push the copy to zakladateliaSpolocniciList
+      zakladateliaSpolocniciList.value.push(zastupitelCopy);
+
+      // Push newItemSpolocnik to zakladateliaSpolocniciList
+      zakladateliaSpolocniciList.value.push(newItemSpolocnik.value as CompanyMemberSpolocnik);
     }
-  }
-  else {
+    else if (isEditOperation && newItemSpolocnik.value.typ_zakladatela == 1) {
+      // Remove zastupitel from zakladateliaSpolocniciList
+      let zastupitelIndex = zakladateliaSpolocniciList.value.findIndex(item => item.rodne_cislo === zastupitel.value.rodne_cislo && item.je_zastupitel);
+      if (zastupitelIndex !== -1) {
+        zakladateliaSpolocniciList.value.splice(zastupitelIndex, 1);
+      }
+    }  
+  } else {
     console.error("No OperationType!");
   }
+
   currentOperation.type = null;
   currentOperation.index = null;
-  // Reset the newItemSpolocnik object after adding or editing an item
   newItemSpolocnik.value = getDefaultNewItemSpolocnik();
 }
+
 
 function closeModalAndSaveOrEditKonatel() {
   vfm.close(modalAddOrEditKonatel)?.then(() => {
