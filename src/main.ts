@@ -40,7 +40,6 @@ const config: DefaultConfigOptions  = {
   locales: { sk },
   locale: 'sk',
   config: {
-    // @ts-expect-error
     classes: generateClasses(myTailwindTheme)
   },
 };

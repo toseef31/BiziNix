@@ -99,10 +99,10 @@ let user = ref({
     password_confirmation: '',
 } as User)
 
-onMounted( async () => {
+onMounted( () => {
   console.log("On Mounted user register form")
   if(userId.value){
-    await store.dispatch("getUserDataByUserId", userId.value)
+    store.dispatch("getUserDataByUserId", userId.value)
     loading.value = false
     disabledInputs.value = true
     user.value.first_name = userData.value.first_name
