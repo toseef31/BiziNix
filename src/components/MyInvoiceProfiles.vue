@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row px-10">
-    <div class="flex flex-col py-10 items-center basis-3/4">
+    <div class="flex flex-col py-10 basis-3/4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-if="invoiceProfiles.length > 0">
           <div class="" v-for="profile in invoiceProfiles">        
               <div class="overflow-hidden bg-white shadow sm:rounded-lg">

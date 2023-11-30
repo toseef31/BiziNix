@@ -317,6 +317,29 @@ export const store = createStore({
           return res.data;
         });
     },
+    async uploadCompanyPodpis({ commit, dispatch }, data) {
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+      return axiosClient
+        .post(
+          `/companies/${data.companyId}/uploadCompanyPodpis`,
+          data.body,
+          config
+        )
+        .then((res) => {
+          commit("setCompany", res.data);
+          return res;
+        });
+    },
+    async getCompanyPodpis({ commit, dispatch }, companyId) {
+      const { data } = await axiosClient.get(
+        `/companies/${companyId}/getCompanyPodpis`
+      );
+      return data;
+    },
     async getDetailsOfCompanyFinstat({ commit, dispatch }, ico) {
       return axiosClient
         .post("/companies/getDetailsOfCompanyFinstat", ico)

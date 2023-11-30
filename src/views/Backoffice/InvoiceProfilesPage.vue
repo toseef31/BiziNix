@@ -8,7 +8,7 @@
           </h1>
           <MyInvoiceProfiles></MyInvoiceProfiles>
           <h1 class="text-3xl font-bold text-gray-600 pb-10">
-            Faktúry
+            Objednávky a faktúry
           </h1>
           <MyInvoices></MyInvoices>
         </div>
