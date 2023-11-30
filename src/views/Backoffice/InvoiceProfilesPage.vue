@@ -7,6 +7,10 @@
             Fakturačné profily
           </h1>
           <MyInvoiceProfiles></MyInvoiceProfiles>
+          <h1 class="text-3xl font-bold text-gray-600 pb-10">
+            Faktúry
+          </h1>
+          <MyInvoices></MyInvoices>
         </div>
         <!-- /End replace -->
       </div>
@@ -15,4 +19,5 @@
 
 <script setup lang="ts">
 import MyInvoiceProfiles from '@/components/MyInvoiceProfiles.vue';
+import MyInvoices from '@/components/MyInvoices.vue';
 </script>

@@ -169,12 +169,23 @@ export const store = createStore({
       const { data } = await axiosClient.post("/users/fakturacneUdaje/add", invoiceProfile);
       return data;
     },
+    async updateInvoiceProfile({ commit, dispatch }, invoiceProfile) {
+      if (invoiceProfile.id) {
+          await axiosClient.put(`/users/fakturacneUdaje/${invoiceProfile.id}/update`, invoiceProfile).then((res) => {
+            return res;
+          });
+      }
+    },
     async getFakturacneUdajeByUserId({ commit }, id) {
       const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/getAllForUser`);
       return data;
     },
     async getFakturacneUdajeById({ commit }, id) {
       const { data } = await axiosClient.get(`/users/fakturacneUdaje/${id}/get`);
+      return data;
+    },
+    async getInvoicesForUser({ commit }, id) {
+      const { data } = await axiosClient.get(`/users/invoices/${id}/getAll`);
       return data;
     },
     //#region Company actions
@@ -394,10 +405,23 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/orders/${id}/get`);
       return data;
     },
+    async getAllOrdersForUser({ commit }, user_id) {
+      const { data } = await axiosClient.get(`/orders/${user_id}/getAll`);
+      return data;
+    },
     async updateOrderById({ commit }, order) {
       const { data } = await axiosClient.put(`/orders/${order.id}/update`, order);
       commit("setOrder", data); // setOrder is defined as muttation below 
       return data;
+    },
+    async getOrderInvoiceById({ dispatch }, id) {
+      return axiosClient.get(`/orderInvoices/${id}/get`)
+    },
+    async getOrderInvoiceForOrderByType({ dispatch }, data) {
+      return await axiosClient.get(`/orderInvoices/${data.id}/${data.type}/get`)
+    },
+    async generateInvoiceById({ dispatch }, id) {
+      return await axiosClient.get(`/orderInvoices/${id}/generate`)
     },
     //#endregion
     //#region payments

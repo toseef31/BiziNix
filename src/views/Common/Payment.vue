@@ -22,10 +22,9 @@
                 <div v-else-if="selectedOptionForPay === 'iban'">
                   <u>Uhradťe prosim <b>{{ order.amount }}</b> € na nasledujúce bankové spojenie, a ako <b>variabilný symbol</b> použite <b>00{{ order.id }}</b>.</u>
                   <ul class="mt-4">
-                    <li>IBAN</li>
-                    <li>BIC/SWIFT</li>
-                    <li>Názov banky</li>
-                    <li>Kód bánky</li>
+                    <li>SK64 1100 0000 0029 4015 7525</li>
+                    <li>TATRSKBX</li>
+                    <li>Tatra banka, a.s.</li>
                   </ul>
                 </div>
                 <div v-else>
