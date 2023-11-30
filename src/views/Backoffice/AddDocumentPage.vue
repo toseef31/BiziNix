@@ -9,7 +9,7 @@
         :actions="false"
         @keydown.enter="$event.preventDefault()"
       >
-        <div class="bg-gray-200 rounded-lg px-4 my-2">
+        <div class="bg-gray-900 text-white rounded-lg px-4 my-2">
           <section>
             <div class="w-full p-4 flex flex-row justify-between">
               <FormKit
@@ -28,7 +28,7 @@
             </div>
             <div class="flex flex-row justify-between">
               <div class="flex">
-                <h3 class="text-3xl font-bold py-10 text-black">
+                <h3 class="text-3xl font-bold py-10 text-white">
                   Vystavujete {{ documentTypeStr }} č.
                 </h3>
                 <div class="py-10 px-2">
@@ -58,7 +58,7 @@
                 </div>
                 <div class="py-10 px-2">
                   <BuildingOfficeIcon
-                    class="w-12 text-black"
+                    class="w-12 text-white"
                     aria-hidden="true"
                   />
                 </div>
@@ -67,23 +67,20 @@
 
             <div class="flex">
               <section class="flex flex-col w-full">
-                <label for="client-name" class="flex text-black font-bold pb-2" v-if="document.subtype != 5"
+                <label for="client-name" class="flex text-white font-bold pb-2" v-if="document.subtype != 5"
                   >Odberateľ</label
                 >
-                <label for="client-name" class="flex text-black font-bold pb-2" v-else
+                <label for="client-name" class="flex text-white font-bold pb-2" v-else
                   >Dodávateľ</label
                 >
                 <div class="flex w-full gap-4">
                   <div class="w-full">
-                    <label for="issue-date" class="text-black"
+                    <label for="issue-date" class="text-white"
                           >Názov spoločnosti</label
                         >
                     <Autocomplete v-model="finstatCompany"></Autocomplete>
                   </div>
                   <div class="w-full">
-                    <label for="issue-date" class="text-black"
-                          >Kontaktná osoba</label
-                        >
                     <FormKit
                       v-model="document.contact_person"
                       autocomplete="nope"
@@ -91,6 +88,7 @@
                       name="data[Client][name]"
                       type="text"
                       placeholder="Kontaktná osoba"
+                      label="Kontaktná osoba"
                     />
                   </div>
                 </div>
@@ -98,9 +96,6 @@
                 <div class="flex flex-row gap-4">
                   <div class="flex pb-2">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >Adresa</label
-                        >
                       <FormKit
                         v-model="document.address"
                         autocomplete="nope"
@@ -108,14 +103,12 @@
                         name="data[Client][address]"
                         type="text"
                         placeholder="Adresa"
+                        label="Adresa"
                       />
                     </div>
                   </div>
                   <div class="flex pb-2">
                     <div>
-                      <label for="issue-date" class="text-black"
-                          >PSČ</label
-                        >
                       <FormKit
                         v-model="document.psc"
                         autocomplete="nope"
@@ -123,14 +116,12 @@
                         name="data[Client][zip]"
                         type="text"
                         placeholder="PSČ"
+                        label="PSČ"
                       />
                     </div>
                   </div>
                   <div class="flex pb-2">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >Mesto</label
-                        >
                       <FormKit
                         v-model="document.city"
                         autocomplete="nope"
@@ -138,19 +129,18 @@
                         name="data[Client][city]"
                         type="text"
                         placeholder="Mesto"
+                        label="Mesto"
                       />
                     </div>
                   </div>
                   <div class="flex pb-2">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >Krajina</label
-                        >
                       <FormKit
                         v-model="document.country"
                         type="select"
                         id="country"
                         name="country"
+                        label="Krajina"
                         :options="Constants.COUNTRIES"
                       />
                     </div>
@@ -160,9 +150,6 @@
                 <div class="flex flex-row gap-4">
                   <div class="flex pb-2">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >IČO</label
-                        >
                       <FormKit
                         v-model="document.ico"
                         autocomplete="nope"
@@ -170,15 +157,13 @@
                         name="data[Client][ico]"
                         type="text"
                         placeholder="IČO"
+                        label="IČO"
                       />
                     </div>
                   </div>
 
                   <div class="flex pb-2">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >DIČ</label
-                        >
                       <FormKit
                         v-model="document.dic"
                         autocomplete="nope"
@@ -186,24 +171,23 @@
                         name="data[Client][dic]"
                         type="text"
                         placeholder="DIČ"
+                        label="DIČ"
                       />
                     </div>
                   </div>
 
                   <div class="flex">
                     <div class="w-full">
-                      <label for="issue-date" class="text-black"
-                          >IČ DPH</label
-                        >
                       <FormKit
                         v-model="document.icdph"
                         autocomplete="nope"
                         id="client-icdph"
                         name="data[Client][ic_dph]"
                         type="text"
+                        label="IČ DPH"
                         placeholder="IČ DPH"
                       />
-                      <label for="client-icdph" class="flex text-black text-xs"
+                      <label for="client-icdph" class="flex text-white text-xs"
                         >platca DPH</label
                       >
                     </div>
@@ -214,55 +198,47 @@
                   <div class="flex flex-row pb-8">
                     <div class="flex flex-row gap-3">
                       <div class="flex flex-col w-full" v-if="document.subtype != 4 && document.subtype != 5">
-                        <label for="issue-date" class="text-black"
-                          >Dátum vystavenia</label
-                        >
                         <FormKit
                           type="date"
                           name="Dátum vystavenia"
                           v-model="document.date_of_issue"
                           :value="today"
+                          label="Dátum vystavenia"
                         />
                       </div>
                       <div class="flex flex-col w-full" v-else>
-                        <label for="issue-date" class="text-black"
-                          >Dátum vyhotovenia</label
-                        >
                         <FormKit
                           type="date"
                           name="Dátum vystavenia"
                           v-model="document.date_of_issue"
                           :value="today"
+                          label="Dátum vyhotovenia"
                         />
                       </div>
                       <div class="flex flex-col w-full" v-if="document.subtype == 1 || document.subtype == 3">
-                        <label for="delivery-date" class="text-black"
-                          >Dátum dodania</label
-                        >
                         <FormKit
                           type="date"
                           name="Dátum dodania"
                           v-model="document.delivery_date"
                           :value="today"
+                          label="Dátum dodania"
                         />
                       </div>
                       <div class="flex flex-col w-full" v-if="document.subtype != 4 && document.subtype != 5">
-                        <label for="due-in" class="text-black">Splatnosť</label>
                         <FormKit
                           type="select"
                           id="due-in"
                           name="due-in"
+                          label="Splatnosť"
                           :options="Constants.DUES"
                           v-model="document.due_by"
                         />
                       </div>
                       <div class="flex flex-col w-full" v-if="document.subtype == 3">
-                        <label for="issue-date" class="text-black"
-                          >K faktúre č.</label
-                        >
                         <FormKit
                           type="text"
                           name="K faktúre č."
+                          label="K faktúre č."
                           v-model="document.serial_number"
                         />
                       </div>
@@ -272,15 +248,13 @@
                         data-slot-rule="non-mobile"
                         v-if="document.subtype != 4 && document.subtype != 5"
                       >
-                        <label for="vs" class="text-black pr-4"
-                          >Variabilný symbol</label
-                        >
                         <FormKit
                           v-model="document.variabilny"
                           autocomplete="nope"
                           type="text"
                           id="vs"
-                          name="[variable]"
+                          name="variable"
+                          label="Variabilný symbol"
                           :value="document.serial_number"
                         />
                       </div>
@@ -323,17 +297,17 @@
               <div>
                 <div class="flex flex-row justify-between pb-8">
                   <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-black pr-4 font-bold"
+                    <label class="text-white pr-4 font-bold"
                       >Názov Vašej banky</label
                     >
-                    <label class="text-black pr-4">
+                    <label class="text-white pr-4">
                       {{ companyBankDetails.name }}
                     </label>
                   </div>
 
                   <div class="flex basis-1/2 flex-col justify-between">
-                    <label class="text-black pr-4 font-bold">IBAN</label>
-                    <label class="text-black pr-4">
+                    <label class="text-white pr-4 font-bold">IBAN</label>
+                    <label class="text-white pr-4">
                       {{ companyBankDetails.iban }}
                     </label>
                   </div>
@@ -341,8 +315,8 @@
 
                 <div class="flex flex-row pb-8">
                   <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-black pr-4 font-bold">SWIFT</label>
-                    <label class="text-black pr-4">
+                    <label class="text-white pr-4 font-bold">SWIFT</label>
+                    <label class="text-white pr-4">
                       {{ companyBankDetails.swift }}
                     </label>
                   </div>
@@ -350,24 +324,20 @@
               </div>
               <div class="flex flex-row">
                 <div class="flex flex-col w-full justify-between px-4">
-                  <label for="comment__above" class="text-black"
-                    >Poznámka nad položkami</label
-                  >
                   <FormKit
                     type="textarea"
                     rows="10"
                     id="comment_above"
                     v-model="document.note_above"
+                    label="Poznámka nad položkami"
                   />
                 </div>
                 <div class="flex basis-2/3 flex-col">
-                  <label for="comment" class="text-black pb-2"
-                    >Poznámka pod položkami</label
-                  >
                   <FormKit
                     type="textarea"
                     rows="10"
                     id="comment_below"
+                    label="Poznámka pod položkami"
                     v-model="document.note_under"
                   />
                 </div>
@@ -375,49 +345,41 @@
               <div class="flex flex-col">
                 <div class="flex flex-row gap-3 py-8">
                   <div class="flex flex-col basis-1/4">
-                    <label for="delivery-type" class="text-black"
-                      >Spôsob dodania</label
-                    >
                     <FormKit
                       type="select"
                       id="delivery-type"
                       name="delivery-type"
+                      label="Spôsob dodania"
                       :options="Constants.DELIVERY_TYPES"
                       v-model="document.delivery_method"
                     />
                   </div>
                   <div class="flex flex-col basis-1/4">
-                    <label for="payment-type" class="text-black"
-                      >Forma úhrady</label
-                    >
                     <FormKit
                       type="select"
                       id="payment_type"
                       name="payment_type"
+                      label="Forma úhrad"
                       :options="Constants.PAYMENT_TYPES"
                       v-model="document.payment_method"
                     />
                   </div>
                   <div class="flex flex-col basis-1/4" v-if="document.subtype != 4 && document.subtype != 5">
-                    <label for="constant-symbol" class="text-black"
-                      >Konštantný symbol</label
-                    >
                     <FormKit
                       autocomplete="nope"
                       type="text"
                       id="constant-symbol"
-                      name="[constant]"
+                      name="constant"
+                      label="Konštantný symbol"
                       v-model="document.konstantny"
                     />
                   </div>
                   <div class="flex flex-col basis-1/4" v-if="document.subtype != 4 && document.subtype != 5">
-                    <label for="specific-symbol" class="text-black"
-                      >Špecifický symbol</label
-                    >
                     <FormKit
                       autocomplete="nope"
                       type="text"
                       id="specific-symbol"
+                      label="Špecifický symbol"
                       v-model="document.specificky"
                     />
                   </div>
