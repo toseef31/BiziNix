@@ -4,18 +4,19 @@
             <div class="grid grid-cols-2 gap-8">
                 <div class="flex flex-row gap-8" v-for="bankAccount in bankAccounts">
                     <div class="flex flex-col">
-                        <FormKit type="text" name="name" v-model="bankAccount.iban"/>
-                        <FormKit type="text" name="address" v-model="bankAccount.account_number"/>
-                        <FormKit type="text" name="psc" v-model="bankAccount.name"/>
+                        <FormKit type="text" label="IBAN" name="iban" v-model="bankAccount.iban" :classes="{label: '$reset text-sm text-black mt-1 select-none'}"/>
+                        <FormKit type="text" label="Číslo účtu" name="account_number" v-model="bankAccount.account_number" :classes="{label: '$reset text-sm text-black mt-1 select-none'}"/>
+                        <FormKit type="text" label="Názov banky" name="name" v-model="bankAccount.name" :classes="{label: '$reset text-sm text-black mt-1 select-none'}"/>
                         <div class="flex flex-row gap-4">
-                            <FormKit type="text" name="city" v-model="bankAccount.swift"/>
-                            <FormKit type="text" name="city" v-model="bankAccount.bank_code"/>
+                            <FormKit type="text" label="SWIFT" name="swift" v-model="bankAccount.swift" :classes="{label: '$reset text-sm text-black mt-1 select-none'}"/>
+                            <FormKit type="text" label="Kód banky" name="bank_code" v-model="bankAccount.bank_code" :classes="{label: '$reset text-sm text-black mt-1 select-none'}"/>
                         </div>
                         <FormKit
                             type="checkbox"
                             label="Predvolený?"
                             name="predvoleny"
                             v-model="bankAccount.is_main_b"
+                            :checked="bankAccount.is_main_b"
                             :classes="{label: '$reset text-sm text-black mt-1 select-none'}"
                         />
                     </div>
@@ -24,7 +25,7 @@
         </div>
         <div class="flex flex-col gap-6 basis-1/6">
             <div>
-                <button @click="addBankAccount" class="w-full shadow flex justify-center border items-center py-2 px-4 rounded-lg bg-gray-500 border-gray-500 text-white font-bold hover:text-white hover:cursor-pointer hover:bg-teal-500 hover:border-teal-500 space-x-2">
+                <button @click="showModal('addBankAccount')" class="w-full shadow flex justify-center border items-center py-2 px-4 rounded-lg bg-gray-500 border-gray-500 text-white font-bold hover:text-white hover:cursor-pointer hover:bg-teal-500 hover:border-teal-500 space-x-2">
                     <span class="pr-2">Pridať účet</span>
                     <PlusCircleIcon class="h-6 w-6 text-white" aria-hidden="true" />
                 </button>
@@ -70,11 +71,66 @@
           v-model:visible="isVisible"
           :type="'clean'"
           :closable="false"
-          title="Loading..."
+          title="Pridanie nového bankového účtu"
         >
           <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+            <div class="flex justify-end px-4 pt-4">
+              <button
+                class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded text-white"
+                v-on:click="closeModal('addBankAccount')"
+                type="button"
+              >
+                X
+              </button>
+            </div>
             <div role="status" class="flex py-10 h-full w-full justify-center text-white">
-                Tož tu bude formular
+              <FormKit type="form"
+                :actions="false"
+                id="addBankAccount"
+                @submit-invalid="showErrors"  
+                #default="{ value, state: { valid } }"
+                @submit="addBankAccount"
+              >
+                <FormKit
+                  type="text"
+                  name="name"
+                  validation="required"
+                  v-model="currentBankAccount.name"
+                  label="Názov banky"
+                />
+                <FormKit
+                  type="text"
+                  name="name"
+                  validation="required"
+                  v-model="currentBankAccount.iban"
+                  label="IBAN"
+                />
+                <FormKit
+                  type="text"
+                  name="name"
+                  v-model="currentBankAccount.account_number"
+                  label="Číslo účtu"
+                />
+                <FormKit
+                  type="text"
+                  name="name"
+                  v-model="currentBankAccount.swift"
+                  label="SWIFT"
+                />
+                <FormKit
+                  type="text"
+                  name="name"
+                  v-model="currentBankAccount.bank_code"
+                  label="Kód banky"
+                />
+                <FormKit
+                  type="checkbox"
+                  label="Predvolený účet?"
+                  name="predvoleny"
+                  v-model="currentBankAccount.is_main"
+                />
+                <FormKit type="submit" label="Pridať" />
+              </FormKit>
             </div>
           </div>
       </Modal>
@@ -87,10 +143,12 @@ import type Company from "@/types/Company";
 import type CompanyBankAccount from "@/types/CompanyBankAccount";
 import { useModal, Modal } from "usemodal-vue3";
 import { PlusCircleIcon } from '@heroicons/vue/24/outline';
+import { getValidationMessages } from '@formkit/validation'
 
 let company = ref({} as Company);
 let bankAccounts = ref([] as any[]);
-let bankAccount = ref({} as CompanyBankAccount);
+const messages = ref([]);
+const currentBankAccount = ref({} as CompanyBankAccount)
 
 const setModal = useModal({
   loadingModal: 1,
@@ -117,7 +175,6 @@ watch(
   }
 );
 
-
 async function refreshData() {
   await store
     .dispatch("getCompanyBankDetails", company.value.headquarters_id)
@@ -134,11 +191,12 @@ async function refreshData() {
 }
 
 async function addBankAccount() {
-    showModal("addCompanyBankAccount");
+    currentBankAccount.value.company_id = company.value.id;
     await store
-    .dispatch("addBankAccount", bankAccount.value)
+    .dispatch("addBankAccount", currentBankAccount.value)
     .then(() => {
         closeModal("addBankAccount");
+        location.reload();
     });
 }
 
@@ -149,6 +207,16 @@ async function updateBankAccounts() {
     .then(() => {
         closeModal("loadingModal");
     });
+}
+
+function showErrors(node: any) {
+  messages.value = []
+  const validations = getValidationMessages(node)
+  validations.forEach((inputMessages: any) => {
+    messages.value = messages.value.concat(
+      inputMessages.map((message: any) => message.value)
+    )
+  })
 }
 
 onMounted(async () => {

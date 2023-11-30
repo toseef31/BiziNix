@@ -222,6 +222,8 @@ async function submitApp(formData: any) {
 };
 
 async function continueFirstTimeActivation(userId, invoiceProfileId, address_id) {
+  /*const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
+  console.log(result)*/
   try {
     if (user.value.userId) {
       const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
@@ -255,6 +257,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
         }
       } else {
         doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
+        doCompanyDataRef.value.currentCompany.fakturacia_free = true;
         await store
           .dispatch("updateCompany", doCompanyDataRef.value.currentCompany)
           .then(async () => {
@@ -338,6 +341,7 @@ async function continueToPayment(userId, invoiceProfileId) {
     } else {
       addOrder(userId, invoiceProfileId, false).then(async () => {
         doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
+        doCompanyDataRef.value.currentCompany.fakturacia_free = false;
         router.push({
           name: "Thanks You New Order",
           params: {
@@ -442,6 +446,7 @@ async function addHeadquarter(address_id): Promise<Response> {
 
 async function addCompany(userId): Promise<Response> {
   doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
+  doCompanyDataRef.value.currentCompany.fakturacia_free = true;
   if (doAccountDataRef.value.userData.id) {
     doCompanyDataRef.value.currentCompany.owner = doAccountDataRef.value.userData.id;
   } else {

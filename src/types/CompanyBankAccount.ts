@@ -6,4 +6,5 @@ export default interface CompanyBankAccount {
   swift: string
   bank_code: string
   is_main: boolean
+  company_id: number
 }

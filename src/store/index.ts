@@ -320,6 +320,20 @@ export const store = createStore({
         return res.data.data;
       });
     },
+    async addBankAccount({ commit }, bankAccount) {
+      const { data } = await axiosClient.post(
+        "/companies/addCompanyBankDetails",
+        bankAccount
+      );
+      return data;
+    },
+    async updateCompanyBankAccounts({ commit }, bankAccounts) {
+      const { data } = await axiosClient.put(
+        "/companies/updateCompanyBankAccounts",
+        bankAccounts
+      );
+      return data;
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {
