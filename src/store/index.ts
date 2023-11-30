@@ -374,6 +374,10 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/documents/${companyId}/getAll`);
       return data;
     },
+    async getFinDataForCompany({ commit }, companyId) {
+      const { data } = await axiosClient.get(`/documents/${companyId}/getFinData`);
+      return data;
+    },
     async getDocumentSubtypes() {
       const { data } = await axiosClient.get(`/documents/getDocumentSubTypes`);
       return data;

@@ -54,7 +54,7 @@
           </Dialog>
         </TransitionRoot>
         <!-- Static sidebar for desktop -->
-        <div class="hidden md:h-min-screen md:flex md:w-full">
+        <div class="h-min-screen flex w-full">
           <!-- Sidebar component, swap this element with another sidebar if you like -->
           <div class="w-full">
               <nav class="space-y-1 px-4 py-4" aria-label="Sidebar">
@@ -81,6 +81,36 @@
                   </Disclosure>
                 </template>
               </nav>
+              <div>
+                <div class="flex align-bottom z-10 px-8">
+                    <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
+                      <div class="text-teal-500">
+                        Tržba (Obrat)
+                      </div>
+                      <div class="text-white">
+                        {{ finData.total }} €
+                      </div>
+                      <div class="text-gray-300 text-sm">
+                        {{ finData.totalVat }} € s DPH
+                      </div>
+                      <div class="text-teal-500">
+                        Zisk
+                      </div>
+                      <div class="text-white">
+                        {{ finData.profit }} €
+                      </div>
+                      <div class="text-red-500">
+                        Neuhradené / Pohľadávky
+                      </div>
+                      <div class="text-white">
+                        {{ finData.totalToPay }} €
+                      </div>
+                      <div class="text-gray-300 text-sm text-right">
+                        Viac info vo <router-link :to="{ name: 'CompanyDetails' }">finančnom reporte</router-link>
+                      </div>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -123,19 +153,6 @@
 
       <div class="flex flex-col w-full" v-else>
         <div v-if="tab == 1 || tab == 2">
-          
-          <div class="flex justify-center z-10">
-            <div
-              class="flex flex-row bg-gray-700 text-gray-300 rounded-b-lg font-bold"
-            >
-              <div class="py-6 px-12">SPOLU {{ total.toFixed(2) }}€ bez DPH</div>
-              <div class="py-6">|</div>
-              <div class="py-6 px-12">
-                NEUHRADENÉ {{ totalToPay.toFixed(2) }}€ bez DPH
-              </div>
-            </div>
-          </div>
-
           <div class="flex flex-col px-20 py-10">
             <div class="flex flex-row justify-between">
               <div class="flex flex-col">
@@ -239,7 +256,7 @@
                         <div class="flex text-white basis-2/3 pr-4">
                           <div class="w-full">
                             <FormKit
-                              type="text"
+                              type="number"
                               id="amount"
                               name="Suma"
                               label="Suma v €"
@@ -284,6 +301,7 @@
                 </Modal>
               </div>
               <div class="flex flex-col items-center w-full py-8 px-10">
+                <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
                 <DocumentsListTable
                   :data="filteredDocumentsBySearch"
                 ></DocumentsListTable>
@@ -371,6 +389,14 @@ const document = ref({
   date_of_issue: today,
 });
 
+let title = ref("Faktúry");
+const finData = ref({
+  total: 0,
+  totalVat: 0,
+  totalToPay: 0,
+  profit: 0
+});
+
 const navigation = [
   {
     name: 'Účtovné',
@@ -430,20 +456,6 @@ const filteredDocumentsBySearch: any = computed(() => {
   });
 });
 
-const total: any = computed(() => {
-  return filteredDocumentsBySearch.value.reduce(
-    (acc: any, item: any) => acc + item.total,
-    0
-  );
-});
-
-const totalToPay: any = computed(() => {
-  return filteredDocumentsBySearch.value.reduce(
-    (acc: any, item: any) => (!item.isPaid ? acc + item.total : acc + 0),
-    0
-  );
-});
-
 function dphChanged(event: any) {
   //
 }
@@ -491,6 +503,7 @@ function currentDocTab(tabNumber: number, page: number) {
           return true;
         }
       });
+      title.value = "Faktúry";
       break;
     case 2:
       filteredDocuments.value = documents.value.filter((document: any) => {
@@ -498,6 +511,7 @@ function currentDocTab(tabNumber: number, page: number) {
           return true;
         }
       });
+      title.value = "Zálohové faktúry";
       break;
     case 3:
       filteredDocuments.value = documents.value.filter((document: any) => {
@@ -505,6 +519,7 @@ function currentDocTab(tabNumber: number, page: number) {
           return true;
         }
       });
+      title.value = "Dobropisy";
       break;
     case 4:
       filteredDocuments.value = documents.value.filter((document: any) => {
@@ -512,6 +527,7 @@ function currentDocTab(tabNumber: number, page: number) {
           return true;
         }
       });
+      title.value = "Cenová ponuka";
       break;
     case 5:
       filteredDocuments.value = documents.value.filter((document: any) => {
@@ -519,6 +535,7 @@ function currentDocTab(tabNumber: number, page: number) {
           return true;
         }
       });
+      title.value = "Objednávka";
       break;
   }
 }
@@ -585,9 +602,9 @@ watch(
 async function refreshData() {
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
-    .then((response) => {
+    .then(async (response) => {
       company.value = response.data;
-      store
+      await store
         .dispatch("getAllDocumentsForCompany", company.value.id)
         .then((response) => {
           documents.value = response.data;
@@ -598,6 +615,11 @@ async function refreshData() {
           });
           filteredDocumentsByIssued.value = filteredDocuments.value;
         });
+      await store
+        .dispatch("getFinDataForCompany", company.value.id)
+        .then((response) => {
+          finData.value = response.data;
+        })
     });
 }
 
