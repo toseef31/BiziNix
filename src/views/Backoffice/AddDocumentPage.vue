@@ -472,7 +472,7 @@
                         <div class="flex">
                           <FormKit
                             autocomplete="nope"
-                            type="text"
+                            type="number"
                             id="quantity"
                             class="flex"
                             inputmode="decimal"
@@ -491,7 +491,7 @@
                         <div class="flex">
                           <FormKit
                             autocomplete="nope"
-                            type="text"
+                            type="number"
                             class="flex"
                             id="unit-price"
                             inputmode="decimal"
@@ -502,7 +502,7 @@
                         <div class="flex" v-show="company.is_dph">
                           <FormKit
                             autocomplete="nope"
-                            type="text"
+                            type="number"
                             class="flex"
                             id="vat"
                             inputmode="decimal"
