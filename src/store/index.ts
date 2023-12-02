@@ -165,6 +165,15 @@ export const store = createStore({
           });
       }
     },
+    updateAddress({ dispatch }, address) {
+      if (address.id) {
+        return axiosClient
+          .put(`/address/${address.id}/update`, address)
+          .then((res) => {
+            return res;
+          });
+      }
+    },
     async addInvoiceProfile({ commit, dispatch }, invoiceProfile) {
       const { data } = await axiosClient.post("/users/fakturacneUdaje/add", invoiceProfile);
       return data;

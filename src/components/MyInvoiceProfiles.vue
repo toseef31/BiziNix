@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row px-10">
-    <div class="flex flex-col py-10 basis-3/4">
+    <div class="flex flex-col py-10 basis-3/4 pr-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" v-if="invoiceProfiles.length > 0">
           <div class="" v-for="profile in invoiceProfiles">        
               <div class="overflow-hidden bg-white shadow sm:rounded-lg">
@@ -80,50 +80,71 @@
                 #default="{ value, state: { valid } }"
                 @submit="updateInvoiceProfile"
               >
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="first_name"
-                    v-model="currentInvoiceProfile.first_name"
-                    label="Krstné meno"
-                  />
-                  <FormKit
-                    type="text"
-                    name="last_name"
-                    v-model="currentInvoiceProfile.last_name"
-                    label="Priezvisko"
-                  />
+                <div class="px-4">
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="first_name"
+                      v-model="currentInvoiceProfile.first_name"
+                      label="Krstné meno"
+                    />
+                    <FormKit
+                      type="text"
+                      name="last_name"
+                      v-model="currentInvoiceProfile.last_name"
+                      label="Priezvisko"
+                    />
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="name"
+                      v-model="currentInvoiceProfile.name"
+                      label="Názov spoločnosti"
+                    />
+                    <FormKit
+                      type="text"
+                      name="ico"
+                      v-model="currentInvoiceProfile.ico"
+                      label="IČO"
+                    />
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="dic"
+                      v-model="currentInvoiceProfile.dic"
+                      label="DIČ"
+                    />
+                    <FormKit
+                      type="text"
+                      name="ic_dph"
+                      v-model="currentInvoiceProfile.ic_dph"
+                      label="IČ DPH"
+                    />
+                  </div>
                 </div>
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="name"
-                    v-model="currentInvoiceProfile.name"
-                    label="Názov spoločnosti"
+                <div class="mx-2 my-2 border-b border-gray-200"></div>
+                <!-- ADDRESS -->
+                <div class="grid grid-cols-3 gap-4 px-4">
+                  <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
+                    :options="['Slovensko', 'Česko']" validation="required" validation-visibility="dirty"
                   />
-                  <FormKit
-                    type="text"
-                    name="ico"
-                    v-model="currentInvoiceProfile.ico"
-                    label="IČO"
+                  <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
+                  <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
+                  <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
+                  <FormKit type="text" name="inv_street_number" v-model="invoiceAddress.street_number" label="Súpisne číslo"
+                    validation="require_one:inv_street_number2"
+                    help="Číslo pred lomítkom"
                   />
+                  <FormKit type="text" name="inv_street_number2" v-model="invoiceAddress.street_number2" label="Orientačné číslo"
+                    validation="require_one:inv_street_number"
+                    help="Číslo za lomítkom"
+                  />
+                </div>  
+                <div class="px-4">
+                  <FormKit type="submit" label="Aktualizovať"/>
                 </div>
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="dic"
-                    v-model="currentInvoiceProfile.dic"
-                    label="DIČ"
-                  />
-                  <FormKit
-                    type="text"
-                    name="ic_dph"
-                    v-model="currentInvoiceProfile.ic_dph"
-                    label="IČ DPH"
-                  />
-                </div>
-                <div class="my-2 border-b border-gray-200"></div>
-                <FormKit type="submit" label="Aktualizovať" />
               </FormKit>
             </div>
           </div>
@@ -153,50 +174,71 @@
                 #default="{ value, state: { valid } }"
                 @submit="addInvoiceProfile"
               >
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="first_name"
-                    v-model="currentInvoiceProfile.first_name"
-                    label="Krstné meno"
+                <div class="px-4">
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="first_name"
+                      v-model="currentInvoiceProfile.first_name"
+                      label="Krstné meno"
+                    />
+                    <FormKit
+                      type="text"
+                      name="last_name"
+                      v-model="currentInvoiceProfile.last_name"
+                      label="Priezvisko"
+                    />
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="name"
+                      v-model="currentInvoiceProfile.name"
+                      label="Názov spoločnosti"
+                    />
+                    <FormKit
+                      type="text"
+                      name="ico"
+                      v-model="currentInvoiceProfile.ico"
+                      label="IČO"
+                    />
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <FormKit
+                      type="text"
+                      name="dic"
+                      v-model="currentInvoiceProfile.dic"
+                      label="DIČ"
+                    />
+                    <FormKit
+                      type="text"
+                      name="ic_dph"
+                      v-model="currentInvoiceProfile.ic_dph"
+                      label="IČ DPH"
+                    />
+                  </div>
+                </div>
+                <div class="mx-2 my-2 border-b border-gray-200"></div>
+                <!-- ADDRESS -->
+                <div class="grid grid-cols-3 gap-4 px-4">
+                  <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
+                    :options="['Slovensko', 'Česko']" validation="required" validation-visibility="dirty"
                   />
-                  <FormKit
-                    type="text"
-                    name="last_name"
-                    v-model="currentInvoiceProfile.last_name"
-                    label="Priezvisko"
+                  <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
+                  <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
+                  <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
+                  <FormKit type="text" name="inv_street_number" v-model="invoiceAddress.street_number" label="Súpisne číslo"
+                    validation="require_one:inv_street_number2"
+                    help="Číslo pred lomítkom"
+                  />
+                  <FormKit type="text" name="inv_street_number2" v-model="invoiceAddress.street_number2" label="Orientačné číslo"
+                    validation="require_one:inv_street_number"
+                    help="Číslo za lomítkom"
                   />
                 </div>
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="name"
-                    v-model="currentInvoiceProfile.name"
-                    label="Názov spoločnosti"
-                  />
-                  <FormKit
-                    type="text"
-                    name="ico"
-                    v-model="currentInvoiceProfile.ico"
-                    label="IČO"
-                  />
+                <div class="px-4">
+                  <FormKit type="submit" label="Pridať"/>
                 </div>
-                <div class="flex flex-row gap-2">
-                  <FormKit
-                    type="text"
-                    name="dic"
-                    v-model="currentInvoiceProfile.dic"
-                    label="DIČ"
-                  />
-                  <FormKit
-                    type="text"
-                    name="ic_dph"
-                    v-model="currentInvoiceProfile.ic_dph"
-                    label="IČ DPH"
-                  />
-                </div>
-                <div class="my-2 border-b border-gray-200"></div>
-                <FormKit type="submit" label="Pridať" />
               </FormKit>
             </div>
           </div>
@@ -205,15 +247,52 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import { onMounted, ref, reactive, computed } from 'vue';
+import { onMounted, ref, reactive, computed, watch } from 'vue';
 import { useModal, Modal } from "usemodal-vue3";
 import { getValidationMessages } from '@formkit/validation'
 import { PlusCircleIcon } from '@heroicons/vue/24/outline';
+import type Address from '@/types/Address';
+import { useRouter } from "vue-router";
 
-const user = computed(() => store.state.user);
+const user = computed(() => store.state.user.userId);
 let invoiceProfiles = ref([] as any);
 const messages = ref([]);
 let currentInvoiceProfile = ref({} as any)
+const invoiceAddressId = ref();
+const router = useRouter();
+
+let invoiceAddress = ref({
+  street: '',
+  street_number: '',
+  street_number2: '',
+  city: '',
+  psc: '',
+  country: '',
+} as Address)
+
+watch(currentInvoiceProfile, async () => {
+  if(currentInvoiceProfile.value.id) {
+    const res = await store.dispatch("getFakturacneUdajeById", currentInvoiceProfile.value.id)
+    if(res.data) {
+      invoiceAddressId.value = res.data.address_id;
+      await store
+        .dispatch("getAddressById", invoiceAddressId.value)
+        .then((response) => {
+          invoiceAddress.value = response.data;
+        });
+    }
+  } else {
+    invoiceAddressId.value = 0;
+    invoiceAddress = ref({
+      street: '',
+      street_number: '',
+      street_number2: '',
+      city: '',
+      psc: '',
+      country: '',
+    } as Address);
+  }
+})
 
 const setModal = useModal({
   profileDetails: 1,
@@ -246,15 +325,25 @@ function showAddProfile() {
 }
 
 async function addInvoiceProfile() {
-    currentInvoiceProfile.value.user_id = user.value.id;
     await store
-    .dispatch("addInvoiceProfile", currentInvoiceProfile.value)
-    .then(async () => {
-        closeModal("addInvoiceProfile");
-        await store.dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
-        .then((response) => {
-            invoiceProfiles.value = response.data
-        })
+    .dispatch("registerAddress", invoiceAddress.value)
+    .then(async (res) => {
+      invoiceAddressId.value = res.address_id;
+      currentInvoiceProfile.value.user_id = user.value;
+      currentInvoiceProfile.value.address_id = invoiceAddressId.value;
+      await store
+      .dispatch("addInvoiceProfile", currentInvoiceProfile.value)
+      .then(async () => {
+          closeModal("addInvoiceProfile");
+          await store.dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
+          .then((response) => {
+              invoiceProfiles.value = response.data
+              closeModal("addProfile");
+          })
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
 }
 
@@ -263,10 +352,14 @@ async function updateInvoiceProfile() {
     await store
     .dispatch("updateInvoiceProfile", currentInvoiceProfile.value)
     .then(async () => {
-        closeModal("loadingModal");
-        await store.dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
-        .then((response) => {
-            invoiceProfiles.value = response.data
+      await store.dispatch("updateAddress", invoiceAddress.value)
+        .then(async () => {
+            closeModal("loadingModal");
+            await store.dispatch("getFakturacneUdajeByUserId", store.state.user.userId)
+            .then((response) => {
+                invoiceProfiles.value = response.data
+                closeModal("profileDetails");
+            })
         })
     });
 }
