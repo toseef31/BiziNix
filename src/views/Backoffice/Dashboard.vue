@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-bold text-gray-600 pb-10">
             Moje spoločnosti
           </h1>
-          <MyCompanies></MyCompanies>
+          <MyCompanies v-if="!isLoading"></MyCompanies>
           <div class="py-8">
             <button @click="addCompany" class="w-fit shadow flex justify-center border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white font-bold hover:text-white hover:cursor-pointer hover:bg-gray-500 hover:border-gray-500 space-x-2">
               <span class="pr-2">Pridať firmu</span>
@@ -21,10 +21,11 @@
 
 <script setup lang="ts">
 import MyCompanies from '@/components/MyCompanies.vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useStore } from 'vuex'
 
 const store = useStore();
+const isLoading = ref(true);
 
 function addCompany() {
     //todo
@@ -32,7 +33,9 @@ function addCompany() {
 
 onMounted(() => {
   store
-    .dispatch('setUserDataAfterLogin')
+    .dispatch('setUserDataAfterLogin').then(() => {
+      isLoading.value = false;
+    })
 })
 
 </script>

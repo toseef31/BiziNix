@@ -176,7 +176,7 @@
             Formát číslovania dokladov
           </div>
           <FormKit
-            v-model="company.doc_sncounters_id"
+            v-model="company.doc_sncounter_id"
             type="select"
             label="Formát čísla"  
             :options="sncounters"
@@ -226,8 +226,15 @@ async function changeTemplate(id: any) {
     });
 }
 
-function snCounterChanged() {
-  //
+async function snCounterChanged() {
+  await store
+    .dispatch("updateCompany", company.value)
+    .then((res) => {
+      console.log("Číslovanie úspešne zmenené.");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function showModal(modal) {

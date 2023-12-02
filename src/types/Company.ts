@@ -30,6 +30,6 @@ export default interface Company {
   sidlo_typ_balika: string
   fakturacia_zaplatene_do: string
   doc_template_id: number
-  doc_sncounters_id: number
+  doc_sncounter_id: number
   logo: string
 }
