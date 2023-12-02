@@ -69,9 +69,9 @@
           </Dialog>
         </TransitionRoot>
         <!-- Static sidebar for desktop -->
-        <div class="h-min-screen flex w-full">
+        <div class="flex flex-col w-full h-full">
           <!-- Sidebar component, swap this element with another sidebar if you like -->
-          <div class="w-full">
+          <div class="flex flex-col w-full">
             <nav class="space-y-1 px-4 py-4" aria-label="Sidebar">
               <template v-for="item in navigation" :key="item.name">
                 <div v-if="!item.children">
@@ -103,8 +103,9 @@
                 </Disclosure>
               </template>
             </nav>
-            <div>
-              <div class="flex align-bottom z-10 px-8">
+          </div>
+          <div class="flex flex-col px-2 py-2 relative w-full h-full">
+              <div class="sticky top-[75vh] px-8">
                 <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
                   <div class="text-teal-500">
                     Tržba (Obrat)
@@ -133,7 +134,6 @@
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
       <!--KONIEC MENU-->
