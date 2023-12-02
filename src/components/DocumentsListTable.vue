@@ -107,8 +107,8 @@
                 <div class="flex text-2xl font-extrabold">
                   {{ document.total }} €
                 </div>
-                <div class="flex text-xl">{{ document.total }} € s DPH</div>
-                <div class="flex text-sm">{{ document.overdue }}</div>
+                <div class="flex text-xl" v-if="company.is_dph">{{ document.total }} € s DPH</div>
+                <div class="flex text-sm" v-if="document.isIssued">{{ document.overdue }}</div>
               </div>
               <div class="flex flex-col items-center justify-center basis-1/4">
                 <div class="flex flex-col items-center pr-2">
@@ -121,7 +121,7 @@
                       class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
-                  <div class="flex flex-col pt-4">
+                  <div class="flex flex-col pt-4" v-if="document.isIssued">
                     <label
                       class="relative inline-flex items-center cursor-pointer"
                     >

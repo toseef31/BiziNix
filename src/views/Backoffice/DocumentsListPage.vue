@@ -90,7 +90,7 @@
                       <div class="text-white">
                         {{ finData.total }} €
                       </div>
-                      <div class="text-gray-300 text-sm">
+                      <div class="text-gray-300 text-sm" v-if="company.is_dph">
                         {{ finData.totalVat }} € s DPH
                       </div>
                       <div class="text-teal-500">
