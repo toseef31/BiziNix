@@ -33,6 +33,7 @@ import DocumentsDesignPageVue from "@/views/Backoffice/DocumentsDesignPage.vue";
 import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
 import InvoiceProfilesPageVue from "@/views/Backoffice/InvoiceProfilesPage.vue";
+import UpravaFirmy from "@/views/Company/UpravaFirmy.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,7 @@ const router = createRouter({
         { path: '/o-nas', name: "About us", component: AboutUsPageVue },
         { path: '/zalozenie-zivnosti', name: "ZalZivnosti", component: ZalozenieZivnosti },
         { path: '/zalozenie-firmy', name: "ZalFirmy", component: ZalozenieFirmy },
+        { path: '/uprava-firmy', name: "UpravaFirmy", component: UpravaFirmy },
         { path: '/dakujeme-nova-objednavka/:orderId', name: "Thanks You New Order", component: ThanksYouNewOrderVue },
         { path: '/payment/:orderId/:paymentMethod', name: "Payment", component: Payment },
         { path: '/forgot-password', name: "Forgot Password", component: ForgotPassword },

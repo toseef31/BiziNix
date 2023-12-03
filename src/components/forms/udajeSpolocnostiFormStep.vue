@@ -107,7 +107,7 @@
                   <PencilIcon class="h-5 w-5" aria-hidden="true" />
                 </button>
                 <template #content v-if="item.addedFromZakladatelia">
-                  Tohto konateľa nie je možné upraviť, pretože je pridaný ako zakladateľ/spoločník.
+                  Ak si želáte upraviť tohto konateľa, urobte tak v časti Zakladatelia (Spoločníci).
                 </template>                
               </Tippy>
             </td>
