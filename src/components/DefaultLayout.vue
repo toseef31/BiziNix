@@ -112,7 +112,7 @@
                       <h3 class="text-sm font-semibold leading-6 ">Najnižšia cena</h3>
                       <p class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Garancia</p>
                     </div>
-                    <p class="mt-2 text-sm leading-6 text-gray-400">Ručíme za najnižšiu cenu na trhu. Ak nájdete nižšiu, radi sa jej prispôsobíme.</p>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Ručíme za najnižšiu cenu na trhu. Ak nájdete nižšiu, radi sa jej prispôsobíme.<br>Nenašli ste, čo ste hladali? Kontaktujte našu <router-link to="/counseling-center">podporu</router-link>, určite to vyriešime!</p>
                   </div>
                 </div>
               </PopoverPanel>
