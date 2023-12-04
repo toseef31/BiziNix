@@ -85,10 +85,10 @@
                 <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
                   <div class="grid grid-cols-2 gap-x-6 sm:gap-x-8">
                     <div>
-                      <h3 class="text-sm text-white font-medium leading-6">Firma (s.r.o.)</h3>
+                      <h3 class="text-lg text-white font-medium leading-6">Firma (s.r.o.)</h3>
                       <div class="mt-6 flow-root">
                         <div class="-my-2">
-                        <a v-for="item in solutions" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                        <a v-for="item in firmaMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
                           <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
                           {{ item.name }}
                         </a>
@@ -96,10 +96,10 @@
                       </div>
                     </div>
                     <div>
-                      <h3 class="text-sm font-medium leading-6 text-white">Živnosť</h3>
+                      <h3 class="text-lg font-medium leading-6 text-white">Živnosť</h3>
                       <div class="mt-6 flow-root">
                         <div class="-my-2">
-                          <a v-for="item in zivnost" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                          <a v-for="item in zivnostMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
                             <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
                             {{ item.name }}
                           </a>
@@ -107,10 +107,10 @@
                       </div>
                     </div>
                   </div>
-                  <div class="bg-gray-950 px-8 py-6 rounded text-white">
+                  <div class="bg-gray-900 py-6 rounded text-white">
                     <div class="flex items-center gap-x-3">
                       <h3 class="text-sm font-semibold leading-6 ">Najnižšia cena</h3>
-                      <p class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Garancia</p>
+                      <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Garancia</span>
                     </div>
                     <p class="mt-2 text-sm leading-6 text-gray-400">Ručíme za najnižšiu cenu na trhu. Ak nájdete nižšiu, radi sa jej prispôsobíme.<br>Nenašli ste, čo ste hladali? Kontaktujte našu <router-link to="/counseling-center">podporu</router-link>, určite to vyriešime!</p>
                   </div>
@@ -120,99 +120,6 @@
           </Popover>
 
           <Popover class="relative" v-slot="{ open, close }">
-            <PopoverButton
-              :class="[
-                open ? 'text-gray-400' : 'text-white',
-                'group inline-flex items-center rounded-md bg-gray-800 text-base font-medium hover:text-gray-400 focus:outline-none',
-              ]"
-              @mouseover="(e) => hoverPopover(e, open)"
-              @mouseleave="closePopover(close)"
-            >
-              <span>Živnosti a ich úprava</span>
-              <ChevronDownIcon
-                :class="[
-                  open ? 'text-gray-400' : 'text-white',
-                  'ml-2 h-5 w-5 group-hover:text-gray-400',
-                ]"
-                aria-hidden="true"
-              />
-            </PopoverButton>
-
-            <transition
-              enter-active-class="transition ease-out duration-200"
-              enter-from-class="opacity-0 translate-y-1"
-              enter-to-class="opacity-100 translate-y-0"
-              leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 translate-y-0"
-              leave-to-class="opacity-0 translate-y-1"
-            >
-              <PopoverPanel
-                class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0"
-                @mouseover.prevent="popoverHover = true"
-                @mouseleave.prevent="closePopover(close)"
-              >
-                <div
-                  class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
-                >
-                  <div
-                    class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8"
-                  >
-                    <a
-                      v-for="item in resources"
-                      :key="item.name"
-                      :href="item.href"
-                      class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
-                    >
-                      <component
-                        :is="item.icon"
-                        class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                        aria-hidden="true"
-                      />
-                      <div class="ml-4">
-                        <p class="text-base font-medium text-gray-900">
-                          {{ item.name }}
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500">
-                          {{ item.description }}
-                        </p>
-                      </div>
-                    </a>
-                  </div>
-                  <div class="bg-gray-50 px-5 py-5 sm:px-8 sm:py-8">
-                    <div>
-                      <h3 class="text-base font-medium text-gray-500">
-                        Recent Posts
-                      </h3>
-                      <ul role="list" class="mt-4 space-y-4">
-                        <li
-                          v-for="post in recentPosts"
-                          :key="post.id"
-                          class="truncate text-base"
-                        >
-                          <a
-                            :href="post.href"
-                            class="font-medium text-gray-900 hover:text-gray-700"
-                            >{{ post.name }}</a
-                          >
-                        </li>
-                      </ul>
-                    </div>
-                    <div class="mt-5 text-sm">
-                      <a
-                        href="#"
-                        class="font-medium text-indigo-600 hover:text-indigo-500"
-                      >
-                        View all posts
-                        <span aria-hidden="true"> &rarr;</span>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </PopoverPanel>
-            </transition>
-          </Popover>
-
-          <Popover v-slot="{ open, close }" class="relative">
             <PopoverButton
               :class="[
                 open ? 'text-gray-400' : 'text-white',
@@ -231,66 +138,61 @@
               />
             </PopoverButton>
 
-            <transition
-              enter-active-class="transition ease-out duration-200"
-              enter-from-class="opacity-0 translate-y-1"
-              enter-to-class="opacity-100 translate-y-0"
-              leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 translate-y-0"
-              leave-to-class="opacity-0 translate-y-1"
-            >
+            <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
               <PopoverPanel
-                class="absolute z-10 -ml-4 mt-3 w-screen max-w-md transform px-2 sm:px-0 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2"
+                class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
                 @mouseover.prevent="popoverHover = true"
                 @mouseleave.prevent="closePopover(close)"
               >
-                <div
-                  class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
-                >
-                  <div
-                    class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8"
-                  >
-                    <a
-                      v-for="item in solutions"
-                      :key="item.name"
-                      :href="item.href"
-                      class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
-                    >
-                      <component
-                        :is="item.icon"
-                        class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                        aria-hidden="true"
-                      />
-                      <div class="ml-4">
-                        <p class="text-base font-medium text-gray-900">
-                          {{ item.name }}
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500">
-                          {{ item.description }}
-                        </p>
-                      </div>
-                    </a>
+                <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">
+                  <div>
+                    <h3 class="text-white text-2xl font-bold">Vytvarajte a spravujte, fakturačné, obchodné a právne dokumenty</h3>
                   </div>
-                  <div
-                    class="space-y-6 bg-gray-50 px-5 py-5 sm:flex sm:space-y-0 sm:space-x-10 sm:px-8"
-                  >
-                    <div
-                      v-for="item in callsToAction"
-                      :key="item.name"
-                      class="flow-root"
-                    >
-                      <a
-                        :href="item.href"
-                        class="-m-3 flex items-center rounded-md p-3 text-base font-medium text-gray-900 hover:bg-gray-100"
-                      >
-                        <component
-                          :is="item.icon"
-                          class="h-6 w-6 flex-shrink-0 text-gray-400"
-                          aria-hidden="true"
-                        />
-                        <span class="ml-3">{{ item.name }}</span>
-                      </a>
+                  <div class="grid grid-cols-3 gap-x-6 sm:gap-x-8">
+                    <div>
+                      <h3 class="text-sm text-white font-medium leading-6">Fakturačné</h3>
+                      <div class="mt-6 flow-root">
+                        <div class="-my-2">
+                        <a v-for="item in fakturacneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                          <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                          {{ item.name }}
+                        </a>
+                      </div>
+                      </div>
                     </div>
+                    <div>
+                      <h3 class="text-sm font-medium leading-6 text-white">Obchodné</h3>
+                      <div class="mt-6 flow-root">
+                        <div class="-my-2">
+                          <a v-for="item in obchodneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                            <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                            {{ item.name }}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-medium leading-6 text-white">Právne dokumenty</h3>
+                      <div class="mt-6 flow-root">
+                        <div class="-my-2">
+                          <a v-for="item in pravneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                            <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                            {{ item.name }}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-gray-900 py-6 rounded text-white">
+                    <div class="flex items-center gap-x-3">
+                      <h3 class="text-sm font-semibold leading-6 ">Výhody</h3>
+                      <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Vlastný dizajn</span>
+                      <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Jednoduché používanie</span>
+                      <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Široké spektrum dokumentov</span>
+                      <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Najlepšia cena</span>
+                    </div>
+                    <p class="mt-2 mb-4 text-sm leading-6 text-gray-400"><span class="text-bizinix-link">3 mesiace zadarmo</span> pre nových uživateľov.</p>
+                    <butto class="bg-bizinix-teal font-medium rounded py-2 px-6 hover:cursor-pointer" @click="$router.push('/documents/order')">Chcem to skúsiť</butto>
                   </div>
                 </div>
               </PopoverPanel>
@@ -455,7 +357,7 @@
             <div class="mt-6">
               <nav class="grid gap-y-8">
                 <a
-                  v-for="item in solutions"
+                  v-for="item in firmaMenuItems"
                   :key="item.name"
                   :href="item.href"
                   class="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50"
@@ -537,7 +439,14 @@ import {
   PhoneIcon,
   PlayIcon,
   ShieldCheckIcon,
-  PencilSquareIcon
+  PencilSquareIcon,
+  DocumentTextIcon,
+  DocumentChartBarIcon,
+  DocumentCheckIcon,
+DocumentArrowUpIcon,
+DocumentPlusIcon,
+DocumentMinusIcon,
+DocumentIcon
 } from "@heroicons/vue/24/outline";
 
 
@@ -610,7 +519,7 @@ const userNavigation = [
 ];
 const userNavigationLogOut = [{ name: "Odhlásiť sa", href: "#" }];
 
-const solutions = [
+const firmaMenuItems = [
   {
     name: "Zápis s.r.o.",
     description:
@@ -626,20 +535,80 @@ const solutions = [
   }
 ];
 
-const zivnost = [
+const zivnostMenuItems = [
   {
     name: "Založenie živnosti",
     description:
       "Get a better understanding of where your traffic is coming from.",
-    href: "/zalozenie-zivnosti",
+    href: "/documents",
     icon: PencilSquareIcon,
   }  
-]
+];
+
+const fakturacneMenuItems = [
+  {
+    name: "Faktúry",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentTextIcon,
+  },
+  {
+    name: "Zálohové faktúry",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentIcon,
+  },
+  {
+    name: "Dobropisy",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentMinusIcon,
+  }
+];
+
+
+const obchodneMenuItems = [
+  {
+    name: "Objednávky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentArrowUpIcon,
+  },
+  {
+    name: "Cenové ponuky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentChartBarIcon,
+  } 
+];
+
+const pravneMenuItems = [
+  {
+    name: "Zmluvy",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentCheckIcon,
+  },
+  {
+    name: "Upomienky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentPlusIcon,
+  }
+];
 
 const callsToAction = [
   { name: "Watch Demo", href: "#", icon: PlayIcon },
   { name: "Contact Sales", href: "#", icon: PhoneIcon },
 ];
+
 const resources = [
   {
     name: "Help Center",
@@ -667,8 +636,9 @@ const resources = [
     description: "Understand how we take your privacy seriously.",
     href: "#",
     icon: ShieldCheckIcon,
-  },
+  }
 ];
+
 const recentPosts = [
   { id: 1, name: "Boost your conversion rate", href: "#" },
   {
