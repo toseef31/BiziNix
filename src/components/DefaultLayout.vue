@@ -172,7 +172,8 @@
                       </div>
                     </div>
                     <div>
-                      <h3 class="text-sm font-medium leading-6 text-white">Právne dokumenty</h3>
+                      <img class="w-56" src="../assets/header/mesiace3zdarma.png" alt="3 mesiace zadarmo" />
+                      <!-- <h3 class="text-sm font-medium leading-6 text-white">Právne dokumenty</h3>
                       <div class="mt-6 flow-root">
                         <div class="-my-2">
                           <a v-for="item in pravneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
@@ -180,7 +181,7 @@
                             {{ item.name }}
                           </a>
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <div class="bg-gray-900 py-6 rounded text-white">
