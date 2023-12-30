@@ -15,41 +15,31 @@
       </div>
     </template>
   </FormKit>
-  <div class="">
-    <div>
-      <div class="bg-bizinix-teal p-2 font-semibold rounded-t">Obchodné meno</div>
-      <div class="p-4 border-r border-b border-l border-bizinix-border">
-        <div class="grid grid-cols-2 items-center">
-          <div>
-            <h1 class="text-lg">{{ companyData.obchodne_meno }}</h1>
-          </div>
-          <div>
-            <button @click.prevent="" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
-          </div>
+  <div class="flex flex-col space-y-4 last:mb-4">
+    <EditItemForCompany title="Obchodné meno">
+      <div class="grid grid-cols-2 items-center">
+        <div>
+          <h1 class="text-lg">{{ companyData.obchodne_meno }}</h1>
         </div>
-      </div>    
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Konatelia</div>
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Spoločníci</div>
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Spôsob konania konateľov</div>
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Predmet podnikania</div>
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Základné imanie</div>
-    </div>
-    <div class="mt-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Prokurista</div>
-    </div>
-    <div class="mt-4 mb-4">
-      <div class="bg-bizinix-teal p-2 font-semibold rounded">Iné zmeny</div>
-    </div>
+        <div>
+          <button @click.prevent="" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+        </div>
+      </div>
+    </EditItemForCompany>
+    <EditItemForCompany title="Konatelia">
+    </EditItemForCompany>
+    <EditItemForCompany title="Spoločníci">
+    </EditItemForCompany>
+    <EditItemForCompany title="Spôsob konania konateľov">
+    </EditItemForCompany>
+    <EditItemForCompany title="Predmet podnikania">
+    </EditItemForCompany>
+    <EditItemForCompany title="Základné imanie">
+    </EditItemForCompany>
+    <EditItemForCompany title="Prokurista">
+    </EditItemForCompany>
+    <EditItemForCompany title="Iné zmeny">
+    </EditItemForCompany>
   </div>
 </template>
 
@@ -59,6 +49,7 @@ import { getNode } from '@formkit/core';
 import { onBeforeMount, ref } from 'vue';
 import type Company from '@/types/Company';
 import { useVfm, VueFinalModal } from 'vue-final-modal'
+import EditItemForCompany from './EditItemForCompany.vue'
 
 const vfm = useVfm()
 const modalIdAddOrEditSubjects = Symbol('modalIdAddOrEditSubjects')
