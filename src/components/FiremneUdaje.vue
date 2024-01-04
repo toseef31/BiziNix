@@ -78,7 +78,7 @@
         <div class="flex flex-col">
             <div class="flex flex-row justify-between">
                 <div>
-                    Prajete si vykonať zmeny Vašej firmy v obchodnom registry? <router-link :to="{ name: 'CompanyDetails' }">Kliknite sem</router-link>
+                    Prajete si vykonať zmeny Vašej firmy v obchodnom registry? <router-link :to="{ name: 'CompanyDetails', params:{ activeTab: 1 } }">Kliknite sem</router-link>
                 </div>
                 <div>
                     <button @click="updateCompany" class="w-fit shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2">

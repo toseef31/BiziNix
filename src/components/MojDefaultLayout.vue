@@ -7,9 +7,14 @@
           </div>
           <div class="flex flex-1 justify-end py-2">
               <Menu as="nav" class="flex px-2 items-center justify-between flex-wrap gap-4">
-                  <MenuItem v-for="item in topnav" :key="item.name" v-slot="{ active }">
-                    <button @click="redirectToByName(item.name)" :class="[active ? 'text-teal-500' : 'text-gray-300 hover:text-white', 'pl-2 py-2 text-sm font-bold']">
+                  <MenuItem v-for="(item, index) in topnav" :key="index">
+                    <button @click="redirectToByName(item.name)" :class="[activeTopNav == index ? 'text-teal-500' : 'text-gray-300 hover:text-white', 'pl-2 py-2 text-sm font-bold']">
                       {{ item.name }}
+                      <span v-if="item.name == 'Sídlo a pošta' && notificationCounter > 0">
+                        <span class="inline-flex absolute items-center justify-center w-4 h-4 ms-1 text-xs font-semibold text-white bg-red-500 rounded-full">
+                          {{ notificationCounter }}
+                        </span>
+                      </span>
                     </button>
                   </MenuItem>
               </Menu>
@@ -17,9 +22,9 @@
               |
             </div>
             <div class="flex items-center">
-              <button type="button" class="px-4 text-teal-500" v-on:click="redirectToByName('Counseling center')">
-                <span class="sr-only">Counseling center</span>
-                <NewspaperIcon class="h-6 w-6" aria-hidden="true" />
+              <button type="button" class="px-4 text-teal-500" v-on:click="openNotifications()">
+                <span class="sr-only">Notifications</span>
+                <BellIcon class="h-6 w-6" aria-hidden="true" />
               </button>
               <button type="button" class="px-4 text-teal-500" v-on:click="redirectToByName('Contact')">
                 <span class="sr-only">Contact us</span>
@@ -74,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed, onBeforeMount, watch } from 'vue'
 import {
   Menu,
   MenuButton,
@@ -83,7 +88,7 @@ import {
 } from '@headlessui/vue'
 import {
   PhoneIcon,
-  NewspaperIcon
+  BellIcon
 } from '@heroicons/vue/24/outline'
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -94,26 +99,60 @@ const router = useRouter();
 let user = ref();
 user = computed(() => store.state.user);
 let activePage = ref("Moja firma");
-const currentCompany = computed(() => store.state.selectedCompany)
+const currentCompany = computed(() => store.state.selectedCompany);
+const mails = computed(() => store.state.mails as any[]);
+
+const notificationCounter = ref(0);
+
+watch(
+  () => mails.value,
+  function () {
+    if(mails.value) {
+      mails.value.forEach(function (value: any) {
+        if(value.isSeen == false) {
+          notificationCounter.value++;
+        }
+      });
+    }
+  }
+);
 
 onBeforeMount(async () => {
   user = computed(() => store.state.user);
   if(user.value.userId){
     await store.dispatch('setUserDataAfterLogin')
+
+    await store
+    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .then((response) => {
+      store.state.mails = response.data;
+    });
    }
 })
 
+const activeTopNav = ref(0);
+
 function redirectToByName(rname: string) {
+  switch(rname) {
+    case 'Moja firma': activeTopNav.value = 0; break;
+    case 'Doklady': activeTopNav.value = 1; break;
+    case 'Sídlo a pošta': activeTopNav.value = 2; break;
+  }
+  
   if(rname == "Moja firma") {
     return router.push({
       name: "CompanyDetails",
-      params: { id: currentCompany.value.id }
+      params: { id: currentCompany.value.id, activeTab: 1 }
     });
   } else {
     return router.push({
       name: rname
     });
   }
+}
+
+function openNotifications() {
+  //todo
 }
 
 const userNavigation = [
@@ -126,8 +165,8 @@ const userNavigationLogOut = [{ name: "Odhlásiť sa", href: "#" }];
 
 const topnav = [
   { name: 'Moja firma'},
-  { name: 'Doklady' },
-  { name: 'Sídlo a pošta' },
+  { name: 'Doklady'},
+  { name: 'Sídlo a pošta'},
 ]
 
 function logout() {

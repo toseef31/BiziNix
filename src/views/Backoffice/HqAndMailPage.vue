@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen">
     <div class="w-full min-h-screen flex flex-row">
-      <div class="flex flex-col basis-1/5 px-2 py-2 relative">
-        <div class="sticky top-[85vh]">
+      <div class="flex flex-col basis-1/12 pl-2 py-2 relative">
+        <div class="sticky top-[75vh]">
           <div class="text-sm px-8">
             V prípade záujmu o
             osobné vyzdvihnutie
@@ -12,7 +12,7 @@
           <div class="py-4 px-8">
             <hr>
           </div>
-          <div v-if="selectedCompany.sidlo_typ_balika">
+          <div v-if="!isLoading && selectedCompany.sidlo_typ_balika">
             <div class="font-bold px-8">
               Využívate balík
             </div>
@@ -518,7 +518,8 @@ const headquarter = ref({
 });
 
 const selectedCompany = ref();
-const mails = ref([] as Mail[]);
+const mails = computed(() => store.state.mails as Mail[]);
+const mailsFromStore = ref([] as Mail[]);
 
 watch(
   () => store.getters.getSelectedCompany,
@@ -527,8 +528,15 @@ watch(
   }
 );
 
+watch(
+  () => store.state.mails,
+  function () {
+    mailsFromStore.value = mails.value;
+  }
+);
+
 const filteredMailsBySearch: any = computed(() => {
-  return mails.value.filter((mail: any) => {
+  return mailsFromStore.value.filter((mail: any) => {
     const distribution_date = mail.distribution_date
       .toString()
       .toLocaleLowerCase();
@@ -739,7 +747,10 @@ async function refreshData() {
   await store
     .dispatch("getAllMailsForCompany", selectedCompany.value.id)
     .then((response) => {
-      mails.value = response.data;
+      store.state.mails = response.data;
+      mails.value.forEach(function (value: any) {
+        value.isSeen = true;
+      });
       loading = false;
     });
 
@@ -748,7 +759,12 @@ async function refreshData() {
 
 onBeforeMount(async () => {
   store.dispatch("userAddress");
-  refreshData();
+  await refreshData();
+  await store
+    .dispatch("updateMultipleMails", mails.value)
+    .catch((err) => {
+      console.log(err);
+    });
 });
 </script>
 

@@ -159,6 +159,7 @@ import FiremneUdaje from '@/components/FiremneUdaje.vue';
 import BankoveUcty from '@/components/BankoveUcty.vue';
 import type { XMarkIcon } from "@heroicons/vue/20/solid";
 
+const props = defineProps(['activeTab'])
 const router = useRouter();
 const company = ref({} as Company);
 const companySubstatuses = ref([] as any[]);
@@ -167,6 +168,8 @@ const tab = ref(1);
 const activeTab = ref(1);
 const substatus = ref({} as any);
 const isLoading = ref(true);
+
+
 
 const navigation = [
   {
@@ -212,7 +215,10 @@ async function refreshData() {
 }
 
 onBeforeMount(async () => {
+  activeTab.value = props.activeTab;
+  tab.value = props.activeTab;
   companySubstatuses.value = await store.dispatch("getCompanySubstatuses");
   await refreshData();
+  
 });
 </script>

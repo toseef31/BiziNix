@@ -144,6 +144,7 @@ import type CompanyBankAccount from "@/types/CompanyBankAccount";
 import { useModal, Modal } from "usemodal-vue3";
 import { PlusCircleIcon } from '@heroicons/vue/24/outline';
 import { getValidationMessages } from '@formkit/validation'
+import CompanySelectorInHeader from './CompanySelectorInHeader.vue';
 
 let company = ref({} as Company);
 let bankAccounts = ref([] as any[]);
@@ -202,9 +203,20 @@ async function addBankAccount() {
 
 async function updateBankAccounts() {
     showModal("loadingModal");
+
+    bankAccounts.value.forEach(element => {
+        if(element.is_main_b == true){
+            element.is_main = 1;
+        } else {
+            element.is_main = 0;
+        }
+      });
+    
+    const bankoveUcty = {bankAccounts: bankAccounts.value};
     await store
-    .dispatch("updateCompanyBankAccounts", bankAccounts.value)
-    .then(() => {
+    .dispatch("updateCompanyBankAccounts", bankoveUcty)
+    .then((response) => {
+        console.log(response)
         closeModal("loadingModal");
     });
 }

@@ -78,7 +78,7 @@ const router = createRouter({
         { path: '/moj/user/fakturacne', name: "Fakturačné profily", component: InvoiceProfilesPageVue, meta: { requiresAuth: true } },
         { path: '/moj/dashboard', name: "Dashboard", component: Dashboard, meta: { requiresAuth: true } },
         { path: '/moj/edit-company', name: "Edit Company", component: CompanyEdit, meta: { requiresAuth: true } },
-        { path: '/moj/detail-spolocnosti', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true } },
+        { path: '/moj/detail-spolocnosti/:activeTab', name: "CompanyDetails", component: CompanyDetailsVue, meta: { requiresAuth: true }, props: true },
         { path: '/moj/add-document/:subtype', name: "Add document", component: AddDocumentPageVue, meta: { requiresAuth: true }, props: true },
         { path: '/moj/documents-design', name: "Document designs", component: DocumentsDesignPageVue, meta: { requiresAuth: true } },
         { path: '/moj/my-documents', name: "Doklady", component: DocumentsListPageVue, meta: { requiresAuth: true } },

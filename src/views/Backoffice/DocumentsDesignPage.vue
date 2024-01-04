@@ -5,7 +5,7 @@
         Nastavenia dokladov
       </div>
       <div class="text-white pb-4">
-        Prajete si vykonať zmeny Vašich firemných údajov ? <router-link :to="{ name: 'CompanyDetails' }" class=" text-teal-600">Kliknite sem</router-link>
+        Prajete si vykonať zmeny Vašich firemných údajov ? <router-link :to="{ name: 'CompanyDetails', params: { activeTab: 2 } }" class=" text-teal-600">Kliknite sem</router-link>
       </div>  
       <div class="flex flex-row pb-10">
         <div class="flex flex-col basis-2/3"> 
@@ -289,11 +289,9 @@ async function refreshData() {
       uploadImageData.value.companyId = company.value.id;
       uploadPodpisData.value.companyId = company.value.id;
       store.dispatch("getCompanyLogo", company.value.id).then((response) => {
-        console.log(response);
         logoSrc.value = response.image;
       });
       store.dispatch("getCompanyPodpis", company.value.id).then((response) => {
-        console.log(response);
         podpisSrc.value = response.image;
       });
     });

@@ -129,7 +129,7 @@
                     {{ finData.totalToPay }} €
                   </div>
                   <div class="text-gray-300 text-sm text-right">
-                    Viac info vo <router-link :to="{ name: 'CompanyDetails' }">finančnom reporte</router-link>
+                    Viac info vo <router-link :to="{ name: 'CompanyDetails', params:{ activeTab:1 } }">finančnom reporte</router-link>
                   </div>
                 </div>
               </div>

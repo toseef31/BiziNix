@@ -37,6 +37,7 @@ function redirectToCompany(companyId: number, routeName: string) {
 
     return router.push({
         name: routeName,
+        params: { activeTab: 1 }
     });
 }
 

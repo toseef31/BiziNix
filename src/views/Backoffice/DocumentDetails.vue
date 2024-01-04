@@ -240,7 +240,7 @@
           </button>
 
           <section>
-            <div class="flex flex-col" v-show="isOpen">
+            <div class="flex flex-col" v-if="isOpen">
               <div>
                 <div class="flex flex-row justify-between pb-8">
                   <div class="flex basis-1/2 flex-col justify-between px-4">
@@ -354,7 +354,7 @@
                 <div class="text-teal-500 flex basis-2/12">Cena</div>
                 <div
                   class="text-teal-500 flex basis-2/12"
-                  v-show="company.is_dph"
+                  v-if="company.is_dph"
                 >
                   DPH %
                 </div>
@@ -383,6 +383,9 @@
                         id="quantity"
                         class="flex"
                         inputmode="decimal"
+                            step="any"
+                            min="0"
+                            number
                         v-model="item.quantity"
                       />
                     </div>
@@ -400,18 +403,20 @@
                         type="number"
                         class="flex"
                         id="unit-price"
-                        inputmode="decimal"
+                        step="0.01"
+                        number
                         v-model="item.unit_price"
                         @change="priceEntered(item)"
                       />
                     </div>
-                    <div class="flex basis-2/12" v-show="company.is_dph">
+                    <div class="flex basis-2/12" v-if="company.is_dph">
                       <FormKit
                         autocomplete="nope"
                         type="number"
                         class="flex"
                         id="vat"
-                        inputmode="decimal"
+                        step="0.01"
+                        number
                         v-model="item.vat"
                         novalidate
                         @change="vatEntered($event)"
@@ -423,7 +428,8 @@
                         type="text"
                         class="flex"
                         id="total"
-                        inputmode="decimal"
+                        step="0.01"
+                        number
                         v-model="item.total"
                         disabled
                       />
@@ -472,7 +478,7 @@
                 <table class="w-full">
                   <tbody>
                     <tr>
-                      <th class="text-right pr-1 text-2xl">{{ totalPrice }}</th>
+                      <th class="text-right pr-1 text-2xl">{{ totalPrice.toFixed(2) }}</th>
                       <th>
                         <FormKit
                           type="select"
@@ -483,16 +489,16 @@
                         />
                       </th>
                     </tr>
-                    <tr v-show="company.is_dph">
+                    <tr v-if="company.is_dph">
                       <th class="text-left pl-2">DPH</th>
                       <th class="text-right pr-2">
-                        {{ totalPriceVat }}&nbsp;{{ document.currency }}
+                        {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
-                    <tr v-show="company.is_dph">
+                    <tr v-if="company.is_dph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
-                        {{ totalPrice + totalPriceVat }}&nbsp;{{
+                        {{ (totalPrice + totalPriceVat).toFixed(2) }}&nbsp;{{
                           document.currency
                         }}
                       </th>
@@ -669,6 +675,11 @@ function submitHandler() {
 
 onMounted(async () => {
   await refreshData();
-  items.value = JSON.parse(document.value.items);
+  try {
+    items.value = JSON.parse(document.value.items);
+  } catch {
+    console.log("Items are empty")
+  }
+  
 });
 </script>

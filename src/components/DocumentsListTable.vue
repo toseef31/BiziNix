@@ -349,7 +349,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { computed, ref, reactive, watch } from "vue";
+import { computed, ref, reactive, watch, onBeforeMount } from "vue";
 import type Doklad from "@/types/Document";
 import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
@@ -494,13 +494,12 @@ function downlaodSingleDocument(document: Doklad) {
     });
 }
 
-function downloadMultipleDocuments() {
-  console.log(selectedDocuments.value);
-  selectedDocuments.value.forEach(function (value: any) {
-    store
+async function downloadMultipleDocuments() {
+  selectedDocuments.value.forEach(async function (value: any) {
+    await store
       .dispatch("downloadDocument", value.id)
       .then((response) => {
-        const byteCharacters = atob(response.data);
+        const byteCharacters = atob(response);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -567,4 +566,9 @@ async function refreshData() {
       company.value = response.data;
     });
 }
+
+onBeforeMount(async () => {
+  await refreshData();
+});
+
 </script>
