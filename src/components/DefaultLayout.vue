@@ -193,7 +193,7 @@
                       <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Najlepšia cena</span>
                     </div>
                     <p class="mt-2 mb-4 text-sm leading-6 text-gray-400"><span class="text-bizinix-link">3 mesiace zadarmo</span> pre nových uživateľov.</p>
-                    <butto class="bg-bizinix-teal font-medium rounded py-2 px-6 hover:cursor-pointer" @click="$router.push('/documents/order')">Chcem to skúsiť</butto>
+                    <button class="bg-bizinix-teal font-medium rounded py-2 px-6 hover:cursor-pointer" @click="$router.push('/documents/order')">Chcem to skúsiť</button>
                   </div>
                 </div>
               </PopoverPanel>

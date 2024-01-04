@@ -56,7 +56,9 @@ const modalIdAddOrEditSubjects = Symbol('modalIdAddOrEditSubjects')
 const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  // const res = await store.dispatch("getCompanyFromOrsrByIco", "36562939");
+  // console.log(res);
 })
 
 async function search({ search }: any) {

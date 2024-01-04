@@ -220,6 +220,17 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/headquarters/${hqId}/get`);
       return data;
     },
+    async getCompanyFromOrsrByIco({commit}, ico: number | string){
+      const { data } = await axiosClient.get('/companies/findCompanyOrsr', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ico: ico // replace with your parameters
+        }                                            
+      });
+      return data;
+    },
     addCompany({ commit }, company) {
       return axiosClient.post("/companies/add", company).then(({ data }) => {
         commit("setCompany", data); // setCompany is defined as muttation below
