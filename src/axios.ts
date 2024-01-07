@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "./store";
 
 const axiosClient = axios.create({
-    baseURL: 'https://be-app-aials.ondigitalocean.app/api'
+    baseURL: import.meta.env.VITE_API_ENDPOINT
 })
 
 axiosClient.interceptors.request.use(config => {
