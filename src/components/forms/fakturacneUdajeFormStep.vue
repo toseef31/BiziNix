@@ -115,7 +115,6 @@ let invoiceAddress = ref({
 } as Address)
 
 onMounted( async () => {
-  console.log("On mounted Fakturacne")
   if(userId.value){
     fetchInvoiceProfiles()
   } else {
@@ -130,7 +129,6 @@ async function fetchInvoiceProfiles() {
   if(res.data[0].id){
     userHasInvoiceProfile.value = true
     return res.data.map((data) => {
-      console.log("Invoice profiles", data)
       return {
         label: `${data?.name ?? ''} ${data?.first_name ?? ''} ${data?.last_name ?? ''} ${data?.ico ? 'IČO: ' + data.ico : ''} ${data?.dic ? 'DIČ: ' + data.dic : ''}`,
         value: data.id

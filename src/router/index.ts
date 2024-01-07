@@ -34,6 +34,7 @@ import DocumentsListPageVue from "@/views/Backoffice/DocumentsListPage.vue";
 import OrderDocumentsPageVue from "@/views/Documents/OrderDocumentsPage.vue";
 import InvoiceProfilesPageVue from "@/views/Backoffice/InvoiceProfilesPage.vue";
 import UpravaFirmy from "@/views/Company/UpravaFirmy.vue";
+import MailServiceOrderVue from "@/components/MailServiceOrder.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -84,6 +85,7 @@ const router = createRouter({
         { path: '/moj/my-documents', name: "Doklady", component: DocumentsListPageVue, meta: { requiresAuth: true } },
         { path: '/moj/doklad', name: "Doklad", component: DocumentDetailsVue, meta: { requiresAuth: true } },
         { path: '/moj/sidlo-a-posta', name: "Sídlo a pošta", component: HqAndMailPageVue, meta: { requiresAuth: true } },
+        { path: '/moj/sidlo-a-posta/objednavka-sluzby/:type', name: "Mail service order", component: MailServiceOrderVue, meta: { requiresAuth: true }, props: true },
       ]
     },
     {

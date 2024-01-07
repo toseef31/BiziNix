@@ -91,14 +91,26 @@
                 <!---->
 
                 <div class="flex flex-1/4">
-                  <button v-show="checkedMails.length > 0"
-                    class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="showSendMails()">
-                    Preposlať poštu
-                  </button>
-                  <button disabled v-show="checkedMails.length == 0"
-                    class="bg-gray-300 h-12 px-6 rounded z-10 font-bold text-gray-400">
-                    Preposlať poštu
-                  </button>
+                  <div class="flex gap-4" v-if="checkedMails.length > 0">
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                      Preposlať poštu
+                    </button>
+                    <button
+                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                      Scanovať poštu
+                    </button>
+                  </div>
+                  <div class="flex gap-4" v-if="checkedMails.length == 0">
+                    <button disabled
+                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                      Preposlať poštu
+                    </button>
+                    <button disabled
+                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                      Scanovať poštu
+                    </button>
+                  </div>
                   <Modal name="m3" v-model:visible="isVisible" :type="'clean'" :closable="false"
                     title="Preposlanie zásielok">
                     <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
@@ -187,10 +199,10 @@
                                 checkedMails.length === filteredMailsByDates.length
                                 " :indeterminate="indeterminate" @change="boxChecked($event)" />
                           </th>
-                          <th scope="col" class="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
+                          <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
                             Odosielateľ
                           </th>
-                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
                             <span class="inline-flex items-center" :class="{
                               'text-teal-500':
                                 selectedColumn == 'distribution_date',
@@ -227,21 +239,21 @@
                               :value="mail" v-model="checkedMails" />
                           </td>
                           <td :class="[
-                            'whitespace-nowrap py-4 pr-3 text-sm font-medium',
+                            'whitespace-nowrap py-4 text-sm font-medium',
                             checkedMails.includes(mail)
                               ? 'text-teal-600'
                               : 'text-gray-900',
                           ]">
                             {{ mail.sender }}
                           </td>
-                          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
                             {{ formatDate(mail.distribution_date) }}
                           </td>
                           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <button v-if="!mail.forward_requested &&
                               mail.status != 4 &&
                               mail.status != 2
-                              " class="font-medium text-gray-900 hover:underline" v-on:click="showSendSingleMail(mail)">
+                              " class="font-medium text-gray-900 hover:underline" v-on:click="sendSingleMail(mail)">
                               Preposlať originál
                             </button>
                             <Modal name="m2" v-model:visible="isVisible" :type="'clean'" :closable="false"
@@ -357,18 +369,18 @@
                             <Modal name="m1" v-model:visible="isVisible" :type="'clean'" :closable="false"
                               title="Skartovanie zásielky">
                               <div class="bg-gray-700 bg-opacity-95 rounded-lg">
-                                <div class="flex flex-row justify-start py-8 px-8 text-white font-bold">
+                                <div class="flex flex-row justify-start py-8 px-8 text-white font-bold text-xl">
                                   Naozaj chcete túto zásielku skartovať?
                                 </div>
-                                <div class="flex flex-row justify-end pb-4 px-4">
+                                <div class="flex flex-row justify-center pb-4 px-4 gap-8">
                                   <div class="flex flex-1/4">
-                                    <button class="bg-gray-500 hover:bg-gray-800 h-8 px-6 rounded z-10 text-white"
+                                    <button class="bg-gray-500 hover:bg-gray-800 h-10 px-8 rounded z-10 text-white"
                                       v-on:click="closeModal()">
                                       Nie
                                     </button>
                                   </div>
                                   <div class="flex flex-1/4 px-4">
-                                    <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+                                    <button class="bg-teal-500 hover:bg-teal-700 h-10 px-8 rounded z-10 text-white"
                                       v-on:click="shredSingleMail(selectedMail)">
                                       Áno
                                     </button>
@@ -468,35 +480,20 @@ const indeterminate = computed(
 );
 
 const setModal = useModal({
-  m1: 1,
-  m2: 2,
-  m3: 3,
+  m1: 1
 });
 
 let isVisible = reactive({});
 
 isVisible = setModal("m1", false);
-isVisible = setModal("m2", false);
-isVisible = setModal("m3", false);
 
 function showModal(mail: any) {
   selectedMail.value = mail;
   isVisible = setModal("m1", true);
 }
 
-function showSendSingleMail(mail: any) {
-  selectedMail.value = mail;
-  isVisible = setModal("m2", true);
-}
-
-function showSendMails() {
-  isVisible = setModal("m3", true);
-}
-
 function closeModal() {
   isVisible = setModal("m1", false);
-  isVisible = setModal("m2", false);
-  isVisible = setModal("m3", false);
 }
 
 const address = ref({
@@ -611,30 +608,19 @@ function boxChecked(event: any) {
 }
 
 function sendMails() {
-  checkedMails.value.forEach(function (value: any) {
-    value.forward_requested = 1;
-    value.forward_address =
-      userAddress.value.street +
-      " " +
-      userAddress.value.street_number +
-      "/" +
-      userAddress.value.street_number2 +
-      ", " +
-      userAddress.value.psc +
-      " " +
-      userAddress.value.city +
-      ", " +
-      userAddress.value.country;
+  store.state.checkedMails = checkedMails.value;
+  router.push({
+    name: "Mail service order",
+    params: { type: 1 },
   });
-  store
-    .dispatch("updateMultipleMails", checkedMails.value)
-    .then((res) => {
-      checkedMails.value = [];
-      isVisible = setModal("m3", false);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+}
+
+function scanMails() {
+  store.state.checkedMails = checkedMails.value;
+  router.push({
+    name: "Mail service order",
+    params: { type: 2 },
+  });
 }
 
 function formatDate(dateString: string) {
@@ -643,30 +629,12 @@ function formatDate(dateString: string) {
 }
 
 function sendSingleMail(mail: any) {
-  selectedMail.value = mail;
-  if (selectedMail.value) {
-    selectedMail.value.forward_requested = true;
-    selectedMail.value.forward_address =
-      userAddress.value.street +
-      " " +
-      userAddress.value.street_number +
-      "/" +
-      userAddress.value.street_number2 +
-      ", " +
-      userAddress.value.psc +
-      " " +
-      userAddress.value.city +
-      ", " +
-      userAddress.value.country;
-    store
-      .dispatch("updateMail", selectedMail.value)
-      .then((res) => {
-        isVisible = setModal("m2", false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  checkedMails.value.push(mail);
+  store.state.checkedMails = checkedMails.value;
+  router.push({
+    name: "Mail service order",
+    params: { type: 1 },
+  });
 }
 
 function shredSingleMail(mail: any) {
@@ -675,7 +643,7 @@ function shredSingleMail(mail: any) {
     selectedMail.value.shred_requested = true;
     store
       .dispatch("updateMail", selectedMail.value)
-      .then((res) => {
+      .then(() => {
         isVisible = setModal("m1", false);
       })
       .catch((err) => {
@@ -686,15 +654,13 @@ function shredSingleMail(mail: any) {
 
 function scanSingleMail(id: any) {
   const mail = mails.value.find((item: any) => item.id == id);
+  checkedMails.value.push(mail);
+  store.state.checkedMails = checkedMails.value;
   if (mail) {
-    mail.scan_requested = true;
-    store
-      .dispatch("updateMail", mail)
-      .then((res) => {
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    router.push({
+      name: "Mail service order",
+      params: { type: 2 },
+    });
   }
 }
 

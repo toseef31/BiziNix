@@ -22,6 +22,7 @@ export const store = createStore({
     vhqs: [],
     selectedCompany: {} as Company,
     mails: [] as Mail[],
+    checkedMails: [] as Mail[],
     hq: {},
     hqAddress: {},
     selectedCompanyMails: [],

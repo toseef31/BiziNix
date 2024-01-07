@@ -12,4 +12,7 @@ export default interface Mail {
   forward_requested: boolean;
   shred_requested: boolean;
   forward_address: string;
+  weight: number;
+  tracking_number: string;
+  receiver: string;
 }

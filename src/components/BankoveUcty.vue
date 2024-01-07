@@ -144,7 +144,6 @@ import type CompanyBankAccount from "@/types/CompanyBankAccount";
 import { useModal, Modal } from "usemodal-vue3";
 import { PlusCircleIcon } from '@heroicons/vue/24/outline';
 import { getValidationMessages } from '@formkit/validation'
-import CompanySelectorInHeader from './CompanySelectorInHeader.vue';
 
 let company = ref({} as Company);
 let bankAccounts = ref([] as any[]);
