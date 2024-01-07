@@ -108,6 +108,7 @@ watch(
   () => mails.value,
   function () {
     if(mails.value) {
+      notificationCounter.value = 0;
       mails.value.forEach(function (value: any) {
         if(value.isSeen == false) {
           notificationCounter.value++;
