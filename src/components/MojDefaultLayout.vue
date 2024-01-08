@@ -22,10 +22,29 @@
               |
             </div>
             <div class="flex items-center">
-              <button type="button" class="px-4 text-teal-500" v-on:click="openNotifications()">
-                <span class="sr-only">Notifications</span>
-                <BellIcon class="h-6 w-6" aria-hidden="true" />
-              </button>
+              <div>
+                <button type="button" class="px-4 text-teal-500" v-on:click="showNotification = !showNotification;">
+                  <span class="sr-only">Notifications</span>
+                  <BellIcon class="h-6 w-6" aria-hidden="true" />
+                </button>
+                <div v-if="showNotification" @click="showNotification = false" class="fixed inset-0 h-full w-full z-10"></div>
+
+                <div v-if="showNotification" class="absolute right-10 mt-5 overflow-hidden z-20" style="width:20rem;">
+                    <div class="flex flex-col py-2 gap-2">
+                        <div class="px-4 py-2 flex flex-row items-start bg-gray-900 bg-opacity-70 rounded-md text-gray-300" v-for="notification in notifications">
+                          <div class="flex flex-col"> {{notification.data.message}} </div>
+                          <div class="flex flex-col"> 
+                            <button class="px-2" v-on:click="markAsRead(notification)"><XCircleIcon class="h-6 w-6" aria-hidden="true" /></button>
+                            <button class="px-4" v-on:click="notificationAction(notification.data.action)">
+                              <span class="sr-only">Prejsť</span>
+                              <ArrowRightIcon class="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              
               <button type="button" class="px-4 text-teal-500" v-on:click="redirectToByName('Contact')">
                 <span class="sr-only">Contact us</span>
                 <PhoneIcon class="h-6 w-6" aria-hidden="true" />
@@ -88,7 +107,9 @@ import {
 } from '@headlessui/vue'
 import {
   PhoneIcon,
-  BellIcon
+  BellIcon,
+  XCircleIcon,
+  ArrowRightIcon
 } from '@heroicons/vue/24/outline'
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -101,6 +122,9 @@ user = computed(() => store.state.user);
 let activePage = ref("Moja firma");
 const currentCompany = computed(() => store.state.selectedCompany);
 const mails = computed(() => store.state.mails as any[]);
+const notifications = computed(() => store.state.notifications as any[]);
+
+const showNotification = ref(false);
 
 const mailCounter = ref(0);
 
@@ -122,6 +146,7 @@ onBeforeMount(async () => {
   user = computed(() => store.state.user);
   if(user.value.userId){
     await store.dispatch('setUserDataAfterLogin')
+    await store.dispatch('getNotifications')
 
     await store
     .dispatch("getAllMailsForCompany", currentCompany.value.id)
@@ -152,8 +177,29 @@ function redirectToByName(rname: string) {
   }
 }
 
-function openNotifications() {
-  //todo
+function notificationAction(action: string) {
+  switch(action){
+    case 'bankaccount': 
+      return router.push({
+        name: "CompanyDetails",
+        params: { id: currentCompany.value.id, activeTab: 3 }
+      });
+    case 'companydetails': 
+      return router.push({
+        name: "CompanyDetails",
+        params: { id: currentCompany.value.id, activeTab: 2 }
+      });
+    case 'documentdetails': 
+      return router.push({
+        name: "Doklady",
+        //TODO: treba nejak presmerovat na spravyn tab params: { tab: 3 }
+      });
+  }
+
+}
+
+async function markAsRead(notification) {
+  await store.dispatch("markNotificationAsRead", notification.id);
 }
 
 const userNavigation = [

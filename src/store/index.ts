@@ -29,11 +29,15 @@ export const store = createStore({
     selectedCompanyAddress: {},
     document: {},
     selectedVhq: {} as any,
-    selectedVhqPackage: {} as any
+    selectedVhqPackage: {} as any,
+    notifications: [] as any
   },
   getters: {
     getUserId: (state) => {
       return state.user.userId
+    },
+    getNotifications: (state) => {
+      return state.notifications
     },
     getUserAddressId: (state) => {
       return state.user.addressId
@@ -174,6 +178,16 @@ export const store = createStore({
             return res;
           });
       }
+    },
+    async getNotifications({ dispatch, commit }) {
+      const { data } = await axiosClient.get("/users/getNotifications");
+      commit("setNotifications", data);
+      return data;
+    },
+    async markNotificationAsRead({ commit, dispatch }, notification_id) {
+      const { data } = await axiosClient.post("/users/readNotification", notification_id);
+      dispatch("getNotifications");
+      return data;
     },
     async addInvoiceProfile({ commit, dispatch }, invoiceProfile) {
       const { data } = await axiosClient.post("/users/fakturacneUdaje/add", invoiceProfile);
@@ -562,6 +576,9 @@ export const store = createStore({
     },
     setUserAddress: (state, userAddress) => {
       state.user.address = userAddress.data;
+    },
+    setNotifications: (state, notifications) => {
+      state.notifications = notifications;
     },
     setUserAddressAfterUpdate: (state, userAddress) => {
       state.user.address = userAddress.address;
