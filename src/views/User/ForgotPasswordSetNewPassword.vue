@@ -75,7 +75,7 @@ onMounted(() => {
   
   const token = route.params.token
 
-  return axios.get(`https://be-app-aials.ondigitalocean.app/api/password/find/${token}`)
+  return axios.get(`${import.meta.env.VITE_API_ENDPOINT}/api/password/find/${token}`)
   .then(response => {
     // console.log(response);
     newPassword.value.email = response.data.email

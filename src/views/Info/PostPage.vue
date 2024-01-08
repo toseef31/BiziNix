@@ -39,7 +39,7 @@ onMounted(() => {
   const postId = route.params.id;
 
   return axios
-    .get(`https://be-app-aials.ondigitalocean.app/api/posts/${postId}/get`)
+    .get(`${import.meta.env.VITE_API_ENDPOINT}/api/posts/${postId}/get`)
     .then((response) => {
       post.value = response.data.data;
       return response;

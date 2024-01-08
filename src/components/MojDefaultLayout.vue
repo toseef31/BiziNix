@@ -10,9 +10,9 @@
                   <MenuItem v-for="(item, index) in topnav" :key="index">
                     <button @click="redirectToByName(item.name)" :class="[activeTopNav == index ? 'text-teal-500' : 'text-gray-300 hover:text-white', 'pl-2 py-2 text-sm font-bold']">
                       {{ item.name }}
-                      <span v-if="item.name == 'Sídlo a pošta' && notificationCounter > 0">
+                      <span v-if="item.name == 'Sídlo a pošta' && mailCounter > 0">
                         <span class="inline-flex absolute items-center justify-center w-4 h-4 ms-1 text-xs font-semibold text-white bg-red-500 rounded-full">
-                          {{ notificationCounter }}
+                          {{ mailCounter }}
                         </span>
                       </span>
                     </button>
@@ -102,16 +102,16 @@ let activePage = ref("Moja firma");
 const currentCompany = computed(() => store.state.selectedCompany);
 const mails = computed(() => store.state.mails as any[]);
 
-const notificationCounter = ref(0);
+const mailCounter = ref(0);
 
 watch(
   () => mails.value,
   function () {
     if(mails.value) {
-      notificationCounter.value = 0;
+      mailCounter.value = 0;
       mails.value.forEach(function (value: any) {
         if(value.isSeen == false) {
-          notificationCounter.value++;
+          mailCounter.value++;
         }
       });
     }
