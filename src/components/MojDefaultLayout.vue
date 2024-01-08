@@ -31,14 +31,17 @@
 
                 <div v-if="showNotification" class="absolute right-10 mt-5 overflow-hidden z-20" style="width:20rem;">
                     <div class="flex flex-col py-2 gap-2">
-                        <div class="px-4 py-2 flex flex-row items-start bg-gray-900 bg-opacity-70 rounded-md text-gray-300" v-for="notification in notifications">
+                        <div class="px-2 py-2 flex flex-row items-start bg-gray-900 bg-opacity-70 rounded-md text-gray-300" v-for="notification in notifications">
                           <div class="flex flex-col"> {{notification.data.message}} </div>
-                          <div class="flex flex-col"> 
-                            <button class="px-2" v-on:click="markAsRead(notification)"><XCircleIcon class="h-6 w-6" aria-hidden="true" /></button>
-                            <button class="px-4" v-on:click="notificationAction(notification.data.action)">
-                              <span class="sr-only">Prejsť</span>
-                              <ArrowRightIcon class="h-6 w-6" aria-hidden="true" />
-                            </button>
+                          <div class="flex flex-col justify-end items-end gap-6"> 
+                            <div class="flex">
+                              <button class="px-2" v-on:click="markAsRead(notification)"><XCircleIcon class="h-6 w-6" aria-hidden="true" /></button>
+                            </div>
+                            <div class="flex">
+                              <button class="px-4 flex justify-center items-center bg-teal-500 hover:bg-teal-700 rounded-md" v-on:click="notificationAction(notification.data.action)">
+                                <span class="px-2 py-2">Prejsť</span> <ArrowRightIcon class="h-6 w-6" aria-hidden="true" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                     </div>
@@ -199,7 +202,10 @@ function notificationAction(action: string) {
 }
 
 async function markAsRead(notification) {
-  await store.dispatch("markNotificationAsRead", notification.id);
+  const notification_id = {
+    notification_id: notification.id
+  }
+  await store.dispatch("markNotificationAsRead", notification_id);
 }
 
 const userNavigation = [
