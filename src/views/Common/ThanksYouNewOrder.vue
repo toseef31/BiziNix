@@ -14,6 +14,7 @@
         <CompanyThanksYou v-if="order && order.order_type === 'company'" />
         <DocumentsThanksYou v-else-if="order && order.order_type === 'documents'" />
         <VhqThanksYouVue v-else-if="order && order.order_type === 'vhq'" />
+        <MailThanksYouVue v-else-if="order && order.order_type === 'mail'" />
       </template>
       <template v-else>
         <div class="text-center py-12">
@@ -35,6 +36,7 @@ import { FaceFrownIcon } from "@heroicons/vue/24/outline";
 import CompanyThanksYou from "@/components/payments/CompanyThanksYou.vue";
 import DocumentsThanksYou from "@/components/payments/DocumentsThanksYou.vue";
 import VhqThanksYouVue from "@/components/payments/VhqThanksYou.vue";
+import MailThanksYouVue from "@/components/payments/MailThanksYou.vue";
 
 const route = useRoute();
 const order = ref<any>();

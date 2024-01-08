@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen">
-    <div class="w-full min-h-screen flex flex-row">
-      <div class="flex flex-col basis-1/12 pl-2 py-2 relative">
+  <div>
+    <div class="w-full min-h-[90vh] flex flex-row">
+      <div v-if="!isLoading" class="flex flex-col basis-1/12 pl-2 py-2 relative">
         <div class="sticky top-[75vh]">
           <div class="text-sm px-8">
             V prípade záujmu o
@@ -26,13 +26,31 @@
             </div>
           </div>
           <div class="py-4 px-8">
-            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="redirectToOrder()">
+            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="redirectToPackageOrder()">
               Upraviť balík
             </button>
           </div>
         </div>
       </div>
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
+        <div v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika == 'MINI'"
+          class="flex flex-col w-full items-center">
+          <div class="flex flex-col w-full items-center h-full py-32">
+            <div class="text-4xl text-gray-900 font-bold">
+              Do online<br>evidencie zásielok<br>nemáte prístup
+            </div>
+            <div class="py-8">
+              <div @click="redirectToPackageOrder()"
+                class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2">
+                <span class="text-center w-full">Upraviť balík</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
         <div v-if="selectedCompany && (new Date(selectedCompany.sidlo_zaplatene_do) < new Date(today) ||
           selectedCompany.sidlo_zaplatene_do == null ||
           selectedCompany.sidlo_zaplatene_do == '')
@@ -53,7 +71,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full" v-else>
+        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika != 'MINI'">
           <div class="w-full min-h-full">
             <div class="flex flex-col container mx-auto h-full text-gray-800">
               <h1 class="flex flex-row px-4 py-8 text-3xl font-bold text-gray-600 pb-10 justify-center">
@@ -94,21 +112,29 @@
                   <div class="flex gap-4" v-if="checkedMails.length > 0">
                     <button
                       class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
-                      Preposlať poštu
+                      Preposlať
                     </button>
                     <button
                       class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
-                      Scanovať poštu
+                      Scanovať
+                    </button>
+                    <button
+                      class="bg-red-500 hover:bg-red-700 h-12 px-6 rounded z-10 font-bold" v-on:click="shredMails()">
+                      Skartovať
                     </button>
                   </div>
                   <div class="flex gap-4" v-if="checkedMails.length == 0">
                     <button disabled
                       class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
-                      Preposlať poštu
+                      Preposlať
                     </button>
                     <button disabled
                       class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
-                      Scanovať poštu
+                      Scanovať
+                    </button>
+                    <button disabled
+                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                      Skartovať
                     </button>
                   </div>
                   <Modal name="m3" v-model:visible="isVisible" :type="'clean'" :closable="false"
@@ -623,6 +649,21 @@ function scanMails() {
   });
 }
 
+async function shredMails() {
+  checkedMails.value.forEach(function (value: any) {
+    value.shred_requested = 1;
+  });
+
+  await store
+    .dispatch("updateMultipleMails", checkedMails.value)
+    .then(async () => {
+      checkedMails.value = [];
+    })
+    .catch((err) => {
+      console.log(err);
+  });
+}
+
 function formatDate(dateString: string) {
   const date = dayjs(dateString);
   return date.format("DD.MM.YYYY");
@@ -687,6 +728,12 @@ function downloadScanFile(id: any) {
 function redirectToOrder() {
   return router.push({
     name: "Virtual hq",
+  });
+}
+
+function redirectToPackageOrder() {
+  return router.push({
+    name: "VHQ zmena balíka",
   });
 }
 

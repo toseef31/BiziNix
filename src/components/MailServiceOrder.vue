@@ -160,7 +160,6 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const user = computed(() => store.state.user.data);
-const userName = computed(() => user.value.first_name + ' ' + user.value.last_name);
 const userAddress = computed(() => store.state.user.address as any);
 const mails = computed(() => store.state.checkedMails as Mail[]);
 const selectedCompany = computed(() => store.getters.getSelectedCompany);
