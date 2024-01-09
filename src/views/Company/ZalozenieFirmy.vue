@@ -372,8 +372,10 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     is_dph: companyMembersAndDetails.value.companyOrZivnostModel.is_dph,
     konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
     sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
-    subjects_of_business: subjects_of_business.value.subjects_of_business
+    subjects_of_business: subjects_of_business.value.subjects_of_business,
+    sidlo_typ_balika: sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'? selectedVhqPackageFromStore.value.name : null
   };
+
 
   try {
     const res = await store.dispatch('addCompany', companyOrZivnostModelData);

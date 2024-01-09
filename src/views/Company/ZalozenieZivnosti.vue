@@ -337,6 +337,10 @@ async function addCompany(user: User, userId: any, hqId: any) {
   companyOrZivnostModel.value.name = user.first_name + " " + user.last_name + " " + businessInfo.value.companyData.name
   companyOrZivnostModel.value.zaciatok_opravnenia = businessInfo.value.companyData.zaciatok_opravnenia
 
+  if(headquarter.value.is_virtual) {
+    companyOrZivnostModel.value.sidlo_typ_balika = selectedVhqPackageFromStore.value.name;
+  }
+
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
     console.log("Adding company: " + JSON.stringify(res))
