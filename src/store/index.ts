@@ -30,7 +30,8 @@ export const store = createStore({
     document: {},
     selectedVhq: {} as any,
     selectedVhqPackage: {} as any,
-    notifications: [] as any
+    notifications: [] as any,
+    documentTab: 1,
   },
   getters: {
     getUserId: (state) => {

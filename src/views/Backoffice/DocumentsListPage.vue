@@ -542,6 +542,8 @@ watch(
 );
 
 async function refreshData() {
+  tab.value = store.state.documentTab;
+  activeTab.value = tab.value;
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {

@@ -193,10 +193,14 @@ function notificationAction(action: string) {
         params: { id: currentCompany.value.id, activeTab: 2 }
       });
     case 'documentdetails': 
+      store.state.documentTab = 3;
       return router.push({
-        name: "Doklady",
-        //TODO: treba nejak presmerovat na spravyn tab params: { tab: 3 }
+        name: "Doklady"
       });
+    case 'mails': 
+      return router.push({
+        name: "Sídlo a pošta"
+    });
   }
 
 }
