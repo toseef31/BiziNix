@@ -168,7 +168,7 @@ const order = ref({
   payment_date: "" as any,
   payment_method: "stripe",
   order_type: 'mail',
-  description: "Objednávka preposlania pošty",
+  description: "Preposlanie",
   amount: 0,
   amount_vat: 0,
   is_paid: false,
@@ -176,7 +176,7 @@ const order = ref({
   company_id: 0,
   items: [
     {
-      description: "Zakúpenie preposlania pošty",
+      description: "Zásielka č. 0 od nikoho",
       price: 0,
       price_vat: 0,
     },
@@ -238,10 +238,19 @@ async function sendMails() {
         order.value.company_id = selectedCompany.value.id;
         order.value.user_id = user.value.id;
 
+        order.value.description = "Preposlanie";
+
+        mails.value.forEach((mail) => {
+            const row = {
+                description: "Zásielka č. "+mail.id+"od: "+mail.sender,
+                price: 0,
+                price_vat: 0
+            };
+            order.value.items.push(row);
+        });
+
         order.value.amount = totalToPay.value;
         order.value.amount_vat = totalToPay.value * 0.2;
-        order.value.items[0].price = totalToPay.value;
-        order.value.items[0].price_vat = totalToPay.value * 0.2;
 
         order.value.fakturacne_udaje_id = invoiceProfileId;
 
@@ -296,14 +305,19 @@ async function scanMails() {
         order.value.company_id = selectedCompany.value.id;
         order.value.user_id = user.value.id;
 
-        order.value.description = "Objednávka scanovania pošty";
-        order.value.items[0].description = "Objednávka scanovania pošty";
+        order.value.description = "Scan";
+
+        mails.value.forEach((mail) => {
+            const row = {
+                description: "Zásielka č. "+mail.id+"od: "+mail.sender,
+                price: 0,
+                price_vat: 0
+            };
+            order.value.items.push(row);
+        });
 
         order.value.amount = totalToPay.value;
         order.value.amount_vat = totalToPay.value * 0.2;
-        order.value.items[0].price = totalToPay.value;
-        order.value.items[0].price_vat = totalToPay.value * 0.2;
-
         order.value.fakturacne_udaje_id = invoiceProfileId;
 
         await store
