@@ -174,13 +174,7 @@ const order = ref({
   is_paid: false,
   user_id: 0,
   company_id: 0,
-  items: [
-    {
-      description: "Zásielka č. 0 od nikoho",
-      price: 0,
-      price_vat: 0,
-    },
-  ],
+  items: [] as any,
   fakturacne_udaje_id: 0
 });
 let orderFromResponse;
@@ -242,7 +236,7 @@ async function sendMails() {
 
         mails.value.forEach((mail) => {
             const row = {
-                description: "Zásielka č. "+mail.id+"od: "+mail.sender,
+                description: "Zásielka č. "+mail.id+" od: "+mail.sender,
                 price: 0,
                 price_vat: 0
             };
@@ -309,7 +303,7 @@ async function scanMails() {
 
         mails.value.forEach((mail) => {
             const row = {
-                description: "Zásielka č. "+mail.id+"od: "+mail.sender,
+                description: "Zásielka č. "+mail.id+" od: "+mail.sender,
                 price: 0,
                 price_vat: 0
             };
