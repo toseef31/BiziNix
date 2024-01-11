@@ -12,7 +12,7 @@ async function search({ search }: any) {
       .catch((err) => {
         console.log(err);
       });
-
+      console.log(res.data)
     return res.data.Results.map((result: any) => {
       return {
         label: result.Name,

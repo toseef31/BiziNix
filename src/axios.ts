@@ -3,6 +3,7 @@ import store from "./store";
 
 const axiosClient = axios.create({
     baseURL: import.meta.env.VITE_API_ENDPOINT
+    //baseURL: "https://api.bizinix.sk/api/"
 })
 
 axiosClient.interceptors.request.use(config => {
