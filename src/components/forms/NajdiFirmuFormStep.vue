@@ -6,27 +6,189 @@
     label="IČO spoločnosti"
     placeholder="Zadajte IČO spoločnosti"
     :options="search"
-    validation="required"
+    validation="required|length:6"
+    empty-message="Subjekt nebol nájdený, zadajte správne ičo."
+    v-model="companyFromOsRs"
   >
     <template #option="{ option }">
       <div class="formkit-option grow p-2">
         <div class="font-bold">{{ option.label }}, {{ option.city }}</div>
-        <p class="option-overview">IČO: {{ option.ico }}</p>
       </div>
     </template>
   </FormKit>
   <div class="flex flex-col space-y-4 last:mb-4">
+    {{companyFromOsRs}}
     <EditItemForCompany title="Obchodné meno">
       <div class="grid grid-cols-2 items-center">
         <div>
-          <h1 class="text-lg">{{ companyData.obchodne_meno }}</h1>
+          <h1 v-bind:class="{ 'text-cross': newCompanyFullName.newCompanyName != ''  }" class="text-lg">{{ companyFromOsRs?.obchodne_meno }}</h1>
+          <h1 class="text-lg">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h1>
         </div>
         <div>
-          <button @click.prevent="" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <button @click="editCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <VueFinalModal
+              :modal-id="modalIdAddOrEditSubjects"
+              display-directive="if"
+              :clickToClose="false"
+              :escToClose="false"
+              :lockscroll="true"
+              class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+              content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+            >
+              <h1 class="text-white text-2xl">
+                Obchodné meno
+              </h1>
+              <p class="text-white mb-4" >Obchodné meno nemôže byť totožné s už existujúcim. Názov si overte cez www.orsr.sk alebo www.rpo.sk. Čiarky, pomlčky, medzery, veľké/malé písmená a podobne nie sú dostatočným odlišovacím znakom.</p>
+              <FormKit
+                type="form"
+                id="form_new_business_name" name="new_business_name"
+                @submit="closeModalAndSaveOrEditSpolocnikZakladatel"
+                :config="{ validationVisibility: 'live' }"
+                submit-label="Pridať"
+                #default="{ value, state: { valid } }"
+                :actions="false"
+              >
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormKit type="text" name="new_business_name" v-model="newCompanyFullName.newCompanyName" label="Nové obchodné meno" placeholder="Napíšte nové obchodné meno" validation="required|length:2" />
+                <FormKit type="select" name="pravnaForma" label="Právna forma" v-model="newCompanyFullName.newCompanyPravForm" placeholder="Vybrať"
+                  :options="['s. r. o.', ', s. r. o.', ', spol. s r. o.']" validation="required"
+                />
+              </div>
+                <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalForCompanyName"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                Potvrdiť
+                </button>
+              </div>
+              </FormKit>
+            </VueFinalModal>         
+              </div>
+            </div>
+    </EditItemForCompany>
+    <EditItemForCompany title="Sídlo">
+      <div class="grid grid-cols-2 items-center">
+        <div>
+          <h1 class="text-lg">{{ companyFromOsRs?.adresa.street + " " + companyFromOsRs?.adresa.number }}</h1>
+          <h1 class="text-lg">{{ companyFromOsRs?.adresa.city + " " + companyFromOsRs?.adresa.zip }}</h1>
+          <!-- <h1 class="text-lg">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h1> -->
         </div>
-      </div>
+        <div>
+          <button @click="editCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <VueFinalModal
+              :modal-id="modalIdAddOrEditSubjects"
+              display-directive="if"
+              :clickToClose="false"
+              :escToClose="false"
+              :lockscroll="true"
+              class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+              content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+            >
+              <h1 class="text-white text-2xl">
+                Obchodné meno
+              </h1>
+              <p class="text-white mb-4" >Obchodné meno nemôže byť totožné s už existujúcim. Názov si overte cez www.orsr.sk alebo www.rpo.sk. Čiarky, pomlčky, medzery, veľké/malé písmená a podobne nie sú dostatočným odlišovacím znakom.</p>
+              <FormKit
+                type="form"
+                id="form_new_business_name" name="new_business_name"
+                @submit="closeModalAndSaveOrEditSpolocnikZakladatel"
+                :config="{ validationVisibility: 'live' }"
+                submit-label="Pridať"
+                #default="{ value, state: { valid } }"
+                :actions="false"
+              >
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormKit type="text" name="new_business_name" v-model="newCompanyFullName.newCompanyName" label="Nové obchodné meno" placeholder="Napíšte nové obchodné meno" validation="required|length:2" />
+                <FormKit type="select" name="pravnaForma" label="Právna forma" v-model="newCompanyFullName.newCompanyPravForm" placeholder="Vybrať"
+                  :options="['s. r. o.', ', s. r. o.', ', spol. s r. o.']" validation="required"
+                />
+              </div>
+                <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalForCompanyName"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                Potvrdiť
+                </button>
+              </div>
+              </FormKit>
+            </VueFinalModal>         
+              </div>
+            </div>
     </EditItemForCompany>
     <EditItemForCompany title="Konatelia">
+      <div class="grid grid-cols-2 items-center">
+        <div>
+          <h1 class="text-lg">{{ companyFromOsRs?.statutarny_organ.konateľ[0].name }}</h1>
+          <!-- <h1 class="text-lg">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h1> -->
+        </div>
+        <div>
+          <button @click="editCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <VueFinalModal
+              :modal-id="modalIdAddOrEditSubjects"
+              display-directive="if"
+              :clickToClose="false"
+              :escToClose="false"
+              :lockscroll="true"
+              class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+              content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+            >
+              <h1 class="text-white text-2xl">
+                Obchodné meno
+              </h1>
+              <p class="text-white mb-4" >Obchodné meno nemôže byť totožné s už existujúcim. Názov si overte cez www.orsr.sk alebo www.rpo.sk. Čiarky, pomlčky, medzery, veľké/malé písmená a podobne nie sú dostatočným odlišovacím znakom.</p>
+              <FormKit
+                type="form"
+                id="form_new_business_name" name="new_business_name"
+                @submit="closeModalAndSaveOrEditSpolocnikZakladatel"
+                :config="{ validationVisibility: 'live' }"
+                submit-label="Pridať"
+                #default="{ value, state: { valid } }"
+                :actions="false"
+              >
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <FormKit type="text" name="new_business_name" v-model="newCompanyFullName.newCompanyName" label="Nové obchodné meno" placeholder="Napíšte nové obchodné meno" validation="required|length:2" />
+                <FormKit type="select" name="pravnaForma" label="Právna forma" v-model="newCompanyFullName.newCompanyPravForm" placeholder="Vybrať"
+                  :options="['s. r. o.', ', s. r. o.', ', spol. s r. o.']" validation="required"
+                />
+              </div>
+                <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalForCompanyName"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                Potvrdiť
+                </button>
+              </div>
+              </FormKit>
+            </VueFinalModal>         
+              </div>
+            </div>
     </EditItemForCompany>
     <EditItemForCompany title="Spoločníci">
     </EditItemForCompany>
@@ -44,17 +206,23 @@
 </template>
 
 <script setup lang="ts">
+
 import store from '@/store';
 import { getNode } from '@formkit/core';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import type Company from '@/types/Company';
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import EditItemForCompany from './EditItemForCompany.vue'
 
+const companyFromOsRs = ref();
 const vfm = useVfm()
 const modalIdAddOrEditSubjects = Symbol('modalIdAddOrEditSubjects')
 const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
+let newCompanyFullName = reactive({
+  newCompanyName: '',
+  newCompanyPravForm: ''
+})
 
 onBeforeMount(async () => {
   // const res = await store.dispatch("getCompanyFromOrsrByIco", "36562939");
@@ -63,26 +231,41 @@ onBeforeMount(async () => {
 
 async function search({ search }: any) {
   if (!search) return [];
-  if (search.length > 2) {
+  if (search.length > 5) {
     const searchQuery = {
       searchQuery: search,
     };
     const res = await store
-      .dispatch("searchCompanies", searchQuery)
+      .dispatch("getCompanyFromOrsrByIco", searchQuery.searchQuery)
       .catch((err) => {
         console.log(err);
       });
-// update function for search in other API
-    return res.data.Results.map((result: any) => {
-      return {
-        label: result.Name,
-        value: result,
-        city: result.City,
-        ico: result.Ico
-      };
-    });
+      console.log(res)
+    return [{
+        label: res.data.obchodne_meno,
+        value: res.data,
+        city: res.data.adresa.city
+    }];
   }
   return [];
+} 
+
+function editCompanyName() {
+  vfm.open(modalIdAddOrEditSubjects)
+}
+
+function closeModalForCompanyName(){
+  vfm.closeAll().then(() => {
+    newCompanyFullName.newCompanyName = '';
+    newCompanyFullName.newCompanyPravForm = '';
+  })
+}
+
+function closeModalAndSaveOrEditSpolocnikZakladatel() {
+  console.log("Calling submit function!")
+  vfm.close(modalIdAddOrEditSubjects)?.then(() => {
+    console.log("then");
+  })
 }
 
 const companyData = ref({
@@ -218,3 +401,9 @@ defineExpose({
 })
 
 </script>
+
+<style>
+.text-cross {
+  text-decoration: line-through;
+}
+</style>
