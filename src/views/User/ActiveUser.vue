@@ -88,7 +88,7 @@ onMounted(() => {
 
   const token = route.params.token
 
-  return axios.get(`${import.meta.env.VITE_API_ENDPOINT}/api/users/activate/${token}`)
+  return axios.get(`${import.meta.env.VITE_API_ENDPOINT}/users/activate/${token}`)
   .then(response => {
     errorMsg.value = null
     sucessMessage.value = "Účet úspešne aktivovaný. Môžete sa prihlásiť."
