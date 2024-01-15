@@ -44,6 +44,9 @@
                             </div>
                           </div>
                         </div>
+                        <div class="px-2 py-2 flex flex-row items-center text-center bg-gray-900 bg-opacity-70 rounded-md text-gray-300" v-if="notifications.length == 0">
+                          <div class="flex flex-col w-full"> Nemáte žiadne notifikácie </div>
+                        </div>
                     </div>
                 </div>
               </div>

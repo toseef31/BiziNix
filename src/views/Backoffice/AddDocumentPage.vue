@@ -302,14 +302,14 @@
                       >Názov Vašej banky</label
                     >
                     <label class="text-white pr-4">
-                      {{ companyBankDetails.name }}
+                      {{ companyBankDetails?.name }}
                     </label>
                   </div>
 
                   <div class="flex basis-1/2 flex-col justify-between">
                     <label class="text-white pr-4 font-bold">IBAN</label>
                     <label class="text-white pr-4">
-                      {{ companyBankDetails.iban }}
+                      {{ companyBankDetails?.iban }}
                     </label>
                   </div>
                 </div>
@@ -318,7 +318,7 @@
                   <div class="flex basis-1/2 flex-col justify-between px-4">
                     <label class="text-white pr-4 font-bold">SWIFT</label>
                     <label class="text-white pr-4">
-                      {{ companyBankDetails.swift }}
+                      {{ companyBankDetails?.swift }}
                     </label>
                   </div>
                 </div>
@@ -627,6 +627,7 @@ import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
 import { BuildingOfficeIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
+import { toast } from 'vue3-toastify'
 
 const route = useRoute();
 const router = useRouter();
@@ -649,7 +650,7 @@ const address = ref({
 const items = ref([
   {
     name: "",
-    quantity: 0,
+    quantity: 1,
     unit: "ks",
     unit_price: 0.0,
     vat: 0,
@@ -746,7 +747,6 @@ async function getCompanyDetails() {
       .dispatch("getDetailsOfCompanyFinstat", ico)
       .then((res: any) => {
         finstatCompanyDetails.value = res.data;
-        console.log(finstatCompanyDetails.value)
         document.value.ico = finstatCompanyDetails.value.Ico;
         document.value.dic = finstatCompanyDetails.value.Dic;
         document.value.icdph = finstatCompanyDetails.value.IcDPH;
@@ -877,7 +877,7 @@ function documentSubtypeChanged() {
 function addItem() {
   let item = {
       name: "",
-      quantity: 0,
+      quantity: 1,
       unit: "ks",
       unit_price: 0.0,
       vat: 0,
@@ -901,19 +901,24 @@ function cancelAddition() {
 }
 
 function submitHandler() {
-  submitted.value = true;
-  document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
-  document.value.items = items.value;
-  document.value.paid = document.value.total;
+  if(companyBankDetails.value != undefined){
+    submitted.value = true;
+    document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
+    document.value.items = items.value;
+    document.value.paid = document.value.total;
 
-  return store
-    .dispatch("addDocument", document.value)
-    .then((res) => {
-      showModal();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    return store
+      .dispatch("addDocument", document.value)
+      .then((res) => {
+        showModal();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    toast.error('Nemáte pridaný bankový účet.');
+  }
+  
 }
 
 const setModal = useModal({

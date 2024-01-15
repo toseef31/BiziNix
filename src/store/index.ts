@@ -404,6 +404,12 @@ export const store = createStore({
       );
       return data;
     },
+    async deleteBankAccount({ commit }, bankAccount) {
+      const { data } = await axiosClient.delete(
+        `/companies/${bankAccount.id}/deleteCompanyBankAccount`
+      );
+      return data;
+    },
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, companyId) {

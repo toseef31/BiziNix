@@ -111,22 +111,22 @@
                     Tržba (Obrat)
                   </div>
                   <div class="text-white">
-                    {{ finData.total }} €
+                    {{ finData.total.toFixed(2) }} €
                   </div>
                   <div class="text-gray-300 text-sm" v-if="company.is_dph">
-                    {{ finData.totalVat }} € s DPH
+                    {{ finData.totalVat.toFixed(2) }} € s DPH
                   </div>
                   <div class="text-teal-500">
                     Zisk
                   </div>
                   <div class="text-white">
-                    {{ finData.profit }} €
+                    {{ finData.profit.toFixed(2) }} €
                   </div>
                   <div class="text-red-500">
                     Neuhradené / Pohľadávky
                   </div>
                   <div class="text-white">
-                    {{ finData.totalToPay }} €
+                    {{ finData.totalToPay.toFixed(2) }} €
                   </div>
                   <div class="text-gray-300 text-sm text-right">
                     Viac info vo <router-link :to="{ name: 'CompanyDetails', params:{ activeTab:1 } }">finančnom reporte</router-link>
@@ -197,11 +197,11 @@
                             placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
                             @change="documentSubtypeChanged()" validation="required" />
                         </div>
-                        <div class="pl-4 text-white w-full py-4">
+                        <div class="px-4 text-white w-full py-4">
                           <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad" validation="required"
                             v-model="document.odberatel" />
                         </div>
-                        <div class="pl-4 text-white w-full py-4">
+                        <div class="px-4 text-white w-full py-4">
                           <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
                             v-model="document.serial_number" />
                         </div>
@@ -210,18 +210,18 @@
                             <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
                               validation="required|length:10" v-model="document.date_of_issue" :value="today" />
                           </div>
-                          <div class="flex text-white basis-2/3 pr-4">
+                          <div class="flex text-white basis-2/3 pr-4 gap-2">
                             <div class="w-full">
                               <FormKit type="number" id="amount" name="Suma" label="Suma v €" v-model="document.total"
                                 validation="required" />
                             </div>
                             <div class="w-full">
-                              <FormKit type="select" label="DPH" name="DPH" :options="['s DPH', 'bez DPH']"
+                              <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
                                 @change="dphChanged($event)" validation="required" />
                             </div>
                           </div>
                         </div>
-                        <div class="pl-4 w-full text-white">
+                        <div class="px-4 w-full text-white">
                           <FormKit id="scan" label="Importovať doklad" accept="image/*"
                             v-on:change="updateImgData($event)" name="scan" type="file" />
                         </div>
@@ -329,6 +329,7 @@ const document = ref({
   total: 0,
   payment_date: "",
   date_of_issue: today,
+  isDph: false
 });
 
 let title = ref("Faktúry");
@@ -399,7 +400,11 @@ const filteredDocumentsBySearch: any = computed(() => {
 });
 
 function dphChanged(event: any) {
-  //
+  if(event.target.value == 's DPH'){
+    document.value.isDph = true;
+  } else {
+    document.value.isDph = false;
+  }
 }
 
 function documentSubtypeChanged() {

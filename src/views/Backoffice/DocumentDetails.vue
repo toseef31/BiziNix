@@ -20,6 +20,7 @@
                 <button
                   class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded text-white"
                   v-on:click="cancelEdit()"
+                  type="button"
                 >
                   X
                 </button>
@@ -216,6 +217,7 @@
             @click="toggleAccordion()"
             class="flex items-center space-x-3 py-8"
             :aria-expanded="isOpen"
+            type="button"
           >
             <label class="pr-2">Zobraziť viac údajov</label>
             <svg
@@ -354,7 +356,7 @@
                 <div class="text-teal-500 flex basis-2/12">Cena</div>
                 <div
                   class="text-teal-500 flex basis-2/12"
-                  v-if="company.is_dph"
+                  v-if="document.isDph"
                 >
                   DPH %
                 </div>
@@ -409,7 +411,7 @@
                         @change="priceEntered(item)"
                       />
                     </div>
-                    <div class="flex basis-2/12" v-if="company.is_dph">
+                    <div class="flex basis-2/12" v-if="document.isDph">
                       <FormKit
                         autocomplete="nope"
                         type="number"
@@ -489,13 +491,13 @@
                         />
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="document.isDph">
                       <th class="text-left pl-2">DPH</th>
                       <th class="text-right pr-2">
                         {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="document.isDph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
                         {{ (totalPrice + totalPriceVat).toFixed(2) }}&nbsp;{{
@@ -524,7 +526,7 @@
 <script setup lang="ts">
 import type Company from "@/types/Company";
 import store from "@/store";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
@@ -673,7 +675,7 @@ function submitHandler() {
     });
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await refreshData();
   try {
     items.value = JSON.parse(document.value.items);
