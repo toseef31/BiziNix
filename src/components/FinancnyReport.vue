@@ -73,7 +73,10 @@ const profitActualYearData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8'],
+            fill: false,
+            borderColor: '#008080',
+            tension: 0.3
         },
     ],
 });
@@ -84,7 +87,10 @@ const salesActualYearData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8'],
+            fill: false,
+            borderColor: '#008080',
+            tension: 0.3
         },
     ],
 });
@@ -95,7 +101,7 @@ const assetsData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8', '#66b2b2', '#008080', '#006666'],
         },
     ],
 });
@@ -106,7 +112,7 @@ const equityData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8', '#66b2b2', '#008080', '#006666'],
         },
     ],
 });
@@ -117,7 +123,10 @@ const profitData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8'],
+            fill: false,
+            borderColor: '#008080',
+            tension: 0.3
         },
     ],
 });
@@ -128,7 +137,10 @@ const salesData = ref({
         {
             label: company.value.name,
             data: [] as any[],
-            backgroundColor: ['#008080'],
+            backgroundColor: ['#b2d8d8'],
+            fill: false,
+            borderColor: '#008080',
+            tension: 0.3
         },
     ],
 });
