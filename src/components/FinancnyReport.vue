@@ -72,7 +72,7 @@ const profitActualYearData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -83,7 +83,7 @@ const salesActualYearData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -94,7 +94,7 @@ const assetsData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -105,7 +105,7 @@ const equityData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -116,7 +116,7 @@ const profitData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -127,7 +127,7 @@ const salesData = ref({
     datasets: [
         {
             label: company.value.name,
-            data: [] as any[], 
+            data: [] as any[],
             backgroundColor: ['#008080'],
         },
     ],
@@ -138,64 +138,64 @@ async function getChartData(val: any) {
         ico: ""
     }
 
-    if(company.value !== undefined) {
+    if (company.value !== undefined) {
         ico = {
             ico: company.value.ico
         }
     }
 
     await store
-      .dispatch("getCompanyFindataFinstat", ico)
-      .then((res) => {
-        res.data.Ratios[0].Values.slice().reverse().forEach(element  => {
-            profitData.value.labels.push(element.Year);
-            profitData.value.datasets[0].data.push(element.Value);
-        });
+        .dispatch("getCompanyFindataFinstat", ico)
+        .then((res) => {
+            res.data.Ratios[0].Values.slice().reverse().forEach(element => {
+                profitData.value.labels.push(element.Year);
+                profitData.value.datasets[0].data.push(element.Value);
+            });
 
-        res.data.Ratios[1].Values.slice().reverse().forEach(element  => {
-            salesData.value.labels.push(element.Year);
-            salesData.value.datasets[0].data.push(element.Value);
-        });
+            res.data.Ratios[1].Values.slice().reverse().forEach(element => {
+                salesData.value.labels.push(element.Year);
+                salesData.value.datasets[0].data.push(element.Value);
+            });
 
-        res.data.Ratios[2].Values.slice().reverse().forEach(element  => {
-            assetsData.value.labels.push(element.Year);
-            assetsData.value.datasets[0].data.push(element.Value);
-        });
+            res.data.Ratios[2].Values.slice().reverse().forEach(element => {
+                assetsData.value.labels.push(element.Year);
+                assetsData.value.datasets[0].data.push(element.Value);
+            });
 
-        res.data.Ratios[3].Values.slice().reverse().forEach(element  => {
-            equityData.value.labels.push(element.Year);
-            equityData.value.datasets[0].data.push(element.Value);
+            res.data.Ratios[3].Values.slice().reverse().forEach(element => {
+                equityData.value.labels.push(element.Year);
+                equityData.value.datasets[0].data.push(element.Value);
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            toast.error('Error: ' + err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error('Error: '+err);
-    });
 
     await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
-          response.data.monthlySalesData.forEach(element  => {
-            salesActualYearData.value.labels.push(element.month);
-            salesActualYearData.value.datasets[0].data.push(element.total);
-        });
+            response.data.monthlySalesData.forEach(element => {
+                salesActualYearData.value.labels.push(element.month);
+                salesActualYearData.value.datasets[0].data.push(element.total);
+            });
 
-        response.data.monthlyProfitData.forEach(element  => {
-            profitActualYearData.value.labels.push(element.month);
-            profitActualYearData.value.datasets[0].data.push(element.total);
-        });
-    })
+            response.data.monthlyProfitData.forEach(element => {
+                profitActualYearData.value.labels.push(element.month);
+                profitActualYearData.value.datasets[0].data.push(element.total);
+            });
+        })
 }
 
 watch(
-  () => store.getters.getSelectedCompany,
-  function () {
-    getChartData(company.value.ico);
-  }
+    () => store.getters.getSelectedCompany,
+    function () {
+        getChartData(company.value.ico);
+    }
 );
 
 onMounted(async () => {
-    await getChartData(company.value.ico);  
+    await getChartData(company.value.ico);
 });
 
 </script>
