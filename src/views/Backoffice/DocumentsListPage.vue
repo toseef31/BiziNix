@@ -337,7 +337,9 @@ const finData = ref({
   total: 0,
   totalVat: 0,
   totalToPay: 0,
-  profit: 0
+  profit: 0,
+  monthlySalesData: [] as any[],
+  monthlyProfitData: [] as any[]
 });
 
 const navigation = [

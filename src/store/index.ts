@@ -383,6 +383,13 @@ export const store = createStore({
           return res.data;
         });
     },
+    async getCompanyFindataFinstat({ commit, dispatch }, ico) {
+      return axiosClient
+        .post("/companies/getCompanyFindataFinstat", ico)
+        .then((res) => {
+          return res.data;
+        });
+    },
     async getCompanySubstatuses({commit, dispatch}) {
       return axiosClient
       .get("/companies/getCompanySubStatuses")

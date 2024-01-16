@@ -1,72 +1,55 @@
 <template>
-    <div class="flex flex-row gap-4">
-        <span class="ms-3 font-medium text-gray-900">Súčasný rok</span>
-        <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" class="sr-only peer" v-model="dataYearSwitch">
-            <div
-                class="w-11 h-6 peer-focus:outline-none rounded-full peer bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600">
-            </div>
-        </label>
-        <span class="ms-3 font-medium text-gray-900">Posledné 4 roky</span>
-    </div>
-
-    <div v-if="!dataYearSwitch">
+    <div>
         <div class="py-4">
             <div class="text-3xl text-gray-800 font-bold">
                 Súčasný rok
             </div>
         </div>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 gap-4">
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Zisk</div>
-                    <LineChart :chartData="testDataYears" />
+                    <LineChart :chartData="profitActualYearData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Tržby</div>
-                    <LineChart :chartData="testDataYears" />
+                    <LineChart :chartData="salesActualYearData" />
                 </div>
             </div>
         </div>
 
     </div>
-    <div v-else>
+    <div>
         <div class="py-4">
             <div class="text-3xl text-gray-800 font-bold">
                 Posledné 4 roky
             </div>
         </div>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-4 gap-4">
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Zisk</div>
-                    <LineChart :chartData="testDataYears" />
+                    <LineChart :chartData="profitData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Tržby</div>
-                    <LineChart :chartData="testDataYears" />
+                    <LineChart :chartData="salesData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Aktíva</div>
-                    <DoughnutChart :chartData="testData" />
+                    <BarChart :chartData="assetsData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
                     <div class="font-bold text-gray-600">Pasíva</div>
-                    <DoughnutChart :chartData="testData" />
-                </div>
-            </div>
-            <div class="overflow-hidden bg-white shadow">
-                <div class="px-4 py-5 sm:px-6">
-                    <div class="font-bold text-gray-600">Daň z príjmu</div>
-                    <LineChart :chartData="testDataYears" />
+                    <BarChart :chartData="equityData" />
                 </div>
             </div>
         </div>
@@ -76,31 +59,143 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
-import { DoughnutChart, BarChart, LineChart } from "vue-chart-3";
+import { BarChart, LineChart } from "vue-chart-3";
+import { toast } from 'vue3-toastify'
 Chart.register(...registerables);
 
-const dataYearSwitch = ref(false);
+const company = computed(() => store.state.selectedCompany);
 
-const testData = {
-    labels: ['Základné imanie', 'Fondy zo zisku súčet', 'Rezervy', 'Dlhodobé záväzky', 'Krátkodobé záväzky', 'Bankové úvery'],
+const profitActualYearData = ref({
+    labels: [] as any[],
     datasets: [
         {
-            data: [30, 40, 60, 70, 5, 999],
-            backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED', '#97B0C9'],
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
         },
     ],
-};
+});
 
-const testDataYears = {
-    labels: ['2018', '2019', '2020', '2021', '2022'],
+const salesActualYearData = ref({
+    labels: [] as any[],
     datasets: [
         {
-            data: [166700, 250999, 335489, 478045, 500000],
-            backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
         },
     ],
-};
+});
+
+const assetsData = ref({
+    labels: [] as any[],
+    datasets: [
+        {
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
+        },
+    ],
+});
+
+const equityData = ref({
+    labels: [] as any[],
+    datasets: [
+        {
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
+        },
+    ],
+});
+
+const profitData = ref({
+    labels: [] as any[],
+    datasets: [
+        {
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
+        },
+    ],
+});
+
+const salesData = ref({
+    labels: [] as any[],
+    datasets: [
+        {
+            label: company.value.name,
+            data: [] as any[], 
+            backgroundColor: ['#008080'],
+        },
+    ],
+});
+
+async function getChartData(val: any) {
+    let ico = {
+        ico: ""
+    }
+
+    if(company.value !== undefined) {
+        ico = {
+            ico: company.value.ico
+        }
+    }
+
+    await store
+      .dispatch("getCompanyFindataFinstat", ico)
+      .then((res) => {
+        res.data.Ratios[0].Values.slice().reverse().forEach(element  => {
+            profitData.value.labels.push(element.Year);
+            profitData.value.datasets[0].data.push(element.Value);
+        });
+
+        res.data.Ratios[1].Values.slice().reverse().forEach(element  => {
+            salesData.value.labels.push(element.Year);
+            salesData.value.datasets[0].data.push(element.Value);
+        });
+
+        res.data.Ratios[2].Values.slice().reverse().forEach(element  => {
+            assetsData.value.labels.push(element.Year);
+            assetsData.value.datasets[0].data.push(element.Value);
+        });
+
+        res.data.Ratios[3].Values.slice().reverse().forEach(element  => {
+            equityData.value.labels.push(element.Year);
+            equityData.value.datasets[0].data.push(element.Value);
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('Error: '+err);
+    });
+
+    await store
+        .dispatch("getFinDataForCompany", company.value.id)
+        .then((response) => {
+          response.data.monthlySalesData.forEach(element  => {
+            salesActualYearData.value.labels.push(element.month);
+            salesActualYearData.value.datasets[0].data.push(element.total);
+        });
+
+        response.data.monthlyProfitData.forEach(element  => {
+            profitActualYearData.value.labels.push(element.month);
+            profitActualYearData.value.datasets[0].data.push(element.total);
+        });
+    })
+}
+
+watch(
+  () => store.getters.getSelectedCompany,
+  function () {
+    getChartData(company.value.ico);
+  }
+);
+
+onMounted(async () => {
+    await getChartData(company.value.ico);  
+});
 
 </script>
