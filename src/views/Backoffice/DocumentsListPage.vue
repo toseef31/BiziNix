@@ -299,8 +299,9 @@ import { useModal, Modal } from "usemodal-vue3";
 import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
-import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { XMarkIcon } from '@heroicons/vue/24/outline';
+import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
 const sidebarOpen = ref(false)
@@ -526,7 +527,7 @@ function importDocument() {
       router.go(0);
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -537,7 +538,7 @@ function uploadImg() {
       console.log(response.data);
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 

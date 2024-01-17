@@ -194,6 +194,7 @@ import { onBeforeMount, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useModal, Modal } from "usemodal-vue3";
 import type Company from "@/types/Company";
+import { toast } from "vue3-toastify";
 
 const router = useRouter();
 const company = ref({} as Company);
@@ -222,7 +223,7 @@ async function changeTemplate(id: any) {
       console.log("Šablóna úspešne zmenená.");
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -233,7 +234,7 @@ async function snCounterChanged() {
       console.log("Číslovanie úspešne zmenené.");
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -264,7 +265,7 @@ async function uploadLogo() {
       await refreshData();
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -277,7 +278,7 @@ async function uploadPodpis() {
       await refreshData();
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 

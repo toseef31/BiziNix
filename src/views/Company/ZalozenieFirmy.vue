@@ -149,8 +149,9 @@ import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.
 import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
-import { getValidationMessages } from '@formkit/validation'
-import { getNode } from '@formkit/core'
+import { getValidationMessages } from '@formkit/validation';
+import { getNode } from '@formkit/core';
+import { toast } from "vue3-toastify";
 
 const userIdFromStore = computed(() => { return store.getters.getUserId })
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
@@ -382,7 +383,7 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     console.log("Adding company: " + JSON.stringify(res));
     return res;
   } catch (err) {
-    console.log(err);
+    toast.error(err);
   }
 }
 
@@ -401,7 +402,7 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
     return res
   } catch(err) {
-    console.log(err)
+    toast.error(err)
   }
 }
 
@@ -420,7 +421,7 @@ async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> 
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
     return res
   } catch (err: any){
-    console.log(err)
+    toast.error(err)
   }
 
 }

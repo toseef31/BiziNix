@@ -347,7 +347,7 @@ async function addCompany(user: User, userId: any, hqId: any) {
     console.log("Company from Res " + JSON.stringify(res))
     return res
   }).catch( err => {
-    console.log(err)
+    toast.error(err)
   })
 
 }
@@ -387,7 +387,7 @@ async function addCompanyMember(companyId: number){
     console.log("Adding single company member: " + JSON.stringify(res))
     return res
   }).catch( err => {
-    console.log(err)
+    toast.error(err)
   })
 
 }
@@ -523,7 +523,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
   } catch(err: any) {
     errorMsg.value = err
-    console.log(err)
+    toast.error(err)
     node.setErrors(err.formErrors, err.fieldErrors)
   }
 }

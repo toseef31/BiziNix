@@ -27,7 +27,7 @@
 
     <div class="flex flex-row gap-8">
       <FormKit type="toggle" track-color-on="#319487" v-if="userId" v-model="createNewInvoiceProfile" label="Vytvoriť nový profil fakturačný profil?" name="checkForNewInvoiceProfil" />
-      <div class="flex">
+      <div class="flex" v-if="!userHasInvoiceProfile || createNewInvoiceProfile">
         <FormKit type="checkbox" v-model="orderingAsCompany" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
       </div>
     </div>
@@ -86,6 +86,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import type Address from '@/types/Address';
 import store from '@/store';
 import Autocomplete from "@/components/Autocomplete.vue";
+import { toast } from "vue3-toastify";
 
 const createNewInvoiceProfile = ref(false);
 const orderingAsCompany = ref(false);
@@ -164,14 +165,14 @@ async function getCompanyDetails() {
         invoiceAddress.value.country = "Slovensko";
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
 } 
 
 async function fetchInvoiceProfiles() {
   const res = await store.dispatch("getFakturacneUdajeByUserId", userId.value)
   isLoading.value = false
-  if(res.data[0].id){
+  if(res.data[0]?.id){
     userHasInvoiceProfile.value = true
     return res.data.map((data) => {
       return {

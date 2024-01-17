@@ -253,6 +253,7 @@ import { getValidationMessages } from '@formkit/validation'
 import { PlusCircleIcon } from '@heroicons/vue/24/outline';
 import type Address from '@/types/Address';
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const user = computed(() => store.state.user.userId);
 let invoiceProfiles = ref([] as any);
@@ -343,7 +344,7 @@ async function addInvoiceProfile() {
       });
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 

@@ -140,6 +140,7 @@ import type Address from "@/types/Address";
 import type Mail from "@/types/Mail";
 import { ChevronDownIcon, PlusCircleIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
+import { toast } from "vue3-toastify";
 
 
 const user = computed(() => store.state.user);
@@ -188,7 +189,7 @@ async function getCompanyDetails() {
         currentCompany.value.icdph = finstatCompanyDetails.value.IcDPH;
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
 } 
 
@@ -318,10 +319,10 @@ onMounted(async () => {
             });
         }).catch((err) => {
           currentCompany.value = newCompany.value;
-          console.log(err)
+          toast.error(err)
         });
     } catch (err){
-      console.log(err)
+      toast.error(err)
     }
   } else {
     currentCompany.value = newCompany.value;

@@ -483,6 +483,7 @@ import { useModal, Modal } from "usemodal-vue3";
 import * as _ from "lodash";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
 const searchQuery = ref("");
@@ -660,7 +661,7 @@ async function shredMails() {
       checkedMails.value = [];
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
   });
 }
 
@@ -688,7 +689,7 @@ function shredSingleMail(mail: any) {
         isVisible = setModal("m1", false);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
   }
 }
@@ -776,7 +777,7 @@ onBeforeMount(async () => {
   await store
     .dispatch("updateMultipleMails", mails.value)
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 });
 </script>

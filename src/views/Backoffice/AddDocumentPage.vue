@@ -627,7 +627,7 @@ import { useModal, Modal } from "usemodal-vue3";
 import Constants from "@/helpers/constants";
 import { BuildingOfficeIcon } from "@heroicons/vue/24/outline";
 import Autocomplete from "@/components/Autocomplete.vue";
-import { toast } from 'vue3-toastify'
+import { toast } from 'vue3-toastify';
 
 const route = useRoute();
 const router = useRouter();
@@ -756,7 +756,7 @@ async function getCompanyDetails() {
 
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
   }
 } 
@@ -913,7 +913,7 @@ function submitHandler() {
         showModal();
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
   } else {
     toast.error('Nemáte pridaný bankový účet.');

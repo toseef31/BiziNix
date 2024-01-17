@@ -157,6 +157,7 @@ import type Mail from "@/types/Mail";
 import stripePaymentComponent from './payments/PayStripe.vue';
 import { ChevronLeftIcon, CreditCardIcon } from '@heroicons/vue/24/outline';
 import { useRoute } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const route = useRoute();
 const user = computed(() => store.state.user.data);
@@ -280,7 +281,7 @@ async function sendMails() {
             })
             .catch((err) => {
                 paymentInProgress.value = false;
-                console.log(err);
+                toast.error(err);
             });
 
     } catch (err: any) {
@@ -333,7 +334,7 @@ async function scanMails() {
             })
             .catch((err) => {
                 paymentInProgress.value = false;
-                console.log(err);
+                toast.error(err);
             });
 
     } catch (err: any) {

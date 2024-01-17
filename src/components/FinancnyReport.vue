@@ -72,7 +72,7 @@
                                 class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
                                 >
                                 <div class="relative z-10 grid gap-1 bg-white p-3">
-                                    <slot> put content here </slot>
+                                    <slot> Aktíva sú ekonomické prostriedky, ktoré sú výsledkom minulých udalostí, od ktorých sa očakáva, že v budúcnosti povedú k zvýšeniu ekonomických úžitkov.  </slot>
                                 </div>
                                 </div>
                             </PopoverPanel>
@@ -117,7 +117,7 @@
                                 class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
                                 >
                                 <div class="relative z-10 grid gap-1 bg-white p-3">
-                                    <slot> put content here </slot>
+                                    <slot> Pasíva sú zdroje majetku, ktoré predstavujú celkovú sumu záväzkov účtovnej jednotky vrátane iných pasív a rozdielu majetku a záväzkov. </slot>
                                 </div>
                                 </div>
                             </PopoverPanel>
@@ -174,7 +174,10 @@ const profitActualYearData = ref({
             backgroundColor: ['#b2d8d8'],
             fill: false,
             borderColor: '#008080',
-            tension: 0.3
+            tension: 0.3,
+            pointStyle: 'circle',
+            pointRadius: 8,
+            pointHoverRadius: 10
         },
     ],
 });
@@ -188,7 +191,10 @@ const salesActualYearData = ref({
             backgroundColor: ['#b2d8d8'],
             fill: false,
             borderColor: '#008080',
-            tension: 0.3
+            tension: 0.3,
+            pointStyle: 'circle',
+            pointRadius: 8,
+            pointHoverRadius: 10
         },
     ],
 });
@@ -224,7 +230,10 @@ const profitData = ref({
             backgroundColor: ['#b2d8d8'],
             fill: false,
             borderColor: '#008080',
-            tension: 0.3
+            tension: 0.3,
+            pointStyle: 'circle',
+            pointRadius: 8,
+            pointHoverRadius: 10
         },
     ],
 });
@@ -238,7 +247,10 @@ const salesData = ref({
             backgroundColor: ['#b2d8d8'],
             fill: false,
             borderColor: '#008080',
-            tension: 0.3
+            tension: 0.3,
+            pointStyle: 'circle',
+            pointRadius: 8,
+            pointHoverRadius: 10
         },
     ],
 });
@@ -278,7 +290,7 @@ async function getChartData(val: any) {
             });
         })
         .catch((err) => {
-            console.log(err);
+            toast.error(err);
             toast.error('Error: ' + err);
         });
 

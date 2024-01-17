@@ -48,6 +48,7 @@ import { getValidationMessages } from '@formkit/validation'
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
 import PodnikatelskeUdajeDocumentsFormStep from "./podnikatelskeUdajeDocumentsFormStep.vue"
+import { toast } from "vue3-toastify";
 
 let doCompanyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
 let doAccountDataRef = ref<InstanceType<typeof userRegisterFormStep>>(null as any);
@@ -217,7 +218,7 @@ async function submitApp(formData: any) {
       await continueToPayment(userId, invoiceProfileId);
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error(err);
   }
 };
 
@@ -271,7 +272,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
             });
           })
           .catch((err) => {
-            console.log(err);
+            toast.error(err);
           });
       }
     } else {
@@ -289,7 +290,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
       });
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error(err);
   }
 }
 
@@ -319,7 +320,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                   });
                 })
                 .catch((err) => {
-                  console.log(err);
+                  toast.error(err);
                 });
             });
           } else {
@@ -359,12 +360,12 @@ async function continueToPayment(userId, invoiceProfileId) {
             });
           })
           .catch((err) => {
-            console.log(err);
+            toast.error(err);
           });
       });
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error(err);
   }
 }
 
@@ -398,7 +399,7 @@ async function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -414,7 +415,7 @@ async function registerUser(): Promise<Response> {
       return res.user_id;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -440,7 +441,7 @@ async function addHeadquarter(address_id): Promise<Response> {
       return hqFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -462,7 +463,7 @@ async function addCompany(userId): Promise<Response> {
       return companyFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 

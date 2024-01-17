@@ -385,7 +385,7 @@ function confirmDelete(document: Doklad) {
       router.go(0);
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -402,7 +402,7 @@ function confirmDeleteMultipleDocuments() {
         router.go(0);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err);
       });
   });
 }
@@ -467,7 +467,7 @@ function confirmReminder(document: Doklad, email: any, text: any) {
       return documentResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -488,7 +488,7 @@ function repayConfirm(document: Doklad) {
       router.go(0);
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 

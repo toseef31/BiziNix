@@ -58,6 +58,7 @@ import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
+import { toast } from "vue3-toastify";
 
 let hqDataRef = ref<InstanceType<typeof SidloVhqFormStepVue>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
@@ -151,7 +152,7 @@ function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -169,7 +170,7 @@ function registerUserAndReturnUserId(): Promise<any> {
       return res.user_id;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
@@ -215,7 +216,7 @@ function addCompany(userId): Promise<Response> {
       return companyFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error(err);
     });
 }
 
