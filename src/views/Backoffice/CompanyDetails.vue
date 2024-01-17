@@ -69,7 +69,7 @@
                 Stav poslednej objednávky
               </div>
               <div class="font-bold text-sm">
-                {{ substatus.description }}
+                {{ substatus?.description }}
               </div>
             </div>
             <div class="flex flex-col items-center">
