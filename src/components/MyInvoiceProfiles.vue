@@ -344,7 +344,7 @@ async function addInvoiceProfile() {
       });
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 

@@ -112,7 +112,7 @@
 
 <script setup lang="ts">
 import store from '@/store';
-import { onMounted, ref, reactive, watch } from 'vue';
+import { onBeforeMount, ref, reactive, watch, computed } from 'vue';
 import type Company from "@/types/Company";
 import type CompanyBankAccount from "@/types/CompanyBankAccount";
 import { useModal, Modal } from "usemodal-vue3";
@@ -120,10 +120,10 @@ import { PlusCircleIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { getValidationMessages } from '@formkit/validation'
 
 let company = ref({} as Company);
-let bankAccounts = ref([] as any[]);
+const bankAccounts = computed(() => store.state.bankAccounts as any[]);
 const messages = ref([]);
 const currentBankAccount = ref({} as CompanyBankAccount)
-const selectedBankAccount = ref({} as any);
+const selectedBankAccount = ref({} as CompanyBankAccount);
 
 const setModal = useModal({
   loadingModal: 1,
@@ -161,7 +161,7 @@ async function refreshData() {
   await store
     .dispatch("getCompanyBankDetails", company.value.headquarters_id)
     .then(async (response) => {
-      bankAccounts.value = response.data;
+      store.state.bankAccounts = response.data;
       bankAccounts.value.forEach(element => {
         if (element.is_main == 1) {
           element.is_main_b = true;
@@ -176,9 +176,9 @@ async function addBankAccount() {
   currentBankAccount.value.company_id = company.value.id;
   await store
     .dispatch("addBankAccount", currentBankAccount.value)
-    .then(() => {
+    .then(async () => {
+      await refreshData();
       closeModal("addBankAccount");
-      location.reload();
     });
 }
 
@@ -196,8 +196,8 @@ async function updateBankAccounts() {
   const bankoveUcty = { bankAccounts: bankAccounts.value };
   await store
     .dispatch("updateCompanyBankAccounts", bankoveUcty)
-    .then((response) => {
-      console.log(response)
+    .then(async () => {
+      await refreshData();
       closeModal("loadingModal");
     });
 }
@@ -205,9 +205,9 @@ async function updateBankAccounts() {
 async function deleteBankAccount() {
   await store
     .dispatch("deleteBankAccount", selectedBankAccount.value)
-    .then(() => {
+    .then(async () => {
+      await refreshData();
       closeModal("deleteBankAccount");
-      location.reload();
     });
 }
 
@@ -221,7 +221,7 @@ function showErrors(node: any) {
   })
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   company.value = store.getters.getSelectedCompany;
   await refreshData();
 })

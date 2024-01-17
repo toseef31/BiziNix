@@ -676,6 +676,7 @@ function submitHandler() {
 }
 
 onBeforeMount(async () => {
+  store.state.mySubmenuActive = 1;
   await refreshData();
   try {
     items.value = JSON.parse(document.value.items);

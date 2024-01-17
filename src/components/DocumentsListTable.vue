@@ -108,7 +108,7 @@
       </li>
     </ul>
   </div>
-  <div v-if="data.length == 0">
+  <div v-if="documents?.length == 0">
     <div>Momentálne nemáte vo svojom účte žiadne doklady.</div>
   </div>
   <Modal name="deleteModal" v-model:visible="isVisible" :type="'clean'" :closable="false" title="Zmazanie dokladu">
@@ -255,8 +255,7 @@ import * as _ from "lodash";
 import type Company from "@/types/Company";
 import { toast } from "vue3-toastify";
 
-const props = defineProps(["data"]);
-const documents = computed(() => props.data);
+const documents = computed(() => store.state.documents);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 const company = ref({} as Company);
@@ -362,13 +361,13 @@ async function duplicateDocument(document: any) {
     .dispatch("addDocument", newDocument)
     .then(() => {
       store.dispatch("setDocument", newDocument).then(() => {
+        store.state.documents.pop(document.id);
         closeModal('loadingModal');
-        router.go(0);
       });
     })
     .catch((err) => {
       closeModal('loadingModal');
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -378,14 +377,14 @@ function deleteSingleDocument(document: Doklad) {
 }
 
 function confirmDelete(document: Doklad) {
-  isVisible = setModal("deleteModal", false);
   store
     .dispatch("deleteDocument", document.id)
     .then(() => {
-      router.go(0);
+      store.state.documents.pop(document.id);
+      isVisible = setModal("deleteModal", false);
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -394,15 +393,15 @@ function deleteMultipleDocuments() {
 }
 
 function confirmDeleteMultipleDocuments() {
-  isVisible = setModal("deleteMultipleModal", false);
   selectedDocuments.value.forEach(function (value: any) {
     store
       .dispatch("deleteDocument", value.id)
       .then(() => {
-        router.go(0);
+        store.state.documents.pop(value.id);
+        isVisible = setModal("deleteMultipleModal", false);
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
   });
 }
@@ -467,7 +466,7 @@ function confirmReminder(document: Doklad, email: any, text: any) {
       return documentResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -485,10 +484,9 @@ function repayConfirm(document: Doklad) {
   store
     .dispatch("updateDocument", document)
     .then(() => {
-      router.go(0);
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 

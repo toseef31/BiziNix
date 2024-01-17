@@ -162,13 +162,13 @@ onBeforeMount(async () => {
    }
 })
 
-const activeTopNav = ref(0);
+const activeTopNav = computed(() => store.state.mySubmenuActive);
 
 function redirectToByName(rname: string) {
   switch(rname) {
-    case 'Moja firma': activeTopNav.value = 0; break;
-    case 'Doklady': activeTopNav.value = 1; break;
-    case 'Sídlo a pošta': activeTopNav.value = 2; break;
+    case 'Moja firma': store.state.mySubmenuActive = 0; break;
+    case 'Doklady': store.state.mySubmenuActive = 1; break;
+    case 'Sídlo a pošta': store.state.mySubmenuActive = 2; break;
   }
   
   if(rname == "Moja firma") {

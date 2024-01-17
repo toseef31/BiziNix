@@ -218,7 +218,7 @@ async function submitApp(formData: any) {
       await continueToPayment(userId, invoiceProfileId);
     }
   } catch (err: any) {
-    toast.error(err);
+    toast.error('Error: ' + err);
   }
 };
 
@@ -272,7 +272,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
             });
           })
           .catch((err) => {
-            toast.error(err);
+            toast.error('Error: ' + err);
           });
       }
     } else {
@@ -290,7 +290,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
       });
     }
   } catch (err: any) {
-    toast.error(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -320,7 +320,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                   });
                 })
                 .catch((err) => {
-                  toast.error(err);
+                  toast.error('Error: ' + err);
                 });
             });
           } else {
@@ -360,12 +360,12 @@ async function continueToPayment(userId, invoiceProfileId) {
             });
           })
           .catch((err) => {
-            toast.error(err);
+            toast.error('Error: ' + err);
           });
       });
     }
   } catch (err: any) {
-    toast.error(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -399,7 +399,7 @@ async function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -415,7 +415,7 @@ async function registerUser(): Promise<Response> {
       return res.user_id;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -441,7 +441,7 @@ async function addHeadquarter(address_id): Promise<Response> {
       return hqFromResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -463,7 +463,7 @@ async function addCompany(userId): Promise<Response> {
       return companyFromResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 

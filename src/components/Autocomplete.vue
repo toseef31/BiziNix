@@ -11,7 +11,7 @@ async function search({ search }: any) {
     const res = await store
       .dispatch("searchCompanies", searchQuery)
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
       console.log(res.data)
     return res.data.Results.map((result: any) => {

@@ -32,6 +32,9 @@ export const store = createStore({
     selectedVhqPackage: {} as any,
     notifications: [] as any,
     documentTab: 1,
+    mySubmenuActive: 0,
+    bankAccounts: [] as any,
+    documents: [] as any[],
   },
   getters: {
     getUserId: (state) => {
@@ -419,8 +422,8 @@ export const store = createStore({
     },
     //#endregion
     //#region documents
-    async getAllDocumentsForCompany({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/documents/${companyId}/getAll`);
+    async getAllDocumentsForCompany({ commit }, inputs) {
+      const { data } = await axiosClient.get(`/documents/${inputs.companyId}/getAll?page=${inputs.page}`);
       return data;
     },
     async getFinDataForCompany({ commit }, companyId) {

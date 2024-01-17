@@ -383,7 +383,7 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     console.log("Adding company: " + JSON.stringify(res));
     return res;
   } catch (err) {
-    toast.error(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -402,7 +402,7 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
     return res
   } catch(err) {
-    toast.error(err)
+    toast.error('Error: ' + err)
   }
 }
 
@@ -421,7 +421,7 @@ async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> 
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
     return res
   } catch (err: any){
-    toast.error(err)
+    toast.error('Error: ' + err)
   }
 
 }

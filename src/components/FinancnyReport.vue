@@ -290,7 +290,6 @@ async function getChartData(val: any) {
             });
         })
         .catch((err) => {
-            toast.error(err);
             toast.error('Error: ' + err);
         });
 

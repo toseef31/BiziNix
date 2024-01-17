@@ -243,7 +243,7 @@ async function getCompanyDetails() {
       currentCompany.value.ico = finstatCompanyDetails.value.Ico;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -286,7 +286,7 @@ async function getCompanies(userId) {
     .then((response) => {
       companies.value = response.data;
     }).catch((err) => {
-      toast.error(err)
+      toast.error('Error: ' + err)
     });
 }
 

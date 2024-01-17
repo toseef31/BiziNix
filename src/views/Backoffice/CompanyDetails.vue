@@ -218,6 +218,7 @@ onBeforeMount(async () => {
   activeTab.value = props.activeTab;
   tab.value = props.activeTab;
   companySubstatuses.value = await store.dispatch("getCompanySubstatuses");
+  store.state.mySubmenuActive = 0;
   await refreshData();
   
 });

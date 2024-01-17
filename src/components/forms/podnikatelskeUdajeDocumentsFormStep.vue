@@ -189,7 +189,7 @@ async function getCompanyDetails() {
         currentCompany.value.icdph = finstatCompanyDetails.value.IcDPH;
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
 } 
 
@@ -319,10 +319,10 @@ onMounted(async () => {
             });
         }).catch((err) => {
           currentCompany.value = newCompany.value;
-          toast.error(err)
+          toast.error('Error: ' + err)
         });
     } catch (err){
-      toast.error(err)
+      toast.error('Error: ' + err)
     }
   } else {
     currentCompany.value = newCompany.value;

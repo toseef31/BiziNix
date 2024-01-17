@@ -223,7 +223,7 @@ async function changeTemplate(id: any) {
       console.log("Šablóna úspešne zmenená.");
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -234,7 +234,7 @@ async function snCounterChanged() {
       console.log("Číslovanie úspešne zmenené.");
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -265,7 +265,7 @@ async function uploadLogo() {
       await refreshData();
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -278,7 +278,7 @@ async function uploadPodpis() {
       await refreshData();
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -314,6 +314,7 @@ async function refreshData() {
 }
 
 onBeforeMount(async () => {
+  store.state.mySubmenuActive = 1;
   await refreshData();
 });
 </script>

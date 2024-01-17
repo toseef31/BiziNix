@@ -239,7 +239,7 @@ async function search({ search }: any) {
     const res = await store
       .dispatch("getCompanyFromOrsrByIco", searchQuery.searchQuery)
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
       console.log(res)
     return [{

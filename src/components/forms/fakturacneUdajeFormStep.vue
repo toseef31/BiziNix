@@ -165,7 +165,7 @@ async function getCompanyDetails() {
         invoiceAddress.value.country = "Slovensko";
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
 } 
 

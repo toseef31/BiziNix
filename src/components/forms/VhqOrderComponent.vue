@@ -152,7 +152,7 @@ function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -170,7 +170,7 @@ function registerUserAndReturnUserId(): Promise<any> {
       return res.user_id;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -216,7 +216,7 @@ function addCompany(userId): Promise<Response> {
       return companyFromResponse;
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 }
 

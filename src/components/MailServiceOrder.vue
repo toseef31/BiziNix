@@ -281,7 +281,7 @@ async function sendMails() {
             })
             .catch((err) => {
                 paymentInProgress.value = false;
-                toast.error(err);
+                toast.error('Error: ' + err);
             });
 
     } catch (err: any) {
@@ -334,7 +334,7 @@ async function scanMails() {
             })
             .catch((err) => {
                 paymentInProgress.value = false;
-                toast.error(err);
+                toast.error('Error: ' + err);
             });
 
     } catch (err: any) {

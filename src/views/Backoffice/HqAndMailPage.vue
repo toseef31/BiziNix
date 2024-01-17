@@ -661,7 +661,7 @@ async function shredMails() {
       checkedMails.value = [];
     })
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
   });
 }
 
@@ -689,7 +689,7 @@ function shredSingleMail(mail: any) {
         isVisible = setModal("m1", false);
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
   }
 }
@@ -773,11 +773,12 @@ async function refreshData() {
 
 onBeforeMount(async () => {
   store.dispatch("userAddress");
+  store.state.mySubmenuActive = 2;
   await refreshData();
   await store
     .dispatch("updateMultipleMails", mails.value)
     .catch((err) => {
-      toast.error(err);
+      toast.error('Error: ' + err);
     });
 });
 </script>

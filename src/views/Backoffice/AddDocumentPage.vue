@@ -756,7 +756,7 @@ async function getCompanyDetails() {
 
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
   }
 } 
@@ -913,7 +913,7 @@ function submitHandler() {
         showModal();
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error('Error: ' + err);
       });
   } else {
     toast.error('Nemáte pridaný bankový účet.');
@@ -948,6 +948,7 @@ function closeModal() {
 }
 
 onBeforeMount(async () => {
+  store.state.mySubmenuActive = 1;
   await refreshData();
   await setSerialNumber();
 });
