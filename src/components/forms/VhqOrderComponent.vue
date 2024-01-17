@@ -141,26 +141,6 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
   .catch((error: any) => {
     console.log(error)
   })
-
-
-  // invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-
-  // if(userRegisterForm.value.userData.id) {
-  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userRegisterForm.value.userData.id;
-  // } else {
-  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
-  // }
-
-  // return store
-  //   .dispatch("addInvoiceProfile", invoiceDataRef.value.currentInvoiceProfile)
-  //   .then((res) => {
-  //     invoiceProfileFromResponse = res;
-  //     invoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
-  //     return invoiceProfileFromResponse;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
 }
 
 function registerAddress(): Promise<Response> {
@@ -195,8 +175,8 @@ function registerUserAndReturnUserId(): Promise<any> {
 
 function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
-  headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.company.name;
-  headquarter.value.name = "VS-" + companyDataRef.value.company.name;
+  headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
+  headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
   
   //treba podla balika updatnut
   headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
@@ -221,15 +201,15 @@ function addHeadquarter(): Promise<Response> {
 
 function addCompany(userId): Promise<Response> {
   if(userRegisterForm.value.userData.id) {
-    companyDataRef.value.company.owner = userRegisterForm.value.userData.id;
+    companyDataRef.value.currentCompany.owner = userRegisterForm.value.userData.id;
   } else {
-    companyDataRef.value.company.owner = userId;
+    companyDataRef.value.currentCompany.owner = userId;
   }
-  companyDataRef.value.company.headquarters_id = hqFromResponse.id;
-  companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
+  companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
+  companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   return store
-    .dispatch("addCompany", companyDataRef.value.company)
+    .dispatch("addCompany", companyDataRef.value.currentCompany)
     .then((res) => {
       companyFromResponse = res;
       return companyFromResponse;
@@ -308,76 +288,6 @@ const submitApp = async (formData: any, node: any) => {
         },
       });
     })
-
-    // if(userRegisterForm.value.userData.id) {
-    //   if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
-    //     registerAddress().then(async () => {
-    //       invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-    //       await addInvoiceProfile().then(() => {
-    //         addHeadquarter().then(() => {
-    //             addCompany().then(() => {
-    //               addOrder().then(() => {
-    //                 hqFromResponse = null;
-    //                 companyDataRef.value.company.owner = 0;
-    //                 companyDataRef.value.company.headquarters_id = 0;
-    //                 closeModal();
-    //                 router.push({
-    //                   name: "Thanks You New Order",
-    //                   params: {
-    //                     orderId: orderFromRes.id,
-    //                   },
-    //                 });
-    //               });
-    //             });
-    //           });
-    //       });    
-    //     });
-    //   } else {
-    //     addHeadquarter().then(() => {
-    //       addCompany().then(() => {
-    //         addOrder().then(() => {
-    //           hqFromResponse = null;
-    //           companyDataRef.value.company.owner = 0;
-    //           companyDataRef.value.company.headquarters_id = 0;
-    //           closeModal();
-    //           router.push({
-    //             name: "Thanks You New Order",
-    //             params: {
-    //               orderId: orderFromRes.id,
-    //             },
-    //           });
-    //         });
-    //       });
-    //     });  
-    //   }
-    // } else {
-    //   registerAddress().then(() => {
-    //     registerUser().then(() => {
-    //       if (userFromResponse) {
-    //         invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-    //         addInvoiceProfile().then(() => {
-    //             addHeadquarter().then(() => {
-    //               addCompany().then(() => {
-    //                 addOrder().then(() => {
-    //                   userFromResponse = null;
-    //                   hqFromResponse = null;
-    //                   companyDataRef.value.company.owner = 0;
-    //                   companyDataRef.value.company.headquarters_id = 0;
-    //                   closeModal();
-    //                   router.push({
-    //                     name: "Thanks You New Order",
-    //                     params: {
-    //                       orderId: orderFromRes.id,
-    //                     },
-    //                   });
-    //                 });
-    //               });
-    //             });
-    //         });
-    //       }
-    //     });
-    //   });
-    // }
     
     node.clearErrors();
   } catch (err: any) {

@@ -42,13 +42,90 @@
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
-                    <div class="font-bold text-gray-600">Aktíva</div>
+                    <div class="flex flex-row gap-2">
+                        <Popover v-slot="{ open, close }" class="relative">
+                            <PopoverButton
+                            class="group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-primary"
+                            @mouseover="(e) => hoverPopover(e, open)"
+                            @mouseleave="closePopover(close)"
+                            >
+                            <InformationCircleIcon
+                                class="ml-1 h-6 w-6 text-primary transition-transform group-hover:text-primary"
+                                aria-hidden="true"
+                            />
+                            </PopoverButton>
+
+                            <transition
+                            enter-active-class="transition ease-out duration-200"
+                            enter-from-class="opacity-0 translate-y-1"
+                            enter-to-class="opacity-100 translate-y-0"
+                            leave-active-class="transition ease-in duration-150"
+                            leave-from-class="opacity-100 translate-y-0"
+                            leave-to-class="opacity-0 translate-y-1"
+                            >
+                            <PopoverPanel
+                                class="absolute z-10 mt-3 w-auto min-w-[15rem] px-2 sm:px-0"
+                                @mouseover.prevent="popoverHover = true"
+                                @mouseleave.prevent="closePopover(close)"
+                            >
+                                <div
+                                class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                                >
+                                <div class="relative z-10 grid gap-1 bg-white p-3">
+                                    <slot> put content here </slot>
+                                </div>
+                                </div>
+                            </PopoverPanel>
+                            </transition>
+                        </Popover>
+                        <div class="font-bold text-gray-600">Aktíva</div>
+
+                    </div>
+
                     <BarChart :chartData="assetsData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
-                    <div class="font-bold text-gray-600">Pasíva</div>
+                    <div class="flex flex-row gap-2">
+                        <Popover v-slot="{ open, close }" class="relative">
+                            <PopoverButton
+                            class="group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-primary"
+                            @mouseover="(e) => hoverPopover(e, open)"
+                            @mouseleave="closePopover(close)"
+                            >
+                            <InformationCircleIcon
+                                class="ml-1 h-6 w-6 text-primary transition-transform group-hover:text-primary"
+                                aria-hidden="true"
+                            />
+                            </PopoverButton>
+
+                            <transition
+                            enter-active-class="transition ease-out duration-200"
+                            enter-from-class="opacity-0 translate-y-1"
+                            enter-to-class="opacity-100 translate-y-0"
+                            leave-active-class="transition ease-in duration-150"
+                            leave-from-class="opacity-100 translate-y-0"
+                            leave-to-class="opacity-0 translate-y-1"
+                            >
+                            <PopoverPanel
+                                class="absolute z-10 mt-3 w-auto min-w-[15rem] px-2 sm:px-0"
+                                @mouseover.prevent="popoverHover = true"
+                                @mouseleave.prevent="closePopover(close)"
+                            >
+                                <div
+                                class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                                >
+                                <div class="relative z-10 grid gap-1 bg-white p-3">
+                                    <slot> put content here </slot>
+                                </div>
+                                </div>
+                            </PopoverPanel>
+                            </transition>
+                        </Popover>
+                        <div class="font-bold text-gray-600">Pasíva</div>
+
+                    </div>
                     <BarChart :chartData="equityData" />
                 </div>
             </div>
@@ -62,10 +139,31 @@ import store from '@/store';
 import { onMounted, ref, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import { BarChart, LineChart } from "vue-chart-3";
-import { toast } from 'vue3-toastify'
+import { toast } from 'vue3-toastify';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
+import { InformationCircleIcon } from "@heroicons/vue/24/outline";
 Chart.register(...registerables);
 
 const company = computed(() => store.state.selectedCompany);
+const popoverHover = ref(false)
+const popoverTimeout = ref()
+
+const hoverPopover = (e: any, open: boolean): void => {
+  popoverHover.value = true
+  if (!open) {
+    e.target.parentNode.click()
+  }
+}
+
+const closePopover = (close: any): void => {
+  popoverHover.value = false
+  if (popoverTimeout.value) clearTimeout(popoverTimeout.value)
+  popoverTimeout.value = setTimeout(() => {
+    if (!popoverHover.value) {
+      close()
+    }
+  }, 100)
+}
 
 const profitActualYearData = ref({
     labels: [] as any[],
