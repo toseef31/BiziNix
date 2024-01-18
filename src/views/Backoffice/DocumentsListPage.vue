@@ -238,25 +238,16 @@
                 </div>
                 <div class="flex flex-col items-center w-full py-8 px-10">
                   <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
+                  <DocumentsListTable></DocumentsListTable>
                   <div class="flex flex-row w-full py-4 justify-around">
-                    <div>
+                    <div v-if="documentsData.next_page_url != null"> 
                       <button
-                        :disabled="documentsData.prev_page_url == null? true : false"
-                        :class="[documentsData.prev_page_url == null? 'bg-gray-500' : 'bg-teal-500 hover:bg-teal-700', 'px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white']"
-                        v-on:click="getPageData(documentsData.current_page, 'prev')">
-                        <ChevronLeftIcon class="h-6 w-6 text-white" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <div> 
-                      <button
-                        :disabled="documentsData.next_page_url == null? true : false"
-                        :class="[documentsData.next_page_url == null? 'bg-gray-500' : 'bg-teal-500 hover:bg-teal-700', 'px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white']"
+                        class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
                         v-on:click="getPageData(documentsData.current_page, 'next')">
-                        <ChevronRightIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                        <span class="px-4">Načítať viac</span><ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
-                  <DocumentsListTable></DocumentsListTable>
                 </div>
                 <div class="flex flex-col items-center">
                   <button
@@ -318,7 +309,7 @@ import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { XMarkIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
@@ -583,9 +574,7 @@ watch(
 );*/
 
 async function getPageData(page: number, type: string) {
-  if(type == 'prev') {
-    page--;
-  } else {
+  if(type == 'next') {
     page++;
   }
 
@@ -597,7 +586,9 @@ async function getPageData(page: number, type: string) {
   await store
         .dispatch("getAllDocumentsForCompany", inputs)
         .then((response) => {
-          documents.value = response.data.data;
+          response.data.data.forEach(element => {
+            documents.value.push(element);
+          });
           documentsData.value = response.data;
           filteredDocuments.value = documents.value.filter((document: any) => {
             if (document.subtype == 1) {
