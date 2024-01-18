@@ -1,4 +1,9 @@
 <template>
+    <div class="pb-2">
+            <div class=" text-gray-800 font-bold">
+                Uvedené sumy sú bez DPH.
+            </div>
+        </div>
     <div>
         <div class="py-4">
             <div class="text-3xl text-gray-800 font-bold">
@@ -8,13 +13,13 @@
         <div class="grid grid-cols-2 gap-4">
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
-                    <div class="font-bold text-gray-600">Zisk</div>
+                    <div class="font-bold text-gray-600">Zisk - {{ actualYearData.profit }}€</div>
                     <LineChart :chartData="profitActualYearData" />
                 </div>
             </div>
             <div class="overflow-hidden bg-white shadow">
                 <div class="px-4 py-5 sm:px-6">
-                    <div class="font-bold text-gray-600">Tržby</div>
+                    <div class="font-bold text-gray-600">Tržby - {{ actualYearData.total }}€</div>
                     <LineChart :chartData="salesActualYearData" />
                 </div>
             </div>
@@ -145,8 +150,17 @@ import { InformationCircleIcon } from "@heroicons/vue/24/outline";
 Chart.register(...registerables);
 
 const company = computed(() => store.state.selectedCompany);
-const popoverHover = ref(false)
-const popoverTimeout = ref()
+const popoverHover = ref(false);
+const popoverTimeout = ref();
+
+const actualYearData = ref({
+  total: 0,
+  totalVat: 0,
+  totalToPay: 0,
+  profit: 0,
+  monthlySalesData: [] as any[],
+  monthlyProfitData: [] as any[]
+});
 
 const hoverPopover = (e: any, open: boolean): void => {
   popoverHover.value = true
@@ -269,25 +283,27 @@ async function getChartData(val: any) {
     await store
         .dispatch("getCompanyFindataFinstat", ico)
         .then((res) => {
-            res.data.Ratios[0].Values.slice().reverse().forEach(element => {
-                profitData.value.labels.push(element.Year);
-                profitData.value.datasets[0].data.push(element.Value);
-            });
+            if(res.data.Ratios) {
+                res.data.Ratios[0].Values.slice().reverse().forEach(element => {
+                    profitData.value.labels.push(element.Year);
+                    profitData.value.datasets[0].data.push(element.Value);
+                });
 
-            res.data.Ratios[1].Values.slice().reverse().forEach(element => {
-                salesData.value.labels.push(element.Year);
-                salesData.value.datasets[0].data.push(element.Value);
-            });
+                res.data.Ratios[1].Values.slice().reverse().forEach(element => {
+                    salesData.value.labels.push(element.Year);
+                    salesData.value.datasets[0].data.push(element.Value);
+                });
 
-            res.data.Ratios[2].Values.slice().reverse().forEach(element => {
-                assetsData.value.labels.push(element.Year);
-                assetsData.value.datasets[0].data.push(element.Value);
-            });
+                res.data.Ratios[2].Values.slice().reverse().forEach(element => {
+                    assetsData.value.labels.push(element.Year);
+                    assetsData.value.datasets[0].data.push(element.Value);
+                });
 
-            res.data.Ratios[3].Values.slice().reverse().forEach(element => {
-                equityData.value.labels.push(element.Year);
-                equityData.value.datasets[0].data.push(element.Value);
-            });
+                res.data.Ratios[3].Values.slice().reverse().forEach(element => {
+                    equityData.value.labels.push(element.Year);
+                    equityData.value.datasets[0].data.push(element.Value);
+                });
+            }
         })
         .catch((err) => {
             toast.error('Error: ' + err);
@@ -296,12 +312,13 @@ async function getChartData(val: any) {
     await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
-            response.data.monthlySalesData.forEach(element => {
+            actualYearData.value = response.data;
+            actualYearData.value.monthlySalesData.forEach(element => {
                 salesActualYearData.value.labels.push(element.month);
                 salesActualYearData.value.datasets[0].data.push(element.total);
             });
 
-            response.data.monthlyProfitData.forEach(element => {
+            actualYearData.value.monthlyProfitData.forEach(element => {
                 profitActualYearData.value.labels.push(element.month);
                 profitActualYearData.value.datasets[0].data.push(element.total);
             });

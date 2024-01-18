@@ -433,7 +433,7 @@ export const store = createStore({
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, inputs) {
-      const { data } = await axiosClient.get(`/documents/${inputs.companyId}/getAll?page=${inputs.page}`);
+      const { data } = await axiosClient.get(`/documents/${inputs.companyId}/${inputs.type}/getAll?page=${inputs.page}`);
       return data;
     },
     async getFinDataForCompany({ commit }, companyId) {

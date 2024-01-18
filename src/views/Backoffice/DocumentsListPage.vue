@@ -238,12 +238,43 @@
                 </div>
                 <div class="flex flex-col items-center w-full py-8 px-10">
                   <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
+                  <div class="flex flex-row w-full justify-center gap-10 py-4">
+                    <div class="flex flex-1/4 flex-row">
+                      <div class="flex relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                          </svg>
+                        </div>
+                        <input id="searchInput" v-model="searchQuery" placeholder="Vyhľadajte doklad"
+                          class="h-12 pl-8 w-full shadow px-1 rounded-xl border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-gray-300 bg-gray-900" />
+                      </div>
+                    </div>
+                    <!---->
+
+                    <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
+                      <div class="flex relative">
+                        <div class="self-center font-bold px-2 text-white">Od:</div>
+                        <input id="searchInput" type="date" v-model="dateFrom"
+                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      </div>
+                      <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
+                      <div class="flex relative">
+                        <div class="self-center font-bold pr-2 text-white">Do:</div>
+                        <input id="searchInput" type="date" v-model="dateTo"
+                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
                   <DocumentsListTable></DocumentsListTable>
                   <div class="flex flex-row w-full py-4 justify-around">
                     <div v-if="documentsData.next_page_url != null"> 
                       <button
                         class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
-                        v-on:click="getPageData(documentsData.current_page, 'next')">
+                        v-on:click="getDocuments(documentsData.current_page, 'next', activeDocTab)">
                         <span class="px-4">Načítať viac</span><ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
@@ -321,13 +352,13 @@ const docTab = ref(1);
 const activeDocTab = ref(1);
 const company = ref({} as Company);
 const documents = ref([] as Doklad[]);
-const filteredDocuments = ref([] as Doklad[]);
 const searchQuery = ref("");
+const dateFrom = ref(null);
+const dateTo = ref(null);
 const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
-
 const documentsData = ref();
 
 const document = ref({
@@ -386,7 +417,7 @@ let isVisible = reactive({});
 isVisible = setModal("importModal", false);
 
 const filteredDocumentsByIssued: any = computed(() => {
-  return filteredDocuments.value.filter((document: any) => {
+  return documents.value.filter((document: any) => {
     if (document.isIssued == 1 && isIssuedChecked.value == true) {
       return true;
     } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
@@ -414,8 +445,27 @@ const filteredDocumentsBySearch: any = computed(() => {
   });
 });
 
-watch(filteredDocumentsBySearch, () => {
-  store.state.documents = filteredDocumentsBySearch.value;
+const filteredDocumentsByDates: any = computed(() => {
+  return filteredDocumentsBySearch.value.filter((doc: any) => {
+    const date_of_issue = doc.date_of_issue;
+    const startDate = dateFrom.value;
+    const endDate = dateTo.value;
+
+    if (startDate !== null && endDate !== null) {
+      return startDate <= date_of_issue && date_of_issue <= endDate;
+    }
+    if (startDate !== null && endDate === null) {
+      return startDate <= date_of_issue;
+    }
+    if (startDate === null && endDate !== null) {
+      return date_of_issue <= endDate;
+    }
+    return true;
+  });
+});
+
+watch(filteredDocumentsByDates, () => {
+  store.state.documents = filteredDocumentsByDates.value;
 });
 
 function dphChanged(event: any) {
@@ -456,51 +506,27 @@ function updateImgData(evt: any) {
   uploadImageData.value.body.logo = evt.target.files[0];
 }
 
-function currentDocTab(tabNumber: number, page: number) {
+async function currentDocTab(tabNumber: number, page: number) {
   tab.value = page;
   activeTab.value = page;
 
   docTab.value = tabNumber;
   activeDocTab.value = tabNumber;
+  await getDocuments(1,'',tabNumber);
   switch (tabNumber) {
     case 1:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 1) {
-          return true;
-        }
-      });
       title.value = "Faktúry";
       break;
     case 2:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 2) {
-          return true;
-        }
-      });
       title.value = "Zálohové faktúry";
       break;
     case 3:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 3) {
-          return true;
-        }
-      });
       title.value = "Dobropisy";
       break;
     case 4:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 4) {
-          return true;
-        }
-      });
       title.value = "Cenová ponuka";
       break;
     case 5:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 5) {
-          return true;
-        }
-      });
       title.value = "Objednávka";
       break;
   }
@@ -565,38 +591,34 @@ watch(
   }
 );
 
-/* treba nejak updatnut zoznam po zmazani / pridani / update
-watch(
-  () => store.state.documents,
-  async function () {
-    await refreshData();
-  }
-);*/
-
-async function getPageData(page: number, type: string) {
-  if(type == 'next') {
-    page++;
-  }
-
+async function getDocuments(page: number, direction: string, type: number) {
   const inputs = {
     companyId: company.value.id,
-    page: page
+    page: page,
+    type: type
   }
 
-  await store
+  if(direction == 'next') {
+    inputs.page++;
+    await store
         .dispatch("getAllDocumentsForCompany", inputs)
         .then((response) => {
           response.data.data.forEach(element => {
             documents.value.push(element);
           });
           documentsData.value = response.data;
-          filteredDocuments.value = documents.value.filter((document: any) => {
-            if (document.subtype == 1) {
-              return true;
-            }
-          });
-          filteredDocumentsByIssued.value = filteredDocuments.value;
+          filteredDocumentsByIssued.value = documents.value;
         });
+  } else {
+    await store
+        .dispatch("getAllDocumentsForCompany", inputs)
+        .then((response) => {
+          documents.value = response.data.data;
+          documentsData.value = response.data;
+          filteredDocumentsByIssued.value = documents.value;
+        });
+
+  }  
 }
 
 async function refreshData() {
@@ -610,19 +632,7 @@ async function refreshData() {
         companyId: company.value.id,
         page: 1
       }
-
-      await store
-        .dispatch("getAllDocumentsForCompany", inputs)
-        .then((response) => {
-          documents.value = response.data.data;
-          documentsData.value = response.data;
-          filteredDocuments.value = documents.value.filter((document: any) => {
-            if (document.subtype == 1) {
-              return true;
-            }
-          });
-          filteredDocumentsByIssued.value = filteredDocuments.value;
-        });
+      await getDocuments(1,'',1);
       await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
