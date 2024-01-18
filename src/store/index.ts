@@ -256,13 +256,23 @@ export const store = createStore({
         return data;
       });
     },
-    addHeadquarter({ commit }, headquarter) {
+    async addHeadquarter({ commit }, headquarter) {
       return axiosClient
         .post("/headquarters/add", headquarter)
         .then(({ data }) => {
           commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
           return data;
         });
+    },
+    async updateHeadquarter({ commit, dispatch }, headquarter) {
+      if (headquarter.id) {
+        return axiosClient
+          .put(`/headquarters/${headquarter.id}/update`, headquarter)
+          .then((res) => {
+            commit("setHeadquarter", res.data);
+            return res;
+          });
+      }
     },
     async getAllCompaniesByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
