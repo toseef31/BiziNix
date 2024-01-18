@@ -235,7 +235,7 @@
                             }">
                               Dátum doručenia
                               <button>
-                                <svg @click="setOrderResultsBy('distribution_date')" xmlns="http://www.w3.org/2000/svg"
+                                <svg @click="orderBy('distribution_date')" xmlns="http://www.w3.org/2000/svg"
                                   class="ml-1 w-3 h-3" aria-hidden="true" fill="currentColor" viewBox="0 0 320 512">
                                   <path
                                     d="M27.66 224h264.7c24.6 0 36.89-29.78 19.54-47.12l-132.3-136.8c-5.406-5.406-12.47-8.107-19.53-8.107c-7.055 0-14.09 2.701-19.45 8.107L8.119 176.9C-9.229 194.2 3.055 224 27.66 224zM292.3 288H27.66c-24.6 0-36.89 29.77-19.54 47.12l132.5 136.8C145.9 477.3 152.1 480 160 480c7.053 0 14.12-2.703 19.53-8.109l132.3-136.8C329.2 317.8 316.9 288 292.3 288z" />
@@ -256,7 +256,7 @@
                         </tr>
                       </thead>
                       <tbody class="divide-y divide-gray-200 bg-gray-50">
-                        <tr v-for="mail in paginatedItems" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
+                        <tr v-for="mail in filteredMailsByDates" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
                           <td class="relative w-12 px-6 sm:w-16 sm:px-8">
                             <div v-if="checkedMails.includes(mail)" class="absolute inset-y-0 left-0 w-0.5 bg-teal-600">
                             </div>
@@ -347,7 +347,7 @@
                           <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                             <div class="flex-1 py-4 px-3 text-left" v-if="!mail.scan_requested">
                               <button class="font-medium text-gray-900 hover:underline"
-                                v-on:click="scanSingleMail(mail.id)">
+                                v-on:click="scanSingleMail(mail)">
                                 Vyžiadať scan
                               </button>
                             </div>
@@ -424,7 +424,7 @@
                     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                       <button
                         class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="pagination.currentPage <= 1" @click="pagination.currentPage--">
+                        :disabled="mailsData.current_page <= 1" @click="mailsData.current_page--">
                         <span class="sr-only">Previous</span>
                         <!-- Heroicon name: mini/chevron-left -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -436,7 +436,7 @@
                       </button>
                       <button
                         class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="pagination.currentPage >= pagination.totalPages" @click="pagination.currentPage++">
+                        :disabled="mailsData.current_page >= mailsData.last_page" @click="mailsData.current_page++">
                         <span class="sr-only">Next</span>
                         <!-- Heroicon name: mini/chevron-right -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -491,6 +491,7 @@ const dateFrom = ref(null);
 const dateTo = ref(null);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
+const mailsData = ref();
 
 let loading = true;
 
@@ -591,41 +592,24 @@ const filteredMailsByDates: any = computed(() => {
   });
 });
 
-const pagination: any = computed(() => {
-  return reactive({
-    currentPage: 1,
-    perPage: 5,
-    totalPages: computed(() =>
-      Math.ceil(mails.value.length / pagination.value.perPage)
-    ),
-  });
-});
-
-const paginatedItems: any = computed(() => {
-  const start = (pagination.value.currentPage - 1) * pagination.value.perPage;
-  const stop = start + pagination.value.perPage;
-  return orderedItems.value.slice(start, stop);
-});
-
-const orderedItems: any = computed(() => {
-  return _.orderBy(
-    filteredMailsByDates.value,
-    ["distribution_date"],
-    [selectedDirection.value.includes("asc") ? "asc" : "desc"]
-  );
-});
-
-function setOrderResultsBy(column: any) {
-  if (selectedColumn.value == column) {
-    if (selectedDirection.value == "desc") {
-      selectedDirection.value = "asc";
-    } else {
-      selectedDirection.value = "desc";
-    }
-  } else {
-    selectedDirection.value = "asc";
-  }
+async function orderBy(column: string) {
+  selectedDirection.value == 'asc'? selectedDirection.value = 'desc': selectedDirection.value = 'asc';
   selectedColumn.value = column;
+  const inputs = {
+    companyId: selectedCompany.value.id,
+    orderBy: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+  }
+
+  await store
+    .dispatch("getAllMailsForCompany", inputs)
+    .then((response) => {
+      mailsData.value = response.data;
+      store.state.mails = response.data.data;
+      mails.value.forEach(function (value: any) {
+        value.isSeen = true;
+      });
+      loading = false;
+    });
 }
 
 function boxChecked(event: any) {
@@ -635,24 +619,49 @@ function boxChecked(event: any) {
 }
 
 function sendMails() {
-  store.state.checkedMails = checkedMails.value;
-  router.push({
-    name: "Mail service order",
-    params: { type: 1 },
+  let updateArray = [] as Mail[];
+  checkedMails.value.forEach((mail) => {
+    if(mail.status == 1 && mail.forward_requested == 0) {
+      updateArray.push(mail);
+    }
   });
+
+  if(updateArray.length > 0){
+    store.state.checkedMails = updateArray;
+    router.push({
+      name: "Mail service order",
+      params: { type: 1 },
+    });
+  } else {
+    toast.info('Označené zásielky nie je možné preposlať.');
+  }
+
 }
 
 function scanMails() {
-  store.state.checkedMails = checkedMails.value;
-  router.push({
-    name: "Mail service order",
-    params: { type: 2 },
+  let updateArray = [] as Mail[];
+  checkedMails.value.forEach((mail) => {
+    if(mail.status == 1 && mail.scan_requested == 0) {
+      updateArray.push(mail);
+    }
   });
+
+  if(updateArray.length > 0){
+    store.state.checkedMails = updateArray;
+    router.push({
+      name: "Mail service order",
+      params: { type: 2 },
+    });
+  } else {
+    toast.info('Označené zásielky nie je možné scanovať.');
+  }
 }
 
 async function shredMails() {
-  checkedMails.value.forEach(function (value: any) {
-    value.shred_requested = 1;
+  checkedMails.value.forEach((mail) => {
+    if(mail.status == 1) {
+      mail.shred_requested = 1;
+    }
   });
 
   await store
@@ -694,8 +703,7 @@ function shredSingleMail(mail: any) {
   }
 }
 
-function scanSingleMail(id: any) {
-  const mail = mails.value.find((item: any) => item.id == id);
+function scanSingleMail(mail: any) {
   checkedMails.value.push(mail);
   store.state.checkedMails = checkedMails.value;
   if (mail) {
@@ -757,11 +765,16 @@ async function refreshData() {
         });
     });
 
+  const inputs = {
+    companyId: selectedCompany.value.id,
+    orderBy: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+  }
   //vyhladat postu
   await store
-    .dispatch("getAllMailsForCompany", selectedCompany.value.id)
+    .dispatch("getAllMailsForCompany", inputs)
     .then((response) => {
-      store.state.mails = response.data;
+      mailsData.value = response.data;
+      store.state.mails = response.data.data;
       mails.value.forEach(function (value: any) {
         value.isSeen = true;
       });

@@ -546,8 +546,8 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/address/${address_id}/get`);
       return data;
     },
-    async getAllMailsForCompany({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/mails/${companyId}/getAll`);
+    async getAllMailsForCompany({ commit }, inputs) {
+      const { data } = await axiosClient.get(`/mails/${inputs.companyId}/getAll`, {params: inputs.orderBy});
       commit("setMails", data);
       return data;
     },
@@ -560,7 +560,6 @@ export const store = createStore({
       }
     },
     updateMultipleMails({ commit, dispatch }, mails) {
-      console.log(mails);
       return axiosClient
         .put(`/mails/updateMultiple`, { mails: mails })
         .then((res) => {

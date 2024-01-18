@@ -86,14 +86,12 @@
       <div class="py-4 text-xl font-bold text-center">
         Prihlásenie
       </div>
-      <FormKit type="email" v-model="userForLogin.email" name="email" autocomplete="email" label="Emailová adresa" validation="required" />
-      <FormKit type="password" v-model="userForLogin.password" name="password" label="Heslo" autocomplete="current-password" validation="required" />
+      <FormKit type="email" v-model="userForLogin.email" name="email" autocomplete="email" label="Emailová adresa"
+        validation="required" />
+      <FormKit type="password" v-model="userForLogin.password" name="password" label="Heslo"
+        autocomplete="current-password" validation="required" />
       <!-- Set submit text with label prop -->
-      <FormKit
-        type="submit"
-        label="Prihlásiť sa"
-        @click.prevent="login"
-      />
+      <FormKit type="submit" label="Prihlásiť sa" @click.prevent="login" />
     </div>
   </div>
 </template>
@@ -102,7 +100,6 @@
 import store from "@/store";
 import { ref, watch, onMounted, computed } from "vue";
 import type Address from "@/types/Address";
-import type Mail from "@/types/Mail";
 import Autocomplete from "@/components/Autocomplete.vue";
 import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 import { toast } from "vue3-toastify";
@@ -115,7 +112,6 @@ const newCompany = ref(false);
 let showAddNewCompany = ref(false);
 const finstatCompanyDetails = ref({} as any);
 const user = computed(() => store.state.user);
-const mails = ref([] as Mail[]);
 const showLogin = ref(false);
 
 const headquarter = ref({
@@ -124,9 +120,9 @@ const headquarter = ref({
 });
 
 const userForLogin = {
-    email: '',
-    password: ''
-  }
+  email: '',
+  password: ''
+}
 
 const address = ref({
   id: 0,
@@ -169,7 +165,7 @@ watch(showAddNewCompany, () => {
 
 const login = async (formdata: any, node: any) => {
   await store.dispatch('loginUser', userForLogin)
-  .then(async () => {
+    .then(async () => {
       showLogin.value = false;
       await store.dispatch("setUserDataAfterLogin");
     })
@@ -202,7 +198,7 @@ async function isIcoAlreadyRegistered(node: any) {
 
 async function icoIsUnique(node: any) {
   const result = await isIcoAlreadyRegistered(node.value);
-  if(!result) {
+  if (!result) {
     showLogin.value = true;
   } else {
     showLogin.value = false;
@@ -257,7 +253,6 @@ async function switchSelect(event: any) {
     (item: any) => item.id == event.target.value
   );
   store.state.selectedCompany = currentCompany.value;
-  mails.value = [];
 
   await store
     .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
@@ -270,13 +265,6 @@ async function switchSelect(event: any) {
           store.state.selectedCompanyAddress = address.value;
         });
     });
-  await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
-    .then((response) => {
-      mails.value = response.data;
-      store.commit("setSelectedCompanyMails", mails.value);
-    });
-
 }
 
 async function getCompanies(userId) {

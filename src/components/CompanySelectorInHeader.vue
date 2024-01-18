@@ -1,23 +1,14 @@
 <template>
   <div class="relative w-64">
-    <select
-      id="companies"
-      name="companies"
+    <select id="companies" name="companies"
       class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
-      @change="switchSelect($event)"
-    >
-      <option
-        v-for="company in companies"
-        :value="company.id"
-        :key="company.id"
-        :selected="company.id == currentCompany.id"
-      >
+      @change="switchSelect($event)">
+      <option v-for="company in companies" :value="company.id" :key="company.id"
+        :selected="company.id == currentCompany.id">
         {{ company.name }}
       </option>
     </select>
-    <div
-      class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
-    >
+    <div class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center">
       <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
     </div>
   </div>
@@ -94,11 +85,15 @@ async function refreshData() {
         });
     });
 
+  const inputs = {
+    companyId: currentCompany.value.id,
+    orderBy: {orderBy: 'distribution_date DESC'}
+  }
   //vyhladat postu
   await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .dispatch("getAllMailsForCompany", inputs)
     .then((response) => {
-      mails.value = response.data;
+      mails.value = response.data.data;
       store.commit("setSelectedCompanyMails", mails.value);
     });
 }
@@ -126,8 +121,13 @@ async function switchSelect(event: any) {
     });
 
   //vyhladat postu
+  const inputs = {
+    companyId: currentCompany.value.id,
+    orderBy: 'distribution_date DESC'
+  }
+
   await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
+    .dispatch("getAllMailsForCompany", inputs)
     .then((response) => {
       mails.value = response.data;
       store.commit("setSelectedCompanyMails", mails.value);

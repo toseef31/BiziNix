@@ -40,6 +40,9 @@
                     <div class="pt-2 pb-8">
                         Gramáž zvolených zásielok: {{ totalWeight }} gramov
                     </div>
+                    <div class="pt-2 pb-8">
+                        Počet zásielok: {{ mails.length }} ks
+                    </div>
                     <div class="font-bold text-xl">
                         Platba kartou (Stripe)
                     </div>
@@ -95,16 +98,16 @@
             <div class="flex flex-col py-6 px-6 bg-gray-200 rounded-r-lg">
                 <div class="flex flex-col">
                     <div class="font-bold text-2xl">
-                        Vytvorenie scanu za <br>1€/zásielka
+                        Vytvorenie scanu za <br>0.09€/1g zásielky
                     </div>
                     <div class="py-4">
                         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
                     </div>
                     <div class="underline font-bold text-xl">
-                        Na zaplatenie {{ mails.length }}€
+                        Na zaplatenie {{ totalWeight*0.09<1.5? 1.5 :  totalWeight*0.09 }}€
                     </div>
                     <div class="pt-2 pb-8">
-                        Počet zásielok: {{ mails.length }}
+                        Gramáž zvolených zásielok: {{ totalWeight }} gramov
                     </div>
                     <div class="font-bold text-xl">
                         Platba kartou (Stripe)
@@ -311,8 +314,10 @@ async function scanMails() {
             order.value.items.push(row);
         });
 
-        order.value.amount = totalToPay.value;
-        order.value.amount_vat = totalToPay.value * 0.2;
+        const payAmount = totalWeight*0.09<1.5? 1.5 :  totalWeight*0.09;
+
+        order.value.amount = payAmount;
+        order.value.amount_vat = payAmount * 0.2;
         order.value.fakturacne_udaje_id = invoiceProfileId;
 
         await store
