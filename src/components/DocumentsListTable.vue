@@ -359,9 +359,9 @@ async function duplicateDocument(document: any) {
     });
   store
     .dispatch("addDocument", newDocument)
-    .then(() => {
+    .then((res) => {
       store.dispatch("setDocument", newDocument).then(() => {
-        store.state.documents.pop(document.id);
+        store.state.documents.push(res.Document);
         closeModal('loadingModal');
       });
     })
