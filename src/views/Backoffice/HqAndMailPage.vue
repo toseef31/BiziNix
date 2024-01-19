@@ -212,7 +212,7 @@
                   Momentálne nemáte žiadnu poštu pre danú spoločnosť.
                 </div>
               </div>
-              <div v-if="filteredMailsByDates.length > 0">
+              <div v-if="mails.length > 0">
                 <div class="relative sm:rounded-lg py-10">
                   <div class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <table class="min-w-full table-fixed divide-y divide-gray-300">
@@ -222,7 +222,7 @@
                             <input type="checkbox"
                               class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 sm:left-6"
                               :checked="indeterminate ||
-                                checkedMails.length === filteredMailsByDates.length
+                                checkedMails.length === mails.length
                                 " :indeterminate="indeterminate" @change="boxChecked($event)" />
                           </th>
                           <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -256,7 +256,7 @@
                         </tr>
                       </thead>
                       <tbody class="divide-y divide-gray-200 bg-gray-50">
-                        <tr v-for="mail in filteredMailsByDates" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
+                        <tr v-for="mail in mails" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
                           <td class="relative w-12 px-6 sm:w-16 sm:px-8">
                             <div v-if="checkedMails.includes(mail)" class="absolute inset-y-0 left-0 w-0.5 bg-teal-600">
                             </div>
@@ -504,7 +504,7 @@ const selectedMail = ref({} as Mail);
 const indeterminate = computed(
   () =>
     checkedMails.value.length > 0 &&
-    checkedMails.value.length < filteredMailsByDates.value.length
+    checkedMails.value.length < mails.value.length
 );
 
 const setModal = useModal({
@@ -544,7 +544,6 @@ const headquarter = ref({
 
 const selectedCompany = ref();
 const mails = computed(() => store.state.mails as Mail[]);
-const mailsFromStore = ref([] as Mail[]);
 
 watch(
   () => store.getters.getSelectedCompany,
@@ -554,50 +553,50 @@ watch(
 );
 
 watch(
-  () => store.state.mails,
+  () => searchQuery,
   function () {
-    mailsFromStore.value = mails.value;
+    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
   }
 );
 
-const filteredMailsBySearch: any = computed(() => {
-  return mailsFromStore.value.filter((mail: any) => {
-    const distribution_date = mail.distribution_date
-      .toString()
-      .toLocaleLowerCase();
-    const sender = mail.sender.toLowerCase();
-    const searchTerm = searchQuery.value.toLowerCase();
-    return (
-      sender.includes(searchTerm) || distribution_date.includes(searchTerm)
-    );
-  });
-});
+watch(
+  () => dateFrom,
+  function () {
+    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
+  }
+);
 
-const filteredMailsByDates: any = computed(() => {
-  return filteredMailsBySearch.value.filter((mail: any) => {
-    const distribution_date = mail.distribution_date;
-    const startDate = dateFrom.value;
-    const endDate = dateTo.value;
-
-    if (startDate !== null && endDate !== null) {
-      return startDate <= distribution_date && distribution_date <= endDate;
-    }
-    if (startDate !== null && endDate === null) {
-      return startDate <= distribution_date;
-    }
-    if (startDate === null && endDate !== null) {
-      return distribution_date <= endDate;
-    }
-    return true;
-  });
-});
+watch(
+  () => dateTo,
+  function () {
+    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
+  }
+);
 
 async function orderBy(column: string) {
   selectedDirection.value == 'asc'? selectedDirection.value = 'desc': selectedDirection.value = 'asc';
   selectedColumn.value = column;
   const inputs = {
     companyId: selectedCompany.value.id,
-    orderBy: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+    body: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+  }
+
+  await store
+    .dispatch("getAllMailsForCompany", inputs)
+    .then((response) => {
+      mailsData.value = response.data;
+      store.state.mails = response.data.data;
+      mails.value.forEach(function (value: any) {
+        value.isSeen = true;
+      });
+      loading = false;
+    });
+}
+
+async function filterBy(searchQuery: any, from: any, to: any) {
+  const inputs = {
+    companyId: selectedCompany.value.id,
+    body: {searchQuery: searchQuery, dateFrom: from, dateTo: to}
   }
 
   await store
@@ -614,7 +613,7 @@ async function orderBy(column: string) {
 
 function boxChecked(event: any) {
   checkedMails.value = event.target.checked
-    ? filteredMailsByDates.value.map((mail: Mail) => mail)
+    ? mails.value.map((mail: Mail) => mail)
     : [];
 }
 
@@ -767,7 +766,7 @@ async function refreshData() {
 
   const inputs = {
     companyId: selectedCompany.value.id,
-    orderBy: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+    body: {orderBy: selectedColumn.value+' '+selectedDirection.value}
   }
   //vyhladat postu
   await store

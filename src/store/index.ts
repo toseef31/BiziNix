@@ -547,7 +547,7 @@ export const store = createStore({
       return data;
     },
     async getAllMailsForCompany({ commit }, inputs) {
-      const { data } = await axiosClient.get(`/mails/${inputs.companyId}/getAll`, {params: inputs.orderBy});
+      const { data } = await axiosClient.get(`/mails/${inputs.companyId}/getAll`, {params: inputs.body});
       commit("setMails", data);
       return data;
     },

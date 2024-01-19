@@ -159,7 +159,7 @@ watch(
 
 async function refreshData() {
   await store
-    .dispatch("getCompanyBankDetails", company.value.headquarters_id)
+    .dispatch("getCompanyBankDetails", company.value.id)
     .then(async (response) => {
       store.state.bankAccounts = response.data;
       bankAccounts.value.forEach(element => {
@@ -170,6 +170,7 @@ async function refreshData() {
         }
       });
     });
+  console.log(bankAccounts.value);  
 }
 
 async function addBankAccount() {
