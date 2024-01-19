@@ -17,7 +17,7 @@
       </div>
     </div>
     <ul>
-      <li class="pb-2" v-for="document in orderedItems" :key="document.id">
+      <li class="pb-2" v-for="document in documents" :key="document.id">
         <div :class="[
           document.isIssued ? 'bg-gray-700' : 'bg-slate-500',
           document.isPaid ? 'bg-teal-900' : 'bg-gray-700',
@@ -279,11 +279,6 @@ watch(
     refreshData();
   }
 );
-
-const orderedItems: any = computed(() => {
-  return _.orderBy(documents.value, ["created_at"], ["desc"]);
-});
-
 let isVisible = reactive({});
 
 isVisible = setModal("deleteModal", false);

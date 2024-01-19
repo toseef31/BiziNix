@@ -105,35 +105,36 @@
             </nav>
           </div>
           <div class="flex flex-col px-2 py-2 relative w-full h-full">
-              <div class="sticky top-[75vh] px-8">
-                <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
-                  <div class="text-teal-500">
-                    Tržba (Obrat)
-                  </div>
-                  <div class="text-white">
-                    {{ finData.total.toFixed(2) }} €
-                  </div>
-                  <div class="text-gray-300 text-sm" v-if="company.is_dph">
-                    {{ finData.totalVat.toFixed(2) }} € s DPH
-                  </div>
-                  <div class="text-teal-500">
-                    Zisk
-                  </div>
-                  <div class="text-white">
-                    {{ finData.profit.toFixed(2) }} €
-                  </div>
-                  <div class="text-red-500">
-                    Neuhradené / Pohľadávky
-                  </div>
-                  <div class="text-white">
-                    {{ finData.totalToPay.toFixed(2) }} €
-                  </div>
-                  <div class="text-gray-300 text-sm text-right">
-                    Viac info vo <router-link :to="{ name: 'CompanyDetails', params:{ activeTab:1 } }">finančnom reporte</router-link>
-                  </div>
+            <div class="sticky top-[75vh] px-8">
+              <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
+                <div class="text-teal-500">
+                  Tržba (Obrat)
+                </div>
+                <div class="text-white">
+                  {{ finData.total.toFixed(2) }} €
+                </div>
+                <div class="text-gray-300 text-sm" v-if="company.is_dph">
+                  {{ finData.totalVat.toFixed(2) }} € s DPH
+                </div>
+                <div class="text-teal-500">
+                  Zisk
+                </div>
+                <div class="text-white">
+                  {{ finData.profit.toFixed(2) }} €
+                </div>
+                <div class="text-red-500">
+                  Neuhradené / Pohľadávky
+                </div>
+                <div class="text-white">
+                  {{ finData.totalToPay.toFixed(2) }} €
+                </div>
+                <div class="text-gray-300 text-sm text-right">
+                  Viac info vo <router-link :to="{ name: 'CompanyDetails', params: { activeTab: 1 } }">finančnom
+                    reporte</router-link>
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <!--KONIEC MENU-->
@@ -212,8 +213,8 @@
                           </div>
                           <div class="flex text-white basis-2/3 pr-4 gap-2">
                             <div class="w-full">
-                              <FormKit type="number" id="amount" name="Suma" label="Suma v €" v-model="document.total"
-                                validation="required" />
+                              <FormKit type="number" id="amount" name="Suma" label="Suma v €" step="any" min="0" number
+                                v-model="document.total" validation="required" />
                             </div>
                             <div class="w-full">
                               <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
@@ -271,11 +272,12 @@
                   </div>
                   <DocumentsListTable></DocumentsListTable>
                   <div class="flex flex-row w-full py-4 justify-around">
-                    <div v-if="documentsData.next_page_url != null"> 
+                    <div v-if="documentsData.next_page_url != null">
                       <button
                         class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
-                        v-on:click="getDocuments(documentsData.current_page, 'next', activeDocTab)">
-                        <span class="px-4">Načítať viac</span><ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                        v-on:click="getDocuments(documentsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn, activeDocTab)">
+                        <span class="px-4">Načítať viac</span>
+                        <ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -334,7 +336,6 @@ import { onBeforeMount, ref, computed, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
 import type Company from "@/types/Company";
-import type Doklad from "@/types/Document";
 import { useModal, Modal } from "usemodal-vue3";
 import moment from "moment";
 import Constants from "@/helpers/constants";
@@ -351,7 +352,7 @@ const activeTab = ref(1);
 const docTab = ref(1);
 const activeDocTab = ref(1);
 const company = ref({} as Company);
-const documents = ref([] as Doklad[]);
+const documents = computed(() => store.state.documents);
 const searchQuery = ref("");
 const dateFrom = ref(null);
 const dateTo = ref(null);
@@ -360,6 +361,9 @@ const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
 const documentsData = ref();
+const selectedColumn = ref("id");
+const selectedDirection = ref("desc");
+const ogDocs = ref([] as any[]);
 
 const document = ref({
   type: activeTab,
@@ -416,60 +420,8 @@ const setModal = useModal({
 let isVisible = reactive({});
 isVisible = setModal("importModal", false);
 
-const filteredDocumentsByIssued: any = computed(() => {
-  return documents.value.filter((document: any) => {
-    if (document.isIssued == 1 && isIssuedChecked.value == true) {
-      return true;
-    } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
-      return true;
-    } else if (
-      isIssuedChecked.value == true &&
-      isReceivedChecked.value == true
-    ) {
-      return true;
-    } else if (
-      isIssuedChecked.value == false &&
-      isReceivedChecked.value == false
-    ) {
-      return true;
-    }
-  });
-});
-
-const filteredDocumentsBySearch: any = computed(() => {
-  return filteredDocumentsByIssued.value.filter((document: Doklad) => {
-    const odberatel = document.odberatel.toLowerCase();
-    const serial_number = document.serial_number.toLowerCase();
-    const searchTerm = searchQuery.value.toLowerCase();
-    return odberatel.includes(searchTerm) || serial_number.includes(searchTerm);
-  });
-});
-
-const filteredDocumentsByDates: any = computed(() => {
-  return filteredDocumentsBySearch.value.filter((doc: any) => {
-    const date_of_issue = doc.date_of_issue;
-    const startDate = dateFrom.value;
-    const endDate = dateTo.value;
-
-    if (startDate !== null && endDate !== null) {
-      return startDate <= date_of_issue && date_of_issue <= endDate;
-    }
-    if (startDate !== null && endDate === null) {
-      return startDate <= date_of_issue;
-    }
-    if (startDate === null && endDate !== null) {
-      return date_of_issue <= endDate;
-    }
-    return true;
-  });
-});
-
-watch(filteredDocumentsByDates, () => {
-  store.state.documents = filteredDocumentsByDates.value;
-});
-
 function dphChanged(event: any) {
-  if(event.target.value == 's DPH'){
+  if (event.target.value == 's DPH') {
     document.value.isDph = true;
   } else {
     document.value.isDph = false;
@@ -512,7 +464,7 @@ async function currentDocTab(tabNumber: number, page: number) {
 
   docTab.value = tabNumber;
   activeDocTab.value = tabNumber;
-  await getDocuments(1,'',tabNumber);
+  await getDocuments(1, null, null, null, '', selectedColumn.value, tabNumber);
   switch (tabNumber) {
     case 1:
       title.value = "Faktúry";
@@ -563,7 +515,7 @@ function importDocument() {
 
   return store
     .dispatch("addDocument", document.value)
-    .then(async() => {
+    .then(async () => {
       //uploadImg();
       await refreshData();
       closeDialog("importModal");
@@ -584,6 +536,26 @@ function uploadImg() {
     });
 }
 
+function filterDataByIssued() {
+  store.state.documents = ogDocs.value.filter((document: any) => {
+    if (document.isIssued == 1 && isIssuedChecked.value == true) {
+      return true;
+    } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
+      return true;
+    } else if (
+      isIssuedChecked.value == true &&
+      isReceivedChecked.value == true
+    ) {
+      return true;  
+    } else if (
+      isIssuedChecked.value == false &&
+      isReceivedChecked.value == false
+    ) {
+      return false;
+    }
+  });
+}
+
 watch(
   () => store.getters.getSelectedCompany,
   async function () {
@@ -591,34 +563,74 @@ watch(
   }
 );
 
-async function getDocuments(page: number, direction: string, type: number) {
+watch(
+  () => isIssuedChecked.value,
+  async function () {
+    filterDataByIssued();
+  }
+);
+
+watch(
+  () => isReceivedChecked.value,
+  async function () {
+    filterDataByIssued();
+  }
+);
+
+watch(
+  () => searchQuery.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+watch(
+  () => dateFrom.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+watch(
+  () => dateTo.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+async function orderBy(column) {
+  selectedColumn.value = column;
+  selectedDirection.value == 'asc' ? selectedDirection.value = 'desc' : selectedDirection.value = 'asc';
+  getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+}
+
+async function getDocuments(page: number, searchQuery: any, from: any, to: any, direction: any, column: any, type: number) {
   const inputs = {
     companyId: company.value.id,
     page: page,
-    type: type
+    body: { type: type, orderBy: column + ' ' + selectedDirection.value, searchQuery: searchQuery, dateFrom: from, dateTo: to }
   }
 
-  if(direction == 'next') {
+  if (direction == 'next') {
     inputs.page++;
     await store
-        .dispatch("getAllDocumentsForCompany", inputs)
-        .then((response) => {
-          response.data.data.forEach(element => {
-            documents.value.push(element);
-          });
-          documentsData.value = response.data;
-          filteredDocumentsByIssued.value = documents.value;
+      .dispatch("getAllDocumentsForCompany", inputs)
+      .then((response) => {
+        response.data.data.forEach(element => {
+          documents.value.push(element);
         });
+        documentsData.value = response.data;
+        ogDocs.value = store.state.documents;
+      });
   } else {
     await store
-        .dispatch("getAllDocumentsForCompany", inputs)
-        .then((response) => {
-          documents.value = response.data.data;
-          documentsData.value = response.data;
-          filteredDocumentsByIssued.value = documents.value;
-        });
-
-  }  
+      .dispatch("getAllDocumentsForCompany", inputs)
+      .then((response) => {
+        store.state.documents = response.data.data;
+        documentsData.value = response.data;
+        ogDocs.value = store.state.documents;
+      });
+  }
 }
 
 async function refreshData() {
@@ -628,11 +640,7 @@ async function refreshData() {
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
       company.value = response.data;
-      const inputs = {
-        companyId: company.value.id,
-        page: 1
-      }
-      await getDocuments(1,'',1);
+      await getDocuments(1, null, null, null, '', selectedColumn.value, 1);
       await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {

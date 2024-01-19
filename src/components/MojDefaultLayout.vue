@@ -136,45 +136,33 @@ let user = ref();
 user = computed(() => store.state.user);
 let activePage = ref("Moja firma");
 const currentCompany = computed(() => store.state.selectedCompany);
-const mails = computed(() => store.state.mails as any[]);
 const notifications = computed(() => store.state.notifications as any[]);
-
 const showNotification = ref(false);
-
 const mailCounter = ref(0);
-
-watch(
-  () => mails.value,
-  function () {
-    if (mails.value.length > 0) {
-      mailCounter.value = 0;
-      mails.value.forEach(function (value: any) {
-        if (value.isSeen == false) {
-          mailCounter.value++;
-        }
-      });
-    }
-  }
-);
 
 onBeforeMount(async () => {
   user = computed(() => store.state.user);
   if (user.value.userId) {
     await store.dispatch('setUserDataAfterLogin')
     await store.dispatch('getNotifications')
-
-    const inputs = {
-      companyId: currentCompany.value.id,
-      orderBy: {orderBy: 'distribution_date DESC'}
-    }
-
-    await store
-      .dispatch("getAllMailsForCompany", inputs)
-      .then((response) => {
-        store.state.mails = response.data.data;
-      });
+    await getUnseenMails();
   }
 })
+
+async function getUnseenMails() {
+  await store
+    .dispatch("getUnseenCount", currentCompany.value.id)
+    .then((response) => {
+      mailCounter.value = response.data;
+    });
+}
+
+watch(
+  () => store.state.mails,
+  async function () {
+      await getUnseenMails();
+  }
+);
 
 const activeTopNav = computed(() => store.state.mySubmenuActive);
 

@@ -26,14 +26,16 @@
             </div>
           </div>
           <div class="py-4 px-8">
-            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="redirectToPackageOrder()">
+            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+              v-on:click="redirectToPackageOrder()">
               Upraviť balík
             </button>
           </div>
         </div>
       </div>
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
-        <div v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika == 'MINI'"
+        <div
+          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika == 'MINI'"
           class="flex flex-col w-full items-center">
           <div class="flex flex-col w-full items-center h-full py-32">
             <div class="text-4xl text-gray-900 font-bold">
@@ -110,30 +112,27 @@
 
                 <div class="flex flex-1/4">
                   <div class="flex gap-4" v-if="checkedMails.length > 0">
-                    <button
-                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                    <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="sendMails()">
                       Preposlať
                     </button>
-                    <button
-                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="scanMails()">
                       Scanovať
                     </button>
-                    <button
-                      class="bg-red-500 hover:bg-red-700 h-12 px-6 rounded z-10 font-bold" v-on:click="shredMails()">
+                    <button class="bg-red-500 hover:bg-red-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="shredMails()">
                       Skartovať
                     </button>
                   </div>
                   <div class="flex gap-4" v-if="checkedMails.length == 0">
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
                       Preposlať
                     </button>
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
                       Scanovať
                     </button>
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
                       Skartovať
                     </button>
                   </div>
@@ -346,8 +345,7 @@
                           </td>
                           <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                             <div class="flex-1 py-4 px-3 text-left" v-if="!mail.scan_requested">
-                              <button class="font-medium text-gray-900 hover:underline"
-                                v-on:click="scanSingleMail(mail)">
+                              <button class="font-medium text-gray-900 hover:underline" v-on:click="scanSingleMail(mail)">
                                 Vyžiadať scan
                               </button>
                             </div>
@@ -424,7 +422,8 @@
                     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                       <button
                         class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="mailsData.current_page <= 1" @click="mailsData.current_page--">
+                        :disabled="mailsData.prev_page_url == null"
+                        @click="getMails(mailsData.current_page, searchQuery, dateFrom, dateTo, 'prev', selectedColumn)">
                         <span class="sr-only">Previous</span>
                         <!-- Heroicon name: mini/chevron-left -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -436,7 +435,8 @@
                       </button>
                       <button
                         class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="mailsData.current_page >= mailsData.last_page" @click="mailsData.current_page++">
+                        :disabled="mailsData.next_page_url == null"
+                        @click="getMails(mailsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn)">
                         <span class="sr-only">Next</span>
                         <!-- Heroicon name: mini/chevron-right -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -486,12 +486,15 @@ import moment from "moment";
 import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
-const searchQuery = ref("");
+const searchQuery = ref(null);
 const dateFrom = ref(null);
 const dateTo = ref(null);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 const mailsData = ref();
+const selectedCompany = ref();
+const mails = computed(() => store.state.mails as Mail[]);
+const userAddress = computed(() => store.state.user.address as any);
 
 let loading = true;
 
@@ -506,6 +509,23 @@ const indeterminate = computed(
     checkedMails.value.length > 0 &&
     checkedMails.value.length < mails.value.length
 );
+
+const address = ref({
+  id: 0,
+  street: "",
+  street_number: 0,
+  street_number2: 0,
+  city: "",
+  country: "",
+  psc: "",
+});
+
+
+
+const headquarter = ref({
+  id: 0,
+  address_id: 0,
+});
 
 const setModal = useModal({
   m1: 1
@@ -524,79 +544,53 @@ function closeModal() {
   isVisible = setModal("m1", false);
 }
 
-const address = ref({
-  id: 0,
-  street: "",
-  street_number: 0,
-  street_number2: 0,
-  city: "",
-  country: "",
-  psc: "",
-});
-
-
-const userAddress = computed(() => store.state.user.address as any);
-
-const headquarter = ref({
-  id: 0,
-  address_id: 0,
-});
-
-const selectedCompany = ref();
-const mails = computed(() => store.state.mails as Mail[]);
-
 watch(
   () => store.getters.getSelectedCompany,
-  function () {
-    refreshData();
+  async function () {
+    if(store.getters.getSelectedCompany.id !== selectedCompany.value.id)
+      await refreshData();
   }
 );
 
 watch(
-  () => searchQuery,
-  function () {
-    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
+  () => searchQuery.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
   }
 );
 
 watch(
-  () => dateFrom,
-  function () {
-    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
+  () => dateFrom.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
   }
 );
 
 watch(
-  () => dateTo,
-  function () {
-    filterBy(searchQuery.value, dateFrom.value, dateTo.value);
+  () => dateTo.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
   }
 );
 
-async function orderBy(column: string) {
-  selectedDirection.value == 'asc'? selectedDirection.value = 'desc': selectedDirection.value = 'asc';
+async function orderBy(column) {
   selectedColumn.value = column;
-  const inputs = {
-    companyId: selectedCompany.value.id,
-    body: {orderBy: selectedColumn.value+' '+selectedDirection.value}
-  }
-
-  await store
-    .dispatch("getAllMailsForCompany", inputs)
-    .then((response) => {
-      mailsData.value = response.data;
-      store.state.mails = response.data.data;
-      mails.value.forEach(function (value: any) {
-        value.isSeen = true;
-      });
-      loading = false;
-    });
+  await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
 }
 
-async function filterBy(searchQuery: any, from: any, to: any) {
+async function getMails(page: number, searchQuery: any, from: any, to: any, direction: any, column:any) {
+  selectedDirection.value == 'asc' ? selectedDirection.value = 'desc' : selectedDirection.value = 'asc';
+
   const inputs = {
     companyId: selectedCompany.value.id,
-    body: {searchQuery: searchQuery, dateFrom: from, dateTo: to}
+    page: page,
+    body: { orderBy: column, searchQuery: searchQuery, dateFrom: from, dateTo: to }
+  }
+
+  if (direction == 'next') {
+    inputs.page++;
+  } else if (direction == 'prev') {
+    inputs.page--;
   }
 
   await store
@@ -604,9 +598,6 @@ async function filterBy(searchQuery: any, from: any, to: any) {
     .then((response) => {
       mailsData.value = response.data;
       store.state.mails = response.data.data;
-      mails.value.forEach(function (value: any) {
-        value.isSeen = true;
-      });
       loading = false;
     });
 }
@@ -620,12 +611,12 @@ function boxChecked(event: any) {
 function sendMails() {
   let updateArray = [] as Mail[];
   checkedMails.value.forEach((mail) => {
-    if(mail.status == 1 && mail.forward_requested == 0) {
+    if (mail.status == 1 && mail.forward_requested == 0) {
       updateArray.push(mail);
     }
   });
 
-  if(updateArray.length > 0){
+  if (updateArray.length > 0) {
     store.state.checkedMails = updateArray;
     router.push({
       name: "Mail service order",
@@ -640,12 +631,12 @@ function sendMails() {
 function scanMails() {
   let updateArray = [] as Mail[];
   checkedMails.value.forEach((mail) => {
-    if(mail.status == 1 && mail.scan_requested == 0) {
+    if (mail.status == 1 && mail.scan_requested == 0) {
       updateArray.push(mail);
     }
   });
 
-  if(updateArray.length > 0){
+  if (updateArray.length > 0) {
     store.state.checkedMails = updateArray;
     router.push({
       name: "Mail service order",
@@ -658,7 +649,7 @@ function scanMails() {
 
 async function shredMails() {
   checkedMails.value.forEach((mail) => {
-    if(mail.status == 1) {
+    if (mail.status == 1) {
       mail.shred_requested = 1;
     }
   });
@@ -670,7 +661,7 @@ async function shredMails() {
     })
     .catch((err) => {
       toast.error('Error: ' + err);
-  });
+    });
 }
 
 function formatDate(dateString: string) {
@@ -752,7 +743,7 @@ async function refreshData() {
       selectedCompany.value = response.data;
     });
 
-  //aktualizovat adresu
+  
   await store
     .dispatch("getHeadquartersById", selectedCompany.value.headquarters_id)
     .then((response) => {
@@ -766,16 +757,25 @@ async function refreshData() {
 
   const inputs = {
     companyId: selectedCompany.value.id,
-    body: {orderBy: selectedColumn.value+' '+selectedDirection.value}
+    page: 1,
+    body: { orderBy: 'distribution_date DESC', searchQuery: null, dateFrom: null, dateTo: null }
   }
-  //vyhladat postu
+  
   await store
     .dispatch("getAllMailsForCompany", inputs)
-    .then((response) => {
+    .then(async (response) => {
       mailsData.value = response.data;
       store.state.mails = response.data.data;
       mails.value.forEach(function (value: any) {
         value.isSeen = true;
+      });
+      await store
+      .dispatch("updateMultipleMails", mails.value)
+      .then(() =>{
+        store.state.mails = mails.value;
+      })
+      .catch((err) => {
+        toast.error('Error: ' + err);
       });
       loading = false;
     });
@@ -787,11 +787,6 @@ onBeforeMount(async () => {
   store.dispatch("userAddress");
   store.state.mySubmenuActive = 2;
   await refreshData();
-  await store
-    .dispatch("updateMultipleMails", mails.value)
-    .catch((err) => {
-      toast.error('Error: ' + err);
-    });
 });
 </script>
 

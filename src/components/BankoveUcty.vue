@@ -170,7 +170,6 @@ async function refreshData() {
         }
       });
     });
-  console.log(bankAccounts.value);  
 }
 
 async function addBankAccount() {

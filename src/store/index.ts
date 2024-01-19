@@ -433,7 +433,7 @@ export const store = createStore({
     //#endregion
     //#region documents
     async getAllDocumentsForCompany({ commit }, inputs) {
-      const { data } = await axiosClient.get(`/documents/${inputs.companyId}/${inputs.type}/getAll?page=${inputs.page}`);
+      const { data } = await axiosClient.post(`/documents/${inputs.companyId}/getAll?page=${inputs.page}`, inputs.body);
       return data;
     },
     async getFinDataForCompany({ commit }, companyId) {
@@ -547,8 +547,12 @@ export const store = createStore({
       return data;
     },
     async getAllMailsForCompany({ commit }, inputs) {
-      const { data } = await axiosClient.get(`/mails/${inputs.companyId}/getAll`, {params: inputs.body});
+      const { data } = await axiosClient.post(`/mails/${inputs.companyId}/getAll?page=${inputs.page}`, inputs.body);
       commit("setMails", data);
+      return data;
+    },
+    async getUnseenCount({ dispatch }, companyId) {
+      const { data } = await axiosClient.get(`/mails/${companyId}/getUnseenCount`);
       return data;
     },
     updateMail({ commit, dispatch }, mail) {
@@ -563,7 +567,7 @@ export const store = createStore({
       return axiosClient
         .put(`/mails/updateMultiple`, { mails: mails })
         .then((res) => {
-          commit("setMailsAfterUpdate", res.data);
+          //commit("setMailsAfterUpdate", res.data);
           return res;
         });
     },
