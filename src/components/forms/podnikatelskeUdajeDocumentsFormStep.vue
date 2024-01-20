@@ -130,6 +130,9 @@ async function getCompanyDetails() {
       currentCompany.value.ico = finstatCompanyDetails.value.Ico;
       currentCompany.value.dic = finstatCompanyDetails.value.Dic;
       currentCompany.value.icdph = finstatCompanyDetails.value.IcDPH;
+
+      currentCompany.value.doc_template_id = 1;
+      currentCompany.value.doc_sncounter_id = 1;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
@@ -143,6 +146,8 @@ const newCompany = ref({
   status: 1,
   ico: "",
   dic: "",
+  doc_template_id: 1,
+  doc_sncounter_id: 1,
   headquarters_id: 0,
   is_dph: false,
   owner: user.value.userId ? Number(user.value.userId) : 0,

@@ -108,7 +108,7 @@ let order = ref({
 })
 
 function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Response> {
-  if (companyFromResponse) {
+  if (companyFromResponse?.company?.id) {
     order.value.company_id = companyFromResponse.company.id;
   } else {
     order.value.company_id = doCompanyDataRef.value.currentCompany.id;
@@ -116,7 +116,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
 
   order.value.user_id = userId;
 
-  if (addressFromResponse) {
+  if (addressFromResponse?.address_id) {
     order.value.address_id = addressFromResponse.address_id;
   } else {
     order.value.address_id = doInvoiceDataRef.value.invoiceAddressId;
@@ -223,8 +223,6 @@ async function submitApp(formData: any) {
 };
 
 async function continueFirstTimeActivation(userId, invoiceProfileId, address_id) {
-  /*const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
-  console.log(result)*/
   try {
     if (user.value.userId) {
       const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);

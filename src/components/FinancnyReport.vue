@@ -309,7 +309,8 @@ async function getChartData(val: any) {
             toast.error('Error: ' + err);
         });
 
-    await store
+    if(company.value.fakturacia_zaplatene_do && company.value.fakturacia_deaktivovane == 0) {
+        await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
             actualYearData.value = response.data;
@@ -323,6 +324,9 @@ async function getChartData(val: any) {
                 profitActualYearData.value.datasets[0].data.push(element.total);
             });
         })
+
+    }
+    
 }
 
 watch(

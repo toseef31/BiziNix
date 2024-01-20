@@ -755,30 +755,32 @@ async function refreshData() {
         });
     });
 
-  const inputs = {
-    companyId: selectedCompany.value.id,
-    page: 1,
-    body: { orderBy: 'distribution_date DESC', searchQuery: null, dateFrom: null, dateTo: null }
+  if(selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
+    const inputs = {
+      companyId: selectedCompany.value.id,
+      page: 1,
+      body: { orderBy: 'distribution_date DESC', searchQuery: null, dateFrom: null, dateTo: null }
+    }
+    
+    await store
+      .dispatch("getAllMailsForCompany", inputs)
+      .then(async (response) => {
+        mailsData.value = response.data;
+        store.state.mails = response.data.data;
+        mails.value.forEach(function (value: any) {
+          value.isSeen = true;
+        });
+        await store
+        .dispatch("updateMultipleMails", mails.value)
+        .then(() =>{
+          store.state.mails = mails.value;
+        })
+        .catch((err) => {
+          toast.error('Error: ' + err);
+        });
+        loading = false;
+      });
   }
-  
-  await store
-    .dispatch("getAllMailsForCompany", inputs)
-    .then(async (response) => {
-      mailsData.value = response.data;
-      store.state.mails = response.data.data;
-      mails.value.forEach(function (value: any) {
-        value.isSeen = true;
-      });
-      await store
-      .dispatch("updateMultipleMails", mails.value)
-      .then(() =>{
-        store.state.mails = mails.value;
-      })
-      .catch((err) => {
-        toast.error('Error: ' + err);
-      });
-      loading = false;
-    });
 
   isLoading.value = false;
 }
