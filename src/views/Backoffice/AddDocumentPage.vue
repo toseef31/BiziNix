@@ -296,32 +296,17 @@
           <section>
             <div class="flex flex-col" v-if="isOpen">
               <div>
-                <div class="flex flex-row justify-between pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold"
-                      >Názov Vašej banky</label
-                    >
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails?.name }}
-                    </label>
-                  </div>
-
-                  <div class="flex basis-1/2 flex-col justify-between">
-                    <label class="text-white pr-4 font-bold">IBAN</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails?.iban }}
-                    </label>
-                  </div>
-                </div>
-
-                <div class="flex flex-row pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold">SWIFT</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails?.swift }}
-                    </label>
-                  </div>
-                </div>
+                <FormKit
+                  type="dropdown"
+                  name="bankaccount_dropdown"
+                  label="Bankový účet"
+                  placeholder="Vybrať"
+                  :options="fetchBankAccounts"
+                  always-load-on-open
+                  validation="required"
+                  v-model="bankAccountId"
+                >
+                </FormKit>
               </div>
               <div class="flex flex-row">
                 <div class="flex flex-col w-full justify-between px-4">
@@ -402,7 +387,7 @@
                 </div>
                 <div
                   class="text-teal-500 flex basis-2/12 justify-end"
-                  v-if="company.is_dph"
+                  v-if="company.is_dph || company.icdph"
                 >
                   DPH %
                 </div>
@@ -466,7 +451,7 @@
                             @change="priceEntered(item)"
                           />
                         </div>
-                        <div class="flex" v-if="company.is_dph">
+                        <div class="flex" v-if="company.is_dph || company.icdph">
                           <FormKit
                             autocomplete="nope"
                             type="text"
@@ -549,13 +534,13 @@
                         />
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="company.is_dph || company.icdph">
                       <th class="text-left pl-2">DPH</th>
                       <th class="text-right pr-2">
                         {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="company.is_dph || company.icdph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2" v-if="document.subtype == 3">
                         {{ ((totalPrice + totalPriceVat)*-1).toFixed(2) }}&nbsp;{{
@@ -635,6 +620,7 @@ const subtype = Number(route.params.subtype);
 const submitted = ref(false);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const isOpen = ref(false);
+const bankAccountId = ref();
 
 const company = ref({} as Company);
 const address = ref({
@@ -704,6 +690,7 @@ const document = ref({
   note_under: "",
   date_of_issue: today,
   due_by: "14 dní",
+  due_by_date: today,
   delivery_method: "Osobný odber",
   delivery_date: today,
   payment_method: "Bankový prevod",
@@ -724,6 +711,14 @@ watch(
   }
 );
 
+watch(bankAccountId, async () => {
+  const res = await store.dispatch("getBankAccountById", bankAccountId.value)
+  if(res.data) {
+    bankAccountId.value = res.data.id;
+    companyBankDetails.value = res.data;
+  }
+})
+
 const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
@@ -732,6 +727,23 @@ watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
       getCompanyDetails();
     }
 });
+
+async function fetchBankAccounts() {
+  const res = await store.dispatch("getCompanyBankDetails", company.value.id)
+  if(res.data[0]?.id){
+    return res.data.map((data) => {
+      if(data?.is_main == 1){
+        bankAccountId.value = data?.id;
+      }
+      return {
+        label: `${data?.account_name ?? ''} IBAN: ${data?.iban ?? ''}`,
+        value: data.id
+      }
+    })
+  } else {
+    return []
+  }
+}
 
 async function getCompanyDetails() {
   let ico = {
@@ -763,7 +775,7 @@ async function getCompanyDetails() {
 
 async function setSerialNumber() {
   store
-    .dispatch("getDocumentSnForCompany", company.value.id)
+    .dispatch("getDocumentSnForCompany", store.state.selectedCompany.id)
     .then((response) => {
       serial_number.value = response.data;
       variabilny.value = response.data;
@@ -797,7 +809,7 @@ async function refreshData() {
         });
     });
 
-    if(company.value.is_dph) {
+    if(company.value.is_dph || company.value.icdph) {
       items.value[0].vat = 20;
     }
 }
@@ -884,7 +896,7 @@ function addItem() {
       total: 0.0,
       description: "",
     };
-  if(company.value.is_dph) {
+  if(company.value.is_dph || company.value.icdph) {
     item.vat = 20;
   }
   items.value.push(item);

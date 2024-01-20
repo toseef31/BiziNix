@@ -29,6 +29,7 @@ export default interface Doklad {
   note_under: string;
   date_of_issue: string;
   due_by: string;
+  due_by_date: string;
   delivery_method: string;
   delivery_date: string;
   payment_method: string;

@@ -172,8 +172,12 @@ async function updateCompany() {
     showModal();
     await store
     .dispatch("updateCompany", company.value)
-    .then(() => {
-        closeModal();
+    .then(async () => {
+        await store
+        .dispatch("updateAddress", address.value)
+        .then(() => {
+            closeModal();
+        });
     });
 }
 

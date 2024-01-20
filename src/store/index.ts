@@ -290,7 +290,13 @@ export const store = createStore({
     },
     async getCompanyBankDetails({ commit }, companyId) {
       const { data } = await axiosClient.get(
-        `/companies/${companyId}/getBankDetails`
+        `/companies/${companyId}/getAllBankDetails`
+      );
+      return data;
+    },
+    async getBankAccountById({ commit }, id) {
+      const { data } = await axiosClient.get(
+        `/companies/${id}/getBankDetails`
       );
       return data;
     },
@@ -411,6 +417,7 @@ export const store = createStore({
       });
     },
     async addBankAccount({ commit }, bankAccount) {
+      console.log(bankAccount);
       const { data } = await axiosClient.post(
         "/companies/addCompanyBankDetails",
         bankAccount
@@ -522,17 +529,17 @@ export const store = createStore({
     //#endregion
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
-        commit("setReviews", data);
+        commit("setReviews", data.data);
       });
     },
     async posts({ commit }) {
       await axiosClient.get("/posts/getAllPosts").then(({ data }) => {
-        commit("setPosts", data);
+        commit("setPosts", data.data);
       });
     },
     async faqs({ commit }) {
       await axiosClient.get("/faqs/getAllFaqs").then(({ data }) => {
-        commit("setFaqs", data);
+        commit("setFaqs", data.data);
       });
     },
     async vhqs({ commit }) {

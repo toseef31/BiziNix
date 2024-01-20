@@ -4,11 +4,13 @@
       <div class="grid grid-cols-2 gap-8">
         <div class="flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-200" v-for="bankAccount in bankAccounts">
           <div class="flex flex-col">
+            <FormKit type="text" label="Názov účtu" name="iban" v-model="bankAccount.account_name"
+              :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
             <FormKit type="text" label="IBAN" name="iban" v-model="bankAccount.iban"
               :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
             <FormKit type="text" label="Číslo účtu" name="account_number" v-model="bankAccount.account_number"
               :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
-            <FormKit type="text" label="Názov banky" name="name" v-model="bankAccount.name"
+            <FormKit type="text" label="Názov banky" name="name" v-model="bankAccount.bank_name"
               :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
             <div class="flex flex-row gap-4">
               <FormKit type="text" label="SWIFT" name="swift" v-model="bankAccount.swift"
@@ -18,7 +20,8 @@
             </div>
             <div class="flex flex-row justify-between">
               <FormKit type="checkbox" label="Predvolený?" name="predvoleny" v-model="bankAccount.is_main_b"
-                :checked="bankAccount.is_main_b" :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+                @click="updateBankAccount(bankAccount)" :checked="bankAccount.is_main_b"
+                :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
               <div>
                 <button @click="deleteBankAccountModal(bankAccount)"
                   class="flex justify-end w-fit items-center py-2 px-4 hover:cursor-pointer text-red-700 hover:text-red-500">
@@ -74,11 +77,14 @@
       <div role="status" class="flex py-10 h-full w-full justify-center text-white">
         <FormKit type="form" :actions="false" id="addBankAccount" @submit-invalid="showErrors"
           #default="{ value, state: { valid } }" @submit="addBankAccount">
-          <FormKit type="text" name="name" validation="required" v-model="currentBankAccount.name" label="Názov banky" />
-          <FormKit type="text" name="name" validation="required" v-model="currentBankAccount.iban" label="IBAN" />
-          <FormKit type="text" name="name" v-model="currentBankAccount.account_number" label="Číslo účtu" />
-          <FormKit type="text" name="name" v-model="currentBankAccount.swift" label="SWIFT" />
-          <FormKit type="text" name="name" v-model="currentBankAccount.bank_code" label="Kód banky" />
+          <FormKit type="text" name="account_name" validation="required" v-model="currentBankAccount.account_name"
+            label="Názov účtu" />
+          <FormKit type="text" name="bank_name" validation="required" v-model="currentBankAccount.bank_name"
+            label="Názov banky" />
+          <FormKit type="text" name="iban" validation="required" v-model="currentBankAccount.iban" label="IBAN" />
+          <FormKit type="text" name="account_number" v-model="currentBankAccount.account_number" label="Číslo účtu" />
+          <FormKit type="text" name="swift" v-model="currentBankAccount.swift" label="SWIFT" />
+          <FormKit type="text" name="bank_code" v-model="currentBankAccount.bank_code" label="Kód banky" />
           <FormKit type="checkbox" label="Predvolený účet?" name="predvoleny" v-model="currentBankAccount.is_main" />
           <FormKit type="submit" label="Pridať" />
         </FormKit>
@@ -202,6 +208,28 @@ async function updateBankAccounts() {
     });
 }
 
+async function updateBankAccount(bankAccount) {
+  showModal("loadingModal");
+
+  if (bankAccount.is_main_b == true) {
+    bankAccount.is_main = 1;
+  } else {
+    bankAccount.is_main = 0;
+  }
+
+  const bankArray =  [] as any[];
+  bankArray.push(bankAccount);
+
+  const bankoveUcty = { bankAccounts: bankArray };
+
+  await store
+    .dispatch("updateCompanyBankAccounts", bankoveUcty)
+    .then(async () => {
+      await refreshData();
+      closeModal("loadingModal");
+    });
+}
+
 async function deleteBankAccount() {
   await store
     .dispatch("deleteBankAccount", selectedBankAccount.value)
@@ -235,5 +263,4 @@ onBeforeMount(async () => {
 
 .formkit-select-icon {
   color: black;
-}
-</style>
+}</style>

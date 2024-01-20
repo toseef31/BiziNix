@@ -527,7 +527,7 @@
 import type Company from "@/types/Company";
 import store from "@/store";
 import { ref, computed, onBeforeMount } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
 import moment from "moment";
@@ -539,7 +539,6 @@ const document: any = computed(() => {
 const items = ref([] as any[]);
 
 const today = moment(new Date()).format("YYYY-MM-DD");
-const route = useRoute();
 const router = useRouter();
 const submitted = ref(false);
 const isOpen = ref(false);

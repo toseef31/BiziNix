@@ -264,11 +264,11 @@ async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   if(res.data.data){
 
     if(!search){
-      return res.data.data.map((item: any) => ({ label: item.title, value: item }))  
+      return res.data.data.data.map((item: any) => ({ label: item.title, value: item }))  
     }
     
     else {
-      const filteredData = res.data.data.filter((item: any) =>
+      const filteredData = res.data.data.data.filter((item: any) =>
         item.title.toLowerCase().includes(search.toLowerCase())
       );
       const mappedData = filteredData.map((item: any) => ({
