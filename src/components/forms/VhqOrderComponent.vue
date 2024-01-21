@@ -277,6 +277,9 @@ async function updateHeadquarter() {
 }
 
 async function updateCompany() {
+  companyDataRef.value.currentCompany.headquarters_id = headquarterFromResponse.id;
+  companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
+
   await store
     .dispatch("updateCompany", companyDataRef.value.currentCompany)
     .then((res) => {
