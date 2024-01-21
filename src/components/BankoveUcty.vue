@@ -2,7 +2,7 @@
   <div class="flex flex-row px-10">
     <div class="flex flex-col py-10 items-center basis-5/6">
       <div class="grid grid-cols-2 gap-8">
-        <div class="flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-200" v-for="bankAccount in bankAccounts">
+        <div :class="[bankAccount.is_main? 'border-2 border-teal-500': 'border-0', 'flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-200']" v-for="bankAccount in bankAccounts">
           <div class="flex flex-col">
             <FormKit type="text" label="Názov účtu" name="iban" v-model="bankAccount.account_name"
               :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
@@ -19,9 +19,13 @@
                 :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
             </div>
             <div class="flex flex-row justify-between">
-              <FormKit type="checkbox" label="Predvolený?" name="predvoleny" v-model="bankAccount.is_main_b"
-                @click="updateBankAccount(bankAccount)" :checked="bankAccount.is_main_b"
-                :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+              <div>
+                <button @click="updateActiveBankAccount(bankAccount)" v-if="!bankAccount.is_main"
+                  class="flex justify-end w-fit items-center py-2 px-4 hover:cursor-pointer text-teal-500 hover:text-teal-700">
+                  Vybrať ako predvyplnený
+                </button>
+              </div>
+
               <div>
                 <button @click="deleteBankAccountModal(bankAccount)"
                   class="flex justify-end w-fit items-center py-2 px-4 hover:cursor-pointer text-red-700 hover:text-red-500">
@@ -126,7 +130,7 @@ import { PlusCircleIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { getValidationMessages } from '@formkit/validation'
 
 let company = ref({} as Company);
-const bankAccounts = computed(() => store.state.bankAccounts as any[]);
+const bankAccounts = computed(() => store.state.bankAccounts as CompanyBankAccount[]);
 const messages = ref([]);
 const currentBankAccount = ref({} as CompanyBankAccount)
 const selectedBankAccount = ref({} as CompanyBankAccount);
@@ -168,13 +172,6 @@ async function refreshData() {
     .dispatch("getCompanyBankDetails", company.value.id)
     .then(async (response) => {
       store.state.bankAccounts = response.data;
-      bankAccounts.value.forEach(element => {
-        if (element.is_main == 1) {
-          element.is_main_b = true;
-        } else {
-          element.is_main_b = false;
-        }
-      });
     });
 }
 
@@ -191,14 +188,6 @@ async function addBankAccount() {
 async function updateBankAccounts() {
   showModal("loadingModal");
 
-  bankAccounts.value.forEach(element => {
-    if (element.is_main_b == true) {
-      element.is_main = 1;
-    } else {
-      element.is_main = 0;
-    }
-  });
-
   const bankoveUcty = { bankAccounts: bankAccounts.value };
   await store
     .dispatch("updateCompanyBankAccounts", bankoveUcty)
@@ -208,19 +197,18 @@ async function updateBankAccounts() {
     });
 }
 
-async function updateBankAccount(bankAccount) {
+async function updateActiveBankAccount(bankAccount) {
   showModal("loadingModal");
 
-  if (bankAccount.is_main_b == true) {
-    bankAccount.is_main = 1;
-  } else {
-    bankAccount.is_main = 0;
-  }
+  bankAccounts.value.forEach((account) => {
+      if(account.id == bankAccount.id) {
+        account.is_main = true;
+      } else {
+        account.is_main = false;
+      }
+  });
 
-  const bankArray =  [] as any[];
-  bankArray.push(bankAccount);
-
-  const bankoveUcty = { bankAccounts: bankArray };
+  const bankoveUcty = { bankAccounts: bankAccounts.value };
 
   await store
     .dispatch("updateCompanyBankAccounts", bankoveUcty)
