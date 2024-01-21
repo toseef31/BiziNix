@@ -62,9 +62,7 @@ const totalForPay = computed(() => hqDataRef.value?.vhq_package.price * 12)
 let addressFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
-  orderFromRes: any,
-  invoiceProfileFromResponse: any,
-  headquarterFromResponse: any;
+  orderFromRes: any;
 
 const headquarter = ref({
   name: "",
@@ -249,35 +247,35 @@ async function updateHeadquarter() {
     .dispatch("getHeadquartersById", companyDataRef.value.currentCompany.headquarters_id)
     .then(async (response) => {
       headquarter.value = response.data;
-    });
 
-  headquarter.value.owner_name = "Bizinix";
-  headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
-  headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
+      headquarter.value.owner_name = "Bizinix";
+      headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
+      headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
 
-  //treba podla balika updatnut
-  headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
-  headquarter.value.is_virtual = true;
-  headquarter.value.img = store.state.selectedVhq.img;
-  headquarter.value.address_id = store.state.selectedVhq.address_id;
-  headquarter.value.registry = false;
-  headquarter.value.forwarding = false;
-  headquarter.value.scanning = false;
-  headquarter.value.shredding = false;
+      //treba podla balika updatnut
+      headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
+      headquarter.value.is_virtual = true;
+      headquarter.value.img = store.state.selectedVhq.img;
+      headquarter.value.address_id = store.state.selectedVhq.address_id;
+      headquarter.value.registry = false;
+      headquarter.value.forwarding = false;
+      headquarter.value.scanning = false;
+      headquarter.value.shredding = false;
 
-  await store
-    .dispatch("updateHeadquarter", headquarter.value)
-    .then((res) => {
-      headquarterFromResponse = res.headquarters;
-      return headquarterFromResponse;
-    })
-    .catch((err) => {
-      toast.error('Error: ' + err);
+      await store
+        .dispatch("updateHeadquarter", headquarter.value)
+        .then((res) => {
+          hqFromResponse = res.data.headquarters;
+          return hqFromResponse;
+        })
+        .catch((err) => {
+          toast.error('Error: ' + err);
+        });
     });
 }
 
 async function updateCompany() {
-  companyDataRef.value.currentCompany.headquarters_id = headquarterFromResponse.id;
+  companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
   companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   await store
