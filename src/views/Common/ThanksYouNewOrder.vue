@@ -23,6 +23,10 @@
           <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </template>
+      <div class="p-4 text-center" v-if="!loading && !user">
+        Nezabudnite si pred prihlásením aktivovať svoj účet.<br>
+        Aktivačný link nájdete vo Vašej emailovej schránke.
+      </div>
       <div class="p-4 text-center">Ďakujeme za dôveru.</div>
     </div>
   </main>
@@ -30,7 +34,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { FaceFrownIcon } from "@heroicons/vue/24/outline";
 import CompanyThanksYou from "@/components/payments/CompanyThanksYou.vue";
@@ -41,6 +45,8 @@ import MailThanksYouVue from "@/components/payments/MailThanksYou.vue";
 const route = useRoute();
 const order = ref<any>();
 const loading = ref(true);
+
+const user = computed(() => store.getters.getUserData);
 
 const getOrderById = async (orderId: string) => {
   try {
