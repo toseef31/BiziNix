@@ -27,7 +27,14 @@
             <div>
               <button type="button" class="px-4 text-teal-500" v-on:click="showNotification = !showNotification;">
                 <span class="sr-only">Notifications</span>
+                <span v-if="notifications.length > 0">
+                  <span
+                    class="inline-flex absolute items-center justify-center w-4 h-4 ms-1 text-xs font-semibold text-white bg-red-500 rounded-full">
+                    {{ notifications.length }}
+                  </span>
+                </span>
                 <BellIcon class="h-6 w-6" aria-hidden="true" />
+                
               </button>
               <div v-if="showNotification" @click="showNotification = false" class="fixed inset-0 h-full w-full z-10">
               </div>
