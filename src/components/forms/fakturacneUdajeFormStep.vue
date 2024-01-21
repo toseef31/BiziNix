@@ -16,9 +16,8 @@
           type="dropdown"
           name="invoice_profile_dropdown"
           label="Fakturačný profil"
-          placeholder="Vybrať"
+          placeholder="Vybrať fakturačný profil"
           :options="fetchInvoiceProfiles"
-          always-load-on-open
           validation="required"
           v-model="invoiceProfileId"
         >

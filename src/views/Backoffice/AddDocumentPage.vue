@@ -300,11 +300,10 @@
                   type="dropdown"
                   name="bankaccount_dropdown"
                   label="Bankový účet"
-                  placeholder="Vybrať"
                   :options="fetchBankAccounts"
-                  always-load-on-open
                   validation="required"
                   v-model="bankAccountId"
+                  :value="companyBankDetails"
                 >
                 </FormKit>
               </div>

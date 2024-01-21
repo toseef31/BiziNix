@@ -281,6 +281,7 @@ async function getCompanies(userId) {
 onMounted(async () => {
   if (store.state.user.userId) {
     await getCompanies(user.value.userId);
+    currentCompany.value = store.state.selectedCompany;
   }
 });
 
