@@ -23,7 +23,7 @@
           <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </template>
-      <div class="p-4 text-center" v-if="!loading && !user">
+      <div class="p-4 text-center font-bold" v-if="!loading && !user">
         Nezabudnite si pred prihlásením aktivovať svoj účet.<br>
         Aktivačný link nájdete vo Vašej emailovej schránke.
       </div>
@@ -46,7 +46,7 @@ const route = useRoute();
 const order = ref<any>();
 const loading = ref(true);
 
-const user = computed(() => store.getters.getUserData);
+const user = computed(() => store.state.user.userId);
 
 const getOrderById = async (orderId: string) => {
   try {
