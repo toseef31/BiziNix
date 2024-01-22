@@ -173,7 +173,7 @@ export default {
       appearance-none border-0 bg-transparent flex p-0 self-stretch cursor-pointer
       focus-visible:outline-none focus-visible:text-white focus-visible:bg-blue-500
     `,
-    calendarIcon: 'flex text-white w-8 grow-0 shrink-0 self-stretch select-none [&>svg]:w-full [&>svg]:m-auto [&>svg]:max-h-[1em] [&>svg]:max-w-[1em]',
+    calendarIcon: 'flex text-white dark:text-white w-8 grow-0 shrink-0 self-stretch select-none [&>svg]:w-full [&>svg]:m-auto [&>svg]:max-h-[1em] [&>svg]:max-w-[1em]',
   },
   rating: {
     inner: 'relative flex items-center w-[8em] formkit-disabled:bg-transparent',

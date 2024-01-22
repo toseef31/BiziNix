@@ -35,20 +35,20 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-gray-50">
-                            <tr v-for="invoice in orderedItems" :key="invoice.id">
+                            <tr v-for="invoice in orderedItems" :key="invoice.order.id">
                                 <td class="whitespace-nowrap py-4 pl-3 text-sm font-medium text-gray-900">
-                                    {{ invoice.id }}
+                                    {{ invoice.orderInvoice.cislo_fa }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ invoice.description }}
+                                    {{ invoice.order.description }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ formatDate(invoice.created_at) }}
+                                    {{ formatDate(invoice.order.created_at) }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                                     <div class="flex-1 py-4 px-3 text-left">
                                         <button class="font-medium text-gray-900 hover:underline"
-                                            v-on:click="downloadInvoice(invoice.id)">
+                                            v-on:click="downloadInvoice(invoice.order.id)">
                                             Stiahnuť faktúru
                                         </button>
                                     </div>
@@ -128,7 +128,7 @@ function formatDate(dateString: string) {
 const orderedItems: any = computed(() => {
   return _.orderBy(
     invoices.value,
-    ["id"],
+    ["order.id"],
     [selectedDirection.value.includes("asc") ? "asc" : "desc"]
   );
 });
@@ -160,7 +160,7 @@ async function downloadInvoice(id: number) {
         await store.dispatch("getOrderInvoiceForOrderByType", data)
         .then(async (response) => {
         const singleOrderInvoice = ref(response.data.data);
-        await store.dispatch("generateInvoiceById", singleOrderInvoice.value.id)
+        await store.dispatch("generateInvoiceById", singleOrderInvoice.value.order.id)
         .then(response => {
             const byteCharacters = atob(response.data);
             const byteNumbers = new Array(byteCharacters.length);
@@ -205,6 +205,7 @@ async function downloadInvoice(id: number) {
 onMounted(async () => {
     await store.dispatch("getAllOrdersForUser", store.state.user.userId)
         .then((response) => {
+          console.log(response)
             invoices.value = response.data
         })
 })

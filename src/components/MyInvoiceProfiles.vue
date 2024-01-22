@@ -175,7 +175,10 @@
                 @submit="addInvoiceProfile"
               >
                 <div class="px-4">
-                  <div class="flex flex-row gap-2">
+                  <div class="flex">
+                    <FormKit type="checkbox" v-model="isCompany" :checked="isCompany" label="Fakturačný profil firmy?"></FormKit>
+                  </div>
+                  <div class="flex flex-row gap-2" v-if="!isCompany">
                     <FormKit
                       type="text"
                       name="first_name"
@@ -189,7 +192,7 @@
                       label="Priezvisko"
                     />
                   </div>
-                  <div class="flex flex-row gap-2">
+                  <div class="flex flex-row gap-2" v-if="isCompany">
                     <FormKit
                       type="text"
                       name="name"
@@ -203,7 +206,7 @@
                       label="IČO"
                     />
                   </div>
-                  <div class="flex flex-row gap-2">
+                  <div class="flex flex-row gap-2" v-if="isCompany">
                     <FormKit
                       type="text"
                       name="dic"
@@ -261,6 +264,7 @@ const messages = ref([]);
 let currentInvoiceProfile = ref({} as any)
 const invoiceAddressId = ref();
 const router = useRouter();
+const isCompany = ref(false);
 
 let invoiceAddress = ref({
   street: '',
