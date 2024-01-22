@@ -38,6 +38,10 @@
             <h1 class="text-6xl my-6 font-bold">Ups, niečo sa pokazilo.</h1>
             <p class="text-xl">Objednávka sa nenašla, alebo nebola zaplatená.</p>
         </template>
+        <div class="p-4 text-center" v-if="!loading && !user">
+          Nezabudnite si pred prihlásením aktivovať svoj účet.<br>
+          Aktivačný link nájdete vo Vašej emailovej schránke.
+        </div>
         <div class="p-4 text-center">Ďakujeme za dôveru.</div>
       </div>
   </main>
@@ -46,10 +50,11 @@
 <script setup lang="ts">
 
 import store from "@/store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { CheckBadgeIcon, FaceFrownIcon } from "@heroicons/vue/24/outline";
 
+const user = computed(() => store.getters.getUserData);
 const loading = ref(true);
 const route = useRoute();
 const order = ref();
