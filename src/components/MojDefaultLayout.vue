@@ -144,7 +144,7 @@ user = computed(() => store.state.user);
 let activePage = ref("Moja firma");
 const currentCompany = computed(() => store.state.selectedCompany);
 const notifications = computed(() => store.state.notifications as any[]);
-const showNotification = ref(false);
+const showNotification = ref(true);
 const mailCounter = ref(0);
 
 onBeforeMount(async () => {
@@ -181,9 +181,10 @@ function redirectToByName(rname: string) {
   }
 
   if (rname == "Moja firma") {
+    store.state.myCompanyDetailsTab = 1;
     return router.push({
       name: "CompanyDetails",
-      params: { id: currentCompany.value.id, activeTab: 1 }
+      params: { id: currentCompany.value.id }
     });
   } else {
     return router.push({
@@ -195,14 +196,16 @@ function redirectToByName(rname: string) {
 function notificationAction(action: string) {
   switch (action) {
     case 'bankaccount':
+      store.state.myCompanyDetailsTab = 3;
       return router.push({
         name: "CompanyDetails",
-        params: { id: currentCompany.value.id, activeTab: 3 }
+        params: { id: currentCompany.value.id }
       });
     case 'companydetails':
+      store.state.myCompanyDetailsTab = 2;
       return router.push({
         name: "CompanyDetails",
-        params: { id: currentCompany.value.id, activeTab: 2 }
+        params: { id: currentCompany.value.id }
       });
     case 'documentdetails':
       store.state.documentTab = 3;

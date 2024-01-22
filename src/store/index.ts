@@ -33,6 +33,7 @@ export const store = createStore({
     notifications: [] as any,
     documentTab: 1,
     mySubmenuActive: 0,
+    myCompanyDetailsTab: 1,
     bankAccounts: [] as any,
     documents: [] as any[],
   },

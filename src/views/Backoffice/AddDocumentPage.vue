@@ -906,6 +906,7 @@ function removeItem(index: number) {
 }
 
 function cancelAddition() {
+  store.state.documentTab = 1;
   router.push({
     name: "Doklady",
   });
@@ -946,6 +947,7 @@ function showModal() {
 
 function addNew() {
   isVisible = setModal("submitted1", false);
+  store.state.documentTab = 1;
   router.push({
     name: "Add document",
   });
@@ -953,6 +955,7 @@ function addNew() {
 
 function closeModal() {
   isVisible = setModal("submitted1", false);
+  store.state.documentTab = 1;
   router.push({
     name: "Doklady",
   });

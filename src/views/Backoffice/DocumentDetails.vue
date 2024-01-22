@@ -244,32 +244,16 @@
           <section>
             <div class="flex flex-col" v-if="isOpen">
               <div>
-                <div class="flex flex-row justify-between pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold"
-                      >Názov Vašej banky</label
-                    >
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.name }}
-                    </label>
-                  </div>
-
-                  <div class="flex basis-1/2 flex-col justify-between">
-                    <label class="text-white pr-4 font-bold">IBAN</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.iban }}
-                    </label>
-                  </div>
-                </div>
-
-                <div class="flex flex-row pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold">SWIFT</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.swift }}
-                    </label>
-                  </div>
-                </div>
+                <FormKit
+                  type="dropdown"
+                  name="bankaccount_dropdown"
+                  label="Bankový účet"
+                  :options="fetchBankAccounts"
+                  validation="required"
+                  v-model="bankAccountId"
+                  :value="companyBankDetails"
+                >
+                </FormKit>
               </div>
               <div class="flex flex-row">
                 <div class="flex flex-col w-full justify-between px-4">
@@ -526,7 +510,7 @@
 <script setup lang="ts">
 import type Company from "@/types/Company";
 import store from "@/store";
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
@@ -542,6 +526,7 @@ const today = moment(new Date()).format("YYYY-MM-DD");
 const router = useRouter();
 const submitted = ref(false);
 const isOpen = ref(false);
+const bankAccountId = ref();
 
 const company = ref({} as Company);
 const address = ref({
@@ -571,6 +556,14 @@ const totalPrice: any = computed(() => {
 const totalPriceVat: any = computed(() => {
   return totalPrice.value * 0.2;
 });
+
+watch(bankAccountId, async () => {
+  const res = await store.dispatch("getBankAccountById", bankAccountId.value)
+  if(res.data) {
+    bankAccountId.value = res.data.id;
+    companyBankDetails.value = res.data;
+  }
+})
 
 async function refreshData() {
   await store
@@ -655,6 +648,23 @@ function removeItem(index: number) {
   items.value.splice(index, 1);
 }
 
+async function fetchBankAccounts() {
+  const res = await store.dispatch("getCompanyBankDetails", company.value.id)
+  if(res.data[0]?.id){
+    return res.data.map((data) => {
+      if(data?.is_main == 1){
+        bankAccountId.value = data?.id;
+      }
+      return {
+        label: `${data?.account_name ?? ''} IBAN: ${data?.iban ?? ''}`,
+        value: data.id
+      }
+    })
+  } else {
+    return []
+  }
+}
+
 function submitHandler() {
   submitted.value = true;
   document.value.items = items.value;
@@ -665,6 +675,7 @@ function submitHandler() {
   return store
     .dispatch("updateDocument", document.value)
     .then((res) => {
+      store.state.documentTab = 1;
       router.push({
         name: "Doklady",
       });

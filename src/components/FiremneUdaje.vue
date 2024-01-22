@@ -95,7 +95,7 @@
           :closable="false"
           title="Loading..."
         >
-          <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+          <div class="bg-gray-100 opacity-50">
             <div role="status" class="flex py-10 h-full w-full justify-center">
               <svg
                 aria-hidden="true"

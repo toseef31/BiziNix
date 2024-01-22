@@ -224,7 +224,7 @@
                         </div>
                         <div class="px-4 w-full text-white">
                           <FormKit id="scan" label="Importovať doklad" accept="image/*"
-                            v-on:change="updateImgData($event)" name="scan" type="file" />
+                            v-on:change="updateImgData($event)" name="scan" type="file"/>
                         </div>
 
                         <div class="flex flex-row justify-end py-8 px-4 gap-4">
@@ -360,8 +360,9 @@ const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
+const uploadImageFile = ref();
 const documentsData = ref();
-const selectedColumn = ref("id");
+const selectedColumn = ref("date_of_issue");
 const selectedDirection = ref("desc");
 const ogDocs = ref([] as any[]);
 
@@ -454,6 +455,8 @@ function documentSubtypeChanged() {
 }
 
 function updateImgData(evt: any) {
+  uploadImageFile.value = evt.target.files[0];
+  console.log(uploadImageFile.value)
   uploadImageData.value.body.name = evt.target.files[0].name;
   uploadImageData.value.body.logo = evt.target.files[0];
 }
@@ -516,7 +519,7 @@ function importDocument() {
   return store
     .dispatch("addDocument", document.value)
     .then(async () => {
-      //uploadImg();
+      uploadImg();
       await refreshData();
       closeDialog("importModal");
     })
