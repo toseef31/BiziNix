@@ -362,7 +362,7 @@ const today = moment(new Date()).format("YYYY-MM-DD");
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
 const uploadImageFile = ref();
 const documentsData = ref();
-const selectedColumn = ref("date_of_issue");
+const selectedColumn = ref("serial_number");
 const selectedDirection = ref("desc");
 const ogDocs = ref([] as any[]);
 
