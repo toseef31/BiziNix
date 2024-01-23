@@ -270,7 +270,7 @@
                     </div>
                     <!---->
                   </div>
-                  <DocumentsListTable></DocumentsListTable>
+                  <DocumentsListTable ref="documentsListTableRef"></DocumentsListTable>
                   <div class="flex flex-row w-full py-4 justify-around">
                     <div v-if="documentsData.next_page_url != null">
                       <button
@@ -365,6 +365,7 @@ const documentsData = ref();
 const selectedColumn = ref("serial_number");
 const selectedDirection = ref("desc");
 const ogDocs = ref([] as any[]);
+let documentsListTableRef = ref<InstanceType<typeof DocumentsListTable>>(null as any);
 
 const document = ref({
   type: activeTab,
@@ -428,6 +429,20 @@ function dphChanged(event: any) {
     document.value.isDph = false;
   }
 }
+
+watch(() => documentsListTableRef.value?.updateFinData,
+  async function (){
+    if(documentsListTableRef.value.updateFinData) {
+      await store
+          .dispatch("getFinDataForCompany", company.value.id)
+          .then((response) => {
+            finData.value = response.data;
+            documentsListTableRef.value.updateFinData = false;
+       })
+    }
+    
+  }
+);
 
 function documentSubtypeChanged() {
   switch (document.value.subtype) {

@@ -259,11 +259,12 @@ const documents = computed(() => store.state.documents);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 const company = ref({} as Company);
+const updateFinData = ref(false);
 
 const selectedDocuments = ref([] as Doklad[]);
 const selectedDocument = ref({} as Doklad);
 const reminderEmail = ref("");
-const reminderText = ref("Dobrý deň, zasielame Vám upomienku k dokladu č. 123 Prosíme Vás o čo najskoršie uhradenie.");
+const reminderText = ref("Dobrý deň, zasielame Vám upomienku k dokladu.");
 
 const setModal = useModal({
   loadingModal: 1,
@@ -357,6 +358,7 @@ async function duplicateDocument(document: any) {
     .then((res) => {
       store.dispatch("setDocument", newDocument).then(() => {
         store.state.documents.push(res.Document);
+        updateFinData.value = true;
         closeModal('loadingModal');
       });
     })
@@ -376,6 +378,7 @@ function confirmDelete(document: Doklad) {
     .dispatch("deleteDocument", document.id)
     .then(() => {
       store.state.documents.pop(document.id);
+      updateFinData.value = true;
       isVisible = setModal("deleteModal", false);
     })
     .catch((err) => {
@@ -393,6 +396,7 @@ function confirmDeleteMultipleDocuments() {
       .dispatch("deleteDocument", value.id)
       .then(() => {
         store.state.documents.pop(value.id);
+        updateFinData.value = true;
         isVisible = setModal("deleteMultipleModal", false);
       })
       .catch((err) => {
@@ -495,6 +499,10 @@ async function refreshData() {
 
 onBeforeMount(async () => {
   await refreshData();
+});
+
+defineExpose({
+  updateFinData
 });
 
 </script>
