@@ -135,6 +135,16 @@ async function fetchInvoiceProfiles() {
     }
 }
 
+async function updateCompany() {
+  selectedCompany.value.sidlo_typ_balika = vhq_package.value.name;
+
+  await store
+    .dispatch("updateCompany", selectedCompany.value)
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
 async function handleSubmit() {
     try {
         paymentInProgress.value = true;
@@ -157,8 +167,9 @@ async function handleSubmit() {
 
         await store
         .dispatch("addOrder", order.value)
-        .then((res) => {
+        .then(async (res) => {
             paymentInProgress.value = false;
+            await updateCompany();
             router.push({
                 name: "Thanks You New Order",
                 params: {
