@@ -347,8 +347,13 @@ async function duplicateDocument(document: any) {
 
   newDocument.items = JSON.parse(document.items);
 
+  const inputs = {
+    companyId: company.value.id,
+    subtype: document.subtype
+  }
+
   await store
-    .dispatch("getDocumentSnForCompany", company.value.id, document.subtype)
+    .dispatch("getDocumentSnForCompany", inputs)
     .then((response) => {
       newDocument.serial_number = response.data;
       newDocument.variabilny = response.data;
@@ -356,10 +361,15 @@ async function duplicateDocument(document: any) {
   store
     .dispatch("addDocument", newDocument)
     .then((res) => {
+      console.log(res);
       store.dispatch("setDocument", newDocument).then(() => {
         store.state.documents.push(res.Document);
         updateFinData.value = true;
+        store.state.document = res.Document;
         closeModal('loadingModal');
+        router.push({
+            name: "Doklad",
+        });
       });
     })
     .catch((err) => {

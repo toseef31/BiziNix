@@ -301,9 +301,9 @@ export const store = createStore({
       );
       return data;
     },
-    async getDocumentSnForCompany({ commit }, companyId, subtype) {
+    async getDocumentSnForCompany({ commit }, inputs) {
       const { data } = await axiosClient.get(
-        `/companies/${companyId}/${subtype}/getDocumentSnForCompany`
+        `/companies/${inputs.companyId}/${inputs.subtype}/getDocumentSnForCompany`
       );
       return data;
     },
