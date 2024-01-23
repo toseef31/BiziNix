@@ -47,8 +47,7 @@
             @change="switchSelect($event)">
             <option v-for="company in companies" :value="company.id" :key="company.id"
               :selected="company.id == currentCompany.id">
-              {{ company.name }} {{ company.fakturacia_free ? "(Skúšobná verzia zdarma)" : !company.fakturacia_free &&
-                company.fakturacia_zaplatene_do ? "(Služba je aktívna)" : "" }}
+              {{ company.name }}
             </option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center">
