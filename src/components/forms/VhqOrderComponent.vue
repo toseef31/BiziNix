@@ -290,6 +290,9 @@ async function updateCompany() {
 }
 
 const submitApp = async (formData: any, node: any) => {
+
+  await addHeadquarter();
+
   try {
 
     let userId = null as unknown as number;
