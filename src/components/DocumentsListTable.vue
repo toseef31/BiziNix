@@ -76,9 +76,9 @@
             <div class="flex flex-row">
               <div class="flex flex-col basis-3/4 px-6 py-1">
                 <div class="flex text-2xl font-extrabold">
-                  {{ document.total }} €
+                  {{ document.total }} {{ document.currency }}
                 </div>
-                <div class="flex text-xl" v-if="document.isDph">{{ document.total }} € s DPH</div>
+                <div class="flex text-xl" v-if="document.isDph">{{ document.total }} {{ document.currency }} s DPH</div>
                 <div class="flex text-sm" v-if="document.isIssued">{{ document.overdue }}</div>
               </div>
               <div class="flex flex-col items-center justify-center basis-1/4">
