@@ -258,7 +258,7 @@
                     <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
                       <div class="flex relative">
                         <div class="self-center font-bold px-2 text-white">Od:</div>
-                        <input id="searchInput" type="date" v-model="dateFrom"
+                        <input id="searchInput" type="date" v-model="dateFrom" 
                           class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
                       </div>
                       <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
@@ -673,3 +673,9 @@ onBeforeMount(async () => {
   await refreshData();
 });
 </script>
+
+<style scoped>
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+</style>
