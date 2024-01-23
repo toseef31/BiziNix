@@ -774,7 +774,7 @@ async function getCompanyDetails() {
 
 async function setSerialNumber() {
   store
-    .dispatch("getDocumentSnForCompany", store.state.selectedCompany.id)
+    .dispatch("getDocumentSnForCompany", store.state.selectedCompany.id, document.value.subtype)
     .then((response) => {
       serial_number.value = response.data;
       variabilny.value = response.data;

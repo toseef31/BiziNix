@@ -347,7 +347,7 @@ async function duplicateDocument(document: any) {
   newDocument.items = JSON.parse(document.items);
 
   await store
-    .dispatch("getDocumentSnForCompany", company.value.id)
+    .dispatch("getDocumentSnForCompany", company.value.id, document.subtype)
     .then((response) => {
       newDocument.serial_number = response.data;
       newDocument.variabilny = response.data;
