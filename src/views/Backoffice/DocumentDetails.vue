@@ -210,6 +210,29 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="flex flex-col pt-8">
+                  <div class="flex flex-row gap-3">
+                    <div class="flex flex-col w-full" v-if="document.subtype == 4 || document.subtype == 5">
+                        <FormKit
+                          autocomplete="nope"
+                          type="text"
+                          id="order-name"
+                          label="Názov zákazky"
+                          v-model="document.order_name"
+                        />
+                      </div>
+                      <div class="flex flex-col w-full" v-if="document.subtype == 4 || document.subtype == 5">
+                        <FormKit
+                          autocomplete="nope"
+                          type="textarea"
+                          id="order-description"
+                          label="Predmet zákazky"
+                          v-model="document.order_description"
+                        />
+                      </div>
+                  </div>
+                </div>
               </section>
             </div>
           </section>
