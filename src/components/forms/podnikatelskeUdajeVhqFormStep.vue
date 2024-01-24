@@ -113,6 +113,8 @@ const finstatCompanyDetails = ref({} as any);
 const user = computed(() => store.state.user);
 const showLogin = ref(false);
 
+const existingCompany = ref(false);
+
 const headquarter = ref({
   id: 0,
   address_id: 0,
@@ -139,6 +141,8 @@ const companyToAdd = ref({
   status: 1,
   ico: "",
   dic: "",
+  doc_template_id: 1,
+  doc_sncounter_id: 1,
   headquarters_id: 0,
   is_dph: false,
   owner: user.value.userId ? Number(user.value.userId) : 0,
@@ -154,7 +158,6 @@ watch(finstatCompany, (newFinstatCompany) => {
 watch(user.value, () => {
   if (user.value.userId !== undefined) {
     getCompanies(user.value.userId);
-    console.log(companies.value);
   }
 });
 
@@ -179,10 +182,12 @@ function addNewCompany() {
     companies.value.push(companyToAdd.value);
     currentCompany.value = companyToAdd.value;
     store.state.selectedCompany = currentCompany.value;
+    existingCompany.value = false;
   } else {
     companies.value.pop();
     store.state.selectedCompany = companies.value[0];
     currentCompany.value = store.state.selectedCompany;
+    existingCompany.value = true;
   }
 }
 
@@ -248,6 +253,8 @@ async function switchSelect(event: any) {
     companies.value.pop();
   }
 
+  existingCompany.value = true;
+
   currentCompany.value = companies.value.find(
     (item: any) => item.id == event.target.value
   );
@@ -272,6 +279,8 @@ async function getCompanies(userId) {
     .dispatch("getAllCompaniesByUserId", userId)
     .then((response) => {
       companies.value = response.data.data;
+      if(companies.value.length > 0)
+        existingCompany.value = true;
     }).catch((err) => {
       toast.error('Error: ' + err)
     });
@@ -288,6 +297,6 @@ defineExpose({
   finstatCompanyDetails,
   companyAddress,
   currentCompany,
-  newCompany
+  existingCompany
 })
 </script>

@@ -251,11 +251,23 @@ export const store = createStore({
       });
       return data;
     },
-    addCompany({ commit }, company) {
-      return axiosClient.post("/companies/add", company).then(({ data }) => {
-        commit("setCompany", data); // setCompany is defined as muttation below
-        return data;
-      });
+    async addCompany({ commit, dispatch }, company) {
+        return axiosClient
+          .post('/companies/add', company)
+          .then((res) => {
+            commit("setCompany", res.data);
+            return res;
+          });
+    },
+    async updateCompany({ commit, dispatch }, company) {
+      if (company.id) {
+        return axiosClient
+          .put(`/companies/${company.id}/update`, company)
+          .then((res) => {
+            commit("setCompany", res.data);
+            return res;
+          });
+      }
     },
     async addHeadquarter({ commit }, headquarter) {
       return axiosClient
@@ -332,16 +344,6 @@ export const store = createStore({
         members
       );
       return data;
-    },
-    async updateCompany({ commit, dispatch }, company) {
-      if (company.id) {
-        return axiosClient
-          .put(`/companies/${company.id}/update`, company)
-          .then((res) => {
-            commit("setCompany", res.data);
-            return res;
-          });
-      }
     },
     async uploadCompanyLogo({ commit, dispatch }, data) {
       const config = {

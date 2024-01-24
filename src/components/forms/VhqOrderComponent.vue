@@ -203,7 +203,7 @@ function addCompany(userId): Promise<Response> {
   return store
     .dispatch("addCompany", companyDataRef.value.currentCompany)
     .then((res) => {
-      companyFromResponse = res;
+      companyFromResponse = res.data;
       return companyFromResponse;
     })
     .catch((err) => {
@@ -216,7 +216,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
-  order.value.company_id = companyFromResponse.data.company.id;
+  order.value.company_id = companyFromResponse.company.id;
 
   if (userRegisterForm.value.userData.id) {
     order.value.user_id = userRegisterForm.value.userData.id;
@@ -281,7 +281,7 @@ async function updateCompany() {
   await store
     .dispatch("updateCompany", companyDataRef.value.currentCompany)
     .then((res) => {
-      companyFromResponse = res;
+      companyFromResponse = res.data;
       return companyFromResponse;
     })
     .catch((err) => {
@@ -290,9 +290,6 @@ async function updateCompany() {
 }
 
 const submitApp = async (formData: any, node: any) => {
-
-  await addHeadquarter();
-
   try {
 
     let userId = null as unknown as number;
@@ -318,7 +315,7 @@ const submitApp = async (formData: any, node: any) => {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    if (companyDataRef.value.currentCompany.newCompany == true) {
+    if (companyDataRef.value.existingCompany == false) {
       await addHeadquarter();
       await addCompany(userId);
     } else {

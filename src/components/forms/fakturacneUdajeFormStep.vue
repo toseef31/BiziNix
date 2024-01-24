@@ -57,7 +57,7 @@
             <Autocomplete v-model="finstatCompany"></Autocomplete>
           </div>
           <FormKit type="text" name="ico" v-model="fakturacne_udaje.ico" label="IČO" validation="required" />
-          <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" validation="required" />
+          <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" />
           <FormKit type="text" name="ic_dph" v-model="fakturacne_udaje.ic_dph" label="IČ DPH" />
 
           <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
