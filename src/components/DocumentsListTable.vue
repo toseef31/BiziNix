@@ -39,12 +39,12 @@
                 </div>
               </div>
               <div class="flex flex-row justify-start pb-4">
-                <button v-show="document.isIssued" type="button"
+                <button v-if="document.isIssued" type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
                   v-on:click="editDocument(document)">
                   Upraviť
                 </button>
-                <button v-show="document.isIssued" type="button"
+                <button v-if="document.isIssued" type="button"
                   class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
                   v-on:click="duplicateDocument(document)">
                   Duplikovať
@@ -54,7 +54,7 @@
                   v-on:click="downlaodSingleDocument(document)">
                   Stiahnuť
                 </button>
-                <button type="button" :disabled="document.isPaid" v-show="document.isIssued" :class="[
+                <button type="button" :disabled="document.isPaid" v-if="document.isIssued" :class="[
                   document.isPaid ? 'text-teal-500' : 'hover:text-teal-500',
                   'text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent focus:outline-none',
                 ]" v-on:click="sendReminder(document)">
@@ -75,7 +75,10 @@
           ]">
             <div class="flex flex-row">
               <div class="flex flex-col basis-3/4 px-6 py-1">
-                <div class="flex text-2xl font-extrabold">
+                <div class="flex text-2xl font-extrabold" v-if="document.isDph">
+                  {{ (document.total / 1.2).toFixed(2) }} {{ document.currency }}
+                </div>
+                <div class="flex text-2xl font-extrabold" v-else>
                   {{ document.total }} {{ document.currency }}
                 </div>
                 <div class="flex text-xl" v-if="document.isDph">{{ document.total }} {{ document.currency }} s DPH</div>
@@ -84,8 +87,9 @@
               <div class="flex flex-col items-center justify-center basis-1/4">
                 <div class="flex flex-col items-center pr-2">
                   <div>
-                    <input id="default-checkbox" type="checkbox" :value="document" v-model="selectedDocuments"
-                      class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                    <input type="checkbox"
+                      class="w-6 h-6 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      :value="document" v-model="selectedDocuments" />
                   </div>
                   <div class="flex flex-col pt-4" v-if="document.isIssued">
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -261,10 +265,16 @@ const today = moment(new Date()).format("YYYY-MM-DD");
 const company = ref({} as Company);
 const updateFinData = ref(false);
 
-const selectedDocuments = ref([] as Doklad[]);
+const selectedDocuments = ref([] as any[]);
 const selectedDocument = ref({} as Doklad);
 const reminderEmail = ref("");
 const reminderText = ref("Dobrý deň, zasielame Vám upomienku k dokladu.");
+
+const indeterminate = computed(
+  () =>
+    selectedDocuments.value.length > 0 &&
+    selectedDocuments.value.length < documents.value.length
+);
 
 const setModal = useModal({
   loadingModal: 1,
@@ -334,15 +344,15 @@ async function duplicateDocument(document: any) {
     due_by: document.due_by,
     delivery_method: document.delivery_method,
     delivery_date: today,
-    payment_method: document.payment_method,
+    payment_method: "",
     currency: document.currency,
     pdf: "",
     isIssued: document.isIssued,
-    isPaid: document.isPaid,
+    isPaid: false,
     reminder_sent: false,
-    paid: document.paid,
+    paid: 0,
     total: document.total,
-    payment_date: document.payment_date,
+    payment_date: "",
   };
 
   newDocument.items = JSON.parse(document.items);
@@ -368,7 +378,7 @@ async function duplicateDocument(document: any) {
         store.state.document = res.Document;
         closeModal('loadingModal');
         router.push({
-            name: "Doklad",
+          name: "Doklad",
         });
       });
     })
@@ -387,7 +397,8 @@ function confirmDelete(document: Doklad) {
   store
     .dispatch("deleteDocument", document.id)
     .then(() => {
-      store.state.documents.pop(document.id);
+      let index = store.state.documents.findIndex(d => d.id === document.id);
+      store.state.documents.splice(index, 1);
       updateFinData.value = true;
       isVisible = setModal("deleteModal", false);
     })
@@ -405,7 +416,8 @@ function confirmDeleteMultipleDocuments() {
     store
       .dispatch("deleteDocument", value.id)
       .then(() => {
-        store.state.documents.pop(value.id);
+        let index = store.state.documents.findIndex(d => d.id === value.id);
+        store.state.documents.splice(index, 1);
         updateFinData.value = true;
         isVisible = setModal("deleteMultipleModal", false);
       })
@@ -415,29 +427,10 @@ function confirmDeleteMultipleDocuments() {
   });
 }
 
-function downlaodSingleDocument(document: Doklad) {
-  store
-    .dispatch("downloadDocument", document.id)
-    .then((response) => {
-      const byteCharacters = atob(response);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "application/pdf" });
-
-      saveAs("document", blob);
-    })
-    .catch((e: Error) => {
-      console.log(e);
-    });
-}
-
-async function downloadMultipleDocuments() {
-  selectedDocuments.value.forEach(async function (value: any) {
+async function downlaodSingleDocument(document: Doklad) {
+  if (document.isIssued) {
     await store
-      .dispatch("downloadDocument", value.id)
+      .dispatch("downloadDocument", document.id)
       .then((response) => {
         const byteCharacters = atob(response);
         const byteNumbers = new Array(byteCharacters.length);
@@ -452,6 +445,64 @@ async function downloadMultipleDocuments() {
       .catch((e: Error) => {
         console.log(e);
       });
+  } else {
+    await store
+      .dispatch("getDocumentImg", document.id)
+      .then((response) => {
+        console.log(response);
+        const byteCharacters = atob(response.image);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray]);
+
+        saveAs(document.pdf, blob);
+      })
+      .catch((e: Error) => {
+        console.log(e);
+      });
+  }
+}
+
+async function downloadMultipleDocuments() {
+  selectedDocuments.value.forEach(async function (value: any) {
+    if (value.isIssued) {
+      await store
+        .dispatch("downloadDocument", value.id)
+        .then((response) => {
+          const byteCharacters = atob(response);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: "application/pdf" });
+
+          saveAs("document", blob);
+        })
+        .catch((e: Error) => {
+          console.log(e);
+        });
+    } else {
+      await store
+        .dispatch("getDocumentImg", value.id)
+        .then((response) => {
+          const byteCharacters = atob(response.image);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray]);
+
+          saveAs(value.pdf, blob);
+        })
+        .catch((e: Error) => {
+          console.log(e);
+        });
+    }
   });
 }
 

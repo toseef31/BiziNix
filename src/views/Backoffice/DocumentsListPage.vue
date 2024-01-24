@@ -359,7 +359,7 @@ const dateTo = ref(null);
 const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
-const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
+const uploadImageData = ref({ body: { name: "", img: "" }, documentId: 0 });
 const uploadImageFile = ref();
 const documentsData = ref();
 const selectedColumn = ref("serial_number");
@@ -379,7 +379,8 @@ const document = ref({
   total: 0,
   payment_date: "",
   date_of_issue: today,
-  isDph: false
+  isDph: false,
+  currency: "€"
 });
 
 let title = ref("Faktúry");
@@ -470,10 +471,8 @@ function documentSubtypeChanged() {
 }
 
 function updateImgData(evt: any) {
-  uploadImageFile.value = evt.target.files[0];
-  console.log(uploadImageFile.value)
   uploadImageData.value.body.name = evt.target.files[0].name;
-  uploadImageData.value.body.logo = evt.target.files[0];
+  uploadImageData.value.body.img = evt.target.files[0];
 }
 
 async function currentDocTab(tabNumber: number, page: number) {
@@ -533,8 +532,8 @@ function importDocument() {
 
   return store
     .dispatch("addDocument", document.value)
-    .then(async () => {
-      uploadImg();
+    .then(async (res) => {
+      await uploadImg(res.Document.id);
       await refreshData();
       closeDialog("importModal");
     })
@@ -543,8 +542,9 @@ function importDocument() {
     });
 }
 
-function uploadImg() {
-  store
+async function uploadImg(documentId) {
+  uploadImageData.value.documentId = documentId;
+  await store
     .dispatch("uploadDocumentImg", uploadImageData.value)
     .then((response) => {
       console.log(response.data);
@@ -626,7 +626,7 @@ async function getDocuments(page: number, searchQuery: any, from: any, to: any, 
   const inputs = {
     companyId: company.value.id,
     page: page,
-    body: { type: type, orderBy: column + ' ' + selectedDirection.value, searchQuery: searchQuery, dateFrom: from, dateTo: to }
+    body: { type: type, orderBy: 'date_of_issue desc, serial_number desc', searchQuery: searchQuery, dateFrom: from, dateTo: to }
   }
 
   if (direction == 'next') {

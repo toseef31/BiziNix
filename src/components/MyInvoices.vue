@@ -13,13 +13,10 @@
                                     Predmet objednávky
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                    <span class="inline-flex items-center" :class="{
-                                        'text-teal-500':
-                                            selectedColumn == 'created_at',
-                                    }">
+                                    <span class="inline-flex items-center text-teal-500">
                                         Dátum vystavenia
                                         <button>
-                                            <svg @click="setOrderResultsBy('created_at')" xmlns="http://www.w3.org/2000/svg"
+                                            <svg xmlns="http://www.w3.org/2000/svg"
                                                 class="ml-1 w-3 h-3" aria-hidden="true" fill="currentColor"
                                                 viewBox="0 0 320 512">
                                                 <path
@@ -35,20 +32,20 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-gray-50">
-                            <tr v-for="invoice in orderedItems" :key="invoice.order.id">
+                            <tr v-for="invoice in invoices" :key="invoice.id">
                                 <td class="whitespace-nowrap py-4 pl-3 text-sm font-medium text-gray-900">
-                                    {{ invoice.orderInvoice.cislo_fa }}
+                                    {{ invoice.cislo_fa }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ invoice.order.description }}
+                                    {{ invoice.description }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ formatDate(invoice.order.created_at) }}
+                                    {{ formatDate(invoice.created_at) }}
                                 </td>
                                 <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                                     <div class="flex-1 py-4 px-3 text-left">
                                         <button class="font-medium text-gray-900 hover:underline"
-                                            v-on:click="downloadInvoice(invoice.order.id)">
+                                            v-on:click="downloadInvoice(invoice.id)">
                                             Stiahnuť faktúru
                                         </button>
                                     </div>
@@ -101,8 +98,6 @@ import dayjs from "dayjs";
 import { useModal, Modal } from "usemodal-vue3";
 
 const invoices = ref([] as any);
-const selectedColumn = ref("created_at");
-const selectedDirection = ref("desc");
 
 const setModal = useModal({
   loadingModal: 1
@@ -123,27 +118,6 @@ function closeModal(modalName: string) {
 function formatDate(dateString: string) {
     const date = dayjs(dateString);
     return date.format("DD.MM.YYYY");
-}
-
-const orderedItems: any = computed(() => {
-  return _.orderBy(
-    invoices.value,
-    ["order.id"],
-    [selectedDirection.value.includes("asc") ? "asc" : "desc"]
-  );
-});
-
-function setOrderResultsBy(column: any) {
-  if (selectedColumn.value == column) {
-    if (selectedDirection.value == "desc") {
-      selectedDirection.value = "asc";
-    } else {
-      selectedDirection.value = "desc";
-    }
-  } else {
-    selectedDirection.value = "asc";
-  }
-  selectedColumn.value = column;
 }
 
 function saveAs(filename: string, blob: Blob) {

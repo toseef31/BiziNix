@@ -13,8 +13,17 @@
             <div class="flex flex-row">
               <div class="flex basis-5/6 justify-center">
                 <h3 class="text-3xl font-bold text-center py-10 text-white">
-                  Detail dokladu č. {{ document.serial_number }}
+                  Detail dokladu č.
                 </h3>
+                <div class="py-10 px-2">
+                  <FormKit
+                    v-model="document.serial_number"
+                    autocomplete="nope"
+                    id="invoice-number"
+                    name="serial_number"
+                    type="text"
+                  />
+                </div>
               </div>
               <div class="flex basis-1/6 justify-end py-6 px-6">
                 <button
@@ -396,6 +405,7 @@
                             min="0"
                             number
                         v-model="item.quantity"
+                        @change="priceEntered(item)"
                       />
                     </div>
                     <div class="flex basis-2/12">
@@ -549,7 +559,7 @@ const today = moment(new Date()).format("YYYY-MM-DD");
 const router = useRouter();
 const submitted = ref(false);
 const isOpen = ref(false);
-const bankAccountId = ref();
+const bankAccountId = ref(document.value.bank_account_id);
 
 const company = ref({} as Company);
 const address = ref({

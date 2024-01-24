@@ -490,6 +490,28 @@ export const store = createStore({
     deleteDocument({ commit }, id) {
       return axiosClient.delete(`/documents/${id}/delete`);
     },
+    async uploadDocumentImg({ commit, dispatch }, data) {
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+      return axiosClient
+        .post(
+          `/documents/${data.documentId}/uploadDocumentImg`,
+          data.body,
+          config
+        )
+        .then((res) => {
+          return res;
+        });
+    },
+    async getDocumentImg({ commit, dispatch }, documentId) {
+      const { data } = await axiosClient.get(
+        `/documents/${documentId}/getDocumentImg`
+      );
+      return data;
+    },
     //#endregion
     //#region orders
     

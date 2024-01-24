@@ -694,6 +694,7 @@ const document = ref({
   type: 1,
   subtype: subtype,
   company_id: company.value.id,
+  bank_account_id: bankAccountId.value,
   odberatel: "",
   contact_person: "",
   address: "",

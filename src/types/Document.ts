@@ -46,4 +46,5 @@ export default interface Doklad {
   overdue: string;
   total: number;
   total_topay: number;
+  bank_account_id: number;
 }

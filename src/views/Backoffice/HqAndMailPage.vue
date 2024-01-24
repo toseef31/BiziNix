@@ -35,7 +35,7 @@
       </div>
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
         <div
-          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika == 'MINI'"
+          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika.toLowerCase() == 'mini'"
           class="flex flex-col w-full items-center">
           <div class="flex flex-col w-full items-center h-full py-32">
             <div class="text-4xl text-gray-900 font-bold">
