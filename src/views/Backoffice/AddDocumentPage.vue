@@ -798,8 +798,13 @@ async function getCompanyDetails() {
 } 
 
 async function setSerialNumber() {
-  store
-    .dispatch("getDocumentSnForCompany", store.state.selectedCompany.id, document.value.subtype)
+  const inputs = {
+    companyId: company.value.id,
+    subtype: document.value.subtype
+  }
+
+  await store
+    .dispatch("getDocumentSnForCompany", inputs)
     .then((response) => {
       serial_number.value = response.data;
       variabilny.value = response.data;

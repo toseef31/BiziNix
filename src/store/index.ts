@@ -277,7 +277,7 @@ export const store = createStore({
     },
     async getAllCompaniesByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
-      commit("setMyCompanies", data.data);
+      commit("setMyCompanies", data);
       return data;
     },
     async getCompanyById({ commit }, companyId) {
