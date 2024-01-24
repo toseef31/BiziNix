@@ -92,6 +92,7 @@ const companyAddress = computed(
 );
 
 let showAddNewCompany = ref(false);
+const existingInactiveCompany = ref(false);
 const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
@@ -177,6 +178,7 @@ const address = ref({
 
 function addNewCompany() {
   if (showAddNewCompany.value) {
+    existingInactiveCompany.value = false;
     companies.value.push(newCompany.value);
     currentCompany.value = newCompany.value;
     store.state.selectedCompany = currentCompany.value;
@@ -184,6 +186,9 @@ function addNewCompany() {
     companies.value.pop();
     store.state.selectedCompany = companies.value[0];
     currentCompany.value = store.state.selectedCompany;
+    if(currentCompany.value.status == 2) {
+      existingInactiveCompany.value = true;
+    }
   }
 }
 
@@ -223,6 +228,12 @@ async function switchSelect(event: any) {
   );
   store.state.selectedCompany = currentCompany.value;
 
+  if(currentCompany.value.status == 2) {
+    existingInactiveCompany.value = true;
+  } else if(currentCompany.value.status == 1 && existingInactiveCompany.value){
+    existingInactiveCompany.value = false;
+  }
+
   await store
     .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
     .then((response) => {
@@ -241,15 +252,18 @@ onMounted(async () => {
     try {
       await store
         .dispatch("getAllCompaniesByUserId", store.state.user.userId)
-        .then((response) => {
+        .then(async (response) => {
           companies.value = response.data.data;
           currentCompany.value = companies.value.at(0);
           store.state.selectedCompany = currentCompany.value;
-          store
+          if(currentCompany.value.status == 2) {
+            existingInactiveCompany.value = true;
+          }
+          await store
             .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
-            .then((response) => {
+            .then(async (response) => {
               headquarter.value = response.data;
-              store
+              await store
                 .dispatch("getAddressById", headquarter.value.address_id)
                 .then((response) => {
                   address.value = response.data;
@@ -272,6 +286,7 @@ defineExpose({
   isIcoAlreadyRegistered,
   companyAddress,
   currentCompany,
-  headquarter
+  headquarter,
+  existingInactiveCompany
 })
 </script>

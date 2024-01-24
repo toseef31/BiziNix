@@ -226,7 +226,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
   try {
     if (user.value.userId) {
       const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
-      if (result) {
+      if (result && doCompanyDataRef.value.existingInactiveCompany == false) {
         if (invoiceProfileId == 0) {
           await addHeadquarter(address_id).then(async () => {
             await addCompany(userId).then(async () => {
