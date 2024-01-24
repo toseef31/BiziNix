@@ -242,7 +242,7 @@ onMounted(async () => {
       await store
         .dispatch("getAllCompaniesByUserId", store.state.user.userId)
         .then((response) => {
-          companies.value = response.data;
+          companies.value = response.data.data;
           currentCompany.value = companies.value.at(0);
           store.state.selectedCompany = currentCompany.value;
           store

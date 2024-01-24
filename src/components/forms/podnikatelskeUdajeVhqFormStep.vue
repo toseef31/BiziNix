@@ -271,7 +271,7 @@ async function getCompanies(userId) {
   await store
     .dispatch("getAllCompaniesByUserId", userId)
     .then((response) => {
-      companies.value = response.data;
+      companies.value = response.data.data;
     }).catch((err) => {
       toast.error('Error: ' + err)
     });
