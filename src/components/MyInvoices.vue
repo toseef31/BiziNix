@@ -205,8 +205,7 @@ async function downloadInvoice(id: number) {
 onMounted(async () => {
     await store.dispatch("getAllOrdersForUser", store.state.user.userId)
         .then((response) => {
-          console.log(response)
-            invoices.value = response.data
+          invoices.value = response.data.data
         })
 })
 
