@@ -73,7 +73,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika != 'MINI'">
+        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika.toLowerCase() != 'mini'">
           <div class="w-full min-h-full">
             <div class="flex flex-col container mx-auto h-full text-gray-800">
               <h1 class="flex flex-row px-4 py-8 text-3xl font-bold text-gray-600 pb-10 justify-center">
