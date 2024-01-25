@@ -529,8 +529,6 @@ const address = ref({
   psc: "",
 });
 
-
-
 const headquarter = ref({
   id: 0,
   address_id: 0,
@@ -752,7 +750,7 @@ async function refreshData() {
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then((response) => {
       selectedCompany.value = response.data;
-    });
+  });
 
 
   await store
@@ -768,8 +766,8 @@ async function refreshData() {
 
       }
 
-    });
-
+  });
+  
   if (selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
     const inputs = {
       companyId: selectedCompany.value.id,

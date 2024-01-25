@@ -162,8 +162,9 @@ function deleteBankAccountModal(bankAccount: any) {
 
 watch(
   () => store.getters.getSelectedCompany,
-  function () {
+  async function () {
     company.value = store.getters.getSelectedCompany;
+    await refreshData();
   }
 );
 

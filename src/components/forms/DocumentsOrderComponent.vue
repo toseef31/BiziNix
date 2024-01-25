@@ -80,14 +80,13 @@ let addressFromResponse: any,
 
 const today = moment(new Date()).format("YYYY-MM-DD");
 const firstTimePaymentDate = moment(today).add(90, "days").format("YYYY-MM-DD");
-const monthlyPaymentDate = moment(today).add(30, "days").format("YYYY-MM-DD");
 const yearlyPaymentDate = moment(today).add(365, "days").format("YYYY-MM-DD");
 
 const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
-let order = ref({
+const order = ref({
   payment_method: '',
   order_type: 'documents',
   description: 'test',
@@ -108,8 +107,8 @@ let order = ref({
 })
 
 function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Response> {
-  if (companyFromResponse?.company?.id) {
-    order.value.company_id = companyFromResponse.company.id;
+  if (companyFromResponse?.id) {
+    order.value.company_id = companyFromResponse.id;
   } else {
     order.value.company_id = doCompanyDataRef.value.currentCompany.id;
   }
@@ -276,7 +275,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
     } else {
       await addHeadquarter(address_id).then(async () => {
         await addCompany(userId).then(async () => {
-          addOrder(userId, invoiceProfileId, true).then(() => {
+          await addOrder(userId, invoiceProfileId, true).then(() => {
             router.push({
               name: "Thanks You New Order",
               params: {
@@ -308,7 +307,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                 },
               });
               store
-                .dispatch("updateCompany", companyFromResponse.company)
+                .dispatch("updateCompany", companyFromResponse)
                 .then(() => {
                   router.push({
                     name: "Thanks You New Order",
@@ -381,7 +380,6 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
 
   return store.dispatch('addInvoiceProfile', faktProfil)
     .then((res) => {
-      console.log("Adding invoice profile: ", JSON.stringify(res))
       return res
     })
     .catch((error: any) => {
@@ -457,7 +455,7 @@ async function addCompany(userId): Promise<Response> {
   return store
     .dispatch("addCompany", doCompanyDataRef.value.currentCompany)
     .then((res) => {
-      companyFromResponse = res;
+      companyFromResponse = res.data.company;
       return companyFromResponse;
     })
     .catch((err) => {

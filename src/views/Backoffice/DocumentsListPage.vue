@@ -224,7 +224,7 @@
                         </div>
                         <div class="px-4 w-full text-white">
                           <FormKit id="scan" label="Importovať doklad" accept="image/*"
-                            v-on:change="updateImgData($event)" name="scan" type="file"/>
+                            v-on:change="updateImgData($event)" name="scan" type="file" />
                         </div>
 
                         <div class="flex flex-row justify-end py-8 px-4 gap-4">
@@ -258,7 +258,7 @@
                     <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
                       <div class="flex relative">
                         <div class="self-center font-bold px-2 text-white">Od:</div>
-                        <input id="searchInput" type="date" v-model="dateFrom" 
+                        <input id="searchInput" type="date" v-model="dateFrom"
                           class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
                       </div>
                       <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
@@ -295,6 +295,22 @@
                   <label class="font-bold text-center">Nový doklad</label>
                 </div>
               </div>
+              <Dialog :open="showBankPopup" @close="showBankPopup = false" class="relative z-50">
+                <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                  <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                    <DialogTitle class="text-center py-4 text-xl font-bold">Bankový účet</DialogTitle>
+
+                    <p class="p-8">
+                      Predtým ako budte môcť vystavovať doklady si pridajte Bankový účet.
+                    </p>
+                    <div class="flex flex-row justify-between py-2 px-4">
+                      <button class="px-2 py-2 hover:text-teal-500" @click="redirectToBankAccounts()">Pridať účet</button>
+                      <button class="px-2 hover:text-red-500" @click="showBankPopup = false">Zatvoriť</button>
+                    </div>
+                  </DialogPanel>
+                </div>
+              </Dialog>
             </div>
           </div>
           <div v-else>
@@ -340,7 +356,7 @@ import { useModal, Modal } from "usemodal-vue3";
 import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
-import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot, DialogTitle } from '@headlessui/vue';
 import { XMarkIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { toast } from "vue3-toastify";
 
@@ -366,6 +382,8 @@ const selectedColumn = ref("serial_number");
 const selectedDirection = ref("desc");
 const ogDocs = ref([] as any[]);
 let documentsListTableRef = ref<InstanceType<typeof DocumentsListTable>>(null as any);
+const showBankPopup = ref(false);
+const bankAccounts = ref([] as any[]);
 
 const document = ref({
   type: activeTab,
@@ -432,16 +450,16 @@ function dphChanged(event: any) {
 }
 
 watch(() => documentsListTableRef.value?.updateFinData,
-  async function (){
-    if(documentsListTableRef.value?.updateFinData) {
+  async function () {
+    if (documentsListTableRef.value?.updateFinData) {
       await store
-          .dispatch("getFinDataForCompany", company.value.id)
-          .then((response) => {
-            finData.value = response.data;
-            documentsListTableRef.value.updateFinData = false;
-       })
+        .dispatch("getFinDataForCompany", company.value.id)
+        .then((response) => {
+          finData.value = response.data;
+          documentsListTableRef.value.updateFinData = false;
+        })
     }
-    
+
   }
 );
 
@@ -502,9 +520,21 @@ async function currentDocTab(tabNumber: number, page: number) {
 }
 
 function redirect() {
+  if (bankAccounts.value.length > 0) {
+    return router.push({
+      name: "Add document",
+      params: { subtype: activeDocTab.value },
+    });
+  } else {
+    showBankPopup.value = true;
+  }
+}
+
+function redirectToBankAccounts() {
+  store.state.myCompanyDetailsTab = 3;
   return router.push({
-    name: "Add document",
-    params: { subtype: activeDocTab.value },
+    name: "CompanyDetails",
+    params: { id: company.value.id }
   });
 }
 
@@ -564,7 +594,7 @@ function filterDataByIssued() {
       isIssuedChecked.value == true &&
       isReceivedChecked.value == true
     ) {
-      return true;  
+      return true;
     } else if (
       isIssuedChecked.value == false &&
       isReceivedChecked.value == false
@@ -663,7 +693,12 @@ async function refreshData() {
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
           finData.value = response.data;
-        })
+        });
+      await store
+        .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)
+        .then((response) => {
+          bankAccounts.value = response.data;
+        });
     });
   isLoading.value = false;
 }
