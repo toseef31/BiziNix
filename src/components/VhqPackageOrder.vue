@@ -96,7 +96,8 @@ const isLoading = ref(true);
 const paymentInProgress = ref(false);
 const totalToPay = computed(() => vhq_package.value.price*(monthsUntilPay.value<=1? 12 : monthsUntilPay.value ));
 const today = moment(new Date()).month();
-const monthsUntilPay = computed(() => (moment(new Date(selectedCompany.value.sidlo_zaplatene_do)).month())-today);
+const today2 = (moment(new Date(selectedCompany.value.sidlo_zaplatene_do)).month())-today;
+const monthsUntilPay = computed(() => today2<=0? 12: today2);
 
 const vhq_package = ref({
   name: "Ideal",
