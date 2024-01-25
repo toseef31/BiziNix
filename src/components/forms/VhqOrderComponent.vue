@@ -165,7 +165,7 @@ function registerUserAndReturnUserId(): Promise<any> {
     });
 }
 
-function addHeadquarter(): Promise<Response> {
+/*function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
   headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
@@ -189,7 +189,7 @@ function addHeadquarter(): Promise<Response> {
     .catch((err) => {
       console.log(err.response.data.value.errors);
     });
-}
+}*/
 
 function addCompany(userId): Promise<Response> {
   if (userRegisterForm.value.userData.id) {
@@ -242,7 +242,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
     });
 }
 
-async function updateHeadquarter() {
+/*async function updateHeadquarter() {
   await store
     .dispatch("getHeadquartersById", companyDataRef.value.currentCompany.headquarters_id)
     .then(async (response) => {
@@ -272,7 +272,7 @@ async function updateHeadquarter() {
           toast.error('Error: ' + err);
         });
     });
-}
+}*/
 
 async function updateCompany() {
   companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
@@ -316,10 +316,10 @@ const submitApp = async (formData: any, node: any) => {
     }
 
     if (companyDataRef.value.existingCompany == false) {
-      await addHeadquarter();
+      //await addHeadquarter();
       await addCompany(userId);
     } else {
-      await updateHeadquarter();
+      //await updateHeadquarter();
       await updateCompany();
     }
 

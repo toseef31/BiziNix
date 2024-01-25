@@ -243,6 +243,12 @@
                             </span>
                           </th>
 
+                          <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <span class="inline-flex items-center">
+                              Gramáž
+                            </span>
+                          </th>
+
                           <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                             Preposlať
                           </th>
@@ -273,6 +279,9 @@
                           </td>
                           <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
                             {{ formatDate(mail.distribution_date) }}
+                          </td>
+                          <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
+                            {{ mail.weight }}g
                           </td>
                           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <button v-if="!mail.forward_requested &&
@@ -547,7 +556,7 @@ function closeModal() {
 watch(
   () => store.getters.getSelectedCompany,
   async function () {
-    if(store.getters.getSelectedCompany.id !== selectedCompany.value.id)
+    if (store.getters.getSelectedCompany.id !== selectedCompany.value.id)
       await refreshData();
   }
 );
@@ -578,7 +587,7 @@ async function orderBy(column) {
   await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
 }
 
-async function getMails(page: number, searchQuery: any, from: any, to: any, direction: any, column:any) {
+async function getMails(page: number, searchQuery: any, from: any, to: any, direction: any, column: any) {
   selectedDirection.value == 'asc' ? selectedDirection.value = 'desc' : selectedDirection.value = 'asc';
 
   const inputs = {
@@ -654,14 +663,16 @@ async function shredMails() {
     }
   });
 
-  await store
-    .dispatch("updateMultipleMails", checkedMails.value)
-    .then(async () => {
-      checkedMails.value = [];
-    })
-    .catch((err) => {
-      toast.error('Error: ' + err);
-    });
+  if (checkedMails.value.length > 0) {
+    await store
+      .dispatch("updateMultipleMails", checkedMails.value)
+      .then(async () => {
+        checkedMails.value = [];
+      })
+      .catch((err) => {
+        toast.error('Error: ' + err);
+      });
+  }
 }
 
 function formatDate(dateString: string) {
@@ -743,7 +754,7 @@ async function refreshData() {
       selectedCompany.value = response.data;
     });
 
-  
+
   await store
     .dispatch("getHeadquartersById", selectedCompany.value.headquarters_id)
     .then((response) => {
@@ -755,13 +766,13 @@ async function refreshData() {
         });
     });
 
-  if(selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
+  if (selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
     const inputs = {
       companyId: selectedCompany.value.id,
       page: 1,
       body: { orderBy: 'distribution_date DESC', searchQuery: null, dateFrom: null, dateTo: null }
     }
-    
+
     await store
       .dispatch("getAllMailsForCompany", inputs)
       .then(async (response) => {
@@ -770,14 +781,16 @@ async function refreshData() {
         mails.value.forEach(function (value: any) {
           value.isSeen = true;
         });
-        await store
-        .dispatch("updateMultipleMails", mails.value)
-        .then(() =>{
-          store.state.mails = mails.value;
-        })
-        .catch((err) => {
-          toast.error('Error: ' + err);
-        });
+        if (mails.value.length > 0) {
+          await store
+            .dispatch("updateMultipleMails", mails.value)
+            .then(() => {
+              store.state.mails = mails.value;
+            })
+            .catch((err) => {
+              toast.error('Error: ' + err);
+            });
+        }
         loading = false;
       });
   }
