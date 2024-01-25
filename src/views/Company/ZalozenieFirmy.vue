@@ -516,8 +516,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
     const companyRes = await addCompany(userId, regHqRes.id);
     
-    await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
-    await addMultipleCompanyMembersKonatelia(companyRes.company.id)
+    await addMultipleCompanyMembersSpolocnici(companyRes.data.company.id)
+    await addMultipleCompanyMembersKonatelia(companyRes.data.company.id)
 
     let invoiceProfileId = null as unknown as number;
     if(invoiceData.value.createNewInvoiceProfile){
@@ -536,7 +536,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
+    const orderRes = await addOrder(companyRes.data.company.id, userId, invoiceProfileId)
     
     if(orderRes.id){
 

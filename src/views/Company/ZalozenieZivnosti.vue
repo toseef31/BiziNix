@@ -488,7 +488,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
     
     const companyRes = await addCompany(userRegisterForm.value.user, userId, regHqRes.id);
     
-    await addCompanyMember(companyRes.company.id);
+    await addCompanyMember(companyRes.data.company.id);
 
     let invoiceProfileId = null as unknown as number;
     if(invoiceData.value.createNewInvoiceProfile){
@@ -507,7 +507,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
+    const orderRes = await addOrder(companyRes.data.company.id, userId, invoiceProfileId)
 
     if(orderRes.id){
       console.log("SUPER! Objednávka bola spracovaná.")
