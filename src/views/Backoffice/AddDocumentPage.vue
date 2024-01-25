@@ -680,9 +680,15 @@ const headquarter = ref({
 });
 
 const companyBankDetails = ref({
-  name: "",
+  id: 0,
+  account_name: "",
+  bank_name: "",
   iban: "",
+  account_number: "",
   swift: "",
+  bank_code: "",
+  is_main: false,
+  company_id: 0
 });
 
 const documentTypeStr = ref("faktúru");
@@ -694,7 +700,7 @@ const document = ref({
   type: 1,
   subtype: subtype,
   company_id: company.value.id,
-  bank_account_id: bankAccountId.value,
+  bank_account_id: null,
   odberatel: "",
   contact_person: "",
   address: "",
@@ -836,6 +842,7 @@ async function refreshData() {
         .then((response) => {
           const bankAccounts = response.data;
           companyBankDetails.value = bankAccounts.filter((item) => { return (item.is_main == 1); })[0];
+          bankAccountId.value = companyBankDetails.value.id;
         });
     });
 
@@ -949,6 +956,7 @@ function submitHandler() {
     document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
     document.value.items = items.value;
     document.value.paid = document.value.total;
+    document.value.bank_account_id = bankAccountId.value;
 
     return store
       .dispatch("addDocument", document.value)

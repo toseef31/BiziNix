@@ -577,9 +577,15 @@ const headquarter = ref({
 });
 
 const companyBankDetails = ref({
-  name: "",
+  id: 0,
+  account_name: "",
+  bank_name: "",
   iban: "",
+  account_number: "",
   swift: "",
+  bank_code: "",
+  is_main: false,
+  company_id: 0
 });
 
 const totalPrice: any = computed(() => {
@@ -685,9 +691,7 @@ async function fetchBankAccounts() {
   const res = await store.dispatch("getCompanyBankDetails", company.value.id)
   if(res.data[0]?.id){
     return res.data.map((data) => {
-      if(data?.is_main == 1){
         bankAccountId.value = data?.id;
-      }
       return {
         label: `${data?.account_name ?? ''} IBAN: ${data?.iban ?? ''}`,
         value: data.id

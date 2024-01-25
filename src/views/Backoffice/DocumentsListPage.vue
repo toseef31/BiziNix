@@ -433,7 +433,7 @@ function dphChanged(event: any) {
 
 watch(() => documentsListTableRef.value?.updateFinData,
   async function (){
-    if(documentsListTableRef.value.updateFinData) {
+    if(documentsListTableRef.value?.updateFinData) {
       await store
           .dispatch("getFinDataForCompany", company.value.id)
           .then((response) => {

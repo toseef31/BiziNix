@@ -759,11 +759,15 @@ async function refreshData() {
     .dispatch("getHeadquartersById", selectedCompany.value.headquarters_id)
     .then((response) => {
       headquarter.value = response.data;
-      store
-        .dispatch("getAddressById", headquarter.value.address_id)
-        .then((response) => {
-          address.value = response.data;
-        });
+      if (headquarter.value.address_id > 0) {
+        store
+          .dispatch("getAddressById", headquarter.value.address_id)
+          .then((response) => {
+            address.value = response.data;
+          });
+
+      }
+
     });
 
   if (selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
