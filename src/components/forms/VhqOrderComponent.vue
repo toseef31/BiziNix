@@ -154,7 +154,6 @@ function registerUserAndReturnUserId(): Promise<any> {
     user = userRegisterForm.value.user
   }
 
-  //userRegisterForm.value.userData.address_id = addressFromResponse.address_id;
   return store
     .dispatch("registerUser", user)
     .then((res) => {
@@ -165,12 +164,11 @@ function registerUserAndReturnUserId(): Promise<any> {
     });
 }
 
-/*function addHeadquarter(): Promise<Response> {
+function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
   headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
 
-  //treba podla balika updatnut
   headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
   headquarter.value.is_virtual = true;
   headquarter.value.img = store.state.selectedVhq.img;
@@ -189,7 +187,7 @@ function registerUserAndReturnUserId(): Promise<any> {
     .catch((err) => {
       console.log(err.response.data.value.errors);
     });
-}*/
+}
 
 function addCompany(userId): Promise<Response> {
   if (userRegisterForm.value.userData.id) {
@@ -242,40 +240,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
     });
 }
 
-/*async function updateHeadquarter() {
-  await store
-    .dispatch("getHeadquartersById", companyDataRef.value.currentCompany.headquarters_id)
-    .then(async (response) => {
-      headquarter.value = response.data;
-
-      headquarter.value.owner_name = "Bizinix";
-      headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
-      headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
-
-      //treba podla balika updatnut
-      headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
-      headquarter.value.is_virtual = true;
-      headquarter.value.img = store.state.selectedVhq.img;
-      headquarter.value.address_id = store.state.selectedVhq.address_id;
-      headquarter.value.registry = false;
-      headquarter.value.forwarding = false;
-      headquarter.value.scanning = false;
-      headquarter.value.shredding = false;
-
-      await store
-        .dispatch("updateHeadquarter", headquarter.value)
-        .then((res) => {
-          hqFromResponse = res.data.headquarters;
-          return hqFromResponse;
-        })
-        .catch((err) => {
-          toast.error('Error: ' + err);
-        });
-    });
-}*/
-
 async function updateCompany() {
-  companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
   companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   await store
@@ -316,10 +281,9 @@ const submitApp = async (formData: any, node: any) => {
     }
 
     if (companyDataRef.value.existingCompany == false) {
-      //await addHeadquarter();
+      await addHeadquarter();
       await addCompany(userId);
     } else {
-      //await updateHeadquarter();
       await updateCompany();
     }
 
