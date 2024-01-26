@@ -270,6 +270,8 @@ const selectedDocument = ref({} as Doklad);
 const reminderEmail = ref("");
 const reminderText = ref("Dobrý deň, zasielame Vám upomienku k dokladu.");
 
+const bankAccountId = ref(0);
+
 const indeterminate = computed(
   () =>
     selectedDocuments.value.length > 0 &&
@@ -353,6 +355,7 @@ async function duplicateDocument(document: any) {
     paid: 0,
     total: document.total,
     payment_date: "",
+    bank_account_id: bankAccountId.value
   };
 
   newDocument.items = JSON.parse(document.items);
@@ -384,6 +387,7 @@ async function duplicateDocument(document: any) {
     })
     .catch((err) => {
       closeModal('loadingModal');
+      console.log(err);
       toast.error('Error: ' + err);
     });
 }
@@ -556,6 +560,15 @@ async function refreshData() {
     .then((response) => {
       company.value = response.data;
     });
+
+  const res = await store.dispatch("getCompanyBankDetails", company.value.id)
+  if(res.data[0]?.id){
+    res.data.map((data) => {
+      if(data?.is_main == 1){
+        bankAccountId.value = data?.id;
+      }
+    })
+  }
 }
 
 onBeforeMount(async () => {

@@ -384,6 +384,7 @@ const ogDocs = ref([] as any[]);
 let documentsListTableRef = ref<InstanceType<typeof DocumentsListTable>>(null as any);
 const showBankPopup = ref(false);
 const bankAccounts = ref([] as any[]);
+const bankAccountId = ref(0);
 
 const document = ref({
   type: activeTab,
@@ -398,7 +399,8 @@ const document = ref({
   payment_date: "",
   date_of_issue: today,
   isDph: false,
-  currency: "€"
+  currency: "€",
+  bank_account_id: 0
 });
 
 let title = ref("Faktúry");
@@ -451,7 +453,7 @@ function dphChanged(event: any) {
 
 watch(() => documentsListTableRef.value?.updateFinData,
   async function () {
-    if (documentsListTableRef.value?.updateFinData) {
+    if (documentsListTableRef.value?.updateFinData == true) {
       await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
@@ -555,6 +557,7 @@ function closeDialog(modal: string) {
 function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
+  document.value.bank_account_id = bankAccountId.value;
 
   if (document.value.serial_number == "") {
     document.value.serial_number = "0";
@@ -698,6 +701,13 @@ async function refreshData() {
         .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)
         .then((response) => {
           bankAccounts.value = response.data;
+          if(bankAccounts.value.length > 0){
+            bankAccounts.value.map((data) => {
+              if(data?.is_main == 1){
+                bankAccountId.value = data?.id;
+              }
+            })
+          }
         });
     });
   isLoading.value = false;
