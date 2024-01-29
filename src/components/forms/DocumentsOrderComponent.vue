@@ -292,7 +292,6 @@ async function continueToPayment(userId, invoiceProfileId) {
         await addCompany(userId).then(async (res) => {
           if (companyFromResponse) {
             addOrder(userId, invoiceProfileId, false).then(async () => {
-              companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
               router.push({
                 name: "Thanks You New Order",
                 params: {
@@ -319,7 +318,6 @@ async function continueToPayment(userId, invoiceProfileId) {
         });
       } catch {
         addOrder(userId, invoiceProfileId, false).then(async () => {
-          doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
           router.push({
             name: "Thanks You New Order",
             params: {
@@ -331,8 +329,6 @@ async function continueToPayment(userId, invoiceProfileId) {
 
     } else {
       addOrder(userId, invoiceProfileId, false).then(async () => {
-        doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-        doCompanyDataRef.value.currentCompany.fakturacia_free = false;
         router.push({
           name: "Thanks You New Order",
           params: {
@@ -435,8 +431,6 @@ async function addHeadquarter(address_id): Promise<Response> {
 }
 
 async function addCompany(userId): Promise<Response> {
-  doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
-  doCompanyDataRef.value.currentCompany.fakturacia_free = true;
   if (doAccountDataRef.value.userData.id) {
     doCompanyDataRef.value.currentCompany.owner = doAccountDataRef.value.userData.id;
   } else {
