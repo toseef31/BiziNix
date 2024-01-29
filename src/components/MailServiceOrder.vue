@@ -109,7 +109,7 @@
                         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
                     </div>
                     <div class="underline font-bold text-xl">
-                        Na zaplatenie {{ totalWeight * 0.09 < 1.5 ? 1.5 : totalWeight * 0.09 }}€ </div>
+                        Na zaplatenie {{ payAmount }}€ </div>
                             <div class="pt-2 pb-8">
                                 Gramáž zvolených zásielok: {{ totalWeight }} gramov
                             </div>
@@ -203,6 +203,8 @@ const receiver = ref("");
 const totalWeight: any = computed(() => {
     return mails.value.reduce((acc, item) => acc + item.weight, 0);
 });
+
+const payAmount = computed(() => {return totalWeight.value*0.09 < 1.5 ? 1.5 : totalWeight.value*0.09});
 
 const totalToPay: any = computed(() => {
     if (mails.value.length <= 20) {
@@ -326,8 +328,6 @@ async function scanMails() {
             };
             order.value.items.push(row);
         });
-
-        const payAmount = computed(() => totalWeight*0.09 < 1.5 ? 1.5 : totalWeight*0.09);
 
         order.value.amount = payAmount.value;
         order.value.amount_vat = payAmount.value * 0.2;

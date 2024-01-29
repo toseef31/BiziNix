@@ -194,7 +194,7 @@
                 </div>
               </div>
               <!-- END OF HEAD -->
-              <div role="status" class="flex py-10 h-full w-full justify-center" v-show="loading">
+              <div role="status" class="flex py-10 h-full w-full justify-center" v-show="isLoading">
                 <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600"
                   viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -206,7 +206,7 @@
                 </svg>
                 <span class="sr-only">Loading...</span>
               </div>
-              <div v-if="mails.length == 0" v-show="!loading">
+              <div v-if="mails.length == 0" v-show="!isLoading">
                 <div class="flex py-10 h-full w-full justify-center">
                   Momentálne nemáte žiadnu poštu pre danú spoločnosť.
                 </div>
@@ -505,8 +505,6 @@ const selectedCompany = ref();
 const mails = computed(() => store.state.mails as Mail[]);
 const userAddress = computed(() => store.state.user.address as any);
 
-let loading = true;
-
 const selectedColumn = ref("distribution_date");
 const selectedDirection = ref("desc");
 
@@ -554,8 +552,7 @@ function closeModal() {
 watch(
   () => store.getters.getSelectedCompany,
   async function () {
-    if (store.getters.getSelectedCompany.id !== selectedCompany.value.id)
-      await refreshData();
+    await refreshData();
   }
 );
 
@@ -605,7 +602,7 @@ async function getMails(page: number, searchQuery: any, from: any, to: any, dire
     .then((response) => {
       mailsData.value = response.data;
       store.state.mails = response.data.data;
-      loading = false;
+      isLoading.value = false;
     });
 }
 
@@ -793,7 +790,6 @@ async function refreshData() {
               toast.error('Error: ' + err);
             });
         }
-        loading = false;
       });
   }
 
