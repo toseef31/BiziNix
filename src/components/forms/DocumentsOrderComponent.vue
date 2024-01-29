@@ -160,7 +160,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   order.value.is_tos_accepted = true;
   order.value.is_advocate_requested = false;
   order.value.description = "Objednávka balíčku dokladov";
-  
+
 
   return store
     .dispatch("addOrder", order.value)
@@ -239,7 +239,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
               });
             });
           });
-        } else { 
+        } else {
           await addHeadquarter(address_id).then(async () => {
             await addCompany(userId).then(async () => {
               addOrder(userId, invoiceProfileId, true).then(() => {
@@ -254,23 +254,16 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
           });
         }
       } else {
-        doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
-        doCompanyDataRef.value.currentCompany.fakturacia_free = true;
-        await store
-          .dispatch("updateCompany", doCompanyDataRef.value.currentCompany)
-          .then(async () => {
-            addOrder(userId, invoiceProfileId, true).then(() => {
-              router.push({
-                name: "Thanks You New Order",
-                params: {
-                  orderId: orderFromRes.id,
-                },
-              });
-            });
-          })
-          .catch((err) => {
-            toast.error('Error: ' + err);
+        addOrder(userId, invoiceProfileId, true).then(() => {
+          router.push({
+            name: "Thanks You New Order",
+            params: {
+              orderId: orderFromRes.id,
+            },
           });
+        }).catch((err) => {
+          toast.error('Error: ' + err);
+        });
       }
     } else {
       await addHeadquarter(address_id).then(async () => {
@@ -401,7 +394,7 @@ async function registerAddress(): Promise<Response> {
 
 async function registerUser(): Promise<Response> {
   let user;
-  if(!doAccountDataRef.value.userData.id){
+  if (!doAccountDataRef.value.userData.id) {
     user = doAccountDataRef.value.user
   }
 
