@@ -23,6 +23,7 @@ export default interface Doklad {
     quantity: number;
     unit: string;
     total: number;
+    total_vat: number;
     vat: number;
     unit_price: number;
   }>;
@@ -45,6 +46,7 @@ export default interface Doklad {
   created_at: Date;
   overdue: string;
   total: number;
+  total_vat: number;
   total_topay: number;
   bank_account_id: number;
 }

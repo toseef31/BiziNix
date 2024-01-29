@@ -483,7 +483,7 @@
                             number
                             v-model="item.vat"
                             novalidate
-                            @change="vatEntered($event)"
+                            @change="vatEntered($event, item)"
                           />
                         </div>
                       </div>
@@ -499,6 +499,18 @@
                       </div>
                     </div>
                     <div class="flex flex-col basis-1/12">
+                      <div class="flex" v-if="company.is_dph || company.icdph">
+                        <FormKit
+                          autocomplete="nope"
+                          type="text"
+                          class="flex"
+                          id="vat"
+                          step="0.01"
+                          number
+                          v-model="item.total_vat"
+                          disabled
+                        />
+                      </div>
                       <div class="flex">
                         <FormKit
                           autocomplete="nope"
@@ -557,7 +569,7 @@
                       </th>
                     </tr>
                     <tr v-if="company.is_dph || company.icdph">
-                      <th class="text-left pl-2">DPH</th>
+                      <th class="pl-2">DPH</th>
                       <th class="text-right pr-2">
                         {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
@@ -650,6 +662,7 @@ const items = ref([
     unit_price: 0.0,
     vat: 0,
     total: 0.0,
+    total_vat: 0.0,
     description: "",
   }
 ]);
@@ -658,7 +671,7 @@ const totalPrice: any = computed(() => {
   return items.value.reduce((acc, item) => acc + item.total, 0);
 });
 const totalPriceVat: any = computed(() => {
-  return totalPrice.value * 0.2;
+  return items.value.reduce((acc, item) => acc + item.total_vat, 0);
 });
 
 const headquarter = ref({
@@ -717,6 +730,7 @@ const document = ref({
   reminder_sent: false,
   paid: 0.0,
   total: totalPrice,
+  total_vat: totalPriceVat,
   payment_date: "",
   order_name: "",
   order_description: ""
@@ -845,6 +859,7 @@ function toggleAccordion() {
 function priceEntered(item: any) {
   if (item.vat > 0) {
     item.total = item.quantity * item.unit_price;
+    item.total_vat = item.total * item.vat/100;
   } else {
     item.total = item.quantity * item.unit_price;
   }
@@ -853,12 +868,13 @@ function priceEntered(item: any) {
 function quantityEntered(item: any) {
   if (item.vat > 0) {
     item.total = item.quantity * item.unit_price;
+    item.total_vat = item.total * item.vat/100;
   } else {
     item.total = item.quantity * item.unit_price;
   }
 }
 
-function vatEntered(event: any) {
+function vatEntered(event: any, item: any) {
   if (
     event.target.value == 0 &&
     !document.value.note_above.includes("Prenos daňovej povinnosti")
@@ -878,6 +894,9 @@ function vatEntered(event: any) {
       ""
     );
   }
+
+  item.total_vat = item.total * item.vat/100;
+
 }
 
 function documentSubtypeChanged() {
@@ -918,6 +937,7 @@ function addItem() {
       unit_price: 0.0,
       vat: 0,
       total: 0.0,
+      total_vat: 0.0,
       description: "",
     };
   if(company.value.is_dph || company.value.icdph) {

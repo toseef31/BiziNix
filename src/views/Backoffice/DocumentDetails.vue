@@ -441,6 +441,18 @@
                         @change="vatEntered($event)"
                       />
                     </div>
+                    <div class="flex basis-2/12" v-if="document.isDph">
+                      <FormKit
+                        autocomplete="nope"
+                        type="text"
+                        class="flex"
+                        id="vat"
+                        step="0.01"
+                        number
+                        v-model="item.total_vat"
+                        disabled
+                      />
+                    </div>
                     <div class="flex basis-2/12">
                       <FormKit
                         autocomplete="nope"
@@ -517,7 +529,7 @@
                     <tr v-if="document.isDph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
-                        {{ (totalPrice + totalPriceVat).toFixed(2) }}&nbsp;{{
+                        {{ (totalPriceVat).toFixed(2) }}&nbsp;{{
                           document.currency
                         }}
                       </th>
@@ -593,7 +605,7 @@ const totalPrice: any = computed(() => {
 });
 
 const totalPriceVat: any = computed(() => {
-  return totalPrice.value * 0.2;
+  return items.value.reduce((acc, item) => acc + item.total_vat, 0);
 });
 
 watch(bankAccountId, async () => {
@@ -706,6 +718,7 @@ function submitHandler() {
   submitted.value = true;
   document.value.items = items.value;
   document.value.total = totalPrice.value;
+  document.value.total_vat = totalPriceVat.value;
   if(document.value.isPaid) {
     document.value.paid = totalPrice.value;
   }
