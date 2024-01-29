@@ -137,25 +137,6 @@ async function downloadInvoice(invoice: any) {
         try{
             await store.dispatch("getOrderInvoiceForOrderByType", data)
             .then(async (response) => {
-            const singleOrderInvoice = ref(response.data.data);
-            await store.dispatch("generateInvoiceById", singleOrderInvoice.value.order.id)
-            .then(response => {
-                const byteCharacters = atob(response.data);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: 'application/pdf' });
-                saveAs(singleOrderInvoice.value.file_name, blob);
-            });
-            })
-            .catch(async (e: Error) => {
-                console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
-                console.log('Sťahujem zalohovu FA');
-                data.type = 1;
-                await store.dispatch("getOrderInvoiceForOrderByType", data)
-                .then(async (response) => {
                 const singleOrderInvoice = ref(response.data.data);
                 await store.dispatch("generateInvoiceById", singleOrderInvoice.value.id)
                 .then(response => {
@@ -168,9 +149,28 @@ async function downloadInvoice(invoice: any) {
                     const blob = new Blob([byteArray], { type: 'application/pdf' });
                     saveAs(singleOrderInvoice.value.file_name, blob);
                 });
+            })
+            .catch(async (e: Error) => {
+                console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
+                console.log('Sťahujem zalohovu FA');
+                data.type = 1;
+                await store.dispatch("getOrderInvoiceForOrderByType", data)
+                .then(async (response) => {
+                    const singleOrderInvoice = ref(response.data.data);
+                    await store.dispatch("generateInvoiceById", singleOrderInvoice.value.id)
+                    .then(response => {
+                        const byteCharacters = atob(response.data);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'application/pdf' });
+                        saveAs(singleOrderInvoice.value.file_name, blob);
+                    });
                 })
                 .catch((e: Error) => {
-                console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
+                    console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
                 });
             });
         } catch {
