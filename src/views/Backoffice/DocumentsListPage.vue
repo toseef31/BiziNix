@@ -223,8 +223,8 @@
                           </div>
                         </div>
                         <div class="px-4 w-full text-white">
-                          <FormKit id="scan" label="Importovať doklad" accept="image/*"
-                            v-on:change="updateImgData($event)" name="scan" type="file" />
+                          <FormKit id="scan" label="Importovať doklad" accept=".jpg,.png,.pdf" validation="mime:.jpg,.png,.pdf"
+                            v-on:change="updateImgData($event)" name="scan" type="file" validation-visibility="live"/>
                         </div>
 
                         <div class="flex flex-row justify-end py-8 px-4 gap-4">
@@ -376,7 +376,6 @@ const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
 const uploadImageData = ref({ body: { name: "", img: "" }, documentId: 0 });
-const uploadImageFile = ref();
 const documentsData = ref();
 const selectedColumn = ref("serial_number");
 const selectedDirection = ref("desc");

@@ -562,19 +562,6 @@
                         {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph || company.icdph">
-                      <th class="text-left pl-2">Celková suma</th>
-                      <th class="text-right pr-2" v-if="document.subtype == 3">
-                        {{ ((totalPrice + totalPriceVat)*-1).toFixed(2) }}&nbsp;{{
-                          document.currency
-                        }}
-                      </th>
-                      <th class="text-right pr-2" v-else>
-                        {{ (totalPrice + totalPriceVat).toFixed(2) }}&nbsp;{{
-                          document.currency
-                        }}
-                      </th>
-                    </tr>
                   </tbody>
                 </table>
               </div>
