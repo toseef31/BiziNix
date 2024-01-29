@@ -34,7 +34,7 @@
                         <tbody class="divide-y divide-gray-200 bg-gray-50">
                             <tr v-for="invoice in invoices" :key="invoice.id">
                                 <td class="whitespace-nowrap py-4 pl-3 text-sm font-medium text-gray-900">
-                                    {{ invoice.cislo_fa }}
+                                    {{ invoice.id }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     {{ invoice.description }}
