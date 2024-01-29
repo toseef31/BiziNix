@@ -45,7 +45,7 @@
                                 <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                                     <div class="flex-1 py-4 px-3 text-left">
                                         <button class="font-medium text-gray-900 hover:underline"
-                                            v-on:click="downloadInvoice(invoice.id)">
+                                            v-on:click="downloadInvoice(invoice)">
                                             Stiahnuť faktúru
                                         </button>
                                     </div>
@@ -96,6 +96,7 @@ import * as FileSaver from "file-saver";
 import * as _ from "lodash";
 import dayjs from "dayjs";
 import { useModal, Modal } from "usemodal-vue3";
+import { toast } from 'vue3-toastify';
 
 const invoices = ref([] as any);
 
@@ -124,36 +125,20 @@ function saveAs(filename: string, blob: Blob) {
     FileSaver.saveAs(blob, filename);
 }
 
-async function downloadInvoice(id: number) {
-    showModal('loadingModal');
-    const data = {
-        'id': id,
-        'type': 2
-    }
-    try{
-        await store.dispatch("getOrderInvoiceForOrderByType", data)
-        .then(async (response) => {
-        const singleOrderInvoice = ref(response.data.data);
-        await store.dispatch("generateInvoiceById", singleOrderInvoice.value.order.id)
-        .then(response => {
-            const byteCharacters = atob(response.data);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'application/pdf' });
-            saveAs(singleOrderInvoice.value.file_name, blob);
-        });
-        })
-        .catch(async (e: Error) => {
-            console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
-            console.log('Sťahujem zalohovu FA');
-            data.type = 1;
+async function downloadInvoice(invoice: any) {
+    if(invoice.amount <= 0) {
+        toast.info('Táto objednávka je spracovaná bezplatne a nie je k nej vystavený žiadny doklad');
+    } else {
+        showModal('loadingModal');
+        const data = {
+            'id': invoice.id,
+            'type': 2
+        }
+        try{
             await store.dispatch("getOrderInvoiceForOrderByType", data)
             .then(async (response) => {
             const singleOrderInvoice = ref(response.data.data);
-            await store.dispatch("generateInvoiceById", singleOrderInvoice.value.id)
+            await store.dispatch("generateInvoiceById", singleOrderInvoice.value.order.id)
             .then(response => {
                 const byteCharacters = atob(response.data);
                 const byteNumbers = new Array(byteCharacters.length);
@@ -165,15 +150,35 @@ async function downloadInvoice(id: number) {
                 saveAs(singleOrderInvoice.value.file_name, blob);
             });
             })
-            .catch((e: Error) => {
-            console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
+            .catch(async (e: Error) => {
+                console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
+                console.log('Sťahujem zalohovu FA');
+                data.type = 1;
+                await store.dispatch("getOrderInvoiceForOrderByType", data)
+                .then(async (response) => {
+                const singleOrderInvoice = ref(response.data.data);
+                await store.dispatch("generateInvoiceById", singleOrderInvoice.value.id)
+                .then(response => {
+                    const byteCharacters = atob(response.data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/pdf' });
+                    saveAs(singleOrderInvoice.value.file_name, blob);
+                });
+                })
+                .catch((e: Error) => {
+                console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
+                });
             });
-        });
-    } catch {
-        console.log('Sťahovanie ostrej aj zálohovej FA zlyhalo');
-    }
+        } catch {
+            console.log('Sťahovanie ostrej aj zálohovej FA zlyhalo');
+        }
 
-    closeModal('loadingModal');
+        closeModal('loadingModal');
+    }
 }
 
 onMounted(async () => {
