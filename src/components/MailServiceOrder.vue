@@ -327,10 +327,10 @@ async function scanMails() {
             order.value.items.push(row);
         });
 
-        const payAmount = totalWeight * 0.09 < 1.5 ? 1.5 : totalWeight * 0.09;
+        const payAmount = computed(() => totalWeight*0.09 < 1.5 ? 1.5 : totalWeight*0.09);
 
-        order.value.amount = payAmount;
-        order.value.amount_vat = payAmount * 0.2;
+        order.value.amount = payAmount.value;
+        order.value.amount_vat = payAmount.value * 0.2;
         order.value.fakturacne_udaje_id = invoiceProfileId;
 
         await store
