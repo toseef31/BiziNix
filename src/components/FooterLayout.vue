@@ -93,6 +93,9 @@ const store = useStore();
 const customerEmail = ref();
 
 function submitEmail() {
-  store.dispatch("subscribeEmail", customerEmail.value)
+  const data = {
+    email: customerEmail.value
+  }
+  store.dispatch("subscribeEmail", data)
 }
 </script>
