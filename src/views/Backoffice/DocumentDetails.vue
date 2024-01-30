@@ -531,7 +531,7 @@
                     <tr v-if="document.isDph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
-                        {{ (totalPriceVat).toFixed(2) }}&nbsp;{{
+                        {{ (totalPrice).toFixed(2) }}&nbsp;{{
                           document.currency
                         }}
                       </th>
