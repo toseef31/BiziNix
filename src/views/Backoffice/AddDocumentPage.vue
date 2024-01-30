@@ -178,11 +178,11 @@
               </div>
               <div class="flex flex-row">
                 <div class="flex flex-col w-full justify-between px-4">
-                  <FormKit type="textarea" rows="10" id="comment_above" v-model="document.note_above"
+                  <FormKit type="textarea" rows="10" id="comment_above" v-model="document.note_above" validation="length:0,255"
                     label="Poznámka nad položkami" />
                 </div>
                 <div class="flex basis-2/3 flex-col">
-                  <FormKit type="textarea" rows="10" id="comment_below" label="Poznámka pod položkami"
+                  <FormKit type="textarea" rows="10" id="comment_below" label="Poznámka pod položkami" validation="length:0,255"
                     v-model="document.note_under" />
                 </div>
               </div>
@@ -259,7 +259,7 @@
                       </div>
                       <div class="flex flex-row w-full">
                         <div class="w-full">
-                          <FormKit type="text" id="desc" placeholder="Detailný popis položky…"
+                          <FormKit type="text" id="desc" placeholder="Detailný popis položky…" validation="length:0,255"
                             v-model="item.description" />
                         </div>
                       </div>

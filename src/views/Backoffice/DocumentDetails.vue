@@ -294,6 +294,7 @@
                     rows="10"
                     id="comment_above"
                     label="Poznámka nad položkami"
+                    validation="length:0,255"
                     v-model="document.note_above"
                   />
                 </div>
@@ -303,6 +304,7 @@
                     rows="10"
                     id="comment_below"
                     label="Poznámka pod položkami"
+                    validation="length:0,255"
                     v-model="document.note_under"
                   />
                 </div>
@@ -476,6 +478,7 @@
                           type="textarea"
                           rows="2"
                           id="desc"
+                          validation="length:0,255"
                           placeholder="Detailný popis položky…"
                           v-model="item.description"
                         />
