@@ -428,7 +428,7 @@
                         @change="priceEntered(item)"
                       />
                     </div>
-                    <div class="flex basis-2/12" v-if="document.isDph">
+                    <div class="flex basis-1/12" v-if="document.isDph">
                       <FormKit
                         autocomplete="nope"
                         type="number"
@@ -441,25 +441,27 @@
                         @change="vatEntered($event)"
                       />
                     </div>
-                    <div class="flex basis-2/12" v-if="document.isDph">
+                    <div class="flex basis-1/12" v-if="document.isDph">
                       <FormKit
                         autocomplete="nope"
                         type="text"
                         class="flex"
                         id="vat"
                         step="0.01"
+                        label="DPH"
                         number
                         v-model="item.total_vat"
                         disabled
                       />
                     </div>
-                    <div class="flex basis-2/12">
+                    <div class="flex basis-1/12">
                       <FormKit
                         autocomplete="nope"
                         type="text"
                         class="flex"
                         id="total"
                         step="0.01"
+                        label="Cena s DPH"
                         number
                         v-model="item.total"
                         disabled

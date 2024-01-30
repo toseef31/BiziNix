@@ -76,7 +76,7 @@
             <div class="flex flex-row">
               <div class="flex flex-col basis-3/4 px-6 py-1">
                 <div class="flex text-2xl font-extrabold" v-if="document.isDph">
-                  {{ (document.total_vat).toFixed(2) }} {{ document.currency }}
+                  {{ (document.total-document.total_vat).toFixed(2) }} {{ document.currency }}
                 </div>
                 <div class="flex text-2xl font-extrabold" v-else>
                   {{ document.total }} {{ document.currency }}

@@ -1,26 +1,26 @@
 <template>
     <div class="flex flex-col px-10">
         <div class="flex flex-col py-10 items-center">
-            <div class="flex flex-row gap-8">
+            <div class="flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-800">
                 <div class="flex flex-col">
-                  <label for="issue-date" class="text-black"
+                  <label for="issue-date" class="text-white"
                           >Názov spoločnosti</label
                         >
                     <FormKit type="text" name="name" v-model="company.name"/>
-                    <label for="issue-date" class="text-black"
+                    <label for="issue-date" class="text-white"
                           >Adresa</label
                         >
                     <FormKit type="text" name="address" v-model="address.street"/>
                     <div class="flex flex-row gap-4">
                       <div class="flex flex-col">
-                        <label for="issue-date" class="text-black"
+                        <label for="issue-date" class="text-white"
                           >PSČ</label
                         >
                         <FormKit type="text" name="psc" v-model="address.psc"/>
 
                       </div>
                       <div class="flex flex-col">
-                        <label for="issue-date" class="text-black"
+                        <label for="issue-date" class="text-white"
                           >Mesto</label
                         >
                         <FormKit type="text" name="city" v-model="address.city"/>
@@ -28,17 +28,17 @@
                       </div>
                                           
                     </div>
-                    <label for="issue-date" class="text-black"
+                    <label for="issue-date" class="text-white"
                           >Krajina</label
                         >
                     <FormKit type="text" name="country" v-model="address.country"/>
                 </div>
                 <div class="flex flex-col">
-                  <label for="issue-date" class="text-black"
+                  <label for="issue-date" class="text-white"
                           >IČO</label
                         >
                     <FormKit type="text" name="ico" v-model="company.ico"/>
-                    <label for="issue-date" class="text-black"
+                    <label for="issue-date" class="text-white"
                           >DIČ</label
                         >
                     <FormKit type="text" name="dic" v-model="company.dic"/>
@@ -49,11 +49,11 @@
                             label="Platiteľ DPH?"
                             name="platitel"
                             v-model="company.is_dph"
-                            :classes="{label: '$reset text-sm text-black mt-1 select-none'}"
+                            :classes="{label: '$reset text-sm text-white mt-1 select-none'}"
                         />
                       </div>
                       <div class="flex flex-col">
-                        <label for="issue-date" class="text-black"
+                        <label for="issue-date" class="text-white"
                           >DPH</label
                         > 
                         <FormKit
@@ -62,7 +62,7 @@
                         />
                       </div>
                     </div>
-                    <label for="issue-date" class="text-black"
+                    <label for="issue-date" class="text-white"
                           >IČ DPH</label
                         >
                     <FormKit type="text" name="icdph" v-model="company.icdph"/>
@@ -70,7 +70,7 @@
                         type="checkbox"
                         label="Osobitná úprava dane"
                         name="dane"
-                        :classes="{label: '$reset text-sm text-black mt-1 select-none'}"
+                        :classes="{label: '$reset text-sm text-white mt-1 select-none'}"
                     />
                 </div>
             </div>

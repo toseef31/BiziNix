@@ -399,16 +399,16 @@
                 class="text-teal-500 flex flex-row bg-gray-700 py-4 rounded-lg"
               >
                 <div class="text-teal-500 flex basis-1/12 pl-4">P. Č.</div>
-                <div class="text-teal-500 flex basis-3/12">Názov položky</div>
-                <div class="text-teal-500 flex basis-2/12 justify-end pr-2">
+                <div class="text-teal-500 flex basis-3/12 pl-2">Názov položky</div>
+                <div class="text-teal-500 flex basis-2/12">
                   Množstvo
                 </div>
-                <div class="text-teal-500 flex basis-2/12 pl-12">MJ</div>
-                <div class="text-teal-500 flex basis-2/12 justify-end pr-10">
+                <div class="text-teal-500 flex basis-2/12 pl-8">MJ</div>
+                <div class="text-teal-500 flex basis-2/12 pr-10">
                   Cena
                 </div>
                 <div
-                  class="text-teal-500 flex basis-2/12 justify-end"
+                  class="text-teal-500 flex basis-2/12"
                   v-if="company.is_dph || company.icdph"
                 >
                   DPH %
@@ -421,13 +421,13 @@
               <ul class="py-2" id="items_list">
                 <li v-for="(item, index) in items" :key="index">
                   <div class="flex flex-row gap-1">
-                    <div class="flex flex-col basis-1/12">
+                    <div class="flex flex-col basis-1/12 mt-6">
                       <div class="flex pl-4">
                         {{ index + 1 }}
                       </div>
                     </div>
 
-                    <div class="flex flex-col basis-5/6">
+                    <div class="flex flex-col basis-9/12 mt-6">
                       <div class="flex flex-row gap-2">
                         <div class="flex">
                           <FormKit
@@ -498,30 +498,34 @@
                         </div>
                       </div>
                     </div>
-                    <div class="flex flex-col basis-1/12">
-                      <div class="flex" v-if="company.is_dph || company.icdph">
-                        <FormKit
-                          autocomplete="nope"
-                          type="text"
-                          class="flex"
-                          id="vat"
-                          step="0.01"
-                          number
-                          v-model="item.total_vat"
-                          disabled
-                        />
-                      </div>
-                      <div class="flex">
-                        <FormKit
-                          autocomplete="nope"
-                          type="text"
-                          class="flex"
-                          id="total"
-                          step="0.01"
-                          number
-                          v-model="item.total"
-                          disabled
-                        />
+                    <div class="flex flex-col basis-2/12">
+                      <div class="flex flex-row gap-2">
+                        <div class="flex" v-if="company.is_dph || company.icdph">
+                          <FormKit
+                            autocomplete="nope"
+                            type="text"
+                            class="flex"
+                            id="vat"
+                            step="0.01"
+                            label="DPH"
+                            number
+                            v-model="item.total_vat"
+                            disabled
+                          />
+                        </div>
+                        <div class="flex">
+                          <FormKit
+                            autocomplete="nope"
+                            type="text"
+                            class="flex"
+                            id="total"
+                            step="0.01"
+                            label="Cena s DPH"
+                            number
+                            v-model="item.total"
+                            disabled
+                          />
+                        </div>
                       </div>
                       <button
                         type="button"
