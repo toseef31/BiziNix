@@ -39,7 +39,7 @@
               <div v-if="showNotification" @click="showNotification = false" class="fixed inset-0 h-full w-full z-10">
               </div>
 
-              <div v-if="showNotification" class="absolute right-10 mt-5 overflow-hidden z-20" style="width:20rem;">
+              <div v-if="showNotification && notifications.length > 0" class="absolute right-10 mt-5 overflow-hidden z-20" style="width:20rem;">
                 <div class="flex flex-col py-2 gap-2">
                   <div class="px-2 py-2 flex flex-row items-start bg-gray-900 bg-opacity-70 rounded-md text-gray-300"
                     v-for="notification in notifications">
