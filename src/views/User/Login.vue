@@ -1,5 +1,5 @@
 <template>
-  <div class="text-white bg-gray-bizinix min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="text-white bg-gray-bizinix flex flex-col justify-center sm:px-6 lg:px-8 flex-grow">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <h2 class="mt-6 text-center text-3xl font-extrabold">Prihláste sa do svojho účtu</h2>
     </div>
