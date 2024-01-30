@@ -58,25 +58,19 @@
               />
               <button
                 class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-                v-on:click="showModal('uploadLogoModal')"
+                v-on:click="showUploadLogoDialog = true"
               >
                 <span class="font-bold w-full px-2">Nahrať logo</span>
               </button>
             </div>
-            <Modal
-              name="uploadLogoModal"
-              v-model:visible="isVisible"
-              :type="'clean'"
-              :closable="false"
-              title="Upload logo"
-            >
-              <div class="bg-gray-100 rounded-lg border-teal-600 border-2">
-                <div
-                  class="flex flex-row justify-start py-4 px-4 text-gray-600 font-bold text-lg"
-                >
-                  Prosím vyberte súbor
-                </div>
-                <div class="flex flex-row justify-end py-2 px-4">
+            <Dialog :open="showUploadLogoDialog" @close="showUploadLogoDialog = false" class="relative z-50">
+              <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+              <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                
+                <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                  <DialogTitle class="text-center py-4 text-xl font-bold">Prosím vyberte súbor
+                  </DialogTitle>
+                  <div class="flex flex-col justify-end py-2 px-4 gap-4">
                   <div class="flex flex-1/4 px-4">
                     <input
                       class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-600"
@@ -86,24 +80,26 @@
                       name="scan"
                       type="file"
                     />
+                    
+                  </div>
+                  <div class="flex flex-1/4 flex-row justify-between">
                     <button
                       class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
                       v-on:click="uploadLogo()"
                     >
                       Nahrať
                     </button>
-                  </div>
-                  <div class="flex flex-1/4">
                     <button
                       class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-gray-600"
-                      v-on:click="closeModal('uploadLogoModal')"
+                      v-on:click="showUploadLogoDialog = false"
                     >
                       Zrušiť
                     </button>
                   </div>
                 </div>
+                </DialogPanel>
               </div>
-            </Modal>
+            </Dialog>
           </div>
           <div class="flex flex-col basis-1/3 px-8">
             <div
@@ -121,25 +117,18 @@
               />
               <button
                 class="shadow flex border py-2 w-full rounded-b-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-                v-on:click="showModal('uploadPodpisModal')"
+                v-on:click="showUploadPodpisDialog = true"
               >
                 <span class="font-bold w-full px-2">Nahrať podpis</span>
               </button>
             </div>
-            <Modal
-              name="uploadPodpisModal"
-              v-model:visible="isVisible"
-              :type="'clean'"
-              :closable="false"
-              title="Upload podpis"
-            >
-              <div class="bg-gray-100 rounded-lg border-teal-600 border-2">
-                <div
-                  class="flex flex-row justify-start py-4 px-4 text-gray-600 font-bold text-lg"
-                >
-                  Prosím vyberte súbor
-                </div>
-                <div class="flex flex-row justify-end py-2 px-4">
+            <Dialog :open="showUploadPodpisDialog" @close="showUploadPodpisDialog = false" class="relative z-50">
+              <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+              <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                  <DialogTitle class="text-center py-4 text-xl font-bold">Prosím vyberte súbor
+                  </DialogTitle>
+                  <div class="flex flex-col justify-end py-2 px-4 gap-4">
                   <div class="flex flex-1/4 px-4">
                     <input
                       class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-600"
@@ -149,24 +138,25 @@
                       name="scan"
                       type="file"
                     />
+                  </div>
+                  <div class="flex flex-1/4 flex-row justify-between">
                     <button
                       class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
                       v-on:click="uploadPodpis()"
                     >
                       Nahrať
                     </button>
-                  </div>
-                  <div class="flex flex-1/4">
                     <button
                       class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-gray-600"
-                      v-on:click="closeModal('uploadPodpisModal')"
+                      v-on:click="showUploadPodpisDialog = false"
                     >
                       Zrušiť
                     </button>
                   </div>
                 </div>
+                </DialogPanel>
               </div>
-            </Modal>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -190,13 +180,11 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { useModal, Modal } from "usemodal-vue3";
+import { onBeforeMount, ref } from "vue";
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 import type Company from "@/types/Company";
 import { toast } from "vue3-toastify";
 
-const router = useRouter();
 const company = ref({} as Company);
 const templates = ref([] as any[]);
 const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
@@ -205,15 +193,8 @@ const logoSrc = ref();
 const podpisSrc = ref();
 const sncounters = ref([] as any);
 
-const setModal = useModal({
-  uploadLogoModal: 1,
-  uploadPodpisModal: 2,
-});
-
-let isVisible = reactive({});
-
-isVisible = setModal("uploadLogoModal", false);
-isVisible = setModal("uploadPodpisModal", false);
+const showUploadLogoDialog = ref(false);
+const showUploadPodpisDialog = ref(false);
 
 async function changeTemplate(id: any) {
   company.value.doc_template_id = id;
@@ -238,14 +219,6 @@ async function snCounterChanged() {
     });
 }
 
-function showModal(modal) {
-  isVisible = setModal(modal, true);
-}
-
-function closeModal(modal) {
-  isVisible = setModal(modal, false);
-}
-
 function updateLogoData(evt: any) {
   uploadImageData.value.body.name = evt.target.files[0].name;
   uploadImageData.value.body.logo = evt.target.files[0];
@@ -261,7 +234,7 @@ async function uploadLogo() {
     .dispatch("uploadCompanyLogo", uploadImageData.value)
     .then(async (response) => {
       company.value = response.data;
-      isVisible = setModal("uploadLogoModal", false);
+      showUploadLogoDialog.value = false;
       await refreshData();
     })
     .catch((err) => {
@@ -274,7 +247,7 @@ async function uploadPodpis() {
     .dispatch("uploadCompanyPodpis", uploadPodpisData.value)
     .then(async (response) => {
       company.value = response.data;
-      isVisible = setModal("uploadPodpisModal", false);
+      showUploadPodpisDialog.value = false;
       await refreshData();
     })
     .catch((err) => {

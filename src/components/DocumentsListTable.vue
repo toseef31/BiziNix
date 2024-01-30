@@ -4,7 +4,7 @@
       <div class="flex">
         <button type="button"
           class="shadow flex border items-center py-2 px-4 rounded-lg bg-red-500 border-red-500 text-white hover:text-red-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-          v-on:click="deleteMultipleDocuments()">
+          v-on:click="showDeleteMultipleModalDialog = true">
           Zmazať označené
         </button>
       </div>
@@ -76,7 +76,7 @@
             <div class="flex flex-row">
               <div class="flex flex-col basis-3/4 px-6 py-1">
                 <div class="flex text-2xl font-extrabold" v-if="document.isDph">
-                  {{ (document.total-document.total_vat).toFixed(2) }} {{ document.currency }}
+                  {{ (document.total - document.total_vat).toFixed(2) }} {{ document.currency }}
                 </div>
                 <div class="flex text-2xl font-extrabold" v-else>
                   {{ document.total }} {{ document.currency }}
@@ -115,144 +115,173 @@
   <div v-if="documents?.length == 0">
     <div>Momentálne nemáte vo svojom účte žiadne doklady.</div>
   </div>
-  <Modal name="deleteModal" v-model:visible="isVisible" :type="'clean'" :closable="false" title="Zmazanie dokladu">
-    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-      <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
-        Prosím potvrdte zmazanie dokladu.
-      </div>
-      <div class="flex flex-row justify-end py-2 px-4">
-        <div class="flex flex-1/4 px-4">
-          <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="confirmDelete(selectedDocument)">
-            Zmazať
-          </button>
+  <Dialog :open="showDeleteModalDialog" @close="showDeleteModalDialog = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+          <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
+            Prosím potvrdte zmazanie dokladu.
+          </div>
+          <div class="flex flex-row justify-end py-2 px-4">
+            <div class="flex flex-1/4 px-4">
+              <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="confirmDelete(selectedDocument)">
+                Zmazať
+              </button>
+            </div>
+            <div class="flex flex-1/4">
+              <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="showDeleteModalDialog = false">
+                Zrušiť
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="flex flex-1/4">
-          <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="closeModal('deleteModal')">
-            Zrušiť
-          </button>
-        </div>
-      </div>
+      </DialogPanel>
     </div>
-  </Modal>
-  <Modal name="deleteMultipleModal" v-model:visible="isVisible" :type="'clean'" :closable="false"
-    title="Zmazanie dokladov">
-    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-      <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
-        Prosím potvrdte zmazanie označených dokladov.
-      </div>
-      <div class="flex flex-row justify-end py-2 px-4">
-        <div class="flex flex-1/4 px-4">
-          <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="confirmDeleteMultipleDocuments()">
-            Zmazať
-          </button>
-        </div>
-        <div class="flex flex-1/4">
-          <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="closeModal('deleteMultipleModal')">
-            Zrušiť
-          </button>
-        </div>
-      </div>
-    </div>
-  </Modal>
-  <Modal name="reminderModal" v-model:visible="isVisible" :type="'clean'" :closable="false" title="Odoslanie upomienky">
-    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-      <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
-        Prosím potvrďte vystavenie upomienky
-      </div>
-      <img src="@/assets/upomienka.png" class="h-auto shrink-0 z-0 w-[128px] relative float-right pr-8" />
-      <div class="flex p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
-        role="alert" v-show="selectedDocument.reminder_sent">
-        <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-            clip-rule="evenodd"></path>
-        </svg>
-        <span class="sr-only">Info</span>
-        <div>
-          <span class="font-medium">Pozor!</span> Pre tento doklad ste už
-          upomienku vystavili.
-        </div>
-      </div>
-      <div class="flex flex-col justify-start px-4 text-white">
-        <FormKit type="email" id="reminder_email" label="Email klienta" placeholder="email@example.com"
-          v-model="reminderEmail" />
-        <FormKit type="textarea" name="reminder_text" label="Sprievodný text upomienky" v-model="reminderText" />
-      </div>
 
-      <div class="flex flex-row justify-end py-2 px-4">
-        <div class="flex flex-1/4 px-4">
-          <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="confirmReminder(selectedDocument, reminderEmail, reminderText)">
-            Odoslať upomienku
-          </button>
+  </Dialog>
+  <Dialog :open="showDeleteMultipleModalDialog" @close="showDeleteMultipleModalDialog = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+          <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
+            Prosím potvrdte zmazanie označených dokladov.
+          </div>
+          <div class="flex flex-row justify-end py-2 px-4">
+            <div class="flex flex-1/4 px-4">
+              <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="confirmDeleteMultipleDocuments()">
+                Zmazať
+              </button>
+            </div>
+            <div class="flex flex-1/4">
+              <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="showDeleteMultipleModalDialog = false">
+                Zrušiť
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="flex flex-1/4">
-          <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="closeModal('reminderModal')">
-            Zrušiť
-          </button>
-        </div>
-      </div>
+      </DialogPanel>
     </div>
-  </Modal>
-  <Modal name="repayModal" v-model:visible="isVisible" :type="'clean'" :closable="false" title="Zaplatenie dokladu">
-    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-      <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
-        Koľko bolo uhradené?
-      </div>
-      <div class="flex justify-start px-4 text-white">
-        <FormKit type="number" id="repay_amount" label="Zaplatená suma" v-model="selectedDocument.paid"
-          :value="selectedDocument.total" :min="0" />
-      </div>
-      <div class="flex justify-start px-4 text-white">
-        <FormKit type="date" name="Dátum úhrady" label="Dátum úhrady" validation="required|length:10"
-          v-model="selectedDocument.payment_date" :value="today" />
-      </div>
-      <div class="flex flex-row justify-end py-2 px-4">
-        <div class="flex flex-1/4 px-4">
-          <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="repayConfirm(selectedDocument)">
-            Zaplatiť
-          </button>
+
+  </Dialog>
+  <Dialog :open="showReminderModalDialog" @close="showReminderModalDialog = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+          <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
+            Prosím potvrďte vystavenie upomienky
+          </div>
+          <img src="@/assets/upomienka.png" class="h-auto shrink-0 z-0 w-[128px] relative float-right pr-8" />
+          <div class="flex p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+            role="alert" v-show="selectedDocument.reminder_sent">
+            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span class="sr-only">Info</span>
+            <div>
+              <span class="font-medium">Pozor!</span> Pre tento doklad ste už
+              upomienku vystavili.
+            </div>
+          </div>
+          <div class="flex flex-col justify-start px-4 text-white">
+            <FormKit type="email" id="reminder_email" label="Email klienta" placeholder="email@example.com"
+              v-model="reminderEmail" />
+            <FormKit type="textarea" name="reminder_text" label="Sprievodný text upomienky" v-model="reminderText" />
+          </div>
+
+          <div class="flex flex-row justify-end py-2 px-4">
+            <div class="flex flex-1/4 px-4">
+              <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="confirmReminder(selectedDocument, reminderEmail, reminderText)">
+                Odoslať upomienku
+              </button>
+            </div>
+            <div class="flex flex-1/4">
+              <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="showReminderModalDialog = false">
+                Zrušiť
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="flex flex-1/4">
-          <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-            v-on:click="closeModal('repayModal')">
-            Zrušiť
-          </button>
+      </DialogPanel>
+    </div>
+
+  </Dialog>
+  <Dialog :open="showRepayModalDialog" @close="showRepayModalDialog = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+          <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
+            Koľko bolo uhradené?
+          </div>
+          <div class="flex justify-start px-4 text-white">
+            <FormKit type="number" id="repay_amount" label="Zaplatená suma" v-model="selectedDocument.paid"
+              :value="selectedDocument.total" :min="0" />
+          </div>
+          <div class="flex justify-start px-4 text-white">
+            <FormKit type="date" name="Dátum úhrady" label="Dátum úhrady" validation="required|length:10"
+              v-model="selectedDocument.payment_date" :value="today" />
+          </div>
+          <div class="flex flex-row justify-end py-2 px-4">
+            <div class="flex flex-1/4 px-4">
+              <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="repayConfirm(selectedDocument)">
+                Zaplatiť
+              </button>
+            </div>
+            <div class="flex flex-1/4">
+              <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
+                v-on:click="showRepayModalDialog = false">
+                Zrušiť
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+
+      </DialogPanel>
     </div>
-  </Modal>
-  <Modal name="loadingModal" v-model:visible="isVisible" :type="'clean'" :closable="false" title="Loading...">
-    <div class="w-full h-full">
-      <div role="status" class="flex py-10 h-full w-full justify-center">
-        <svg aria-hidden="true" class="w-10 h-10 mr-2 text-white animate-spin dark:text-gray-900 fill-teal-500"
-          viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-            fill="currentColor" />
-          <path
-            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-            fill="currentFill" />
-        </svg>
-        <span class="sr-only">Loading...</span>
-      </div>
+
+  </Dialog>
+  <Dialog :open="showLoadingModalDialog" @close="showLoadingModalDialog = false" class="relative z-50">
+    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+      <DialogPanel class="w-full max-w-sm bg-transparent rounded">
+        <div class="w-full h-full">
+          <div role="status" class="flex py-10 h-full w-full justify-center">
+            <svg aria-hidden="true" class="w-10 h-10 mr-2 text-white animate-spin dark:text-gray-900 fill-teal-500"
+              viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor" />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill" />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </DialogPanel>
     </div>
-  </Modal>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import store from "@/store";
-import { computed, ref, reactive, watch, onBeforeMount } from "vue";
+import { computed, ref, watch, onBeforeMount } from "vue";
 import type Doklad from "@/types/Document";
 import { useRouter } from "vue-router";
-import { useModal, Modal } from "usemodal-vue3";
+import { Dialog, DialogPanel } from '@headlessui/vue';
 import * as FileSaver from "file-saver";
 import moment from "moment";
 import * as _ from "lodash";
@@ -264,6 +293,12 @@ const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
 const company = ref({} as Company);
 const updateFinData = ref(false);
+
+const showLoadingModalDialog = ref(false);
+const showDeleteModalDialog = ref(false);
+const showDeleteMultipleModalDialog = ref(false);
+const showRepayModalDialog = ref(false);
+const showReminderModalDialog = ref(false);
 
 const selectedDocuments = ref([] as any[]);
 const selectedDocument = ref({} as Doklad);
@@ -278,35 +313,12 @@ const indeterminate = computed(
     selectedDocuments.value.length < documents.value.length
 );
 
-const setModal = useModal({
-  loadingModal: 1,
-  deleteModal: 2,
-  deleteMultipleModal: 3,
-  reminderModal: 4,
-  repayModal: 5
-});
-
 watch(
   () => store.getters.getSelectedCompany,
   function () {
     refreshData();
   }
 );
-let isVisible = reactive({});
-
-isVisible = setModal("deleteModal", false);
-isVisible = setModal("deleteMultipleModal", false);
-isVisible = setModal("reminderModal", false);
-isVisible = setModal("repayModal", false);
-isVisible = setModal("loadingModal", false);
-
-function showModal(modal: string) {
-  isVisible = setModal(modal, true);
-}
-
-function closeModal(modal: string) {
-  isVisible = setModal(modal, false);
-}
 
 function saveAs(filename: string, blob: Blob) {
   FileSaver.saveAs(blob, filename);
@@ -321,7 +333,7 @@ function editDocument(document: Doklad) {
 }
 
 async function duplicateDocument(document: any) {
-  showModal('loadingModal');
+  showLoadingModalDialog.value = true;
   let newDocument = {
     type: document.type,
     subtype: document.subtype,
@@ -379,14 +391,14 @@ async function duplicateDocument(document: any) {
         store.state.documents.push(res.Document);
         updateFinData.value = true;
         store.state.document = res.Document;
-        closeModal('loadingModal');
+        showLoadingModalDialog.value = false;
         router.push({
           name: "Doklad",
         });
       });
     })
     .catch((err) => {
-      closeModal('loadingModal');
+      showLoadingModalDialog.value = false;
       console.log(err);
       toast.error('Error: ' + err);
     });
@@ -394,7 +406,7 @@ async function duplicateDocument(document: any) {
 
 function deleteSingleDocument(document: Doklad) {
   selectedDocument.value = document;
-  showModal("deleteModal");
+  showDeleteModalDialog.value = true;
 }
 
 function confirmDelete(document: Doklad) {
@@ -404,15 +416,11 @@ function confirmDelete(document: Doklad) {
       let index = store.state.documents.findIndex(d => d.id === document.id);
       store.state.documents.splice(index, 1);
       updateFinData.value = true;
-      isVisible = setModal("deleteModal", false);
+      showDeleteModalDialog.value = false;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
     });
-}
-
-function deleteMultipleDocuments() {
-  showModal("deleteMultipleModal");
 }
 
 function confirmDeleteMultipleDocuments() {
@@ -423,7 +431,7 @@ function confirmDeleteMultipleDocuments() {
         let index = store.state.documents.findIndex(d => d.id === value.id);
         store.state.documents.splice(index, 1);
         updateFinData.value = true;
-        isVisible = setModal("deleteMultipleModal", false);
+        showDeleteMultipleModalDialog.value = false;
       })
       .catch((err) => {
         toast.error('Error: ' + err);
@@ -512,11 +520,11 @@ async function downloadMultipleDocuments() {
 
 function sendReminder(document: Doklad) {
   selectedDocument.value = document;
-  showModal("reminderModal");
+  showReminderModalDialog.value = true;
 }
 
 function confirmReminder(document: Doklad, email: any, text: any) {
-  isVisible = setModal("reminderModal", false);
+  showReminderModalDialog.value = false;
   const data = {
     id: document.id,
     email: email,
@@ -536,11 +544,11 @@ function confirmReminder(document: Doklad, email: any, text: any) {
 
 function repay(document: Doklad) {
   selectedDocument.value = document;
-  showModal("repayModal");
+  showRepayModalDialog.value = true;
 }
 
 function repayConfirm(document: Doklad) {
-  isVisible = setModal("repayModal", false);
+  showRepayModalDialog.value = false;
   document.paid = Number(document.paid);
   if (document.paid == document.total) {
     document.isPaid = true;
@@ -562,9 +570,9 @@ async function refreshData() {
     });
 
   const res = await store.dispatch("getCompanyBankDetails", company.value.id)
-  if(res.data[0]?.id){
+  if (res.data[0]?.id) {
     res.data.map((data) => {
-      if(data?.is_main == 1){
+      if (data?.is_main == 1) {
         bankAccountId.value = data?.id;
       }
     })

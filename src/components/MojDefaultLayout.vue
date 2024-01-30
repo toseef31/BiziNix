@@ -36,7 +36,7 @@
                 <BellIcon class="h-6 w-6" aria-hidden="true" />
                 
               </button>
-              <div v-if="showNotification" @click="showNotification = false" class="fixed inset-0 h-full w-full z-10">
+              <div v-if="showNotification && notifications.length > 0" @click="showNotification = false" class="fixed inset-0 h-full w-full z-10">
               </div>
 
               <div v-if="showNotification && notifications.length > 0" class="absolute right-10 mt-5 overflow-hidden z-20" style="width:20rem;">

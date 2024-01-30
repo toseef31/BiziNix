@@ -91,6 +91,11 @@ export const store = createStore({
     }
   },
   actions: {
+    subscribeEmail({ commit }, email) {
+      return axiosClient.post("/users/subscribe", email).then(({ data }) => {
+        return data;
+      });
+    },
     async registerUser(_, user) {
       // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
       const { data } = await axiosClient.post("/users/register", user);
