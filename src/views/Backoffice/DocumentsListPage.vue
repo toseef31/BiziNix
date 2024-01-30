@@ -176,66 +176,73 @@
                   </div>
                   <div class="pt-4">
                     Importujte prijaté doklady <br />
-                    <button class="font-bold" v-on:click="openImportDialog('importModal')">
+                    <button class="font-bold" v-on:click="showImportPopup = true">
                       TU
                     </button>
                   </div>
-                  <Modal name="importModal" v-model:visible="isVisible" :type="'clean'" :closable="false"
-                    title="Importovanie dokladu">
-                    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-                      <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
-                      <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
-                        Importujte prijatý doklad
-                        <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                          v-on:click="closeDialog('importModal')">
-                          X
-                        </button>
-                      </div>
-                      <FormKit type="form" id="add-document" submit-label="Importovať doklad" @submit="importDocument()"
-                        :actions="false">
-                        <div class="flex px-4 pt-10 text-white z-10 relative">
-                          <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
-                            placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
-                            @change="documentSubtypeChanged()" validation="required" />
-                        </div>
-                        <div class="px-4 text-white w-full py-4">
-                          <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad" validation="required"
-                            v-model="document.odberatel" />
-                        </div>
-                        <div class="px-4 text-white w-full py-4">
-                          <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
-                            v-model="document.serial_number" />
-                        </div>
-                        <div class="flex flex-row pb-8 gap-4">
-                          <div class="flex text-white pl-4 basis-1/3">
-                            <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
-                              validation="required|length:10" v-model="document.date_of_issue" :value="today" />
+                  <Dialog :open="showImportPopup" @close="showImportPopup = false" class="relative z-50">
+                    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                      <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                        <DialogTitle class="text-center py-4 text-xl font-bold">Importovanie dokladu</DialogTitle>
+                        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+                          <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
+                          <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
+                            Importujte prijatý doklad
+                            <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                              v-on:click="showImportPopup = false">
+                              X
+                            </button>
                           </div>
-                          <div class="flex text-white basis-2/3 pr-4 gap-2">
-                            <div class="w-full">
-                              <FormKit type="number" id="amount" name="Suma" label="Suma v €" step="any" min="0" number
-                                v-model="document.total" validation="required" />
+                          <FormKit type="form" id="add-document" submit-label="Importovať doklad"
+                            @submit="importDocument()" :actions="false">
+                            <div class="flex px-4 pt-10 text-white z-10 relative">
+                              <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
+                                placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
+                                @change="documentSubtypeChanged()" validation="required" />
                             </div>
-                            <div class="w-full">
-                              <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
-                                @change="dphChanged($event)" validation="required" />
+                            <div class="px-4 text-white w-full py-4">
+                              <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad"
+                                validation="required" v-model="document.odberatel" />
                             </div>
-                          </div>
-                        </div>
-                        <div class="px-4 w-full text-white">
-                          <FormKit id="scan" label="Importovať doklad" accept=".jpg,.png,.pdf" validation="mime:.jpg,.png,.pdf"
-                            v-on:change="updateImgData($event)" name="scan" type="file" validation-visibility="live"/>
-                        </div>
+                            <div class="px-4 text-white w-full py-4">
+                              <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
+                                v-model="document.serial_number" />
+                            </div>
+                            <div class="flex flex-row pb-8 gap-4">
+                              <div class="flex text-white pl-4 basis-1/3">
+                                <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
+                                  validation="required|length:10" v-model="document.date_of_issue" :value="today" />
+                              </div>
+                              <div class="flex text-white basis-2/3 pr-4 gap-2">
+                                <div class="w-full">
+                                  <FormKit type="number" id="amount" name="Suma" label="Suma v €" step="any" min="0"
+                                    number v-model="document.total" validation="required" />
+                                </div>
+                                <div class="w-full">
+                                  <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
+                                    @change="dphChanged($event)" validation="required" />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="px-4 w-full text-white">
+                              <FormKit id="scan" label="Importovať doklad" accept=".jpg,.png,.pdf"
+                                validation="mime:.jpg,.png,.pdf" v-on:change="updateImgData($event)" name="scan"
+                                type="file" validation-visibility="live" />
+                            </div>
 
-                        <div class="flex flex-row justify-end py-8 px-4 gap-4">
-                          <div class="flex flex-1/4">
-                            <FormKit label="Importovať doklad" type="submit"
-                              class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2" />
-                          </div>
+                            <div class="flex flex-row justify-end py-8 px-4 gap-4">
+                              <div class="flex flex-1/4">
+                                <FormKit label="Importovať doklad" type="submit"
+                                  class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2" />
+                              </div>
+                            </div>
+                          </FormKit>
                         </div>
-                      </FormKit>
+                      </DialogPanel>
                     </div>
-                  </Modal>
+
+                  </Dialog>
                 </div>
                 <div class="flex flex-col items-center w-full py-8 px-10">
                   <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
@@ -348,11 +355,10 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref, computed, watch, reactive } from "vue";
+import { onBeforeMount, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
 import type Company from "@/types/Company";
-import { useModal, Modal } from "usemodal-vue3";
 import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
@@ -382,6 +388,7 @@ const selectedDirection = ref("desc");
 const ogDocs = ref([] as any[]);
 let documentsListTableRef = ref<InstanceType<typeof DocumentsListTable>>(null as any);
 const showBankPopup = ref(false);
+const showImportPopup = ref(false);
 const bankAccounts = ref([] as any[]);
 const bankAccountId = ref(0);
 
@@ -435,12 +442,6 @@ const navigation = [
     tab: 3
   },
 ]
-
-const setModal = useModal({
-  importModal: 1,
-});
-let isVisible = reactive({});
-isVisible = setModal("importModal", false);
 
 function dphChanged(event: any) {
   if (event.target.value == 's DPH') {
@@ -545,14 +546,6 @@ function redirectToOrder() {
   });
 }
 
-function openImportDialog(modal: string) {
-  isVisible = setModal(modal, true);
-}
-
-function closeDialog(modal: string) {
-  isVisible = setModal(modal, false);
-}
-
 function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
@@ -567,7 +560,7 @@ function importDocument() {
     .then(async (res) => {
       await uploadImg(res.Document.id);
       await refreshData();
-      closeDialog("importModal");
+      showImportPopup.value = false;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
@@ -700,9 +693,9 @@ async function refreshData() {
         .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)
         .then((response) => {
           bankAccounts.value = response.data;
-          if(bankAccounts.value.length > 0){
+          if (bankAccounts.value.length > 0) {
             bankAccounts.value.map((data) => {
-              if(data?.is_main == 1){
+              if (data?.is_main == 1) {
                 bankAccountId.value = data?.id;
               }
             })
