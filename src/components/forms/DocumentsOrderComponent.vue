@@ -43,7 +43,6 @@ import { ref, computed } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import type Company from "@/types/Company";
-import moment from "moment";
 import { getValidationMessages } from '@formkit/validation'
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
@@ -77,10 +76,6 @@ let addressFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
   orderFromRes: any;
-
-const today = moment(new Date()).format("YYYY-MM-DD");
-const firstTimePaymentDate = moment(today).add(90, "days").format("YYYY-MM-DD");
-const yearlyPaymentDate = moment(today).add(365, "days").format("YYYY-MM-DD");
 
 const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;

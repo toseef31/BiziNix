@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-300">
+  <div class="min-h-screen">
     <div class="w-full min-h-screen flex flex-row">
       <div class="flex flex-col w-full bg-gray-900 basis-1/5">
         <TransitionRoot as="template" :show="sidebarOpen">

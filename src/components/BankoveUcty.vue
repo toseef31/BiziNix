@@ -2,21 +2,21 @@
   <div class="flex flex-row px-10">
     <div class="flex flex-col py-10 items-center basis-5/6">
       <div class="grid grid-cols-2 gap-8">
-        <div :class="[bankAccount.is_main? 'border-2 border-teal-500': 'border-0', 'flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-200']" v-for="bankAccount in bankAccounts">
+        <div :class="[bankAccount.is_main? 'border-2 border-teal-500': 'border-0', 'flex flex-row gap-8 rounded-lg shadow-md p-4 bg-gray-800']" v-for="bankAccount in bankAccounts">
           <div class="flex flex-col">
             <FormKit type="text" label="Názov účtu" name="iban" v-model="bankAccount.account_name"
-              :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+              :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
             <FormKit type="text" label="IBAN" name="iban" v-model="bankAccount.iban"
-              :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+              :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
             <FormKit type="text" label="Číslo účtu" name="account_number" v-model="bankAccount.account_number"
-              :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+              :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
             <FormKit type="text" label="Názov banky" name="name" v-model="bankAccount.bank_name"
-              :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+              :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
             <div class="flex flex-row gap-4">
               <FormKit type="text" label="SWIFT" name="swift" v-model="bankAccount.swift"
-                :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+                :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
               <FormKit type="text" label="Kód banky" name="bank_code" v-model="bankAccount.bank_code"
-                :classes="{ label: '$reset text-sm text-black mt-1 select-none' }" />
+                :classes="{ label: '$reset text-sm text-white mt-1 select-none' }" />
             </div>
             <div class="flex flex-row justify-between">
               <div>
