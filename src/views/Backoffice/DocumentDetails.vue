@@ -409,7 +409,7 @@
                             min="0"
                             number
                         v-model="item.quantity"
-                        @change="priceEntered(item)"
+                        @change="quantityEntered(item)"
                       />
                     </div>
                     <div class="flex basis-2/12">
@@ -650,6 +650,16 @@ function cancelEdit() {
 function priceEntered(item: any) {
   if (item.vat > 0) {
     item.total = item.quantity * item.unit_price;
+    item.total_vat = item.total * item.vat / 100;
+  } else {
+    item.total = item.quantity * item.unit_price;
+  }
+}
+
+function quantityEntered(item: any) {
+  if (item.vat > 0) {
+    item.total = item.quantity * item.unit_price;
+    item.total_vat = item.total * item.vat / 100;
   } else {
     item.total = item.quantity * item.unit_price;
   }
