@@ -235,7 +235,7 @@
                       </div>
                     </div>
 
-                    <div class="flex flex-col basis-9/12 mt-6">
+                    <div class="flex flex-col basis-9/12">
                       <div class="flex flex-row gap-2">
                         <div class="flex">
                           <FormKit autocomplete="nope" class="flex" id="name" type="text"
@@ -266,12 +266,8 @@
                     </div>
                     <div class="flex flex-col basis-2/12">
                       <div class="flex flex-row gap-2">
-                        <div class="flex" v-if="company.is_dph || company.icdph">
-                          <FormKit autocomplete="nope" type="number" class="flex" id="vat" step="0.01" label="DPH" number
-                            v-model="item.total_vat" disabled />
-                        </div>
                         <div class="flex">
-                          <FormKit autocomplete="nope" type="number" class="flex" id="total" step="0.01" :label="(company.is_dph || company.icdph) ? 'Cena s DPH' : 'Cena'"
+                          <FormKit autocomplete="nope" type="text" class="flex" id="total" step="0.01"
                             number v-model="item.total" disabled />
                         </div>
                       </div>
@@ -310,9 +306,9 @@
                       </th>
                     </tr>
                     <tr v-if="company.is_dph || company.icdph">
-                      <th class="pl-2">DPH</th>
-                      <th class="text-right pr-2">
-                        {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
+                      <th class="text-right">Spolu s DPH</th>
+                      <th class="text-left pl-4">
+                        {{ (totalPrice+totalPriceVat).toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
                   </tbody>

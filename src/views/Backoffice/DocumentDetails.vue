@@ -445,31 +445,19 @@
                         @change="vatEntered($event)"
                       />
                     </div>
-                    <div class="flex basis-1/12" v-if="document.isDph">
-                      <FormKit
-                        autocomplete="nope"
-                        type="text"
-                        class="flex"
-                        id="vat"
-                        step="0.01"
-                        label="DPH"
-                        number
-                        v-model="item.total_vat"
-                        disabled
-                      />
-                    </div>
-                    <div class="flex basis-1/12">
-                      <FormKit
-                        autocomplete="nope"
-                        type="text"
-                        class="flex"
-                        id="total"
-                        step="0.01"
-                        :label="document.isDph ? 'Cena s DPH' : 'Cena'"
-                        number
-                        v-model="item.total"
-                        disabled
-                      />
+                    <div class="flex basis-2/12 pl-4">
+                      <div class="flex">
+                        <FormKit
+                          autocomplete="nope"
+                          type="text"
+                          id="total"
+                          step="0.01"
+                          number
+                          v-model="item.total"
+                          disabled
+                        />
+                      </div>
+                      
                     </div>
                   </div>
 
@@ -536,7 +524,7 @@
                     <tr v-if="document.isDph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
-                        {{ (totalPrice).toFixed(2) }}&nbsp;{{
+                        {{ (totalPrice+totalPriceVat).toFixed(2) }}&nbsp;{{
                           document.currency
                         }}
                       </th>
