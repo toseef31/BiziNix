@@ -442,7 +442,7 @@
                         number
                         v-model="item.vat"
                         novalidate
-                        @change="vatEntered($event)"
+                        @change="vatEntered($event, item)"
                       />
                     </div>
                     <div class="flex basis-2/12 pl-4">
@@ -655,7 +655,7 @@ function priceEntered(item: any) {
   }
 }
 
-function vatEntered(event: any) {
+function vatEntered(event: any, item: any) {
   if (
     event.target.value == 0 &&
     !document.value.note_above.includes("Prenos daňovej povinnosti")
@@ -675,6 +675,8 @@ function vatEntered(event: any) {
       ""
     );
   }
+
+  item.total_vat = item.total * item.vat / 100;
 }
 
 function addItem() {
