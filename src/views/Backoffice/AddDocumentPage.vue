@@ -197,11 +197,11 @@
                       :options="Constants.PAYMENT_TYPES" v-model="document.payment_method" />
                   </div>
                   <div class="flex flex-col basis-1/4" v-if="document.subtype != 4 && document.subtype != 5">
-                    <FormKit autocomplete="nope" type="text" id="constant-symbol" name="constant"
+                    <FormKit autocomplete="nope" type="text" id="constant-symbol" name="constant" validation="length:0,4"
                       label="Konštantný symbol" v-model="document.konstantny" />
                   </div>
                   <div class="flex flex-col basis-1/4" v-if="document.subtype != 4 && document.subtype != 5">
-                    <FormKit autocomplete="nope" type="text" id="specific-symbol" label="Špecifický symbol"
+                    <FormKit autocomplete="nope" type="text" id="specific-symbol" label="Špecifický symbol" validation="length:0,10"
                       v-model="document.specificky" />
                   </div>
                 </div>
@@ -267,11 +267,11 @@
                     <div class="flex flex-col basis-2/12">
                       <div class="flex flex-row gap-2">
                         <div class="flex" v-if="company.is_dph || company.icdph">
-                          <FormKit autocomplete="nope" type="text" class="flex" id="vat" step="0.01" label="DPH" number
+                          <FormKit autocomplete="nope" type="number" class="flex" id="vat" step="0.01" label="DPH" number
                             v-model="item.total_vat" disabled />
                         </div>
                         <div class="flex">
-                          <FormKit autocomplete="nope" type="text" class="flex" id="total" step="0.01" label="Cena s DPH"
+                          <FormKit autocomplete="nope" type="number" class="flex" id="total" step="0.01" :label="(company.is_dph || company.icdph) ? 'Cena s DPH' : 'Cena'"
                             number v-model="item.total" disabled />
                         </div>
                       </div>
@@ -549,6 +549,8 @@ async function setSerialNumber() {
 }
 
 async function refreshData() {
+  documentSubtypeChanged();
+
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
@@ -579,6 +581,7 @@ async function refreshData() {
   if (company.value.is_dph || company.value.icdph) {
     items.value[0].vat = 20;
   }
+
 }
 
 function toggleAccordion() {
@@ -700,6 +703,7 @@ function submitHandler() {
         showLoadingModalDialog.value = true;
       })
       .catch((err) => {
+        console.log(err);
         toast.error('Error: ' + err);
       });
   } else {

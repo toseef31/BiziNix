@@ -339,6 +339,7 @@
                       name="[constant]"
                       v-model="document.konstantny"
                       label="Konštantný symbol"
+                      validation="length:0,4"
                     />
                   </div>
                   <div class="flex flex-col basis-1/4">
@@ -348,6 +349,7 @@
                       id="specific-symbol"
                       v-model="document.specificky"
                       label="Špecifický symbol"
+                      validation="length:0,10"
                     />
                   </div>
                 </div>
@@ -463,7 +465,7 @@
                         class="flex"
                         id="total"
                         step="0.01"
-                        label="Cena s DPH"
+                        :label="document.isDph ? 'Cena s DPH' : 'Cena'"
                         number
                         v-model="item.total"
                         disabled

@@ -358,7 +358,7 @@ async function duplicateDocument(document: any) {
     due_by: document.due_by,
     delivery_method: document.delivery_method,
     delivery_date: today,
-    payment_method: "",
+    payment_method: document.payment_method,
     currency: document.currency,
     pdf: "",
     isIssued: document.isIssued,
@@ -386,7 +386,6 @@ async function duplicateDocument(document: any) {
   store
     .dispatch("addDocument", newDocument)
     .then((res) => {
-      console.log(res);
       store.dispatch("setDocument", newDocument).then(() => {
         store.state.documents.push(res.Document);
         updateFinData.value = true;

@@ -571,9 +571,6 @@ async function uploadImg(documentId) {
   uploadImageData.value.documentId = documentId;
   await store
     .dispatch("uploadDocumentImg", uploadImageData.value)
-    .then((response) => {
-      console.log(response.data);
-    })
     .catch((err) => {
       toast.error('Error: ' + err);
     });
@@ -683,7 +680,7 @@ async function refreshData() {
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
       company.value = response.data;
-      await getDocuments(1, null, null, null, '', selectedColumn.value, 1);
+      await getDocuments(activeTab.value, null, null, null, '', selectedColumn.value, 1);
       await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
