@@ -368,6 +368,8 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     status: companyMembersAndDetails.value.companyOrZivnostModel.status,
     owner: userId,
     headquarters_id: hqId,
+    doc_sncounter_id: 1,
+    doc_template_id: 1,
     imanie_vyska: companyMembersAndDetails.value.companyOrZivnostModel.imanie_vyska,
     imanie_splatene: companyMembersAndDetails.value.companyOrZivnostModel.imanie_splatene,
     is_dph: companyMembersAndDetails.value.companyOrZivnostModel.is_dph,
