@@ -18,6 +18,7 @@
   </FormKit>
   <div class="flex flex-col space-y-4 last:mb-4">
     {{companyFromOsRs}}
+    Konateliaaa: {{ konateliaFromOrSr }}
     <EditItemForCompany title="Obchodné meno">
       <div class="grid grid-cols-2 items-center">
         <div>
@@ -25,7 +26,7 @@
           <h1 class="text-lg">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h1>
         </div>
         <div>
-          <button @click="editCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <button @click.prevent="editCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
           <VueFinalModal
               :modal-id="modalIdAddOrEditSubjects"
               display-directive="if"
@@ -134,9 +135,9 @@
             </div>
     </EditItemForCompany>
     <EditItemForCompany title="Konatelia">
-      <div class="grid grid-cols-2 items-center">
+      <div v-for="konatel in konateliaFromOrSr" class="grid grid-cols-2 items-center">
         <div>
-          <h1 class="text-lg">{{ companyFromOsRs?.statutarny_organ.konateľ[0].name }}</h1>
+          <h1 class="text-lg">{{ konatel.name }}</h1>
           <!-- <h1 class="text-lg">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h1> -->
         </div>
         <div>
@@ -209,7 +210,7 @@
 
 import store from '@/store';
 import { getNode } from '@formkit/core';
-import { onBeforeMount, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, computed } from 'vue';
 import type Company from '@/types/Company';
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import EditItemForCompany from './EditItemForCompany.vue'
@@ -254,7 +255,7 @@ function editCompanyName() {
   vfm.open(modalIdAddOrEditSubjects)
 }
 
-function closeModalForCompanyName(){
+function closeModalForCompanyName(){ 
   vfm.closeAll().then(() => {
     newCompanyFullName.newCompanyName = '';
     newCompanyFullName.newCompanyPravForm = '';
@@ -267,6 +268,22 @@ function closeModalAndSaveOrEditSpolocnikZakladatel() {
     console.log("then");
   })
 }
+
+const konateliaFromOrSr = computed(() => {
+  if(companyFromOsRs.value){
+    //const list = [{}];
+    //const emptyList = companyFromOsRs?.value.statutarny_organ.konateľ === 0 ? companyFromOsRs.value.statutarny_organ.konatelia : companyFromOsRs?.value.statutarny_organ.konateľ
+    if(companyFromOsRs?.value.statutarny_organ.konateľ){
+      return companyFromOsRs?.value.statutarny_organ.konateľ;
+    }
+    else if(companyFromOsRs?.value.statutarny_organ.konatelia){
+      return companyFromOsRs?.value.statutarny_organ.konatelia
+    }
+    else {
+      return [];
+    }
+  }
+})
 
 const companyData = ref({
       typ_sudu: "MS",

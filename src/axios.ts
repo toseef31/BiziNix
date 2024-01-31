@@ -2,8 +2,7 @@ import axios from "axios";
 import store from "./store";
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_API_ENDPOINT
-    //baseURL: "https://api.bizinix.sk/api/"
+    baseURL: import.meta.env.VITE_API_ENDPOINT ? 'https://api.bizinix.sk/api/' : undefined
 })
 
 axiosClient.interceptors.request.use(config => {
