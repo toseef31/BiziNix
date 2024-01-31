@@ -183,9 +183,7 @@
                   <Dialog :open="showImportPopup" @close="showImportPopup = false" class="relative z-50">
                     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
                     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
-                      <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
-                        <DialogTitle class="text-center py-4 text-xl font-bold">Importovanie dokladu</DialogTitle>
-                        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+                      <DialogPanel class="w-full max-w-lg rounded bg-gray-900 shadow text-white">
                           <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
                           <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
                             Importujte prijatý doklad
@@ -238,7 +236,6 @@
                               </div>
                             </div>
                           </FormKit>
-                        </div>
                       </DialogPanel>
                     </div>
 
