@@ -114,7 +114,7 @@
                   {{ finData.total.toFixed(2) }} €
                 </div>
                 <div class="text-gray-300 text-sm" v-if="company.is_dph">
-                  {{ finData.totalVat.toFixed(2) }} € s DPH
+                  {{ (finData.total+finData.totalVat).toFixed(2) }} € s DPH
                 </div>
                 <div class="text-teal-500">
                   Zisk

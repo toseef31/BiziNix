@@ -35,7 +35,7 @@
       </div>
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
         <div
-          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika.toLowerCase() == 'mini'"
+          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika != null && selectedCompany.sidlo_typ_balika?.toLowerCase() == 'mini'"
           class="flex flex-col w-full items-center">
           <div class="flex flex-col w-full items-center h-full py-32">
             <div class="text-4xl text-gray-900 font-bold">
@@ -55,7 +55,7 @@
         </div>
         <div v-if="selectedCompany && (new Date(selectedCompany.sidlo_zaplatene_do) < new Date(today) ||
           selectedCompany.sidlo_zaplatene_do == null ||
-          selectedCompany.sidlo_zaplatene_do == '')
+          selectedCompany.sidlo_zaplatene_do == '' || selectedCompany.sidlo_typ_balika == null)
           " class="flex flex-col w-full items-center">
           <div class="flex flex-col w-full items-center h-full py-32">
             <div class="text-4xl text-gray-900 font-bold">
@@ -73,7 +73,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika.toLowerCase() != 'mini'">
+        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika != null && selectedCompany.sidlo_typ_balika.toLowerCase() != 'mini'">
           <div class="w-full min-h-full">
             <div class="flex flex-col container mx-auto h-full text-gray-800">
               <h1 class="flex flex-row px-4 py-8 text-3xl font-bold text-gray-600 pb-10 justify-center">

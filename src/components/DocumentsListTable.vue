@@ -119,7 +119,6 @@
     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
       <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
-        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
           <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
             Prosím potvrdte zmazanie dokladu.
           </div>
@@ -137,7 +136,6 @@
               </button>
             </div>
           </div>
-        </div>
       </DialogPanel>
     </div>
 
@@ -146,7 +144,6 @@
     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
       <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
-        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
           <div class="flex flex-row justify-start py-4 px-4 text-white font-bold text-lg">
             Prosím potvrdte zmazanie označených dokladov.
           </div>
@@ -164,7 +161,6 @@
               </button>
             </div>
           </div>
-        </div>
       </DialogPanel>
     </div>
 
@@ -173,7 +169,6 @@
     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
       <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
-        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
           <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
             Prosím potvrďte vystavenie upomienky
           </div>
@@ -212,7 +207,6 @@
               </button>
             </div>
           </div>
-        </div>
       </DialogPanel>
     </div>
 
@@ -221,7 +215,6 @@
     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
       <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
-        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
           <div class="flex justify-start py-4 px-4 text-white font-bold text-lg">
             Koľko bolo uhradené?
           </div>
@@ -247,8 +240,6 @@
               </button>
             </div>
           </div>
-        </div>
-
       </DialogPanel>
     </div>
 
