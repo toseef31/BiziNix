@@ -149,8 +149,9 @@ import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.
 import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
-import { getValidationMessages } from '@formkit/validation'
-import { getNode } from '@formkit/core'
+import { getValidationMessages } from '@formkit/validation';
+import { getNode } from '@formkit/core';
+import { toast } from "vue3-toastify";
 
 const userIdFromStore = computed(() => { return store.getters.getUserId })
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
@@ -382,7 +383,7 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     console.log("Adding company: " + JSON.stringify(res));
     return res;
   } catch (err) {
-    console.log(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -401,7 +402,7 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
     return res
   } catch(err) {
-    console.log(err)
+    toast.error('Error: ' + err)
   }
 }
 
@@ -420,7 +421,7 @@ async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> 
     console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
     return res
   } catch (err: any){
-    console.log(err)
+    toast.error('Error: ' + err)
   }
 
 }
@@ -515,8 +516,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
     const companyRes = await addCompany(userId, regHqRes.id);
     
-    await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
-    await addMultipleCompanyMembersKonatelia(companyRes.company.id)
+    await addMultipleCompanyMembersSpolocnici(companyRes.data.company.id)
+    await addMultipleCompanyMembersKonatelia(companyRes.data.company.id)
 
     let invoiceProfileId = null as unknown as number;
     if(invoiceData.value.createNewInvoiceProfile){
@@ -535,7 +536,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
+    const orderRes = await addOrder(companyRes.data.company.id, userId, invoiceProfileId)
     
     if(orderRes.id){
 

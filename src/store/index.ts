@@ -32,6 +32,10 @@ export const store = createStore({
     selectedVhqPackage: {} as any,
     notifications: [] as any,
     documentTab: 1,
+    mySubmenuActive: 0,
+    myCompanyDetailsTab: 1,
+    bankAccounts: [] as any,
+    documents: [] as any[],
   },
   getters: {
     getUserId: (state) => {
@@ -87,6 +91,11 @@ export const store = createStore({
     }
   },
   actions: {
+    subscribeEmail({ commit }, email) {
+      return axiosClient.post("/users/subscribe", email).then(({ data }) => {
+        return data;
+      });
+    },
     async registerUser(_, user) {
       // registerUser is dispatch must be same name is defined in Register component or view user second argument for registartion
       const { data } = await axiosClient.post("/users/register", user);
@@ -247,19 +256,41 @@ export const store = createStore({
       });
       return data;
     },
-    addCompany({ commit }, company) {
-      return axiosClient.post("/companies/add", company).then(({ data }) => {
-        commit("setCompany", data); // setCompany is defined as muttation below
-        return data;
-      });
+    async addCompany({ commit, dispatch }, company) {
+        return axiosClient
+          .post('/companies/add', company)
+          .then((res) => {
+            commit("setCompany", res.data);
+            return res;
+          });
     },
-    addHeadquarter({ commit }, headquarter) {
+    async updateCompany({ commit, dispatch }, company) {
+      if (company.id) {
+        return axiosClient
+          .put(`/companies/${company.id}/update`, company)
+          .then((res) => {
+            commit("setCompany", res.data);
+            return res;
+          });
+      }
+    },
+    async addHeadquarter({ commit }, headquarter) {
       return axiosClient
         .post("/headquarters/add", headquarter)
         .then(({ data }) => {
           commit("setHeadquarter", data); // setHeadquarter is defined as muttation below
           return data;
         });
+    },
+    async updateHeadquarter({ commit, dispatch }, headquarter) {
+      if (headquarter.id) {
+        return axiosClient
+          .put(`/headquarters/${headquarter.id}/update`, headquarter)
+          .then((res) => {
+            commit("setHeadquarter", res.data);
+            return res;
+          });
+      }
     },
     async getAllCompaniesByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/companies/${userId}/getAll`);
@@ -277,13 +308,19 @@ export const store = createStore({
     },
     async getCompanyBankDetails({ commit }, companyId) {
       const { data } = await axiosClient.get(
-        `/companies/${companyId}/getBankDetails`
+        `/companies/${companyId}/getAllBankDetails`
       );
       return data;
     },
-    async getDocumentSnForCompany({ commit }, companyId) {
+    async getBankAccountById({ commit }, id) {
       const { data } = await axiosClient.get(
-        `/companies/${companyId}/getDocumentSnForCompany`
+        `/companies/${id}/getBankDetails`
+      );
+      return data;
+    },
+    async getDocumentSnForCompany({ commit }, inputs) {
+      const { data } = await axiosClient.get(
+        `/companies/${inputs.companyId}/${inputs.subtype}/getDocumentSnForCompany`
       );
       return data;
     },
@@ -312,16 +349,6 @@ export const store = createStore({
         members
       );
       return data;
-    },
-    async updateCompany({ commit, dispatch }, company) {
-      if (company.id) {
-        return axiosClient
-          .put(`/companies/${company.id}/update`, company)
-          .then((res) => {
-            commit("setCompany", res.data);
-            return res;
-          });
-      }
     },
     async uploadCompanyLogo({ commit, dispatch }, data) {
       const config = {
@@ -383,6 +410,13 @@ export const store = createStore({
           return res.data;
         });
     },
+    async getCompanyFindataFinstat({ commit, dispatch }, ico) {
+      return axiosClient
+        .post("/companies/getCompanyFindataFinstat", ico)
+        .then((res) => {
+          return res.data;
+        });
+    },
     async getCompanySubstatuses({commit, dispatch}) {
       return axiosClient
       .get("/companies/getCompanySubStatuses")
@@ -391,6 +425,7 @@ export const store = createStore({
       });
     },
     async addBankAccount({ commit }, bankAccount) {
+      console.log(bankAccount);
       const { data } = await axiosClient.post(
         "/companies/addCompanyBankDetails",
         bankAccount
@@ -404,10 +439,16 @@ export const store = createStore({
       );
       return data;
     },
+    async deleteBankAccount({ commit }, bankAccount) {
+      const { data } = await axiosClient.delete(
+        `/companies/${bankAccount.id}/deleteCompanyBankAccount`
+      );
+      return data;
+    },
     //#endregion
     //#region documents
-    async getAllDocumentsForCompany({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/documents/${companyId}/getAll`);
+    async getAllDocumentsForCompany({ commit }, inputs) {
+      const { data } = await axiosClient.post(`/documents/${inputs.companyId}/getAll?page=${inputs.page}`, inputs.body);
       return data;
     },
     async getFinDataForCompany({ commit }, companyId) {
@@ -456,6 +497,28 @@ export const store = createStore({
     deleteDocument({ commit }, id) {
       return axiosClient.delete(`/documents/${id}/delete`);
     },
+    async uploadDocumentImg({ commit, dispatch }, data) {
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+      return axiosClient
+        .post(
+          `/documents/${data.documentId}/uploadDocumentImg`,
+          data.body,
+          config
+        )
+        .then((res) => {
+          return res;
+        });
+    },
+    async getDocumentImg({ commit, dispatch }, documentId) {
+      const { data } = await axiosClient.get(
+        `/documents/${documentId}/getDocumentImg`
+      );
+      return data;
+    },
     //#endregion
     //#region orders
     
@@ -496,17 +559,17 @@ export const store = createStore({
     //#endregion
     async reviews({ commit }) {
       await axiosClient.get("/reviews/getAllReviews").then(({ data }) => {
-        commit("setReviews", data);
+        commit("setReviews", data.data);
       });
     },
     async posts({ commit }) {
       await axiosClient.get("/posts/getAllPosts").then(({ data }) => {
-        commit("setPosts", data);
+        commit("setPosts", data.data);
       });
     },
     async faqs({ commit }) {
       await axiosClient.get("/faqs/getAllFaqs").then(({ data }) => {
-        commit("setFaqs", data);
+        commit("setFaqs", data.data);
       });
     },
     async vhqs({ commit }) {
@@ -520,9 +583,13 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/address/${address_id}/get`);
       return data;
     },
-    async getAllMailsForCompany({ commit }, companyId) {
-      const { data } = await axiosClient.get(`/mails/${companyId}/getAll`);
+    async getAllMailsForCompany({ commit }, inputs) {
+      const { data } = await axiosClient.post(`/mails/${inputs.companyId}/getAll?page=${inputs.page}`, inputs.body);
       commit("setMails", data);
+      return data;
+    },
+    async getUnseenCount({ dispatch }, companyId) {
+      const { data } = await axiosClient.get(`/mails/${companyId}/getUnseenCount`);
       return data;
     },
     updateMail({ commit, dispatch }, mail) {
@@ -534,11 +601,10 @@ export const store = createStore({
       }
     },
     updateMultipleMails({ commit, dispatch }, mails) {
-      console.log(mails);
       return axiosClient
         .put(`/mails/updateMultiple`, { mails: mails })
         .then((res) => {
-          commit("setMailsAfterUpdate", res.data);
+          //commit("setMailsAfterUpdate", res.data);
           return res;
         });
     },

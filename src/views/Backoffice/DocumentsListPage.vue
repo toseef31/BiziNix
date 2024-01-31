@@ -105,35 +105,36 @@
             </nav>
           </div>
           <div class="flex flex-col px-2 py-2 relative w-full h-full">
-              <div class="sticky top-[75vh] px-8">
-                <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
-                  <div class="text-teal-500">
-                    Tržba (Obrat)
-                  </div>
-                  <div class="text-white">
-                    {{ finData.total }} €
-                  </div>
-                  <div class="text-gray-300 text-sm" v-if="company.is_dph">
-                    {{ finData.totalVat }} € s DPH
-                  </div>
-                  <div class="text-teal-500">
-                    Zisk
-                  </div>
-                  <div class="text-white">
-                    {{ finData.profit }} €
-                  </div>
-                  <div class="text-red-500">
-                    Neuhradené / Pohľadávky
-                  </div>
-                  <div class="text-white">
-                    {{ finData.totalToPay }} €
-                  </div>
-                  <div class="text-gray-300 text-sm text-right">
-                    Viac info vo <router-link :to="{ name: 'CompanyDetails', params:{ activeTab:1 } }">finančnom reporte</router-link>
-                  </div>
+            <div class="sticky top-[75vh] px-8">
+              <div class="flex flex-col justify-center w-full gap-1 px-8 py-8 bg-gray-800 rounded-lg">
+                <div class="text-teal-500">
+                  Tržba (Obrat)
+                </div>
+                <div class="text-white">
+                  {{ finData.total.toFixed(2) }} €
+                </div>
+                <div class="text-gray-300 text-sm" v-if="company.is_dph">
+                  {{ finData.totalVat.toFixed(2) }} € s DPH
+                </div>
+                <div class="text-teal-500">
+                  Zisk
+                </div>
+                <div class="text-white">
+                  {{ finData.profit.toFixed(2) }} €
+                </div>
+                <div class="text-red-500">
+                  Neuhradené / Pohľadávky
+                </div>
+                <div class="text-white">
+                  {{ finData.totalToPay.toFixed(2) }} €
+                </div>
+                <div class="text-gray-300 text-sm text-right">
+                  Viac info vo <router-link :to="{ name: 'CompanyDetails', params: { activeTab: 1 } }">finančnom
+                    reporte</router-link>
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <!--KONIEC MENU-->
@@ -175,70 +176,118 @@
                   </div>
                   <div class="pt-4">
                     Importujte prijaté doklady <br />
-                    <button class="font-bold" v-on:click="openImportDialog('importModal')">
+                    <button class="font-bold" v-on:click="showImportPopup = true">
                       TU
                     </button>
                   </div>
-                  <Modal name="importModal" v-model:visible="isVisible" :type="'clean'" :closable="false"
-                    title="Importovanie dokladu">
-                    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-                      <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
-                      <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
-                        Importujte prijatý doklad
-                        <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
-                          v-on:click="closeDialog('importModal')">
-                          X
-                        </button>
-                      </div>
-                      <FormKit type="form" id="add-document" submit-label="Importovať doklad" @submit="importDocument()"
-                        :actions="false">
-                        <div class="flex px-4 pt-10 text-white z-10 relative">
-                          <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
-                            placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
-                            @change="documentSubtypeChanged()" validation="required" />
-                        </div>
-                        <div class="pl-4 text-white w-full py-4">
-                          <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad" validation="required"
-                            v-model="document.odberatel" />
-                        </div>
-                        <div class="pl-4 text-white w-full py-4">
-                          <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
-                            v-model="document.serial_number" />
-                        </div>
-                        <div class="flex flex-row pb-8 gap-4">
-                          <div class="flex text-white pl-4 basis-1/3">
-                            <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
-                              validation="required|length:10" v-model="document.date_of_issue" :value="today" />
+                  <Dialog :open="showImportPopup" @close="showImportPopup = false" class="relative z-50">
+                    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                      <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                        <DialogTitle class="text-center py-4 text-xl font-bold">Importovanie dokladu</DialogTitle>
+                        <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
+                          <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
+                          <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
+                            Importujte prijatý doklad
+                            <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
+                              v-on:click="showImportPopup = false">
+                              X
+                            </button>
                           </div>
-                          <div class="flex text-white basis-2/3 pr-4">
-                            <div class="w-full">
-                              <FormKit type="number" id="amount" name="Suma" label="Suma v €" v-model="document.total"
-                                validation="required" />
+                          <FormKit type="form" id="add-document" submit-label="Importovať doklad"
+                            @submit="importDocument()" :actions="false">
+                            <div class="flex px-4 pt-10 text-white z-10 relative">
+                              <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
+                                placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
+                                @change="documentSubtypeChanged()" validation="required" />
                             </div>
-                            <div class="w-full">
-                              <FormKit type="select" label="DPH" name="DPH" :options="['s DPH', 'bez DPH']"
-                                @change="dphChanged($event)" validation="required" />
+                            <div class="px-4 text-white w-full py-4">
+                              <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad"
+                                validation="required" v-model="document.odberatel" />
                             </div>
-                          </div>
-                        </div>
-                        <div class="pl-4 w-full text-white">
-                          <FormKit id="scan" label="Importovať doklad" accept="image/*"
-                            v-on:change="updateImgData($event)" name="scan" type="file" />
-                        </div>
+                            <div class="px-4 text-white w-full py-4">
+                              <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
+                                v-model="document.serial_number" />
+                            </div>
+                            <div class="flex flex-row pb-8 gap-4">
+                              <div class="flex text-white pl-4 basis-1/3">
+                                <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
+                                  validation="required|length:10" v-model="document.date_of_issue" :value="today" />
+                              </div>
+                              <div class="flex text-white basis-2/3 pr-4 gap-2">
+                                <div class="w-full">
+                                  <FormKit type="number" id="amount" name="Suma" label="Suma v €" step="any" min="0"
+                                    number v-model="document.total" validation="required" />
+                                </div>
+                                <div class="w-full">
+                                  <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
+                                    @change="dphChanged($event)" validation="required" />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="px-4 w-full text-white">
+                              <FormKit id="scan" label="Importovať doklad" accept=".jpg,.png,.pdf"
+                                validation="mime:.jpg,.png,.pdf" v-on:change="updateImgData($event)" name="scan"
+                                type="file" validation-visibility="live" />
+                            </div>
 
-                        <div class="flex flex-row justify-end py-8 px-4 gap-4">
-                          <div class="flex flex-1/4">
-                            <FormKit label="Importovať doklad" type="submit"
-                              class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2" />
-                          </div>
+                            <div class="flex flex-row justify-end py-8 px-4 gap-4">
+                              <div class="flex flex-1/4">
+                                <FormKit label="Importovať doklad" type="submit"
+                                  class="shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2" />
+                              </div>
+                            </div>
+                          </FormKit>
                         </div>
-                      </FormKit>
+                      </DialogPanel>
                     </div>
-                  </Modal>
+
+                  </Dialog>
                 </div>
                 <div class="flex flex-col items-center w-full py-8 px-10">
                   <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
-                  <DocumentsListTable :data="filteredDocumentsBySearch"></DocumentsListTable>
+                  <div class="flex flex-row w-full justify-center gap-10 py-4">
+                    <div class="flex flex-1/4 flex-row">
+                      <div class="flex relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                          </svg>
+                        </div>
+                        <input id="searchInput" v-model="searchQuery" placeholder="Vyhľadajte doklad"
+                          class="h-12 pl-8 w-full shadow px-1 rounded-xl border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-gray-300 bg-gray-900" />
+                      </div>
+                    </div>
+                    <!---->
+
+                    <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
+                      <div class="flex relative">
+                        <div class="self-center font-bold px-2 text-white">Od:</div>
+                        <input id="searchInput" type="date" v-model="dateFrom"
+                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      </div>
+                      <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
+                      <div class="flex relative">
+                        <div class="self-center font-bold pr-2 text-white">Do:</div>
+                        <input id="searchInput" type="date" v-model="dateTo"
+                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <DocumentsListTable ref="documentsListTableRef"></DocumentsListTable>
+                  <div class="flex flex-row w-full py-4 justify-around">
+                    <div v-if="documentsData.next_page_url != null">
+                      <button
+                        class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
+                        v-on:click="getDocuments(documentsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn, activeDocTab)">
+                        <span class="px-4">Načítať viac</span>
+                        <ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="flex flex-col items-center">
                   <button
@@ -253,6 +302,22 @@
                   <label class="font-bold text-center">Nový doklad</label>
                 </div>
               </div>
+              <Dialog :open="showBankPopup" @close="showBankPopup = false" class="relative z-50">
+                <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                  <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                    <DialogTitle class="text-center py-4 text-xl font-bold">Bankový účet</DialogTitle>
+
+                    <p class="p-8">
+                      Predtým ako budte môcť vystavovať doklady si pridajte Bankový účet.
+                    </p>
+                    <div class="flex flex-row justify-between py-2 px-4">
+                      <button class="px-2 py-2 hover:text-teal-500" @click="redirectToBankAccounts()">Pridať účet</button>
+                      <button class="px-2 hover:text-red-500" @click="showBankPopup = false">Zatvoriť</button>
+                    </div>
+                  </DialogPanel>
+                </div>
+              </Dialog>
             </div>
           </div>
           <div v-else>
@@ -262,7 +327,7 @@
       </div>
       <div v-else class="flex flex-col w-full justify-center">
         <div role="status" class="flex flex-col w-full items-center">
-          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600"
+          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-white animate-spin dark:text-gray-900 fill-teal-500"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -290,17 +355,16 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref, computed, watch, reactive } from "vue";
+import { onBeforeMount, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import DocumentsListTable from "@/components/DocumentsListTable.vue";
 import type Company from "@/types/Company";
-import type Doklad from "@/types/Document";
-import { useModal, Modal } from "usemodal-vue3";
 import moment from "moment";
 import Constants from "@/helpers/constants";
 import DocumentsDesignPage from "./DocumentsDesignPage.vue";
-import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { Disclosure, DisclosureButton, DisclosurePanel, Dialog, DialogPanel, TransitionChild, TransitionRoot, DialogTitle } from '@headlessui/vue';
+import { XMarkIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
+import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
 const sidebarOpen = ref(false)
@@ -310,13 +374,24 @@ const activeTab = ref(1);
 const docTab = ref(1);
 const activeDocTab = ref(1);
 const company = ref({} as Company);
-const documents = ref([] as Doklad[]);
-const filteredDocuments = ref([] as Doklad[]);
+const documents = computed(() => store.state.documents);
 const searchQuery = ref("");
+const dateFrom = ref(null);
+const dateTo = ref(null);
 const isIssuedChecked = ref(true);
 const isReceivedChecked = ref(true);
 const today = moment(new Date()).format("YYYY-MM-DD");
-const uploadImageData = ref({ body: { name: "", logo: "" }, companyId: 0 });
+const uploadImageData = ref({ body: { name: "", img: "" }, documentId: 0 });
+const documentsData = ref();
+const selectedColumn = ref("serial_number");
+const selectedDirection = ref("desc");
+const ogDocs = ref([] as any[]);
+let documentsListTableRef = ref<InstanceType<typeof DocumentsListTable>>(null as any);
+const showBankPopup = ref(false);
+const showImportPopup = ref(false);
+const bankAccounts = ref([] as any[]);
+const bankAccountId = ref(0);
+
 const document = ref({
   type: activeTab,
   subtype: activeDocTab,
@@ -329,6 +404,9 @@ const document = ref({
   total: 0,
   payment_date: "",
   date_of_issue: today,
+  isDph: false,
+  currency: "€",
+  bank_account_id: 0
 });
 
 let title = ref("Faktúry");
@@ -336,7 +414,9 @@ const finData = ref({
   total: 0,
   totalVat: 0,
   totalToPay: 0,
-  profit: 0
+  profit: 0,
+  monthlySalesData: [] as any[],
+  monthlyProfitData: [] as any[]
 });
 
 const navigation = [
@@ -363,44 +443,27 @@ const navigation = [
   },
 ]
 
-const setModal = useModal({
-  importModal: 1,
-});
-let isVisible = reactive({});
-isVisible = setModal("importModal", false);
-
-const filteredDocumentsByIssued: any = computed(() => {
-  return filteredDocuments.value.filter((document: any) => {
-    if (document.isIssued == 1 && isIssuedChecked.value == true) {
-      return true;
-    } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
-      return true;
-    } else if (
-      isIssuedChecked.value == true &&
-      isReceivedChecked.value == true
-    ) {
-      return true;
-    } else if (
-      isIssuedChecked.value == false &&
-      isReceivedChecked.value == false
-    ) {
-      return true;
-    }
-  });
-});
-
-const filteredDocumentsBySearch: any = computed(() => {
-  return filteredDocumentsByIssued.value.filter((document: Doklad) => {
-    const odberatel = document.odberatel.toLowerCase();
-    const serial_number = document.serial_number.toLowerCase();
-    const searchTerm = searchQuery.value.toLowerCase();
-    return odberatel.includes(searchTerm) || serial_number.includes(searchTerm);
-  });
-});
-
 function dphChanged(event: any) {
-  //
+  if (event.target.value == 's DPH') {
+    document.value.isDph = true;
+  } else {
+    document.value.isDph = false;
+  }
 }
+
+watch(() => documentsListTableRef.value?.updateFinData,
+  async function () {
+    if (documentsListTableRef.value?.updateFinData == true) {
+      await store
+        .dispatch("getFinDataForCompany", company.value.id)
+        .then((response) => {
+          finData.value = response.data;
+          documentsListTableRef.value.updateFinData = false;
+        })
+    }
+
+  }
+);
 
 function documentSubtypeChanged() {
   switch (document.value.subtype) {
@@ -429,63 +492,51 @@ function documentSubtypeChanged() {
 
 function updateImgData(evt: any) {
   uploadImageData.value.body.name = evt.target.files[0].name;
-  uploadImageData.value.body.logo = evt.target.files[0];
+  uploadImageData.value.body.img = evt.target.files[0];
 }
 
-function currentDocTab(tabNumber: number, page: number) {
+async function currentDocTab(tabNumber: number, page: number) {
   tab.value = page;
   activeTab.value = page;
 
   docTab.value = tabNumber;
   activeDocTab.value = tabNumber;
+  await getDocuments(1, null, null, null, '', selectedColumn.value, tabNumber);
   switch (tabNumber) {
     case 1:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 1) {
-          return true;
-        }
-      });
       title.value = "Faktúry";
       break;
     case 2:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 2) {
-          return true;
-        }
-      });
       title.value = "Zálohové faktúry";
       break;
     case 3:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 3) {
-          return true;
-        }
-      });
       title.value = "Dobropisy";
       break;
     case 4:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 4) {
-          return true;
-        }
-      });
       title.value = "Cenová ponuka";
       break;
     case 5:
-      filteredDocuments.value = documents.value.filter((document: any) => {
-        if (document.subtype == 5) {
-          return true;
-        }
-      });
       title.value = "Objednávka";
       break;
   }
 }
 
 function redirect() {
+  if (bankAccounts.value.length > 0) {
+    return router.push({
+      name: "Add document",
+      params: { subtype: activeDocTab.value },
+    });
+  } else {
+    showBankPopup.value = true;
+  }
+}
+
+function redirectToBankAccounts() {
+  store.state.myCompanyDetailsTab = 3;
   return router.push({
-    name: "Add document",
-    params: { subtype: activeDocTab.value },
+    name: "CompanyDetails",
+    params: { id: company.value.id }
   });
 }
 
@@ -495,17 +546,10 @@ function redirectToOrder() {
   });
 }
 
-function openImportDialog(modal: string) {
-  isVisible = setModal(modal, true);
-}
-
-function closeDialog(modal: string) {
-  isVisible = setModal(modal, false);
-}
-
 function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
+  document.value.bank_account_id = bankAccountId.value;
 
   if (document.value.serial_number == "") {
     document.value.serial_number = "0";
@@ -513,33 +557,121 @@ function importDocument() {
 
   return store
     .dispatch("addDocument", document.value)
-    .then(() => {
-      //uploadImg();
-      closeDialog("importModal");
-      router.go(0);
+    .then(async (res) => {
+      await uploadImg(res.Document.id);
+      await refreshData();
+      showImportPopup.value = false;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
-function uploadImg() {
-  store
+async function uploadImg(documentId) {
+  uploadImageData.value.documentId = documentId;
+  await store
     .dispatch("uploadDocumentImg", uploadImageData.value)
-    .then((response) => {
-      console.log(response.data);
-    })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
+}
+
+function filterDataByIssued() {
+  store.state.documents = ogDocs.value.filter((document: any) => {
+    if (document.isIssued == 1 && isIssuedChecked.value == true) {
+      return true;
+    } else if (document.isIssued == 0 && isReceivedChecked.value == true) {
+      return true;
+    } else if (
+      isIssuedChecked.value == true &&
+      isReceivedChecked.value == true
+    ) {
+      return true;
+    } else if (
+      isIssuedChecked.value == false &&
+      isReceivedChecked.value == false
+    ) {
+      return false;
+    }
+  });
 }
 
 watch(
   () => store.getters.getSelectedCompany,
-  function () {
-    refreshData();
+  async function () {
+    await refreshData();
   }
 );
+
+watch(
+  () => isIssuedChecked.value,
+  async function () {
+    filterDataByIssued();
+  }
+);
+
+watch(
+  () => isReceivedChecked.value,
+  async function () {
+    filterDataByIssued();
+  }
+);
+
+watch(
+  () => searchQuery.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+watch(
+  () => dateFrom.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+watch(
+  () => dateTo.value,
+  async function () {
+    await getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+  }
+);
+
+async function orderBy(column) {
+  selectedColumn.value = column;
+  selectedDirection.value == 'asc' ? selectedDirection.value = 'desc' : selectedDirection.value = 'asc';
+  getDocuments(documentsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value, activeDocTab.value);
+}
+
+async function getDocuments(page: number, searchQuery: any, from: any, to: any, direction: any, column: any, type: number) {
+  const inputs = {
+    companyId: company.value.id,
+    page: page,
+    body: { type: type, orderBy: 'date_of_issue desc, serial_number desc', searchQuery: searchQuery, dateFrom: from, dateTo: to }
+  }
+
+  if (direction == 'next') {
+    inputs.page++;
+    await store
+      .dispatch("getAllDocumentsForCompany", inputs)
+      .then((response) => {
+        response.data.data.forEach(element => {
+          documents.value.push(element);
+        });
+        documentsData.value = response.data;
+        ogDocs.value = store.state.documents;
+      });
+  } else {
+    await store
+      .dispatch("getAllDocumentsForCompany", inputs)
+      .then((response) => {
+        store.state.documents = response.data.data;
+        documentsData.value = response.data;
+        ogDocs.value = store.state.documents;
+      });
+  }
+}
 
 async function refreshData() {
   tab.value = store.state.documentTab;
@@ -548,27 +680,36 @@ async function refreshData() {
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
       company.value = response.data;
-      await store
-        .dispatch("getAllDocumentsForCompany", company.value.id)
-        .then((response) => {
-          documents.value = response.data;
-          filteredDocuments.value = documents.value.filter((document: any) => {
-            if (document.subtype == 1) {
-              return true;
-            }
-          });
-          filteredDocumentsByIssued.value = filteredDocuments.value;
-        });
+      await getDocuments(activeTab.value, null, null, null, '', selectedColumn.value, 1);
       await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
           finData.value = response.data;
-        })
+        });
+      await store
+        .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)
+        .then((response) => {
+          bankAccounts.value = response.data;
+          if (bankAccounts.value.length > 0) {
+            bankAccounts.value.map((data) => {
+              if (data?.is_main == 1) {
+                bankAccountId.value = data?.id;
+              }
+            })
+          }
+        });
     });
   isLoading.value = false;
 }
 
 onBeforeMount(async () => {
+  store.state.mySubmenuActive = 1;
   await refreshData();
 });
 </script>
+
+<style scoped>
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+</style>

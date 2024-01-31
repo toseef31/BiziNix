@@ -42,13 +42,14 @@
               <input
                 placeholder="jozkopodnikatel@mail.sk"
                 class="h-10 w-full shadow px-1 rounded border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
+                v-model="customerEmail"
               />
             </div>
             <div class="flex mt-1">
               <div class="shrink text-sm">
                 Buďte informovaný o všetkom, čo sa deje vo svete podnikania
               </div>
-              <button>
+              <button @click="submitEmail()">
                 <div
                   class="bg-teal-500 shrink-0 flex items-center justify-center rounded-lg ml-2"
                 >
@@ -83,3 +84,18 @@
     </div>
   </footer>
 </template>
+
+<script setup lang="ts">
+import { useStore } from "vuex";
+import { ref } from "vue";
+
+const store = useStore();
+const customerEmail = ref();
+
+function submitEmail() {
+  const data = {
+    email: customerEmail.value
+  }
+  store.dispatch("subscribeEmail", data)
+}
+</script>

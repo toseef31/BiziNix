@@ -1,23 +1,14 @@
 <template>
   <div class="relative w-64">
-    <select
-      id="companies"
-      name="companies"
+    <select id="companies" name="companies"
       class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
-      @change="switchSelect($event)"
-    >
-      <option
-        v-for="company in companies"
-        :value="company.id"
-        :key="company.id"
-        :selected="company.id == currentCompany.id"
-      >
+      @change="switchSelect($event)">
+      <option v-for="company in companies" :value="company.id" :key="company.id"
+        :selected="company.id == currentCompany.id">
         {{ company.name }}
       </option>
     </select>
-    <div
-      class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center"
-    >
+    <div class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center">
       <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
     </div>
   </div>
@@ -31,7 +22,6 @@ import type Company from "@/types/Company";
 import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 
 const companies = ref([""] as any);
-const mails = ref([] as Mail[]);
 const currentCompany = ref({} as Company);
 
 const headquarter = ref({
@@ -59,7 +49,7 @@ onBeforeMount(async () => {
   await store
     .dispatch("getAllCompaniesByUserId", store.state.user.userId)
     .then((response) => {
-      companies.value = response.data;
+      companies.value = response.data.data;
       currentCompany.value = companies.value.at(0);
       store.state.selectedCompany = currentCompany.value;
       //aktualizovat adresu
@@ -79,7 +69,6 @@ onBeforeMount(async () => {
 
 async function refreshData() {
   currentCompany.value = store.state.selectedCompany;
-  mails.value = [];
 
   //aktualizovat adresu
   await store
@@ -92,14 +81,6 @@ async function refreshData() {
           address.value = response.data;
           store.state.selectedCompanyAddress = address.value;
         });
-    });
-
-  //vyhladat postu
-  await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
-    .then((response) => {
-      mails.value = response.data;
-      store.commit("setSelectedCompanyMails", mails.value);
     });
 }
 
@@ -110,8 +91,6 @@ async function switchSelect(event: any) {
 
   store.state.selectedCompany = currentCompany.value;
 
-  mails.value = [];
-
   //aktualizovat adresu
   await store
     .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
@@ -123,14 +102,6 @@ async function switchSelect(event: any) {
           address.value = response.data;
           store.state.selectedCompanyAddress = address.value;
         });
-    });
-
-  //vyhladat postu
-  await store
-    .dispatch("getAllMailsForCompany", currentCompany.value.id)
-    .then((response) => {
-      mails.value = response.data;
-      store.commit("setSelectedCompanyMails", mails.value);
     });
 }
 </script>

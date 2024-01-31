@@ -74,6 +74,9 @@ function switchSelect(event: any) {
 
 onBeforeMount(async () => {
   await store.dispatch("vhqs");
+  store.state.selectedVhq = vhqs.value.find(
+    (item: any) => item.id == 1
+  );
 });
 
 defineExpose({

@@ -76,7 +76,7 @@
           preberanie pošty, <br />
           ich scanovanie).
         </div>
-        <VirtualHqSlider v-model="currentVhq"></VirtualHqSlider>
+        <VirtualHqSlider></VirtualHqSlider>
       </div>
     </div>
   </div>
@@ -114,21 +114,16 @@ import Reviews from "@/components/Reviews.vue";
 import VirtualHqSlider from "@/components/VirtualHqSlider.vue";
 import { onMounted } from "vue";
 
-const currentVhq = ref({});
 let detailsDiv;
 
-watch(
+/*watch(
   () => store.state.selectedVhq,
   function () {
     if(detailsDiv) {
       detailsDiv.scrollIntoView({ behavior: "smooth" });
     }
   }
-);
-
-onBeforeMount(async () => {
-  currentVhq.value = store.state.selectedVhq;
-});
+);*/
 
 onMounted(() => {
   detailsDiv = document.getElementById("detailsDiv");

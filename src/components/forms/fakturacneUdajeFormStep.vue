@@ -11,25 +11,29 @@
     </div>
   </template>
   <template v-else>
-    <FormKit v-if="userHasInvoiceProfile && !createNewInvoiceProfile"
-      type="dropdown"
-      name="invoice_profile_dropdown"
-      label="Fakturačný profil"
-      placeholder="Vybrať"
-      :options="fetchInvoiceProfiles"
-      always-load-on-open
-      validation="required"
-      v-model="invoiceProfileId"
-    >
-    </FormKit>
-    <FormKit type="toggle" track-color-on="#319487" v-if="userId" v-model="createNewInvoiceProfile" label="Vytvoriť nový profil fakturačný profil?" name="checkForNewInvoiceProfil" />
+    <div class="flex">
+        <FormKit v-if="userHasInvoiceProfile && !createNewInvoiceProfile"
+          type="dropdown"
+          name="invoice_profile_dropdown"
+          label="Fakturačný profil"
+          placeholder="Vybrať fakturačný profil"
+          :options="fetchInvoiceProfiles"
+          validation="required"
+          v-model="invoiceProfileId"
+        >
+        </FormKit>
+      </div>
+
+    <div class="flex flex-row gap-8">
+      <FormKit type="toggle" track-color-on="#319487" v-if="userId" v-model="createNewInvoiceProfile" label="Vytvoriť nový profil fakturačný profil?" name="checkForNewInvoiceProfil" />
+      <div class="flex" v-if="!userHasInvoiceProfile || createNewInvoiceProfile">
+        <FormKit type="checkbox" v-model="orderingAsCompany" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
+      </div>
+    </div>
     <div v-if="!userHasInvoiceProfile || createNewInvoiceProfile">
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 items-center" v-if="!orderingAsCompany">
         <FormKit type="text" name="first_name" v-model="fakturacne_udaje.first_name" label="Meno" validation="required" />
         <FormKit type="text" name="last_name" v-model="fakturacne_udaje.last_name" label="Priezvisko" validation="required" />
-      </div>
-      <div>
-        <FormKit type="checkbox" v-model="orderingAsCompany" label="Objednávate ako firma?" id="orderingAsCompany" name="orderingAsCompany" />
       </div>
       <div v-if="!orderingAsCompany" class="grid grid-cols-3 gap-4">
         <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
@@ -48,9 +52,12 @@
         />
       </div>   
       <div v-if="orderingAsCompany" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <FormKit type="text" name="name" v-model="fakturacne_udaje.name" label="Názov firmy" validation="required" />
+          <div class="flex flex-col">
+            <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+            <Autocomplete v-model="finstatCompany"></Autocomplete>
+          </div>
           <FormKit type="text" name="ico" v-model="fakturacne_udaje.ico" label="IČO" validation="required" />
-          <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" validation="required" />
+          <FormKit type="text" name="dic" v-model="fakturacne_udaje.dic" label="DIČ" />
           <FormKit type="text" name="ic_dph" v-model="fakturacne_udaje.ic_dph" label="IČ DPH" />
 
           <FormKit type="select" name="country" id="country" placeholder="Vybrať" label="Štát" v-model="invoiceAddress.country"
@@ -75,9 +82,10 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue';
-import type Order from '@/types/Order';
 import type Address from '@/types/Address';
 import store from '@/store';
+import Autocomplete from "@/components/Autocomplete.vue";
+import { toast } from "vue3-toastify";
 
 const createNewInvoiceProfile = ref(false);
 const orderingAsCompany = ref(false);
@@ -95,6 +103,7 @@ const invoiceProfileOptions = computed(() => {
 })
 
 let paymentOptions = ref<string>('');
+const finstatCompany = ref({} as any);
 
 let fakturacne_udaje = ref({
   first_name: '',
@@ -123,10 +132,46 @@ onMounted( async () => {
   }
 })
 
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany.Spoločnosť !== undefined) {
+    getCompanyDetails();
+      
+    }
+});
+
+async function getCompanyDetails() {
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompany.value.Spoločnosť !== undefined) {
+    ico = {
+      ico: finstatCompany.value.Spoločnosť.Ico
+    }
+  }
+  
+  await store
+      .dispatch("getDetailsOfCompanyFinstat", ico)
+      .then((res: any) => {
+        fakturacne_udaje.value.name = res.data.Name;
+        fakturacne_udaje.value.dic = res.data.Dic;
+        fakturacne_udaje.value.ic_dph = res.data.IcDPH;
+        fakturacne_udaje.value.ico = res.data.Ico;
+
+        invoiceAddress.value.city = res.data.City;
+        invoiceAddress.value.street = res.data.Street+" "+res.data.StreetNumber;
+        invoiceAddress.value.psc = res.data.ZipCode;
+        invoiceAddress.value.country = "Slovensko";
+      })
+      .catch((err) => {
+        toast.error('Error: ' + err);
+      });
+} 
+
 async function fetchInvoiceProfiles() {
   const res = await store.dispatch("getFakturacneUdajeByUserId", userId.value)
   isLoading.value = false
-  if(res.data[0].id){
+  if(res.data[0]?.id){
     userHasInvoiceProfile.value = true
     return res.data.map((data) => {
       return {

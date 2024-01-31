@@ -102,7 +102,7 @@ function forgotPasswordSetNewPassword(){
         }, 5000);
     })
     .catch(err => {
-        // console.log(err)
+        // toast.error('Error: ' + err)
         setNewPassword.value = null
         errorMsg.value = err.response.data.message // response data is from store actions
     })

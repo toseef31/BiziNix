@@ -214,6 +214,7 @@ import { onBeforeMount, reactive, ref, computed } from 'vue';
 import type Company from '@/types/Company';
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import EditItemForCompany from './EditItemForCompany.vue'
+import { toast } from "vue3-toastify";
 
 const companyFromOsRs = ref();
 const vfm = useVfm()
@@ -239,7 +240,7 @@ async function search({ search }: any) {
     const res = await store
       .dispatch("getCompanyFromOrsrByIco", searchQuery.searchQuery)
       .catch((err) => {
-        console.log(err);
+        toast.error('Error: ' + err);
       });
       console.log(res)
     return [{

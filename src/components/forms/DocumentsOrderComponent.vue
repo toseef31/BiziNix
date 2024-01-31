@@ -43,11 +43,11 @@ import { ref, computed } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import type Company from "@/types/Company";
-import moment from "moment";
 import { getValidationMessages } from '@formkit/validation'
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
 import PodnikatelskeUdajeDocumentsFormStep from "./podnikatelskeUdajeDocumentsFormStep.vue"
+import { toast } from "vue3-toastify";
 
 let doCompanyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeDocumentsFormStep>>(null as any);
 let doAccountDataRef = ref<InstanceType<typeof userRegisterFormStep>>(null as any);
@@ -77,16 +77,11 @@ let addressFromResponse: any,
   companyFromResponse: any,
   orderFromRes: any;
 
-const today = moment(new Date()).format("YYYY-MM-DD");
-const firstTimePaymentDate = moment(today).add(90, "days").format("YYYY-MM-DD");
-const monthlyPaymentDate = moment(today).add(30, "days").format("YYYY-MM-DD");
-const yearlyPaymentDate = moment(today).add(365, "days").format("YYYY-MM-DD");
-
 const firstTimeActivation = computed(() => {
   return company.value.fakturacia_zaplatene_do ? false : true;
 });
 
-let order = ref({
+const order = ref({
   payment_method: '',
   order_type: 'documents',
   description: 'test',
@@ -107,15 +102,15 @@ let order = ref({
 })
 
 function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Response> {
-  if (companyFromResponse) {
-    order.value.company_id = companyFromResponse.company.id;
+  if (companyFromResponse?.id) {
+    order.value.company_id = companyFromResponse.id;
   } else {
     order.value.company_id = doCompanyDataRef.value.currentCompany.id;
   }
 
   order.value.user_id = userId;
 
-  if (addressFromResponse) {
+  if (addressFromResponse?.address_id) {
     order.value.address_id = addressFromResponse.address_id;
   } else {
     order.value.address_id = doInvoiceDataRef.value.invoiceAddressId;
@@ -160,7 +155,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
   order.value.is_tos_accepted = true;
   order.value.is_advocate_requested = false;
   order.value.description = "Objednávka balíčku dokladov";
-  
+
 
   return store
     .dispatch("addOrder", order.value)
@@ -217,17 +212,15 @@ async function submitApp(formData: any) {
       await continueToPayment(userId, invoiceProfileId);
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error('Error: ' + err);
   }
 };
 
 async function continueFirstTimeActivation(userId, invoiceProfileId, address_id) {
-  /*const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
-  console.log(result)*/
   try {
     if (user.value.userId) {
       const result = await doCompanyDataRef.value.isIcoAlreadyRegistered(doCompanyDataRef.value.currentCompany.ico);
-      if (result) {
+      if (result && doCompanyDataRef.value.existingInactiveCompany == false) {
         if (invoiceProfileId == 0) {
           await addHeadquarter(address_id).then(async () => {
             await addCompany(userId).then(async () => {
@@ -241,7 +234,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
               });
             });
           });
-        } else { 
+        } else {
           await addHeadquarter(address_id).then(async () => {
             await addCompany(userId).then(async () => {
               addOrder(userId, invoiceProfileId, true).then(() => {
@@ -256,28 +249,21 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
           });
         }
       } else {
-        doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
-        doCompanyDataRef.value.currentCompany.fakturacia_free = true;
-        await store
-          .dispatch("updateCompany", doCompanyDataRef.value.currentCompany)
-          .then(async () => {
-            addOrder(userId, invoiceProfileId, true).then(() => {
-              router.push({
-                name: "Thanks You New Order",
-                params: {
-                  orderId: orderFromRes.id,
-                },
-              });
-            });
-          })
-          .catch((err) => {
-            console.log(err);
+        addOrder(userId, invoiceProfileId, true).then(() => {
+          router.push({
+            name: "Thanks You New Order",
+            params: {
+              orderId: orderFromRes.id,
+            },
           });
+        }).catch((err) => {
+          toast.error('Error: ' + err);
+        });
       }
     } else {
       await addHeadquarter(address_id).then(async () => {
         await addCompany(userId).then(async () => {
-          addOrder(userId, invoiceProfileId, true).then(() => {
+          await addOrder(userId, invoiceProfileId, true).then(() => {
             router.push({
               name: "Thanks You New Order",
               params: {
@@ -289,7 +275,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
       });
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -301,7 +287,6 @@ async function continueToPayment(userId, invoiceProfileId) {
         await addCompany(userId).then(async (res) => {
           if (companyFromResponse) {
             addOrder(userId, invoiceProfileId, false).then(async () => {
-              companyFromResponse.company.fakturacia_zaplatene_do = yearlyPaymentDate;
               router.push({
                 name: "Thanks You New Order",
                 params: {
@@ -309,7 +294,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                 },
               });
               store
-                .dispatch("updateCompany", companyFromResponse.company)
+                .dispatch("updateCompany", companyFromResponse)
                 .then(() => {
                   router.push({
                     name: "Thanks You New Order",
@@ -319,7 +304,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                   });
                 })
                 .catch((err) => {
-                  console.log(err);
+                  toast.error('Error: ' + err);
                 });
             });
           } else {
@@ -328,7 +313,6 @@ async function continueToPayment(userId, invoiceProfileId) {
         });
       } catch {
         addOrder(userId, invoiceProfileId, false).then(async () => {
-          doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
           router.push({
             name: "Thanks You New Order",
             params: {
@@ -340,8 +324,6 @@ async function continueToPayment(userId, invoiceProfileId) {
 
     } else {
       addOrder(userId, invoiceProfileId, false).then(async () => {
-        doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = yearlyPaymentDate;
-        doCompanyDataRef.value.currentCompany.fakturacia_free = false;
         router.push({
           name: "Thanks You New Order",
           params: {
@@ -359,12 +341,12 @@ async function continueToPayment(userId, invoiceProfileId) {
             });
           })
           .catch((err) => {
-            console.log(err);
+            toast.error('Error: ' + err);
           });
       });
     }
   } catch (err: any) {
-    console.log(err);
+    toast.error('Error: ' + err);
   }
 }
 
@@ -382,7 +364,6 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
 
   return store.dispatch('addInvoiceProfile', faktProfil)
     .then((res) => {
-      console.log("Adding invoice profile: ", JSON.stringify(res))
       return res
     })
     .catch((error: any) => {
@@ -398,13 +379,13 @@ async function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
 async function registerUser(): Promise<Response> {
   let user;
-  if(!doAccountDataRef.value.userData.id){
+  if (!doAccountDataRef.value.userData.id) {
     user = doAccountDataRef.value.user
   }
 
@@ -414,7 +395,7 @@ async function registerUser(): Promise<Response> {
       return res.user_id;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -440,13 +421,11 @@ async function addHeadquarter(address_id): Promise<Response> {
       return hqFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
 async function addCompany(userId): Promise<Response> {
-  doCompanyDataRef.value.currentCompany.fakturacia_zaplatene_do = firstTimePaymentDate;
-  doCompanyDataRef.value.currentCompany.fakturacia_free = true;
   if (doAccountDataRef.value.userData.id) {
     doCompanyDataRef.value.currentCompany.owner = doAccountDataRef.value.userData.id;
   } else {
@@ -458,11 +437,11 @@ async function addCompany(userId): Promise<Response> {
   return store
     .dispatch("addCompany", doCompanyDataRef.value.currentCompany)
     .then((res) => {
-      companyFromResponse = res;
+      companyFromResponse = res.data.company;
       return companyFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import store from "@/store";
+import { toast } from "vue3-toastify";
 
 async function search({ search }: any) {
   if (!search) return [];
@@ -10,7 +11,7 @@ async function search({ search }: any) {
     const res = await store
       .dispatch("searchCompanies", searchQuery)
       .catch((err) => {
-        console.log(err);
+        toast.error('Error: ' + err);
       });
       console.log(res.data)
     return res.data.Results.map((result: any) => {

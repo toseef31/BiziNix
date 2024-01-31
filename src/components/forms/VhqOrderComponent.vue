@@ -1,51 +1,43 @@
 <template>
   <!--FORM -->
   <div>
-        <FormKit type="form"
-          :actions="false"
-          id="vhqOrder"
-          @submit-invalid="showErrors"  
-          #default="{ value, state: { valid } }"
-          @submit="submitApp"
-        >
-        <div>
-          <ul class="validation-errors" v-if="messages.length">
-            <li v-for="message in messages">{{ message }}</li>
-          </ul>
-        </div>
-          <FormKit type="multi-step" name="vhqOrderMultiStepPlugin" tab-style="tab">
-            <FormKit type="step" name="sidloUdaje" label="Výber sídla" next-label="Pokračovať" previous-label="Naspäť">
-              <SidloVhqFormStepVue ref="hqDataRef" />
-            </FormKit>
-
-            <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať" previous-label="Naspäť">
-              <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
-            </FormKit>
-                        
-            <FormKit type="step" name="userRegister" label="Užívateľský účet" next-label="Pokračovať">
-              <userRegisterFormStep ref="userRegisterForm" />
-            </FormKit>
-
-            <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-              <fakturacneUdajeFormStep ref="invoiceData" />
-            </FormKit>
-
-          </FormKit>
-          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              Celkom k platbe <b>{{ totalForPay }} € / rok</b>.
-          </div>
-          <FormKit
-            type="checkbox"
-            label="Všeobecné obchodné podmienky"
-            validation="accepted"
-            validation-visibility="dirty"
-          >
-            <template #label="context">
-              <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-            </template>
-          </FormKit>
-          <FormKit type="submit" label="Objednať" />
+    <FormKit type="form" :actions="false" id="vhqOrder" @submit-invalid="showErrors"
+      #default="{ value, state: { valid } }" @submit="submitApp">
+      <div>
+        <ul class="validation-errors" v-if="messages.length">
+          <li v-for="message in messages">{{ message }}</li>
+        </ul>
+      </div>
+      <FormKit type="multi-step" name="vhqOrderMultiStepPlugin" tab-style="tab">
+        <FormKit type="step" name="sidloUdaje" label="Výber sídla" next-label="Pokračovať" previous-label="Naspäť">
+          <SidloVhqFormStepVue ref="hqDataRef" />
         </FormKit>
+
+        <FormKit type="step" name="podnikatelskeUdaje" label="Podnikateľské údaje" next-label="Pokračovať"
+          previous-label="Naspäť">
+          <PodnikatelskeUdajeVhqFormStep ref="companyDataRef" />
+        </FormKit>
+
+        <FormKit type="step" name="userRegister" label="Užívateľský účet" next-label="Pokračovať">
+          <userRegisterFormStep ref="userRegisterForm" />
+        </FormKit>
+
+        <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
+          <fakturacneUdajeFormStep ref="invoiceData" />
+        </FormKit>
+
+      </FormKit>
+      <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+        Celkom k platbe <b>{{ totalForPay }} € / rok</b>.
+      </div>
+      <FormKit type="checkbox" label="Všeobecné obchodné podmienky" validation="accepted" validation-visibility="dirty">
+        <template #label="context">
+          <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými
+              podmienkami poskytovania služby</a>.</span>
+        </template>
+      </FormKit>
+      <FormKit type="submit" label="Objednať" />
+    </FormKit>
   </div>
 </template>
 
@@ -58,6 +50,7 @@ import PodnikatelskeUdajeVhqFormStep from "./podnikatelskeUdajeVhqFormStep.vue"
 import SidloVhqFormStepVue from "./sidloVhqFormStep.vue";
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
+import { toast } from "vue3-toastify";
 
 let hqDataRef = ref<InstanceType<typeof SidloVhqFormStepVue>>(null as any);
 let companyDataRef = ref<InstanceType<typeof PodnikatelskeUdajeVhqFormStep>>(null as any);
@@ -69,8 +62,7 @@ const totalForPay = computed(() => hqDataRef.value?.vhq_package.price * 12)
 let addressFromResponse: any,
   hqFromResponse: any,
   companyFromResponse: any,
-  orderFromRes: any,
-  invoiceProfileFromResponse: any;
+  orderFromRes: any;
 
 const headquarter = ref({
   name: "",
@@ -134,33 +126,13 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
   }
 
   return store.dispatch('addInvoiceProfile', faktProfil)
-  .then((res) => {
-    console.log("Adding invoice profile: ", JSON.stringify(res))
-    return res
-  })
-  .catch((error: any) => {
-    console.log(error)
-  })
-
-
-  // invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-
-  // if(userRegisterForm.value.userData.id) {
-  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userRegisterForm.value.userData.id;
-  // } else {
-  //   invoiceDataRef.value.currentInvoiceProfile.user_id = userFromResponse.user_id;
-  // }
-
-  // return store
-  //   .dispatch("addInvoiceProfile", invoiceDataRef.value.currentInvoiceProfile)
-  //   .then((res) => {
-  //     invoiceProfileFromResponse = res;
-  //     invoiceDataRef.value.currentInvoiceProfile.id = invoiceProfileFromResponse.id;
-  //     return invoiceProfileFromResponse;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+    .then((res) => {
+      console.log("Adding invoice profile: ", JSON.stringify(res))
+      return res
+    })
+    .catch((error: any) => {
+      console.log(error)
+    })
 }
 
 function registerAddress(): Promise<Response> {
@@ -171,34 +143,32 @@ function registerAddress(): Promise<Response> {
       return addressFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
 function registerUserAndReturnUserId(): Promise<any> {
-  
+
   let user;
-  if(!userRegisterForm.value.userData.id){
+  if (!userRegisterForm.value.userData.id) {
     user = userRegisterForm.value.user
   }
 
-  //userRegisterForm.value.userData.address_id = addressFromResponse.address_id;
   return store
     .dispatch("registerUser", user)
     .then((res) => {
       return res.user_id;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
 function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
-  headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.company.name;
-  headquarter.value.name = "VS-" + companyDataRef.value.company.name;
-  
-  //treba podla balika updatnut
+  headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
+  headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
+
   headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
   headquarter.value.is_virtual = true;
   headquarter.value.img = store.state.selectedVhq.img;
@@ -220,34 +190,33 @@ function addHeadquarter(): Promise<Response> {
 }
 
 function addCompany(userId): Promise<Response> {
-  if(userRegisterForm.value.userData.id) {
-    companyDataRef.value.company.owner = userRegisterForm.value.userData.id;
+  if (userRegisterForm.value.userData.id) {
+    companyDataRef.value.currentCompany.owner = userRegisterForm.value.userData.id;
   } else {
-    companyDataRef.value.company.owner = userId;
+    companyDataRef.value.currentCompany.owner = userId;
   }
-  companyDataRef.value.company.headquarters_id = hqFromResponse.id;
-  companyDataRef.value.company.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
+  companyDataRef.value.currentCompany.headquarters_id = hqFromResponse.id;
+  companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
   return store
-    .dispatch("addCompany", companyDataRef.value.company)
+    .dispatch("addCompany", companyDataRef.value.currentCompany)
     .then((res) => {
-      companyFromResponse = res;
+      companyFromResponse = res.data;
       return companyFromResponse;
     })
     .catch((err) => {
-      console.log(err);
+      toast.error('Error: ' + err);
     });
 }
 
 function addOrder(userId, invoiceProfileId): Promise<Response> {
-
   order.value.payment_date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
   order.value.company_id = companyFromResponse.company.id;
-  
-  if(userRegisterForm.value.userData.id) {
+
+  if (userRegisterForm.value.userData.id) {
     order.value.user_id = userRegisterForm.value.userData.id;
   } else {
     order.value.user_id = userId;
@@ -259,7 +228,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
   order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
 
   order.value.fakturacne_udaje_id = invoiceProfileId
-  
+
   return store
     .dispatch("addOrder", order.value)
     .then((res) => {
@@ -271,35 +240,53 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
     });
 }
 
+async function updateCompany() {
+  companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
+
+  await store
+    .dispatch("updateCompany", companyDataRef.value.currentCompany)
+    .then((res) => {
+      companyFromResponse = res.data;
+      return companyFromResponse;
+    })
+    .catch((err) => {
+      toast.error('Error: ' + err);
+    });
+}
+
 const submitApp = async (formData: any, node: any) => {
   try {
 
     let userId = null as unknown as number;
-    if(!userRegisterForm.value.userData.id){
+    if (!userRegisterForm.value.userData.id) {
       userId = await registerUserAndReturnUserId();
     } else {
       userId = userRegisterForm.value.userData.id
     }
 
     let invoiceProfileId = null as unknown as number;
-    if(invoiceData.value.createNewInvoiceProfile){
+    if (invoiceData.value.createNewInvoiceProfile) {
       let invoiceAddressRes: any;
-      if(!invoiceData.value.orderingAsCompany){
+      if (!invoiceData.value.orderingAsCompany) {
         invoiceAddressRes = await registerAddress()
       }
       else if (invoiceData.value.orderingAsCompany) {
         invoiceAddressRes = await registerAddress()
       }
-      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
-
       const response = await addInvoiceProfile(userId, invoiceAddressRes.address_id)
       invoiceProfileId = response.id
     }
     else {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
-    await addHeadquarter();
-    await addCompany(userId);
+
+    if (companyDataRef.value.existingCompany == false) {
+      await addHeadquarter();
+      await addCompany(userId);
+    } else {
+      await updateCompany();
+    }
+
     await addOrder(userId, invoiceProfileId).then(() => {
       router.push({
         name: "Thanks You New Order",
@@ -309,78 +296,9 @@ const submitApp = async (formData: any, node: any) => {
       });
     })
 
-    // if(userRegisterForm.value.userData.id) {
-    //   if(invoiceDataRef.value.currentInvoiceProfile.id == 0) {
-    //     registerAddress().then(async () => {
-    //       invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-    //       await addInvoiceProfile().then(() => {
-    //         addHeadquarter().then(() => {
-    //             addCompany().then(() => {
-    //               addOrder().then(() => {
-    //                 hqFromResponse = null;
-    //                 companyDataRef.value.company.owner = 0;
-    //                 companyDataRef.value.company.headquarters_id = 0;
-    //                 closeModal();
-    //                 router.push({
-    //                   name: "Thanks You New Order",
-    //                   params: {
-    //                     orderId: orderFromRes.id,
-    //                   },
-    //                 });
-    //               });
-    //             });
-    //           });
-    //       });    
-    //     });
-    //   } else {
-    //     addHeadquarter().then(() => {
-    //       addCompany().then(() => {
-    //         addOrder().then(() => {
-    //           hqFromResponse = null;
-    //           companyDataRef.value.company.owner = 0;
-    //           companyDataRef.value.company.headquarters_id = 0;
-    //           closeModal();
-    //           router.push({
-    //             name: "Thanks You New Order",
-    //             params: {
-    //               orderId: orderFromRes.id,
-    //             },
-    //           });
-    //         });
-    //       });
-    //     });  
-    //   }
-    // } else {
-    //   registerAddress().then(() => {
-    //     registerUser().then(() => {
-    //       if (userFromResponse) {
-    //         invoiceDataRef.value.currentInvoiceProfile.address_id = addressFromResponse.address_id;
-    //         addInvoiceProfile().then(() => {
-    //             addHeadquarter().then(() => {
-    //               addCompany().then(() => {
-    //                 addOrder().then(() => {
-    //                   userFromResponse = null;
-    //                   hqFromResponse = null;
-    //                   companyDataRef.value.company.owner = 0;
-    //                   companyDataRef.value.company.headquarters_id = 0;
-    //                   closeModal();
-    //                   router.push({
-    //                     name: "Thanks You New Order",
-    //                     params: {
-    //                       orderId: orderFromRes.id,
-    //                     },
-    //                   });
-    //                 });
-    //               });
-    //             });
-    //         });
-    //       }
-    //     });
-    //   });
-    // }
-    
     node.clearErrors();
   } catch (err: any) {
+    toast.error('Error: ' + err);
     node.setErrors(err.formErrors, err.fieldErrors);
   }
 };

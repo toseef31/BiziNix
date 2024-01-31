@@ -69,7 +69,7 @@
                 Stav poslednej objednávky
               </div>
               <div class="font-bold text-sm">
-                {{ substatus.description }}
+                {{ substatus?.description }}
               </div>
             </div>
             <div class="flex flex-col items-center">
@@ -109,19 +109,19 @@
           </div>
         </div>
         <div class="flex flex-col w-full" v-else>
-          <div class="p-10" v-if="tab == 1">
+          <div class="p-10" v-if="activeTab == 1">
             <h1 class="text-3xl font-bold text-gray-600 pb-10">
               Finančný report
             </h1>
             <FinancnyReport></FinancnyReport>
           </div>
-          <div class="p-10" v-if="tab == 2">
+          <div class="p-10" v-if="activeTab == 2">
             <h1 class="text-3xl font-bold text-gray-600 pb-10">
               Firemné údaje
             </h1>
             <FiremneUdaje></FiremneUdaje>
           </div>
-          <div class="p-10" v-if="tab == 3">
+          <div class="p-10" v-if="activeTab == 3">
             <h1 class="text-3xl font-bold text-gray-600 pb-10">
               Bankové účty
             </h1>
@@ -132,7 +132,7 @@
       </div>
       <div v-else class="flex flex-col w-full justify-center">
         <div role="status" class="flex flex-col w-full items-center">
-          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600"
+          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-white animate-spin dark:text-gray-900 fill-teal-500"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -150,7 +150,7 @@
 
 <script setup lang="ts">
 import store from "@/store";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import type Company from "@/types/Company";
@@ -159,13 +159,11 @@ import FiremneUdaje from '@/components/FiremneUdaje.vue';
 import BankoveUcty from '@/components/BankoveUcty.vue';
 import type { XMarkIcon } from "@heroicons/vue/20/solid";
 
-const props = defineProps(['activeTab'])
 const router = useRouter();
 const company = ref({} as Company);
 const companySubstatuses = ref([] as any[]);
 const sidebarOpen = ref(false)
-const tab = ref(1);
-const activeTab = ref(1);
+const activeTab = computed(() => store.state.myCompanyDetailsTab);
 const substatus = ref({} as any);
 const isLoading = ref(true);
 
@@ -187,8 +185,7 @@ const navigation = [
 ]
 
 function changeTab(tabNumber: number) {
-  tab.value = tabNumber;
-  activeTab.value = tabNumber;
+  store.state.myCompanyDetailsTab = tabNumber;
 }
 
 function redirect() {
@@ -215,9 +212,8 @@ async function refreshData() {
 }
 
 onBeforeMount(async () => {
-  activeTab.value = props.activeTab;
-  tab.value = props.activeTab;
   companySubstatuses.value = await store.dispatch("getCompanySubstatuses");
+  store.state.mySubmenuActive = 0;
   await refreshData();
   
 });

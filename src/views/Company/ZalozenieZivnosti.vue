@@ -328,6 +328,8 @@ async function addHeadquarter(user: User, hqAddressId: any) {
 async function addCompany(user: User, userId: any, hqId: any) {
 
   companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
+  companyOrZivnostModel.value.doc_sncounter_id = 1
+  companyOrZivnostModel.value.doc_template_id = 1
   companyOrZivnostModel.value.status = 2
   companyOrZivnostModel.value.owner = userId
   companyOrZivnostModel.value.headquarters_id = hqId
@@ -347,7 +349,7 @@ async function addCompany(user: User, userId: any, hqId: any) {
     console.log("Company from Res " + JSON.stringify(res))
     return res
   }).catch( err => {
-    console.log(err)
+    toast.error('Error: ' + err)
   })
 
 }
@@ -387,7 +389,7 @@ async function addCompanyMember(companyId: number){
     console.log("Adding single company member: " + JSON.stringify(res))
     return res
   }).catch( err => {
-    console.log(err)
+    toast.error('Error: ' + err)
   })
 
 }
@@ -486,7 +488,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
     
     const companyRes = await addCompany(userRegisterForm.value.user, userId, regHqRes.id);
     
-    await addCompanyMember(companyRes.company.id);
+    await addCompanyMember(companyRes.data.company.id);
 
     let invoiceProfileId = null as unknown as number;
     if(invoiceData.value.createNewInvoiceProfile){
@@ -505,7 +507,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       invoiceProfileId = invoiceData.value.invoiceProfileId
     }
 
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
+    const orderRes = await addOrder(companyRes.data.company.id, userId, invoiceProfileId)
 
     if(orderRes.id){
       console.log("SUPER! Objednávka bola spracovaná.")
@@ -523,7 +525,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
   } catch(err: any) {
     errorMsg.value = err
-    console.log(err)
+    toast.error('Error: ' + err)
     node.setErrors(err.formErrors, err.fieldErrors)
   }
 }

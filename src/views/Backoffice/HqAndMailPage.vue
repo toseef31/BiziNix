@@ -26,14 +26,16 @@
             </div>
           </div>
           <div class="py-4 px-8">
-            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="redirectToPackageOrder()">
+            <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+              v-on:click="redirectToPackageOrder()">
               Upraviť balík
             </button>
           </div>
         </div>
       </div>
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
-        <div v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika == 'MINI'"
+        <div
+          v-if="selectedCompany && new Date(selectedCompany.sidlo_zaplatene_do) > new Date(today) && selectedCompany.sidlo_typ_balika.toLowerCase() == 'mini'"
           class="flex flex-col w-full items-center">
           <div class="flex flex-col w-full items-center h-full py-32">
             <div class="text-4xl text-gray-900 font-bold">
@@ -71,7 +73,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika != 'MINI'">
+        <div class="flex flex-col w-full" v-else-if="selectedCompany.sidlo_typ_balika.toLowerCase() != 'mini'">
           <div class="w-full min-h-full">
             <div class="flex flex-col container mx-auto h-full text-gray-800">
               <h1 class="flex flex-row px-4 py-8 text-3xl font-bold text-gray-600 pb-10 justify-center">
@@ -110,76 +112,30 @@
 
                 <div class="flex flex-1/4">
                   <div class="flex gap-4" v-if="checkedMails.length > 0">
-                    <button
-                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                    <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="sendMails()">
                       Preposlať
                     </button>
-                    <button
-                      class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button class="bg-teal-500 hover:bg-teal-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="scanMails()">
                       Scanovať
                     </button>
-                    <button
-                      class="bg-red-500 hover:bg-red-700 h-12 px-6 rounded z-10 font-bold" v-on:click="shredMails()">
+                    <button class="bg-red-500 hover:bg-red-700 h-12 px-6 rounded z-10 font-bold"
+                      v-on:click="shredMails()">
                       Skartovať
                     </button>
                   </div>
                   <div class="flex gap-4" v-if="checkedMails.length == 0">
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="sendMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold">
                       Preposlať
                     </button>
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold">
                       Scanovať
                     </button>
-                    <button disabled
-                      class="bg-gray-300 h-12 px-6 rounded z-10 font-bold" v-on:click="scanMails()">
+                    <button disabled class="bg-gray-300 h-12 px-6 rounded z-10 font-bold">
                       Skartovať
                     </button>
                   </div>
-                  <Modal name="m3" v-model:visible="isVisible" :type="'clean'" :closable="false"
-                    title="Preposlanie zásielok">
-                    <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-                      <div class="flex flex-col justify-start py-4 px-4 text-white font-bold">
-                        <img src="@/assets/posta.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
-                        <div class="text-xl">
-                          Prosím potvrdte preposlanie zvolených zásielok zo zoznamu.
-                        </div>
-                        <div class="py-3">Na adresu:</div>
-                        <FormKit type="text" name="street" label="Ulica" validation="required"
-                          v-model="userAddress.street" :value="userAddress.street" />
-                        <div class="flex flex-row">
-                          <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required"
-                            v-model="userAddress.street_number" :value="userAddress.street_number" />
-                          <div class="py-6 px-4">/</div>
-                          <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required"
-                            v-model="userAddress.street_number2" :value="userAddress.street_number2" />
-                        </div>
-
-                        <FormKit type="text" name="city" label="Mesto" validation="required" v-model="userAddress.city"
-                          :value="userAddress.city" />
-                        <FormKit type="text" name="psc" label="PSČ" validation="required" v-model="userAddress.psc"
-                          :value="userAddress.psc" />
-                        <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
-                          :options="['Slovensko', 'Česká republika']" validation="required" validation-visibility="dirty"
-                          v-model="userAddress.country" :value="userAddress.country" />
-                      </div>
-                      <div class="flex flex-row justify-end py-2 px-4">
-                        <div class="flex flex-1/4 px-4">
-                          <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
-                            v-on:click="sendMails()">
-                            Preposlať
-                          </button>
-                        </div>
-                        <div class="flex flex-1/4">
-                          <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                            v-on:click="closeModal()">
-                            Zrušiť
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Modal>
                 </div>
 
                 <div class="flex-1/4">
@@ -195,7 +151,7 @@
                 </div>
               </div>
               <!-- END OF HEAD -->
-              <div role="status" class="flex py-10 h-full w-full justify-center" v-show="loading">
+              <div role="status" class="flex py-10 h-full w-full justify-center" v-show="isLoading">
                 <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600"
                   viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -207,12 +163,12 @@
                 </svg>
                 <span class="sr-only">Loading...</span>
               </div>
-              <div v-if="mails.length == 0" v-show="!loading">
+              <div v-if="mails.length == 0" v-show="!isLoading">
                 <div class="flex py-10 h-full w-full justify-center">
                   Momentálne nemáte žiadnu poštu pre danú spoločnosť.
                 </div>
               </div>
-              <div v-if="filteredMailsByDates.length > 0">
+              <div v-if="mails.length > 0">
                 <div class="relative sm:rounded-lg py-10">
                   <div class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <table class="min-w-full table-fixed divide-y divide-gray-300">
@@ -222,7 +178,7 @@
                             <input type="checkbox"
                               class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 sm:left-6"
                               :checked="indeterminate ||
-                                checkedMails.length === filteredMailsByDates.length
+                                checkedMails.length === mails.length
                                 " :indeterminate="indeterminate" @change="boxChecked($event)" />
                           </th>
                           <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -235,12 +191,18 @@
                             }">
                               Dátum doručenia
                               <button>
-                                <svg @click="setOrderResultsBy('distribution_date')" xmlns="http://www.w3.org/2000/svg"
+                                <svg @click="orderBy('distribution_date')" xmlns="http://www.w3.org/2000/svg"
                                   class="ml-1 w-3 h-3" aria-hidden="true" fill="currentColor" viewBox="0 0 320 512">
                                   <path
                                     d="M27.66 224h264.7c24.6 0 36.89-29.78 19.54-47.12l-132.3-136.8c-5.406-5.406-12.47-8.107-19.53-8.107c-7.055 0-14.09 2.701-19.45 8.107L8.119 176.9C-9.229 194.2 3.055 224 27.66 224zM292.3 288H27.66c-24.6 0-36.89 29.77-19.54 47.12l132.5 136.8C145.9 477.3 152.1 480 160 480c7.053 0 14.12-2.703 19.53-8.109l132.3-136.8C329.2 317.8 316.9 288 292.3 288z" />
                                 </svg>
                               </button>
+                            </span>
+                          </th>
+
+                          <th scope="col" class="py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <span class="inline-flex items-center">
+                              Gramáž
                             </span>
                           </th>
 
@@ -256,7 +218,7 @@
                         </tr>
                       </thead>
                       <tbody class="divide-y divide-gray-200 bg-gray-50">
-                        <tr v-for="mail in paginatedItems" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
+                        <tr v-for="mail in mails" :key="mail.id" :class="[mail.status == 1 && 'bg-white']">
                           <td class="relative w-12 px-6 sm:w-16 sm:px-8">
                             <div v-if="checkedMails.includes(mail)" class="absolute inset-y-0 left-0 w-0.5 bg-teal-600">
                             </div>
@@ -275,6 +237,9 @@
                           <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
                             {{ formatDate(mail.distribution_date) }}
                           </td>
+                          <td class="whitespace-nowrap pr-3 py-4 text-sm text-gray-500">
+                            {{ mail.weight }}g
+                          </td>
                           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <button v-if="!mail.forward_requested &&
                               mail.status != 4 &&
@@ -282,52 +247,6 @@
                               " class="font-medium text-gray-900 hover:underline" v-on:click="sendSingleMail(mail)">
                               Preposlať originál
                             </button>
-                            <Modal name="m2" v-model:visible="isVisible" :type="'clean'" :closable="false"
-                              title="Preposlanie zásielky">
-                              <div class="bg-gray-800 rounded-lg border-teal-600 border-2">
-                                <div class="flex flex-col justify-start py-6 px-6 text-white font-bold">
-                                  <img src="@/assets/posta.png"
-                                    class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
-                                  <div class="text-xl">
-                                    Prosím potvrdte preposlanie zásielky od <br />
-                                    {{ selectedMail.sender }}
-                                  </div>
-                                  <div class="py-3">Na adresu:</div>
-                                  <FormKit type="text" name="street" label="Ulica" validation="required"
-                                    v-model="userAddress.street" :value="userAddress.street" />
-                                  <div class="flex flex-row">
-                                    <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required"
-                                      v-model="userAddress.street_number" :value="userAddress.street_number" />
-                                    <div class="py-6 px-4">/</div>
-                                    <FormKit type="text" name="street_number2" label="Orientačné číslo"
-                                      validation="required" v-model="userAddress.street_number2"
-                                      :value="userAddress.street_number2" />
-                                  </div>
-                                  <FormKit type="text" name="city" label="Mesto" validation="required"
-                                    v-model="userAddress.city" :value="userAddress.city" />
-                                  <FormKit type="text" name="psc" label="PSČ" validation="required"
-                                    v-model="userAddress.psc" :value="userAddress.psc" />
-                                  <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
-                                    :options="['Slovensko', 'Česká republika']" validation="required"
-                                    validation-visibility="dirty" v-model="userAddress.country"
-                                    :value="userAddress.country" />
-                                </div>
-                                <div class="flex flex-row justify-end py-2 px-4">
-                                  <div class="flex flex-1/4 px-4">
-                                    <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-gray-800"
-                                      v-on:click="sendSingleMail(selectedMail)">
-                                      Preposlať
-                                    </button>
-                                  </div>
-                                  <div class="flex flex-1/4">
-                                    <button class="bg-gray-500 hover:bg-gray-700 h-8 px-6 rounded z-10 text-white"
-                                      v-on:click="closeModal()">
-                                      Zrušiť
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </Modal>
                             <div class="text-left" v-if="mail.status == 4" disabled>
                               <button class="font-medium text-gray-900" disabled>
                                 Originál preposlaný
@@ -346,8 +265,7 @@
                           </td>
                           <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
                             <div class="flex-1 py-4 px-3 text-left" v-if="!mail.scan_requested">
-                              <button class="font-medium text-gray-900 hover:underline"
-                                v-on:click="scanSingleMail(mail.id)">
+                              <button class="font-medium text-gray-900 hover:underline" v-on:click="scanSingleMail(mail)">
                                 Vyžiadať scan
                               </button>
                             </div>
@@ -392,28 +310,34 @@
                                 Nie je možné skartovať
                               </button>
                             </div>
-                            <Modal name="m1" v-model:visible="isVisible" :type="'clean'" :closable="false"
-                              title="Skartovanie zásielky">
-                              <div class="bg-gray-700 bg-opacity-95 rounded-lg">
-                                <div class="flex flex-row justify-start py-8 px-8 text-white font-bold text-xl">
-                                  Naozaj chcete túto zásielku skartovať?
-                                </div>
-                                <div class="flex flex-row justify-center pb-4 px-4 gap-8">
-                                  <div class="flex flex-1/4">
-                                    <button class="bg-gray-500 hover:bg-gray-800 h-10 px-8 rounded z-10 text-white"
-                                      v-on:click="closeModal()">
-                                      Nie
-                                    </button>
+                            <Dialog :open="showDeleteModalDialog" @close="showDeleteModalDialog = false"
+                              class="relative z-50">
+                              <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                              <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                                <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+                                  <div class="bg-gray-700 bg-opacity-95 rounded-lg">
+                                    <div class="flex flex-row justify-start py-8 px-8 text-white font-bold text-xl">
+                                      Naozaj chcete túto zásielku skartovať?
+                                    </div>
+                                    <div class="flex flex-row justify-center pb-4 px-4 gap-8">
+                                      <div class="flex flex-1/4">
+                                        <button class="bg-gray-500 hover:bg-gray-800 h-10 px-8 rounded z-10 text-white"
+                                          v-on:click="showDeleteModalDialog = false">
+                                          Nie
+                                        </button>
+                                      </div>
+                                      <div class="flex flex-1/4 px-4">
+                                        <button class="bg-teal-500 hover:bg-teal-700 h-10 px-8 rounded z-10 text-white"
+                                          v-on:click="shredSingleMail(selectedMail)">
+                                          Áno
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div class="flex flex-1/4 px-4">
-                                    <button class="bg-teal-500 hover:bg-teal-700 h-10 px-8 rounded z-10 text-white"
-                                      v-on:click="shredSingleMail(selectedMail)">
-                                      Áno
-                                    </button>
-                                  </div>
-                                </div>
+                                </DialogPanel>
                               </div>
-                            </Modal>
+
+                            </Dialog>
                           </td>
                         </tr>
                       </tbody>
@@ -424,7 +348,8 @@
                     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                       <button
                         class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="pagination.currentPage <= 1" @click="pagination.currentPage--">
+                        :disabled="mailsData.prev_page_url == null"
+                        @click="getMails(mailsData.current_page, searchQuery, dateFrom, dateTo, 'prev', selectedColumn)">
                         <span class="sr-only">Previous</span>
                         <!-- Heroicon name: mini/chevron-left -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -436,7 +361,8 @@
                       </button>
                       <button
                         class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                        :disabled="pagination.currentPage >= pagination.totalPages" @click="pagination.currentPage++">
+                        :disabled="mailsData.next_page_url == null"
+                        @click="getMails(mailsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn)">
                         <span class="sr-only">Next</span>
                         <!-- Heroicon name: mini/chevron-right -->
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -457,7 +383,7 @@
       </div>
       <div v-else class="flex flex-col w-full justify-center">
         <div role="status" class="flex flex-col w-full items-center">
-          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600"
+          <svg aria-hidden="true" class="w-10 h-10 mr-2 text-white animate-spin dark:text-gray-900 fill-teal-500"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -476,22 +402,27 @@
 <script setup lang="ts">
 import type Mail from "@/types/Mail";
 import store from "@/store";
-import { ref, onBeforeMount, computed, reactive, watch } from "vue";
+import { ref, onBeforeMount, computed, watch } from "vue";
 import axiosClient from "@/axios";
 import dayjs from "dayjs";
-import { useModal, Modal } from "usemodal-vue3";
+import { Dialog, DialogPanel } from '@headlessui/vue';
 import * as _ from "lodash";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { toast } from "vue3-toastify";
 
 const isLoading = ref(true);
-const searchQuery = ref("");
+const searchQuery = ref(null);
 const dateFrom = ref(null);
 const dateTo = ref(null);
 const router = useRouter();
 const today = moment(new Date()).format("YYYY-MM-DD");
+const mailsData = ref();
+const selectedCompany = ref();
+const mails = computed(() => store.state.mails as Mail[]);
+const userAddress = computed(() => store.state.user.address as any);
 
-let loading = true;
+const showDeleteModalDialog = ref(false);
 
 const selectedColumn = ref("distribution_date");
 const selectedDirection = ref("desc");
@@ -502,25 +433,8 @@ const selectedMail = ref({} as Mail);
 const indeterminate = computed(
   () =>
     checkedMails.value.length > 0 &&
-    checkedMails.value.length < filteredMailsByDates.value.length
+    checkedMails.value.length < mails.value.length
 );
-
-const setModal = useModal({
-  m1: 1
-});
-
-let isVisible = reactive({});
-
-isVisible = setModal("m1", false);
-
-function showModal(mail: any) {
-  selectedMail.value = mail;
-  isVisible = setModal("m1", true);
-}
-
-function closeModal() {
-  isVisible = setModal("m1", false);
-}
 
 const address = ref({
   id: 0,
@@ -532,136 +446,135 @@ const address = ref({
   psc: "",
 });
 
-
-const userAddress = computed(() => store.state.user.address as any);
-
 const headquarter = ref({
   id: 0,
   address_id: 0,
 });
 
-const selectedCompany = ref();
-const mails = computed(() => store.state.mails as Mail[]);
-const mailsFromStore = ref([] as Mail[]);
+function showModal(mail: any) {
+  selectedMail.value = mail;
+  showDeleteModalDialog.value = true;
+}
 
 watch(
   () => store.getters.getSelectedCompany,
-  function () {
-    refreshData();
+  async function () {
+    await refreshData();
   }
 );
 
 watch(
-  () => store.state.mails,
-  function () {
-    mailsFromStore.value = mails.value;
+  () => searchQuery.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
   }
 );
 
-const filteredMailsBySearch: any = computed(() => {
-  return mailsFromStore.value.filter((mail: any) => {
-    const distribution_date = mail.distribution_date
-      .toString()
-      .toLocaleLowerCase();
-    const sender = mail.sender.toLowerCase();
-    const searchTerm = searchQuery.value.toLowerCase();
-    return (
-      sender.includes(searchTerm) || distribution_date.includes(searchTerm)
-    );
-  });
-});
-
-const filteredMailsByDates: any = computed(() => {
-  return filteredMailsBySearch.value.filter((mail: any) => {
-    const distribution_date = mail.distribution_date;
-    const startDate = dateFrom.value;
-    const endDate = dateTo.value;
-
-    if (startDate !== null && endDate !== null) {
-      return startDate <= distribution_date && distribution_date <= endDate;
-    }
-    if (startDate !== null && endDate === null) {
-      return startDate <= distribution_date;
-    }
-    if (startDate === null && endDate !== null) {
-      return distribution_date <= endDate;
-    }
-    return true;
-  });
-});
-
-const pagination: any = computed(() => {
-  return reactive({
-    currentPage: 1,
-    perPage: 5,
-    totalPages: computed(() =>
-      Math.ceil(mails.value.length / pagination.value.perPage)
-    ),
-  });
-});
-
-const paginatedItems: any = computed(() => {
-  const start = (pagination.value.currentPage - 1) * pagination.value.perPage;
-  const stop = start + pagination.value.perPage;
-  return orderedItems.value.slice(start, stop);
-});
-
-const orderedItems: any = computed(() => {
-  return _.orderBy(
-    filteredMailsByDates.value,
-    ["distribution_date"],
-    [selectedDirection.value.includes("asc") ? "asc" : "desc"]
-  );
-});
-
-function setOrderResultsBy(column: any) {
-  if (selectedColumn.value == column) {
-    if (selectedDirection.value == "desc") {
-      selectedDirection.value = "asc";
-    } else {
-      selectedDirection.value = "desc";
-    }
-  } else {
-    selectedDirection.value = "asc";
+watch(
+  () => dateFrom.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
   }
+);
+
+watch(
+  () => dateTo.value,
+  async function () {
+    await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
+  }
+);
+
+async function orderBy(column) {
   selectedColumn.value = column;
+  await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
+}
+
+async function getMails(page: number, searchQuery: any, from: any, to: any, direction: any, column: any) {
+  selectedDirection.value == 'asc' ? selectedDirection.value = 'desc' : selectedDirection.value = 'asc';
+
+  const inputs = {
+    companyId: selectedCompany.value.id,
+    page: page,
+    body: { orderBy: column, searchQuery: searchQuery, dateFrom: from, dateTo: to }
+  }
+
+  if (direction == 'next') {
+    inputs.page++;
+  } else if (direction == 'prev') {
+    inputs.page--;
+  }
+
+  await store
+    .dispatch("getAllMailsForCompany", inputs)
+    .then((response) => {
+      mailsData.value = response.data;
+      store.state.mails = response.data.data;
+      isLoading.value = false;
+    });
 }
 
 function boxChecked(event: any) {
   checkedMails.value = event.target.checked
-    ? filteredMailsByDates.value.map((mail: Mail) => mail)
+    ? mails.value.map((mail: Mail) => mail)
     : [];
 }
 
 function sendMails() {
-  store.state.checkedMails = checkedMails.value;
-  router.push({
-    name: "Mail service order",
-    params: { type: 1 },
+  let updateArray = [] as Mail[];
+  checkedMails.value.forEach((mail) => {
+    if (mail.status == 1 && mail.forward_requested == 0) {
+      updateArray.push(mail);
+    }
   });
+
+  if (updateArray.length > 0) {
+    store.state.checkedMails = updateArray;
+    router.push({
+      name: "Mail service order",
+      params: { type: 1 },
+    });
+  } else {
+    toast.info('Označené zásielky nie je možné preposlať.');
+  }
+
 }
 
 function scanMails() {
-  store.state.checkedMails = checkedMails.value;
-  router.push({
-    name: "Mail service order",
-    params: { type: 2 },
+  let updateArray = [] as Mail[];
+  checkedMails.value.forEach((mail) => {
+    if (mail.status == 1 && mail.scan_requested == 0) {
+      updateArray.push(mail);
+    }
   });
+
+  if (updateArray.length > 0) {
+    store.state.checkedMails = updateArray;
+    router.push({
+      name: "Mail service order",
+      params: { type: 2 },
+    });
+  } else {
+    toast.info('Označené zásielky nie je možné scanovať.');
+  }
 }
 
 async function shredMails() {
-  checkedMails.value.forEach(function (value: any) {
-    value.shred_requested = 1;
+  checkedMails.value.forEach((mail) => {
+    if (mail.status == 1) {
+      mail.shred_requested = 1;
+    }
   });
 
-  await store
-    .dispatch("updateMultipleMails", checkedMails.value)
-    .then(async () => {
-      checkedMails.value = [];
-    })
-    .catch((err) => {
-      console.log(err);
-  });
+  if (checkedMails.value.length > 0) {
+    await store
+      .dispatch("updateMultipleMails", checkedMails.value)
+      .then(async () => {
+        checkedMails.value = [];
+      })
+      .catch((err) => {
+        toast.error('Error: ' + err);
+      });
+  }
 }
 
 function formatDate(dateString: string) {
@@ -685,16 +598,15 @@ function shredSingleMail(mail: any) {
     store
       .dispatch("updateMail", selectedMail.value)
       .then(() => {
-        isVisible = setModal("m1", false);
+        showDeleteModalDialog.value = false;
       })
       .catch((err) => {
-        console.log(err);
+        toast.error('Error: ' + err);
       });
   }
 }
 
-function scanSingleMail(id: any) {
-  const mail = mails.value.find((item: any) => item.id == id);
+function scanSingleMail(mail: any) {
   checkedMails.value.push(mail);
   store.state.checkedMails = checkedMails.value;
   if (mail) {
@@ -744,49 +656,62 @@ async function refreshData() {
       selectedCompany.value = response.data;
     });
 
-  //aktualizovat adresu
+
   await store
     .dispatch("getHeadquartersById", selectedCompany.value.headquarters_id)
     .then((response) => {
       headquarter.value = response.data;
-      store
-        .dispatch("getAddressById", headquarter.value.address_id)
-        .then((response) => {
-          address.value = response.data;
-        });
+      if (headquarter.value.address_id > 0) {
+        store
+          .dispatch("getAddressById", headquarter.value.address_id)
+          .then((response) => {
+            address.value = response.data;
+          });
+
+      }
+
     });
 
-  //vyhladat postu
-  await store
-    .dispatch("getAllMailsForCompany", selectedCompany.value.id)
-    .then((response) => {
-      store.state.mails = response.data;
-      mails.value.forEach(function (value: any) {
-        value.isSeen = true;
+  if (selectedCompany.value.sidlo_zaplatene_do && selectedCompany.value.sidlo_deaktivovane == 0) {
+    const inputs = {
+      companyId: selectedCompany.value.id,
+      page: 1,
+      body: { orderBy: 'distribution_date DESC', searchQuery: null, dateFrom: null, dateTo: null }
+    }
+
+    await store
+      .dispatch("getAllMailsForCompany", inputs)
+      .then(async (response) => {
+        mailsData.value = response.data;
+        store.state.mails = response.data.data;
+        mails.value.forEach(function (value: any) {
+          value.isSeen = true;
+        });
+        if (mails.value.length > 0) {
+          await store
+            .dispatch("updateMultipleMails", mails.value)
+            .then(() => {
+              store.state.mails = mails.value;
+            })
+            .catch((err) => {
+              toast.error('Error: ' + err);
+            });
+        }
       });
-      loading = false;
-    });
+  }
 
   isLoading.value = false;
 }
 
 onBeforeMount(async () => {
   store.dispatch("userAddress");
+  store.state.mySubmenuActive = 2;
   await refreshData();
-  await store
-    .dispatch("updateMultipleMails", mails.value)
-    .catch((err) => {
-      console.log(err);
-    });
 });
 </script>
 
 <style scoped>
 ::-webkit-calendar-picker-indicator {
   filter: invert(1);
-}
-
-.modal-vue3-footer {
-  display: none !important;
 }
 </style>

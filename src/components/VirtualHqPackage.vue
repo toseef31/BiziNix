@@ -100,7 +100,6 @@ const packages = [
 ];
 
 function changeVhqPackage(indexToFind: any) {
-    console.log("Infex for Find: ", indexToFind)
     store.state.selectedVhqPackage = packages.find((_,index: any) => index === indexToFind);
 }
 

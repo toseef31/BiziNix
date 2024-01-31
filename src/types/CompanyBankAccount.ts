@@ -1,6 +1,7 @@
 export default interface CompanyBankAccount {
   id: number
-  name: string
+  account_name: string
+  bank_name: string
   iban: string
   account_number: string
   swift: string

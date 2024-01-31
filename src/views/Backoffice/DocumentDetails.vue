@@ -13,13 +13,23 @@
             <div class="flex flex-row">
               <div class="flex basis-5/6 justify-center">
                 <h3 class="text-3xl font-bold text-center py-10 text-white">
-                  Detail dokladu č. {{ document.serial_number }}
+                  Detail dokladu č.
                 </h3>
+                <div class="py-10 px-2">
+                  <FormKit
+                    v-model="document.serial_number"
+                    autocomplete="nope"
+                    id="invoice-number"
+                    name="serial_number"
+                    type="text"
+                  />
+                </div>
               </div>
               <div class="flex basis-1/6 justify-end py-6 px-6">
                 <button
                   class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded text-white"
                   v-on:click="cancelEdit()"
+                  type="button"
                 >
                   X
                 </button>
@@ -209,6 +219,29 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="flex flex-col pt-8">
+                  <div class="flex flex-row gap-3">
+                    <div class="flex flex-col w-full" v-if="document.subtype == 4 || document.subtype == 5">
+                        <FormKit
+                          autocomplete="nope"
+                          type="text"
+                          id="order-name"
+                          label="Názov zákazky"
+                          v-model="document.order_name"
+                        />
+                      </div>
+                      <div class="flex flex-col w-full" v-if="document.subtype == 4 || document.subtype == 5">
+                        <FormKit
+                          autocomplete="nope"
+                          type="textarea"
+                          id="order-description"
+                          label="Predmet zákazky"
+                          v-model="document.order_description"
+                        />
+                      </div>
+                  </div>
+                </div>
               </section>
             </div>
           </section>
@@ -216,6 +249,7 @@
             @click="toggleAccordion()"
             class="flex items-center space-x-3 py-8"
             :aria-expanded="isOpen"
+            type="button"
           >
             <label class="pr-2">Zobraziť viac údajov</label>
             <svg
@@ -242,32 +276,16 @@
           <section>
             <div class="flex flex-col" v-if="isOpen">
               <div>
-                <div class="flex flex-row justify-between pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold"
-                      >Názov Vašej banky</label
-                    >
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.name }}
-                    </label>
-                  </div>
-
-                  <div class="flex basis-1/2 flex-col justify-between">
-                    <label class="text-white pr-4 font-bold">IBAN</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.iban }}
-                    </label>
-                  </div>
-                </div>
-
-                <div class="flex flex-row pb-8">
-                  <div class="flex basis-1/2 flex-col justify-between px-4">
-                    <label class="text-white pr-4 font-bold">SWIFT</label>
-                    <label class="text-white pr-4">
-                      {{ companyBankDetails.swift }}
-                    </label>
-                  </div>
-                </div>
+                <FormKit
+                  type="dropdown"
+                  name="bankaccount_dropdown"
+                  label="Bankový účet"
+                  :options="fetchBankAccounts"
+                  validation="required"
+                  v-model="bankAccountId"
+                  :value="companyBankDetails"
+                >
+                </FormKit>
               </div>
               <div class="flex flex-row">
                 <div class="flex flex-col w-full justify-between px-4">
@@ -276,6 +294,7 @@
                     rows="10"
                     id="comment_above"
                     label="Poznámka nad položkami"
+                    validation="length:0,255"
                     v-model="document.note_above"
                   />
                 </div>
@@ -285,6 +304,7 @@
                     rows="10"
                     id="comment_below"
                     label="Poznámka pod položkami"
+                    validation="length:0,255"
                     v-model="document.note_under"
                   />
                 </div>
@@ -319,6 +339,7 @@
                       name="[constant]"
                       v-model="document.konstantny"
                       label="Konštantný symbol"
+                      validation="length:0,4"
                     />
                   </div>
                   <div class="flex flex-col basis-1/4">
@@ -328,6 +349,7 @@
                       id="specific-symbol"
                       v-model="document.specificky"
                       label="Špecifický symbol"
+                      validation="length:0,10"
                     />
                   </div>
                 </div>
@@ -354,7 +376,7 @@
                 <div class="text-teal-500 flex basis-2/12">Cena</div>
                 <div
                   class="text-teal-500 flex basis-2/12"
-                  v-if="company.is_dph"
+                  v-if="document.isDph"
                 >
                   DPH %
                 </div>
@@ -387,6 +409,7 @@
                             min="0"
                             number
                         v-model="item.quantity"
+                        @change="priceEntered(item)"
                       />
                     </div>
                     <div class="flex basis-2/12">
@@ -409,7 +432,7 @@
                         @change="priceEntered(item)"
                       />
                     </div>
-                    <div class="flex basis-2/12" v-if="company.is_dph">
+                    <div class="flex basis-1/12" v-if="document.isDph">
                       <FormKit
                         autocomplete="nope"
                         type="number"
@@ -422,17 +445,19 @@
                         @change="vatEntered($event)"
                       />
                     </div>
-                    <div class="flex basis-2/12">
-                      <FormKit
-                        autocomplete="nope"
-                        type="text"
-                        class="flex"
-                        id="total"
-                        step="0.01"
-                        number
-                        v-model="item.total"
-                        disabled
-                      />
+                    <div class="flex basis-2/12 pl-4">
+                      <div class="flex">
+                        <FormKit
+                          autocomplete="nope"
+                          type="text"
+                          id="total"
+                          step="0.01"
+                          number
+                          v-model="item.total"
+                          disabled
+                        />
+                      </div>
+                      
                     </div>
                   </div>
 
@@ -443,6 +468,7 @@
                           type="textarea"
                           rows="2"
                           id="desc"
+                          validation="length:0,255"
                           placeholder="Detailný popis položky…"
                           v-model="item.description"
                         />
@@ -489,16 +515,16 @@
                         />
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="document.isDph">
                       <th class="text-left pl-2">DPH</th>
                       <th class="text-right pr-2">
                         {{ totalPriceVat.toFixed(2) }}&nbsp;{{ document.currency }}
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph">
+                    <tr v-if="document.isDph">
                       <th class="text-left pl-2">Celková suma</th>
                       <th class="text-right pr-2">
-                        {{ (totalPrice + totalPriceVat).toFixed(2) }}&nbsp;{{
+                        {{ (totalPrice+totalPriceVat).toFixed(2) }}&nbsp;{{
                           document.currency
                         }}
                       </th>
@@ -524,8 +550,8 @@
 <script setup lang="ts">
 import type Company from "@/types/Company";
 import store from "@/store";
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, computed, onBeforeMount, watch } from "vue";
+import { useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
 import moment from "moment";
@@ -537,10 +563,10 @@ const document: any = computed(() => {
 const items = ref([] as any[]);
 
 const today = moment(new Date()).format("YYYY-MM-DD");
-const route = useRoute();
 const router = useRouter();
 const submitted = ref(false);
 const isOpen = ref(false);
+const bankAccountId = ref(document.value.bank_account_id);
 
 const company = ref({} as Company);
 const address = ref({
@@ -558,9 +584,15 @@ const headquarter = ref({
 });
 
 const companyBankDetails = ref({
-  name: "",
+  id: 0,
+  account_name: "",
+  bank_name: "",
   iban: "",
+  account_number: "",
   swift: "",
+  bank_code: "",
+  is_main: false,
+  company_id: 0
 });
 
 const totalPrice: any = computed(() => {
@@ -568,8 +600,16 @@ const totalPrice: any = computed(() => {
 });
 
 const totalPriceVat: any = computed(() => {
-  return totalPrice.value * 0.2;
+  return items.value.reduce((acc, item) => acc + item.total_vat, 0);
 });
+
+watch(bankAccountId, async () => {
+  const res = await store.dispatch("getBankAccountById", bankAccountId.value)
+  if(res.data) {
+    bankAccountId.value = res.data.id;
+    companyBankDetails.value = res.data;
+  }
+})
 
 async function refreshData() {
   await store
@@ -654,16 +694,33 @@ function removeItem(index: number) {
   items.value.splice(index, 1);
 }
 
+async function fetchBankAccounts() {
+  const res = await store.dispatch("getCompanyBankDetails", company.value.id)
+  if(res.data[0]?.id){
+    return res.data.map((data) => {
+        bankAccountId.value = data?.id;
+      return {
+        label: `${data?.account_name ?? ''} IBAN: ${data?.iban ?? ''}`,
+        value: data.id
+      }
+    })
+  } else {
+    return []
+  }
+}
+
 function submitHandler() {
   submitted.value = true;
   document.value.items = items.value;
   document.value.total = totalPrice.value;
+  document.value.total_vat = totalPriceVat.value;
   if(document.value.isPaid) {
     document.value.paid = totalPrice.value;
   }
   return store
     .dispatch("updateDocument", document.value)
     .then((res) => {
+      store.state.documentTab = 1;
       router.push({
         name: "Doklady",
       });
@@ -673,7 +730,8 @@ function submitHandler() {
     });
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
+  store.state.mySubmenuActive = 1;
   await refreshData();
   try {
     items.value = JSON.parse(document.value.items);
