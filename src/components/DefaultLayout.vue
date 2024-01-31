@@ -543,7 +543,7 @@ const zivnostMenuItems = [
     name: "Založenie živnosti",
     description:
       "Get a better understanding of where your traffic is coming from.",
-    href: "/documents",
+    href: "/zalozenie-zivnosti",
     icon: PencilSquareIcon,
   }  
 ];
