@@ -675,7 +675,6 @@ function vatEntered(event: any, item: any) {
       ""
     );
   }
-
   item.total_vat = item.total * item.vat / 100;
 }
 
@@ -687,6 +686,7 @@ function addItem() {
     unit_price: 0.0,
     vat: 0,
     total: 0.0,
+    total_vat: 0.0,
     description: "",
   };
   items.value.push(item);
