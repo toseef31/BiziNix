@@ -218,7 +218,7 @@
                 <div class="text-teal-500 flex basis-2/12 pr-10">
                   Cena
                 </div>
-                <div class="text-teal-500 flex basis-2/12" v-if="company.is_dph || company.icdph">
+                <div class="text-teal-500 flex basis-2/12" v-if="document.isDph">
                   DPH %
                 </div>
                 <div class="text-teal-500 flex basis-2/12 justify-end pr-4">
@@ -252,7 +252,7 @@
                           <FormKit autocomplete="nope" type="number" class="flex" id="unit-price" step="0.01" number
                             v-model="item.unit_price" @change="priceEntered(item)" />
                         </div>
-                        <div class="flex" v-if="company.is_dph || company.icdph">
+                        <div class="flex" v-if="document.isDph">
                           <FormKit autocomplete="nope" type="text" class="flex" id="vat" step="0.01" number
                             v-model="item.vat" novalidate @change="vatEntered($event, item)" />
                         </div>
@@ -305,7 +305,7 @@
                           v-model="document.currency" />
                       </th>
                     </tr>
-                    <tr v-if="company.is_dph || company.icdph">
+                    <tr v-if="document.isDph">
                       <th class="text-right">Spolu s DPH</th>
                       <th class="text-left pl-4">
                         {{ (totalPrice+totalPriceVat).toFixed(2) }}&nbsp;{{ document.currency }}
@@ -458,7 +458,8 @@ const document = ref({
   total_vat: totalPriceVat,
   payment_date: "",
   order_name: "",
-  order_description: ""
+  order_description: "",
+  isDph: false
 });
 
 watch(
@@ -576,6 +577,7 @@ async function refreshData() {
 
   if (company.value.is_dph || company.value.icdph) {
     items.value[0].vat = 20;
+    document.value.isDph = true;
   }
 
 }
@@ -690,8 +692,13 @@ function submitHandler() {
     submitted.value = true;
     document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
     document.value.items = items.value;
-    document.value.paid = document.value.total;
     document.value.bank_account_id = bankAccountId.value;
+
+    if(document.value.isDph) {
+      document.value.paid = document.value.total+document.value.total_vat;
+    } else {
+      document.value.paid = document.value.total;
+    }
 
     return store
       .dispatch("addDocument", document.value)

@@ -114,7 +114,7 @@
                   {{ finData.total.toFixed(2) }} €
                 </div>
                 <div class="text-gray-300 text-sm" v-if="company.is_dph">
-                  {{ (finData.total+finData.totalVat).toFixed(2) }} € s DPH
+                  {{ finData.totalVat.toFixed(2) }} € s DPH
                 </div>
                 <div class="text-teal-500">
                   Zisk
@@ -216,11 +216,11 @@
                               </div>
                               <div class="flex text-white basis-2/3 pr-4 gap-2">
                                 <div class="w-full">
-                                  <FormKit type="number" id="total" name="total" :label="is_dph? 'Suma bez DPH' : 'Suma v €'" step="any" min="0"
+                                  <FormKit type="number" id="total" name="total" :label="is_dph? 'Suma bez DPH' : 'Celková suma'" step="any" min="0"
                                     number v-model="document.total" validation="required" />
                                 </div>
                                 <div class="w-full" v-if="is_dph">
-                                  <FormKit type="number" id="total_vat" name="total_vat" label="Suma DPH" step="any" min="0" help="Sem zadajte súčet DPH."
+                                  <FormKit type="number" id="total_vat" name="total_vat" label="Čiastka DPH" step="any" min="0" help="Sem zadajte súčet DPH."
                                     number v-model="document.total_vat" />
                                 </div>
                               </div>
@@ -470,6 +470,7 @@ watch(() => documentsListTableRef.value?.updateFinData,
         .then((response) => {
           finData.value = response.data;
           documentsListTableRef.value.updateFinData = false;
+          console.log(response)
         })
     }
 
@@ -696,6 +697,7 @@ async function refreshData() {
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
           finData.value = response.data;
+          console.log(response)
         });
       await store
         .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)
