@@ -184,7 +184,6 @@
                     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
                     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
                       <DialogPanel class="w-full max-w-lg rounded bg-gray-900 shadow text-white">
-                          <img src="@/assets/doklad.png" class="h-auto shrink-0 z-0 w-[128px] absolute right-16 top-12" />
                           <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
                             Importujte prijatý doklad
                             <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
@@ -207,6 +206,9 @@
                               <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
                                 v-model="document.serial_number" />
                             </div>
+                            <div class="px-4 text-white w-full py-4">
+                              <FormKit type="checkbox" label="Doklad s DPH?" name="predvoleny" v-model="is_dph" />
+                            </div>
                             <div class="flex flex-row pb-8 gap-4">
                               <div class="flex text-white pl-4 basis-1/3">
                                 <FormKit type="date" name="Termín prijatia" label="Termín prijatia"
@@ -214,12 +216,12 @@
                               </div>
                               <div class="flex text-white basis-2/3 pr-4 gap-2">
                                 <div class="w-full">
-                                  <FormKit type="number" id="amount" name="Suma" label="Suma v €" step="any" min="0"
+                                  <FormKit type="number" id="total" name="total" :label="is_dph? 'Suma bez DPH' : 'Suma v €'" step="any" min="0"
                                     number v-model="document.total" validation="required" />
                                 </div>
-                                <div class="w-full">
-                                  <FormKit type="select" label="DPH" name="DPH" :options="['bez DPH', 's DPH']"
-                                    @change="dphChanged($event)" validation="required" />
+                                <div class="w-full" v-if="is_dph">
+                                  <FormKit type="number" id="total_vat" name="total_vat" label="Suma DPH" step="any" min="0" help="Sem zadajte súčet DPH."
+                                    number v-model="document.total_vat" />
                                 </div>
                               </div>
                             </div>
@@ -388,6 +390,7 @@ const showBankPopup = ref(false);
 const showImportPopup = ref(false);
 const bankAccounts = ref([] as any[]);
 const bankAccountId = ref(0);
+const is_dph = ref(false);
 
 const document = ref({
   type: activeTab,
@@ -399,6 +402,7 @@ const document = ref({
   isPaid: false,
   reminder_sent: false,
   total: 0,
+  total_vat: 0,
   payment_date: "",
   date_of_issue: today,
   isDph: false,
@@ -447,6 +451,16 @@ function dphChanged(event: any) {
     document.value.isDph = false;
   }
 }
+
+watch(() => is_dph,
+  async function () {
+    if (is_dph.value == true) {
+      document.value.isDph = true;
+    } else {
+      document.value.isDph = false;
+    }
+  }
+);
 
 watch(() => documentsListTableRef.value?.updateFinData,
   async function () {
