@@ -208,8 +208,7 @@
                                 </ul>    
                               </div>
                               <div v-else>
-                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vypíšte jeho celkovú sumu (vrátane prípadnej DPH).</span><br>
-                                  Vzhľadom k tomu, že nie ste plátcom DPH, nemáte nárok na vrátenie dane.
+                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vypíšte jeho celkovú sumu (vrátane prípadnej DPH).</span>
                               </div>
                             </div>
                             <div class="flex px-4 pt-10 text-white z-10 relative">
