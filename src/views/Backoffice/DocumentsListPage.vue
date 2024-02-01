@@ -206,7 +206,7 @@
                               <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
                                 v-model="document.serial_number" />
                             </div>
-                            <div class="px-4 text-white w-full py-4">
+                            <div class="px-4 text-white w-full py-4" v-if="company.is_dph ">
                               <FormKit type="checkbox" label="Doklad s DPH?" name="predvoleny" v-model="is_dph" />
                             </div>
                             <div class="flex flex-row pb-8 gap-4">
@@ -216,7 +216,7 @@
                               </div>
                               <div class="flex text-white basis-2/3 pr-4 gap-2">
                                 <div class="w-full">
-                                  <FormKit type="number" id="total" name="total" :label="is_dph? 'Suma bez DPH' : 'Celková suma'" step="any" min="0"
+                                  <FormKit type="number" id="total" name="total" :label="company.is_dph? 'Suma bez DPH' : 'Celková suma'" step="any" min="0"
                                     number v-model="document.total" validation="required" />
                                 </div>
                                 <div class="w-full" v-if="is_dph">
@@ -470,7 +470,6 @@ watch(() => documentsListTableRef.value?.updateFinData,
         .then((response) => {
           finData.value = response.data;
           documentsListTableRef.value.updateFinData = false;
-          console.log(response)
         })
     }
 
@@ -697,7 +696,6 @@ async function refreshData() {
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
           finData.value = response.data;
-          console.log(response)
         });
       await store
         .dispatch("getCompanyBankDetails", store.state.selectedCompany.id)

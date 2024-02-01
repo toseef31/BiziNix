@@ -540,7 +540,7 @@ function repay(document: Doklad) {
 function repayConfirm(document: Doklad) {
   showRepayModalDialog.value = false;
   document.paid = Number(document.paid);
-  if (document.paid == document.total) {
+  if (document.paid == document.total+document.total_vat) {
     document.isPaid = true;
   }
   store
