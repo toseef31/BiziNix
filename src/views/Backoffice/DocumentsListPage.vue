@@ -184,8 +184,8 @@
                     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
                     <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
                       <DialogPanel class="w-full max-w-lg rounded bg-gray-900 shadow text-white">
-                          <div class="flex justify-between py-8 px-4 text-white font-bold text-lg">
-                            Importujte prijatý doklad
+                          <div class="flex justify-between py-8 px-4 text-white font-bold">
+                            <span class="text-2xl">Importujte prijatý doklad</span>
                             <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
                               v-on:click="showImportPopup = false">
                               X
@@ -193,6 +193,25 @@
                           </div>
                           <FormKit type="form" id="add-document" submit-label="Importovať doklad"
                             @submit="importDocument()" :actions="false">
+                            <div class="flex px-4 py-4 w-full text-white">
+                              <div v-if="company.is_dph">
+                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vyplňte nasledujúce údaje podľa potreby:</span><br>
+                                <ul class="pt-4">
+                                  <li>
+                                    • Ak je doklad bez DPH, vypíšte iba sumu bez DPH.
+                                  </li>
+                                  <li>
+                                    • Ak je doklad s DPH a chcete mať prehľad o vratkách dane,
+                                      zaškrtnite pole "doklad je s DPH" a doplňte tak čiastku DPH do okna
+                                      "čiastka DPH".
+                                  </li>
+                                </ul>    
+                              </div>
+                              <div v-else>
+                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vypíšte jeho celkovú sumu (vrátane prípadnej DPH).</span><br>
+                                  Vzhľadom k tomu, že nie ste plátcom DPH, nemáte nárok na vrátenie dane.
+                              </div>
+                            </div>
                             <div class="flex px-4 pt-10 text-white z-10 relative">
                               <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
                                 placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
