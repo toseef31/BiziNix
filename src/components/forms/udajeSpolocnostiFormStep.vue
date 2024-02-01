@@ -544,7 +544,13 @@ function resetNewItem() {
 }
 
 const calculatedImanieVyska = computed(() => {
-  return zakladateliaSpolocniciList.value.reduce((acc, item) => acc + (item.vyska_vkladu as number), 0);
+  return zakladateliaSpolocniciList.value.reduce((acc, item) => {
+    let vyska_vkladu = Number(item.vyska_vkladu);
+    if (isNaN(vyska_vkladu)) {
+      vyska_vkladu = 0;  // or handle error
+    }
+    return acc + vyska_vkladu;
+  }, 0);
 });
 
 effect(() => {
