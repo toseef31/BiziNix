@@ -42,14 +42,6 @@
         <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
         <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
-        <FormKit type="text" name="inv_street_number" v-model="invoiceAddress.street_number" label="Súpisne číslo"
-          validation="require_one:inv_street_number2"
-          help="Číslo pred lomítkom"
-        />
-        <FormKit type="text" name="inv_street_number2" v-model="invoiceAddress.street_number2" label="Orientačné číslo"
-          validation="require_one:inv_street_number"
-          help="Číslo za lomítkom"
-        />
       </div>   
       <div v-if="orderingAsCompany" class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="flex flex-col">
@@ -66,14 +58,6 @@
           <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
           <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
           <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
-          <FormKit type="text" name="inv_company_street_number" v-model="invoiceAddress.street_number" label="Súpisne číslo"
-            validation="require_one:inv_company_street_number2"
-            help="Číslo pred lomítkom"
-          />
-          <FormKit type="text" name="inv_company_street_number2" v-model="invoiceAddress.street_number2" label="Orientačné číslo"
-            validation="require_one:inv_company_street_number"
-            help="Číslo za lomítkom"
-          />
       </div>
     </div>
   </template>

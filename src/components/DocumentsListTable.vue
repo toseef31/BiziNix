@@ -449,7 +449,8 @@ async function downlaodSingleDocument(document: Doklad) {
         console.log(e);
       });
   } else {
-    await store
+    if(document.pdf != null || document.pdf != '') {
+      await store
       .dispatch("getDocumentImg", document.id)
       .then((response) => {
         console.log(response);
@@ -466,6 +467,10 @@ async function downlaodSingleDocument(document: Doklad) {
       .catch((e: Error) => {
         console.log(e);
       });
+    } else {
+      toast.warning('Pre daný doklad neexistuje súbor.');
+    }
+    
   }
 }
 
