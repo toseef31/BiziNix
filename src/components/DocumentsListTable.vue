@@ -221,7 +221,7 @@
           </div>
           <div class="flex justify-start px-4 text-white">
             <FormKit type="number" id="repay_amount" label="Zaplatená suma" v-model="totalToPay"
-              :value="(selectedDocument.total+selectedDocument.total_vat)-selectedDocument.paid" :min="0" />
+              :value="totalToPay" :min="0" />
           </div>
           <div class="flex justify-start px-4 text-white">
             <FormKit type="date" name="Dátum úhrady" label="Dátum úhrady" validation="required|length:10"
@@ -231,7 +231,7 @@
             <div class="flex flex-1/4 px-4">
               <button class="bg-teal-500 hover:bg-teal-700 h-8 px-6 rounded z-10 text-white"
                 v-on:click="repayConfirm(selectedDocument)">
-                Zaplatiť
+                Potvrdiť
               </button>
             </div>
             <div class="flex flex-1/4">

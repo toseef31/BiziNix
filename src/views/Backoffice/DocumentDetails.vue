@@ -726,7 +726,6 @@ function submitHandler() {
   document.value.items = items.value;
   document.value.total = totalPrice.value;
   document.value.total_vat = totalPriceVat.value;
-  document.value.paid = totalPrice.value+totalPriceVat.value;
 
   return store
     .dispatch("updateDocument", document.value)

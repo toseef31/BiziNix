@@ -694,12 +694,6 @@ function submitHandler() {
     document.value.items = items.value;
     document.value.bank_account_id = bankAccountId.value;
 
-    if(document.value.isDph) {
-      document.value.paid = document.value.total+document.value.total_vat;
-    } else {
-      document.value.paid = document.value.total;
-    }
-
     return store
       .dispatch("addDocument", document.value)
       .then((res) => {
