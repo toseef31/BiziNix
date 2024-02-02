@@ -81,7 +81,8 @@
                 <div class="flex text-2xl font-extrabold" v-else>
                   {{ document.total }} {{ document.currency }}
                 </div>
-                <div class="flex text-xl" v-if="document.isDph">{{ document.total+document.total_vat }} {{ document.currency }} s DPH</div>
+                <div class="flex text-xl" v-if="document.isDph && document.isIssued == 1">{{ document.total+document.total_vat }} {{ document.currency }} s DPH</div>
+                <div class="flex text-xl" v-if="document.isDph && document.isIssued == 0 && document.total_vat > 0">{{ document.total+document.total_vat }} {{ document.currency }} s DPH</div>
                 <div class="flex text-sm" v-if="document.isIssued">{{ document.overdue }}</div>
               </div>
               <div class="flex flex-col items-center justify-center basis-1/4">

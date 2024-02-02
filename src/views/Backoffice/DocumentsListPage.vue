@@ -590,6 +590,11 @@ function importDocument() {
       await uploadImg(res.Document.id);
       await refreshData();
       showImportPopup.value = false;
+      document.value.odberatel = "";
+      document.value.serial_number = "";
+      document.value.total = 0;
+      document.value.total_vat = 0;
+      document.value.isDph = false;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
@@ -705,6 +710,7 @@ async function getDocuments(page: number, searchQuery: any, from: any, to: any, 
 async function refreshData() {
   tab.value = store.state.documentTab;
   activeTab.value = tab.value;
+
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
