@@ -220,8 +220,8 @@
             Koľko bolo uhradené?
           </div>
           <div class="flex justify-start px-4 text-white">
-            <FormKit type="number" id="repay_amount" label="Zaplatená suma" v-model="selectedDocument.paid"
-              :value="selectedDocument.total" :min="0" />
+            <FormKit type="number" id="repay_amount" label="Zaplatená suma" v-model="totalToPay"
+              :value="(selectedDocument.total+selectedDocument.total_vat)-selectedDocument.paid" :min="0" />
           </div>
           <div class="flex justify-start px-4 text-white">
             <FormKit type="date" name="Dátum úhrady" label="Dátum úhrady" validation="required|length:10"
@@ -298,6 +298,7 @@ const reminderEmail = ref("");
 const reminderText = ref("Dobrý deň, zasielame Vám upomienku k dokladu.");
 
 const bankAccountId = ref(0);
+const totalToPay = ref(0);
 
 const indeterminate = computed(
   () =>
@@ -430,8 +431,8 @@ function confirmDeleteMultipleDocuments() {
   });
 }
 
-async function downlaodSingleDocument(document: Doklad) {
-  if (document.isIssued) {
+async function downlaodSingleDocument(document: any) {
+  if (document.isIssued == 1) {
     await store
       .dispatch("downloadDocument", document.id)
       .then((response) => {
@@ -449,7 +450,7 @@ async function downlaodSingleDocument(document: Doklad) {
         console.log(e);
       });
   } else {
-    if(document.pdf != null || document.pdf != '') {
+    if(document.pdf) {
       await store
       .dispatch("getDocumentImg", document.id)
       .then((response) => {
@@ -520,7 +521,6 @@ function sendReminder(document: Doklad) {
 }
 
 function confirmReminder(document: Doklad, email: any, text: any) {
-  showReminderModalDialog.value = false;
   const data = {
     id: document.id,
     email: email,
@@ -536,22 +536,25 @@ function confirmReminder(document: Doklad, email: any, text: any) {
     .catch((err) => {
       toast.error('Error: ' + err);
     });
+
+    showReminderModalDialog.value = false;
 }
 
 function repay(document: Doklad) {
   selectedDocument.value = document;
+  totalToPay.value = (document.total+document.total_vat)-document.paid;
   showRepayModalDialog.value = true;
 }
 
 function repayConfirm(document: Doklad) {
-  showRepayModalDialog.value = false;
-  document.paid = Number(document.paid);
+  document.paid = Number(totalToPay.value);
   if (document.paid == document.total+document.total_vat) {
     document.isPaid = true;
   }
   store
     .dispatch("updateDocument", document)
     .then(() => {
+      showRepayModalDialog.value = false;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
