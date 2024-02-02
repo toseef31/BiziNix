@@ -425,7 +425,8 @@ const document = ref({
   date_of_issue: today,
   isDph: false,
   currency: "€",
-  bank_account_id: 0
+  bank_account_id: 0,
+  pdf: null
 });
 
 let title = ref("Faktúry");
@@ -595,6 +596,7 @@ function importDocument() {
       document.value.total = 0;
       document.value.total_vat = 0;
       document.value.isDph = false;
+      document.value.pdf = null;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
