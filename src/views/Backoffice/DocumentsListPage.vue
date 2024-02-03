@@ -463,14 +463,6 @@ const navigation = [
   },
 ]
 
-function dphChanged(event: any) {
-  if (event.target.value == 's DPH') {
-    document.value.isDph = true;
-  } else {
-    document.value.isDph = false;
-  }
-}
-
 watch(() => is_dph,
   async function () {
     if (is_dph.value == true) {
@@ -583,7 +575,9 @@ function importDocument() {
   return store
     .dispatch("addDocument", document.value)
     .then(async (res) => {
-      await uploadImg(res.Document.id);
+      if(uploadImageData.value.body.img){
+        await uploadImg(res.Document.id);
+      }
       await refreshData();
       showImportPopup.value = false;
       document.value.odberatel = "";
