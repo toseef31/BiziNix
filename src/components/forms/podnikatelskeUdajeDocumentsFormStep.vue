@@ -97,7 +97,6 @@ const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
-  console.log(newFinstatCompany)
   if (newFinstatCompany.Spoločnosť !== undefined) {
     getCompanyDetails();
   }

@@ -93,17 +93,18 @@
                       :value="document" v-model="selectedDocuments" />
                   </div>
                   <div class="flex flex-col pt-4" v-if="document.isIssued">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" value="" class="sr-only peer" @click="repay(document)"
-                        :checked="document.isPaid" :disabled="document.isPaid" />
-                      <div
-                        class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-teal-800 dark:peer-focus:ring-teal-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500">
-                      </div>
-                    </label>
-                    <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      v-show="!document.isPaid">Neuhradené</span>
-                    <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      v-show="document.isPaid">Uhradené</span>
+                    <button :disabled="document.isPaid" @click="repay(document)" :class="[document.isPaid? '' : 'hover:text-teal-500', 'flex flex-col justify-center text-center items-center text-gray-300']">
+                      <CreditCardIcon
+                                class="ml-1 h-6 w-6 text-primary transition-transform group-hover:text-primary"
+                                aria-hidden="true"
+                            />
+                            <span class="ml-3 text-sm font-medium"
+                              v-show="!document.isPaid && document.paid == 0">Neuhradené</span>
+                            <span class="ml-3 text-sm font-medium"
+                              v-show="!document.isPaid && document.paid > 0">Uhradené {{ document.paid }}{{ document.currency }} z {{ document.total + document.total_vat }}{{ document.currency }}</span>
+                            <span class="ml-3 text-sm font-medium"
+                              v-show="document.isPaid">Uhradené</span>
+                    </button>                    
                   </div>
                 </div>
               </div>
@@ -279,6 +280,7 @@ import moment from "moment";
 import * as _ from "lodash";
 import type Company from "@/types/Company";
 import { toast } from "vue3-toastify";
+import { CreditCardIcon } from "@heroicons/vue/24/outline" 
 
 const documents = computed(() => store.state.documents);
 const router = useRouter();
@@ -308,8 +310,8 @@ const indeterminate = computed(
 
 watch(
   () => store.getters.getSelectedCompany,
-  function () {
-    refreshData();
+  async function () {
+    await refreshData();
   }
 );
 
@@ -391,7 +393,6 @@ async function duplicateDocument(document: any) {
     })
     .catch((err) => {
       showLoadingModalDialog.value = false;
-      console.log(err);
       toast.error('Error: ' + err);
     });
 }
@@ -447,14 +448,13 @@ async function downlaodSingleDocument(document: any) {
         saveAs("document", blob);
       })
       .catch((e: Error) => {
-        console.log(e);
+        toast.error('Error: ' + e);
       });
   } else {
     if(document.pdf) {
       await store
       .dispatch("getDocumentImg", document.id)
       .then((response) => {
-        console.log(response);
         const byteCharacters = atob(response.image);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
@@ -466,7 +466,7 @@ async function downlaodSingleDocument(document: any) {
         saveAs(document.pdf, blob);
       })
       .catch((e: Error) => {
-        console.log(e);
+        toast.error('Error: ' + e);
       });
     } else {
       toast.warning('Pre daný doklad neexistuje súbor.');
@@ -492,7 +492,7 @@ async function downloadMultipleDocuments() {
           saveAs("document", blob);
         })
         .catch((e: Error) => {
-          console.log(e);
+          toast.error('Error: ' + e);
         });
     } else {
       await store
@@ -509,7 +509,7 @@ async function downloadMultipleDocuments() {
           saveAs(value.pdf, blob);
         })
         .catch((e: Error) => {
-          console.log(e);
+          toast.error('Error: ' + e);
         });
     }
   });
@@ -520,24 +520,22 @@ function sendReminder(document: Doklad) {
   showReminderModalDialog.value = true;
 }
 
-function confirmReminder(document: Doklad, email: any, text: any) {
+async function confirmReminder(document: Doklad, email: any, text: any) {
   const data = {
     id: document.id,
     email: email,
     text: text
   };
-  store
+  await store
     .dispatch("sendReminder", data)
-    .then((res) => {
-      const documentResponse = res;
-      console.log("Res " + JSON.stringify(documentResponse));
-      return documentResponse;
+    .then(async() => {
+      updateFinData.value = true;
     })
     .catch((err) => {
       toast.error('Error: ' + err);
     });
-
     showReminderModalDialog.value = false;
+    toast.success('Upomienka úspešne odoslaná.');
 }
 
 function repay(document: Doklad) {
@@ -546,14 +544,15 @@ function repay(document: Doklad) {
   showRepayModalDialog.value = true;
 }
 
-function repayConfirm(document: Doklad) {
+async function repayConfirm(document: Doklad) {
   document.paid = Number(totalToPay.value);
   if (document.paid == document.total+document.total_vat) {
     document.isPaid = true;
   }
-  store
+  await store
     .dispatch("updateDocument", document)
-    .then(() => {
+    .then(async() => {
+      updateFinData.value = true;
       showRepayModalDialog.value = false;
     })
     .catch((err) => {

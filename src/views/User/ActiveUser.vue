@@ -87,7 +87,6 @@ onMounted(() => {
   .then(response => {
     errorMsg.value = null
     sucessMessage.value = "Účet úspešne aktivovaný. Môžete sa prihlásiť."
-    // console.log(response);
     return response;
   })
   .catch(err => {
@@ -103,7 +102,6 @@ function login(){
     .dispatch('loginUser', user)
     .then((res) => {
       errorMsg.value = null
-      // console.log(res)
       router.push({
         name: 'Dashboard',  
       })

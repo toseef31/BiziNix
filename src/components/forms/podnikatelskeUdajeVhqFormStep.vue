@@ -172,7 +172,7 @@ const login = async (formdata: any, node: any) => {
       await store.dispatch("setUserDataAfterLogin");
     })
     .catch(err => {
-      console.log(err.response.data.error);
+      toast.error('Error: ' + err);
     })
 }
 

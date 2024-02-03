@@ -213,7 +213,7 @@
                             </div>
                             <div class="flex px-4 pt-10 text-white z-10 relative">
                               <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
-                                placeholder="Vyberte druh dokladu" :options="Constants.DOCUMENT_SUBTYPES"
+                                placeholder="Vyberte druh dokladu" :options="Constants.IMPORT_DOCUMENT_SUBTYPES"
                                 @change="documentSubtypeChanged()" validation="required" />
                             </div>
                             <div class="px-4 text-white w-full py-4">
@@ -580,11 +580,6 @@ function importDocument() {
   document.value.isIssued = false;
   document.value.company_id = company.value.id;
   document.value.bank_account_id = bankAccountId.value;
-
-  if (document.value.serial_number == "") {
-    document.value.serial_number = "0";
-  }
-
   return store
     .dispatch("addDocument", document.value)
     .then(async (res) => {

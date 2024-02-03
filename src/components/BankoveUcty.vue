@@ -95,7 +95,7 @@
               label="Názov banky" />
             <FormKit type="text" name="iban" validation="required" v-model="currentBankAccount.iban" label="IBAN" />
             <FormKit type="text" name="account_number" v-model="currentBankAccount.account_number" label="Číslo účtu" />
-            <FormKit type="text" name="swift" v-model="currentBankAccount.swift" label="SWIFT" />
+            <FormKit type="text" name="swift" validation="required" v-model="currentBankAccount.swift" label="SWIFT" />
             <FormKit type="text" name="bank_code" v-model="currentBankAccount.bank_code" label="Kód banky" />
             <FormKit type="checkbox" label="Predvolený účet?" name="predvoleny" v-model="currentBankAccount.is_main" />
             <FormKit type="submit" label="Pridať" />

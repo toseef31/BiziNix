@@ -425,7 +425,6 @@ export const store = createStore({
       });
     },
     async addBankAccount({ commit }, bankAccount) {
-      console.log(bankAccount);
       const { data } = await axiosClient.post(
         "/companies/addCompanyBankDetails",
         bankAccount

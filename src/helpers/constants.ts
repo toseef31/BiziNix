@@ -318,6 +318,13 @@ const DOCUMENT_SUBTYPES = [
   { value: 4, label: "Cenová ponuka" },
   { value: 5, label: "Objednávka" },
 ];
+const IMPORT_DOCUMENT_SUBTYPES = [
+  { value: 1, label: "Faktúra / Pokladničný blok" },
+  { value: 2, label: "Zálohová faktúra" },
+  { value: 3, label: "Dobropis" },
+  { value: 4, label: "Cenová ponuka" },
+  { value: 5, label: "Objednávka" },
+];
 
 
 export default {
@@ -327,5 +334,6 @@ export default {
   PAYMENT_TYPES: PAYMENT_TYPES,
   DELIVERY_TYPES: DELIVERY_TYPES,
   DUES: DUES,
-  DOCUMENT_SUBTYPES: DOCUMENT_SUBTYPES  
+  DOCUMENT_SUBTYPES: DOCUMENT_SUBTYPES,
+  IMPORT_DOCUMENT_SUBTYPES: IMPORT_DOCUMENT_SUBTYPES
 }

@@ -700,7 +700,6 @@ function submitHandler() {
         showLoadingModalDialog.value = true;
       })
       .catch((err) => {
-        console.log(err);
         toast.error('Error: ' + err);
       });
   } else {

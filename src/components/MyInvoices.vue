@@ -128,8 +128,6 @@ async function downloadInvoice(invoice: any) {
                         });
                 })
                 .catch(async (e: Error) => {
-                    console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
-                    console.log('Sťahujem zalohovu FA');
                     data.type = 1;
                     await store.dispatch("getOrderInvoiceForOrderByType", data)
                         .then(async (response) => {
@@ -146,12 +144,9 @@ async function downloadInvoice(invoice: any) {
                                     saveAs(singleOrderInvoice.value.file_name, blob);
                                 });
                         })
-                        .catch((e: Error) => {
-                            console.log('Sťahovanie ostrej FA zlyhalo: ' + e.message);
-                        });
                 });
-        } catch {
-            console.log('Sťahovanie ostrej aj zálohovej FA zlyhalo');
+        } catch (e) {
+            toast.error('Error: ' + e);
         }
 
         showLoadingModalDialog.value = false;

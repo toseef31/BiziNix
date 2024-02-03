@@ -100,7 +100,6 @@ let user = ref({
 } as User)
 
 onMounted( () => {
-  console.log("On Mounted user register form")
   if(userId.value){
     store.dispatch("getUserDataByUserId", userId.value)
     loading.value = false
@@ -121,7 +120,6 @@ const isValidEmail = computed(() => {
 async function isEmailAlreadyRegistered(node: any) {
   try {
     const res = await store.dispatch("isEmailAlreadyRegistered", node);
-    console.log(res);
     isEmailUnique.value = true
     return true;
   }

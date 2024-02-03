@@ -200,8 +200,8 @@ async function changeTemplate(id: any) {
   company.value.doc_template_id = id;
   await store
     .dispatch("updateCompany", company.value)
-    .then((res) => {
-      console.log("Šablóna úspešne zmenená.");
+    .then(() => {
+      toast.success("Šablóna úspešne zmenená.");
     })
     .catch((err) => {
       toast.error('Error: ' + err);
@@ -211,8 +211,8 @@ async function changeTemplate(id: any) {
 async function snCounterChanged() {
   await store
     .dispatch("updateCompany", company.value)
-    .then((res) => {
-      console.log("Číslovanie úspešne zmenené.");
+    .then(() => {
+      toast.success("Číslovanie úspešne zmenené.");
     })
     .catch((err) => {
       toast.error('Error: ' + err);

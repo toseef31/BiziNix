@@ -69,6 +69,7 @@ import { ChevronLeftIcon } from '@heroicons/vue/24/outline';
 import VirtualHqPackage from './VirtualHqPackage.vue';
 import dayjs from "dayjs";
 import moment from "moment";
+import { toast } from "vue3-toastify";
 
 const user = computed(() => store.state.user.data);
 const selectedCompany = computed(() => store.getters.getSelectedCompany);
@@ -142,7 +143,7 @@ async function updateCompany() {
   await store
     .dispatch("updateCompany", selectedCompany.value)
     .catch((err) => {
-      console.log(err);
+        toast.error('Error: ' + err);
     });
 }
 
@@ -180,7 +181,7 @@ async function handleSubmit() {
         })
         .catch((err) => {
             paymentInProgress.value = false;
-            console.log(err.response.data);
+            toast.error('Error: ' + err);
         });
 
     } catch (err: any) {

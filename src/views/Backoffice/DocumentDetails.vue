@@ -745,8 +745,8 @@ onBeforeMount(async () => {
   await refreshData();
   try {
     items.value = JSON.parse(document.value.items);
-  } catch {
-    console.log("Items are empty")
+  } catch(e: any) {
+    toast.error('Error: ' + e);
   }
   
 });

@@ -77,7 +77,6 @@ onMounted(() => {
 
   return axios.get(`${import.meta.env.VITE_API_ENDPOINT}/api/password/find/${token}`)
   .then(response => {
-    // console.log(response);
     newPassword.value.email = response.data.email
     newPassword.value.token = response.data.token
     return response;
@@ -92,7 +91,6 @@ function forgotPasswordSetNewPassword(){
   store
     .dispatch('forgotPasswordSetNewPassword', newPassword.value)
     .then(res => {
-        // console.log(res.data)
         errorMsg.value = null
         setNewPassword.value = "Heslo úspešne zmenené. Budete presmerovaný na prihlásenie."
         setTimeout(() => {

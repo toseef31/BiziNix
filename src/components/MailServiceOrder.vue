@@ -272,7 +272,7 @@ async function sendMails() {
                 orderFromResponse = res.order;
             })
             .catch((err) => {
-                console.log(err.response.data);
+                toast.error('Error: ' + err);
             });
 
         mails.value.forEach(function (value: any) {
@@ -339,7 +339,7 @@ async function scanMails() {
                 orderFromResponse = res.order;
             })
             .catch((err) => {
-                console.log(err.response.data);
+                toast.error('Error: ' + err);
             });
 
         mails.value.forEach(function (value: any) {

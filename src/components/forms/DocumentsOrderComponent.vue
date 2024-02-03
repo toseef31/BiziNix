@@ -164,7 +164,7 @@ function addOrder(userId, invoiceProfileId, firstTimeActivation): Promise<Respon
       return orderFromRes;
     })
     .catch((err) => {
-      console.log(err.response.data);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -367,7 +367,7 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
       return res
     })
     .catch((error: any) => {
-      console.log(error)
+      toast.error('Error: ' + error);
     })
 }
 

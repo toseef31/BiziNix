@@ -127,11 +127,10 @@ async function addInvoiceProfile(userId, invoiceAddressId): Promise<any> {
 
   return store.dispatch('addInvoiceProfile', faktProfil)
     .then((res) => {
-      console.log("Adding invoice profile: ", JSON.stringify(res))
       return res
     })
     .catch((error: any) => {
-      console.log(error)
+      toast.error('Error: ' + error);
     })
 }
 
@@ -185,7 +184,7 @@ function addHeadquarter(): Promise<Response> {
       return hqFromResponse;
     })
     .catch((err) => {
-      console.log(err.response.data.value.errors);
+      toast.error('Error: ' + err);
     });
 }
 
@@ -236,7 +235,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
       return orderFromRes;
     })
     .catch((err) => {
-      console.log(err.response.data);
+      toast.error('Error: ' + err);
     });
 }
 
