@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import store from '@/store';
 import { getNode } from '@formkit/core';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import SignleSubjectOfBusinnesWithImg from './SignleSubjectOfBusinnesWithImg.vue'
 import VueHorizontal from "vue-horizontal";
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
@@ -96,6 +96,7 @@ const modalIdAddOrEditSubjects = Symbol('modalIdAddOrEditSubjects')
 const loading = ref(true);
 const imgSource = "src/assets/predmety-podnikania/"
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
+const uniqueSubjects = ref<Company['subjects_of_business']>([]);
 
 const arrOfObjGrafika: Company['subjects_of_business'] = [
     { id: 6, title: "Dizajnérske činnosti", price: 0, description: null, category_id: 1 },
@@ -259,30 +260,35 @@ function addSubjectOfBusinessToAutoselect(objOfArray: any) {
 
 async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
 
-  const res = await store.dispatch("getAllSubjectOfBusiness")
-  console.log(res);
-  loading.value = false
-  if(res.data.data){
+const res = await store.dispatch("getAllSubjectOfBusiness")
+console.log(res);
+loading.value = false
+if(res.data.data){
 
-    if(!search){
-      return res.data.data.map((item: any) => ({ label: item.title, value: item }))  
-    }
-    
-    else {
-      const filteredData = res.data.data.filter((item: any) =>
-        item.title.toLowerCase().includes(search.toLowerCase())
-      );
-      const mappedData = filteredData.map((item: any) => ({
-        label: item.title,
-        value: item,
-      }));
-      return mappedData
-    }  
-  }
+  // Filter out items that already exist in subjects_of_business
+  const newData = res.data.data.filter((item: any) => {
+    return !subjects_of_business.value.some((subject: any) => subject.title === item.title);
+  });
 
-  loading.value = false
-  return []
+  if(!search){
+    return newData.map((item: any) => ({ label: item.title, value: item }))  
+  }    
+  else {
+    const filteredData = newData.filter((item: any) =>
+      item.title.toLowerCase().includes(search.toLowerCase())
+    );
+    const mappedData = filteredData.map((item: any) => ({
+      label: item.title,
+      value: item,
+    }));
+    return mappedData
+  }  
 }
+
+loading.value = false
+return []
+}
+
 
 const components = [ 
     { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "grafika.png", title: "Grafika a design", obj: arrOfObjGrafika },
@@ -308,6 +314,18 @@ const components = [
     subjects_of_business.value.splice(0, subjects_of_business.value.length)
   })
  }
+
+ watch(subjects_of_business, (newVal, oldVal) => {
+  const uniqueSubjects = newVal.filter((subject, index, self) =>
+    index === self.findIndex((t) => (
+      t.title === subject.title && t.title === subject.title
+    ))
+  );
+
+  if (JSON.stringify(uniqueSubjects) !== JSON.stringify(subjects_of_business.value)) {
+    subjects_of_business.value = uniqueSubjects;
+  }
+});
 
  defineExpose({
   subjects_of_business,
