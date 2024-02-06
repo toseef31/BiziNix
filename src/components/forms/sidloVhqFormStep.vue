@@ -18,7 +18,7 @@
                   v-for="vhq in vhqs"
                   :value="vhq.id"
                   :key="vhq.id"
-                  :selected="vhq.id == currentVhq.id"
+                  :selected="vhq.id == currentVhq?.id"
                 >
                   {{ vhq.name }}
                 </option>
