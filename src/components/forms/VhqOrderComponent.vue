@@ -169,13 +169,16 @@ function addHeadquarter(): Promise<Response> {
   headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
 
   headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
-  headquarter.value.is_virtual = true;
   headquarter.value.img = store.state.selectedVhq.img;
   headquarter.value.address_id = store.state.selectedVhq.address_id;
   headquarter.value.registry = false;
   headquarter.value.forwarding = false;
   headquarter.value.scanning = false;
   headquarter.value.shredding = false;
+
+  if(companyDataRef.value.currentCompany.ico == null) {
+    headquarter.value.is_virtual = true;
+  }
 
   return store
     .dispatch("addHeadquarter", headquarter.value)
