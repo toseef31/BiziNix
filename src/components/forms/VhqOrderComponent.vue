@@ -163,14 +163,14 @@ function registerUserAndReturnUserId(): Promise<any> {
     });
 }
 
-function addHeadquarter(): Promise<Response> {
+async function addHeadquarter(): Promise<Response> {
   headquarter.value.owner_name = "Bizinix";
   headquarter.value.description = "Virtualne sidlo pre spolocnost: " + companyDataRef.value.currentCompany.name;
   headquarter.value.name = "VS-" + companyDataRef.value.currentCompany.name;
 
   headquarter.value.price = hqDataRef.value.vhq_package.price * 12;
   headquarter.value.img = store.state.selectedVhq.img;
-  headquarter.value.address_id = store.state.selectedVhq.address_id;
+  
   headquarter.value.registry = false;
   headquarter.value.forwarding = false;
   headquarter.value.scanning = false;
@@ -178,6 +178,24 @@ function addHeadquarter(): Promise<Response> {
 
   if(companyDataRef.value.currentCompany.ico == null) {
     headquarter.value.is_virtual = true;
+    headquarter.value.address_id = store.state.selectedVhq.address_id;
+  } else {
+    const address = {
+      city: companyDataRef.value.companyAddress.city,
+      street: companyDataRef.value.companyAddress.street,
+      psc: companyDataRef.value.companyAddress.psc,
+      country: companyDataRef.value.companyAddress.country
+    };
+
+    await store
+    .dispatch("registerAddress", address)
+    .then((res) => {
+      headquarter.value.address_id = res.address_id;
+    })
+    .catch((err) => {
+      toast.error('Error: ' + err);
+    });
+    
   }
 
   return store
