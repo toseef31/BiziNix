@@ -101,7 +101,7 @@ const payWithStripe = async (order: any) => {
       return
     }
 
-    await payForOrder(order.amount)
+    await payForOrder(order.amount, order)
 
     const paymentResult = await elms.value.instance.confirmCardPayment(clientSecret, {
       payment_method: {
@@ -140,9 +140,10 @@ const payWithStripe = async (order: any) => {
   }
 }
 
-async function payForOrder(amount: number) {
+async function payForOrder(amount: number, order: any) {
   const amountForPay = {
     amount: amount * 100,
+    description: order.id
   }
 
   try {
