@@ -236,7 +236,6 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
           });
         } else {
           await addHeadquarter(address_id).then(async () => {
-            await addCompany(userId).then(async () => {
               addOrder(userId, invoiceProfileId, true).then(() => {
                 router.push({
                   name: "Thanks You New Order",
@@ -245,7 +244,6 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
                   },
                 });
               });
-            });
           });
         }
       } else {
@@ -444,5 +442,4 @@ async function addCompany(userId): Promise<Response> {
       toast.error('Error: ' + err);
     });
 }
-
 </script>

@@ -245,8 +245,15 @@ async function getCompanyDetails() {
 
       currentCompany.value.name = finstatCompanyDetails.value.Name;
       currentCompany.value.ico = finstatCompanyDetails.value.Ico;
+      currentCompany.value.dic = finstatCompanyDetails.value.Dic;
       currentCompany.value.doc_template_id = 1;
       currentCompany.value.doc_sncounter_id = 1;
+
+      if(currentCompany.value.dic) {
+        currentCompany.value.is_dph = true;
+      } else {
+        currentCompany.value.is_dph = false;
+      }
     })
     .catch((err) => {
       toast.error('Error: ' + err);
