@@ -165,6 +165,10 @@ watch(showAddNewCompany, () => {
   addNewCompany();
 });
 
+watch(newCompany, () => {
+  addNewCompany();
+});
+
 const login = async (formdata: any, node: any) => {
   await store.dispatch('loginUser', userForLogin)
     .then(async () => {
