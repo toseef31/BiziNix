@@ -1,5 +1,4 @@
 export default interface CompanyMemberSpolocnik {
-[x: string]: any
   id?: number | null | string
   company_id: number | null
   first_name: string
@@ -23,7 +22,7 @@ export default interface CompanyMemberSpolocnik {
   podiel_v_spolocnosti?: number | null
   rozsah_splatenia_vkladu?: number | null
   je_spravca_vkladu?: boolean
-  je_zakladatel?: boolean
+  je_zakladatel: true
   je_konatel?: boolean
   typ_dokladu_totoznosti?: string
   cislo_dokladu_totoznosti?: string

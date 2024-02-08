@@ -4,7 +4,7 @@
 export default {
   // Global styles apply to _all_ inputs with matching section keys
   global: {
-    fieldset: 'max-w-md border border-gray-400 rounded px-2 pb-1',
+    fieldset: 'max-w-md border border-gray-600 rounded px-2 pb-1',
     help: 'text-xs text-gray-500',
     inner: 'formkit-disabled:bg-gray-600 formkit-disabled:cursor-not-allowed formkit-disabled:pointer-events-none',
     input: 'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none !text-white',
@@ -13,7 +13,7 @@ export default {
     loaderIcon: 'inline-flex items-center w-4 text-gray-600 animate-spin',
     message: 'text-red-500 mb-1 text-xs',
     messages: 'list-none p-0 mt-1 mb-0',
-    outer: 'mb-4 formkit-disabled:opacity-50',
+    outer: 'mb-2 formkit-disabled:opacity-50',
     prefixIcon: 'w-10 flex self-stretch grow-0 shrink-0 rounded-tl rounded-bl border-r border-gray-400 bg-white bg-gradient-to-b from-transparent to-gray-200 [&>svg]:w-full [&>svg]:max-w-[1em] [&>svg]:max-h-[1em] [&>svg]:m-auto',
     suffixIcon: 'w-7 pr-3 p-3 flex self-stretch grow-0 shrink-0 [&>svg]:w-full [&>svg]:max-w-[1em] [&>svg]:max-h-[1em] [&>svg]:m-auto'
   },
@@ -186,16 +186,16 @@ export default {
   repeater: {
     content: 'grow p-3 flex flex-col align-center',
     controlLabel: 'absolute opacity-0 pointer-events-none',
-    controls: 'flex flex-col items-center justify-center bg-gray-100 p-3',
-    downControl: 'hover:text-blue-500 disabled:hover:text-inherit disabled:opacity-25',
+    controls: 'flex flex-col items-center justify-center bg-gray-800 p-3',
+    downControl: 'text-white hover:text-teal-500 disabled:hover:text-inherit disabled:opacity-25 disabled:cursor-not-allowed',
     fieldset: 'py-4 px-5',
     help: 'mb-2 mt-1.5',
-    item: 'flex w-full mb-1 rounded border border-gray-100 border-opacity-25',
+    item: 'flex w-full mb-1 rounded border border-gray-600 border-opacity-25',
     moveDownIcon: 'block w-3 my-1',
     moveUpIcon: 'block w-3 my-1',
-    removeControl: 'text-black hover:text-blue-500 disabled:hover:text-gray-600 disabled:opacity-25',
+    removeControl: 'text-white hover:text-teal-500 disabled:hover:text-gray-600 disabled:opacity-25 disabled:cursor-not-allowed',
     removeIcon: 'block w-5 my-1',
-    upControl: 'hover:text-blue-500 disabled:hover:text-gray-600 disabled:opacity-25'
+    upControl: 'text-white hover:text-teal-500 disabled:hover:text-gray-600 disabled:opacity-25 disabled:cursor-not-allowed',
   },
   slider: {
     outer: 'max-w-md',

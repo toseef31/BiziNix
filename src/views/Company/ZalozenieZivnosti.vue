@@ -336,7 +336,7 @@ async function addCompany(user: User, userId: any, hqId: any) {
   companyOrZivnostModel.value.is_dph = false
   companyOrZivnostModel.value.is_dph = false
   companyOrZivnostModel.value.subjects_of_business = subjects_of_business.value.subjects_of_business
-  companyOrZivnostModel.value.name = user.first_name + " " + user.last_name + " " + businessInfo.value.companyData.name
+  companyOrZivnostModel.value.name = businessInfo.value.companyMemberZivnost.first_name + " " + businessInfo.value.companyMemberZivnost.last_name + " " + businessInfo.value.companyData.name
   companyOrZivnostModel.value.zaciatok_opravnenia = businessInfo.value.companyData.zaciatok_opravnenia
 
   if(headquarter.value.is_virtual) {
