@@ -165,6 +165,10 @@ watch(showAddNewCompany, () => {
   addNewCompany();
 });
 
+watch(newCompany, () => {
+  addNewCompany();
+});
+
 const login = async (formdata: any, node: any) => {
   await store.dispatch('loginUser', userForLogin)
     .then(async () => {
@@ -178,7 +182,7 @@ const login = async (formdata: any, node: any) => {
 
 
 function addNewCompany() {
-  if (showAddNewCompany.value) {
+  if (showAddNewCompany.value || newCompany.value) {
     companies.value.push(companyToAdd.value);
     currentCompany.value = companyToAdd.value;
     store.state.selectedCompany = currentCompany.value;
@@ -241,8 +245,15 @@ async function getCompanyDetails() {
 
       currentCompany.value.name = finstatCompanyDetails.value.Name;
       currentCompany.value.ico = finstatCompanyDetails.value.Ico;
+      currentCompany.value.dic = finstatCompanyDetails.value.Dic;
       currentCompany.value.doc_template_id = 1;
       currentCompany.value.doc_sncounter_id = 1;
+
+      if(currentCompany.value.dic) {
+        currentCompany.value.is_dph = true;
+      } else {
+        currentCompany.value.is_dph = false;
+      }
     })
     .catch((err) => {
       toast.error('Error: ' + err);

@@ -70,18 +70,20 @@ onBeforeMount(async () => {
 async function refreshData() {
   currentCompany.value = store.state.selectedCompany;
 
-  //aktualizovat adresu
-  await store
-    .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
-    .then((response) => {
-      headquarter.value = response.data;
-      store
-        .dispatch("getAddressById", headquarter.value.address_id)
-        .then((response) => {
-          address.value = response.data;
-          store.state.selectedCompanyAddress = address.value;
-        });
-    });
+  if(currentCompany.value.headquarters_id != 0) {
+    //aktualizovat adresu
+    await store
+      .dispatch("getHeadquartersById", currentCompany.value.headquarters_id)
+      .then((response) => {
+        headquarter.value = response.data;
+        store
+          .dispatch("getAddressById", headquarter.value.address_id)
+          .then((response) => {
+            address.value = response.data;
+            store.state.selectedCompanyAddress = address.value;
+          });
+      });
+  }
 }
 
 async function switchSelect(event: any) {

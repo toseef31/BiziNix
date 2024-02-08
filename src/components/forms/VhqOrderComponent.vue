@@ -176,7 +176,7 @@ async function addHeadquarter(): Promise<Response> {
   headquarter.value.scanning = false;
   headquarter.value.shredding = false;
 
-  if(companyDataRef.value.currentCompany.ico == null) {
+  if(companyDataRef.value.currentCompany.ico == null || companyDataRef.value.currentCompany.ico == "") {
     headquarter.value.is_virtual = true;
     headquarter.value.address_id = store.state.selectedVhq.address_id;
   } else {

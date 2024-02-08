@@ -26,13 +26,13 @@
                     :options="['Slovensko', 'Česká republika']" validation="required" validation-visibility="dirty"
                     v-model="userAddress.country" :value="userAddress.country" />
             </div>
-            <div class="flex flex-col py-6 px-6 bg-gray-200 rounded-r-lg">
+            <div class="flex flex-col py-6 px-6 bg-gray-800 rounded-r-lg text-white">
                 <div class="flex flex-col">
                     <div class="font-bold text-2xl">
                         Preposlanie pošty za <br>5€/preposlanie
                     </div>
                     <div class="py-4">
-                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+                        <hr class="h-px my-8 bg-gray-200 border-0">
                     </div>
                     <div class="underline font-bold text-xl">
                         Na zaplatenie {{ totalToPay }}€
@@ -94,19 +94,19 @@
     </div>
     <div class="flex flex-col p-8" v-else="type == 2">
         <div class="flex justify-center text-gray-800 font-extrabold text-4xl py-8">Žiadosť o SCAN</div>
-        <div class="flex flex-row justify-center">
+        <div class="flex flex-row justify-center text-white">
             <div class="flex flex-col justify-start py-6 px-6">
                 <div class="w-full md:w-1/2 p-4 flex items-center justify-center">
                     <img src="@/assets/robot_scan.png" class="max-w-sm md:max-w-md" />
                 </div>
             </div>
-            <div class="flex flex-col py-6 px-6 bg-gray-200 rounded-r-lg">
+            <div class="flex flex-col py-6 px-6 bg-gray-800 rounded-r-lg">
                 <div class="flex flex-col">
                     <div class="font-bold text-2xl">
                         Vytvorenie scanu za <br>0.09€/1g zásielky
                     </div>
                     <div class="py-4">
-                        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+                        <hr class="h-px my-8 bg-gray-200 border-0">
                     </div>
                     <div class="underline font-bold text-xl">
                         Na zaplatenie {{ payAmount }}€ </div>
