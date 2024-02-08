@@ -182,7 +182,7 @@ const login = async (formdata: any, node: any) => {
 
 
 function addNewCompany() {
-  if (showAddNewCompany.value) {
+  if (showAddNewCompany.value || newCompany.value) {
     companies.value.push(companyToAdd.value);
     currentCompany.value = companyToAdd.value;
     store.state.selectedCompany = currentCompany.value;
