@@ -115,15 +115,17 @@ const submitHandler = async (formdata: any, node: any) => {
   try{
     
     if(selectedOptionForPay.value === 'stripe'){
-      await childRefComponentForPay.value.payWithStripe(order.value)
+      await childRefComponentForPay.value.payWithStripe(order.value);
     } else {
+      order.value.payment_method = selectedOptionForPay.value;
+      await store.dispatch('updateOrderById', order.value);
       await router.push({
           name:"Payment",
           params: {
             orderId: orderId,
             paymentMethod: selectedOptionForPay.value
           }
-      })
+      });
     }
     
     /*order.value.payment_method = selectedOptionForPay.value
