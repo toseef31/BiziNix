@@ -31,7 +31,6 @@
     >
       <FormKit type="select" name="typ_zakladatela"
         label="Typ zakladateľa"
-        placeholder="Vybrať"
         :options="[
           { value: 1, label: 'Fyzická osoba' },
           { value: 2, label: 'Právnicka osoba' }
@@ -267,15 +266,31 @@
       help="Od 1.1.2016 finančné prostriedky do výšky 5000 eur nemusia byť vkladané ná účet v banke. V prípade jediného zakladateľa musí byť základné imanie splatené v plnom rozsahu, teda 5000 eur (100%). Ak je zakladateľov viac, rozsah splatenia základného imania postačí vo výške 2500 eur."
     />
   </div>
-  <div class="my-4">
-    <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
-      :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod" validation="required" />
-    <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
-      <FormKit type="textarea" label="Iné osoby"
-        placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
-        help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
-        rows="3" />
-    </div>
+  <div class="my-2">
+    <template v-if="countOfPravOsobaFromZakladatelia >= 1 && countOfFyzOsobaFromZakladatelia == 0">
+      <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
+        :options="{ 2: 'Iné osoby' }" :value="2" name="konecny_uzivatelia_vyhod" validation="required"
+      />
+      <FormKit type="textarea" v-model="companyOrZivnostModel.note" label="Konečným užívateľom výhod sú iné osoby"
+          placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          rows="3"
+          validation="required"
+        />
+    </template>
+    <template v-else>
+      <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
+        :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod" validation="required"
+      />
+      <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
+        <FormKit type="textarea" v-model="companyOrZivnostModel.note" label="Iné osoby"
+          placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          rows="3"
+          validation="required"
+        />
+      </div>
+    </template>
   </div>
   <div class="my-4">
     <FormKit v-model="companyOrZivnostModel.sposob_konania_konatelov" type="radio" label="Spôsob konania konateľov"
@@ -338,6 +353,14 @@ const countOfZakladatelia = computed(() => {
 
 const countOfKonatelFromZakladatelia = computed(() => {
   return zakladateliaSpolocniciList.value.filter(item => item.je_konatel).length;
+});
+
+const countOfPravOsobaFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value.filter(member => member.typ_zakladatela == 2).length;
+});
+
+const countOfFyzOsobaFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value.filter(member => member.typ_zakladatela == 1).length;
 });
 
 const konatelNamesFromZakladatelia = computed(() => {
