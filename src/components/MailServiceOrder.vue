@@ -35,7 +35,7 @@
                         <hr class="h-px my-8 bg-gray-200 border-0">
                     </div>
                     <div class="underline font-bold text-xl">
-                        Na zaplatenie {{ totalToPay }}€
+                        Na zaplatenie {{ totalToPay.toFixed(2) }}€
                     </div>
                     <div class="pt-2 pb-8">
                         Gramáž zvolených zásielok: {{ totalWeight }} gramov
@@ -109,7 +109,7 @@
                         <hr class="h-px my-8 bg-gray-200 border-0">
                     </div>
                     <div class="underline font-bold text-xl">
-                        Na zaplatenie {{ payAmount }}€ </div>
+                        Na zaplatenie {{ payAmount.toFixed(2) }}€ </div>
                             <div class="pt-2 pb-8">
                                 Gramáž zvolených zásielok: {{ totalWeight }} gramov
                             </div>
