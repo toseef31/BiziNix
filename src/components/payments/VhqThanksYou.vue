@@ -126,8 +126,8 @@ const submitHandler = async (formdata: any, node: any) => {
       })
     }
     
-    order.value.payment_method = selectedOptionForPay.value
-    await store.dispatch('updateOrderById', order.value)
+    /*order.value.payment_method = selectedOptionForPay.value
+    await store.dispatch('updateOrderById', order.value)*/
 
     node.clearErrors()
   } catch (err: any){
