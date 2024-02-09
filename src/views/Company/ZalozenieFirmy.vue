@@ -82,7 +82,7 @@
             </FormKit>
 
             <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" previous-label="Naspäť">
-              <udajeSpolocnostiFormStep ref="companyMembersAndDetails" />
+              <udajeSpolocnostiFormStepRepeater ref="companyMembersAndDetails" />
               <template #stepNext="{ handlers, node }">
                 <!-- incrementStep returns a callable function -->
                 <FormKit
@@ -143,7 +143,8 @@ import type User from "@/types/User";
 import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
 import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
 import obchodneSidloFormStep from "@/components/forms/obchodneSidloFormStep.vue";
-import udajeSpolocnostiFormStep from "@/components/forms/udajeSpolocnostiFormStep.vue";
+//import udajeSpolocnostiFormStep from "@/components/forms/udajeSpolocnostiFormStep.vue";
+import udajeSpolocnostiFormStepRepeater from "@/components/forms/udajeSpolocnostiFormStepRepeater.vue";
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
 import type Company from "@/types/Company";
@@ -162,7 +163,8 @@ let errorMsgCompany = ref('');
 let sucessMsg = ref('');
 let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
 let sidloCompanyAddress = ref<InstanceType<typeof obchodneSidloFormStep>>(null as any)
-let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>>(null as any);
+//let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>>(null as any);
+let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStepRepeater>>(null as any);
 let userRegisterForm = ref<InstanceType<typeof userRegisterFormStep>>(null as any)
 let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any)
 let user = ref<User>();
