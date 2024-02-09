@@ -546,13 +546,13 @@ async function setSerialNumber() {
 }
 
 async function refreshData() {
-  documentSubtypeChanged();
 
   await store
     .dispatch("getSelectedCompany", store.state.selectedCompany.id)
     .then(async (response) => {
       company.value = response.data;
       document.value.company_id = company.value.id;
+      await setSerialNumber();
       //aktualizovat adresu
       await store
         .dispatch("getHeadquartersById", company.value.headquarters_id)
@@ -629,7 +629,7 @@ function vatEntered(event: any, item: any) {
 
 }
 
-function documentSubtypeChanged() {
+async function documentSubtypeChanged() {
   switch (document.value.subtype) {
     case 1:
       document.value.type = 1;
@@ -657,6 +657,7 @@ function documentSubtypeChanged() {
       documentTypeStr.value = "objednávku";
       break;
   }
+  await setSerialNumber();
 }
 
 function addItem() {
@@ -727,6 +728,5 @@ function closeModal() {
 onBeforeMount(async () => {
   store.state.mySubmenuActive = 1;
   await refreshData();
-  await setSerialNumber();
 });
 </script>
