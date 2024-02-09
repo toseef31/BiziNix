@@ -31,7 +31,6 @@
     >
       <FormKit type="select" name="typ_zakladatela"
         label="Typ zakladateľa"
-        placeholder="Vybrať"
         :options="[
           { value: 1, label: 'Fyzická osoba' },
           { value: 2, label: 'Právnicka osoba' }
@@ -73,11 +72,18 @@
       </div>
       <div>
         <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-          <FormKit type="number" name="vyska_vkladu" label="Výška vkladu €" validation="required|min:750|max:5000"
-            help="Zadajte hodnotu napr. 5000" />
-          <FormKit type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti %" validation="required|max:100"
+          <FormKit type="number" :index="index" name="vyska_vkladu" label="Výška vkladu €"
+            validation="required|min:750|max:5000"
+            help="Zadajte hodnotu napr. 5000"
+          />
+          <FormKit type="number" :index="index" name="podiel_v_spolocnosti" label="Podiel v spoločnosti %"
+            :validation-rules="{ validatePodielVSpolocnosti }"
+            validation="required|max:100|min:0|validatePodielVSpolocnosti"
+            :validation-messages="{
+              validatePodielVSpolocnosti: 'Podiel všetkých spoločníkov je väčší než 100 %.'
+            }"
             help="Zadajte hodnotu 0 - 100" />
-          <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu €" validation="required|min:750|max:5000"
+          <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu €" validation="required|min:750"
             help="Zadajte hodnotu napr. 5000" />
         </div>
         <div>
@@ -121,6 +127,19 @@
     <template v-if="zakladateliaSpolocniciList.length === 0">
         <div class="font-bold">Zatiaľ nebol pridaný žiadný zakladateľ (spoločník).</div>
     </template>
+    <ul class="list-none list-inside my-1">
+      <li class="" v-for="konatel in konatelNamesFromZakladatelia">
+        <div class="flex flex-row items-center">
+          <Tippy>
+            <UserIcon class="h-5 w-5 text-bizinix-teal" aria-hidden="true" />
+            <template #content>
+              Konateľ je pridaný ako zakladateľ.
+            </template>
+          </Tippy>
+          <span class="text-lg">{{ konatel.first_name }} {{ konatel.last_name }}</span>
+        </div>
+      </li>
+    </ul>
   </div>
   <!-- <button @click.prevent="logValueForKonatelia">Log for list konatelia.</button> -->
   <!-- Modal for SpolocnikZakladatel Add/Edit -->
@@ -160,8 +179,10 @@
         name="rep_konatelia"
         type="repeater"
         :insert-control="true"
+        :remove="{ logValueForKonatelia }"
         add-label="+ Pridať konateľa"
         v-model="konateliaList"
+        min="0"
       >
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
@@ -223,25 +244,53 @@
   </VueFinalModal>
   <!-- Inputs inside step for paren formm -->
   <h2 class="text-xl my-4">Základné imanie </h2>
-  <div class="grid grid-cols-3 gap-4 my-4">
-    <FormKit type="number" name="vyska" label="Výška €" validation="required|min:5000"
+  <div class="grid grid-cols-2 gap-4 my-4">
+    <FormKit type="number" name="vyska" label="Výška €"
       v-model="companyOrZivnostModel.imanie_vyska"
+      :validation-rules="{ validateImanieVyska }"
+      validation="required|min:5000|validateImanieVyska"
+      :validation-messages="{
+        validateImanieVyska: 'Základné imanie sa nezhoduje so súčtom vkladov spoločníkov'
+      }"
       help="Od 1.1.2016 finančné prostriedky do výšky 5000 eur nemusia byť vkladané ná účet v banke. Minimálna výška základného imania pri s.r.o. je podľa zákona 5000,- Eur. Môžete zadať aj viac."
     />
-    <FormKit type="number" name="rozsah_splatenia" label="Rozsah splatenia €" validation="required|min:2500"
+    <FormKit type="number" name="rozsah_splatenia" label="Rozsah splatenia €"
       v-model="companyOrZivnostModel.imanie_splatene"
+      :validation-rules="{ validateMinRozsahSplatenia, validateAllRozsahSplatenia }"
+      validation="required|min:2500|validateMinRozsahSplatenia|validateAllRozsahSplatenia"
+      validation-visibility="blur"
+      :validation-messages="{
+        validateMinRozsahSplatenia: 'V prípade jediného zakladateľa musí byť základné imanie splatené v plnom rozsahu, teda 5000 eur (100%). Ak je zakladateľov viac, rozsah splatenia základného imania postačí vo výške 2500 eur.',
+        validateAllRozsahSplatenia: 'Rozsah splatenia základného imania sa nezhoduje so súčtom rozsahu splatenia vkladov spoločníkov.',
+      }"
       help="Od 1.1.2016 finančné prostriedky do výšky 5000 eur nemusia byť vkladané ná účet v banke. V prípade jediného zakladateľa musí byť základné imanie splatené v plnom rozsahu, teda 5000 eur (100%). Ak je zakladateľov viac, rozsah splatenia základného imania postačí vo výške 2500 eur."
     />
   </div>
-  <div class="my-4">
-    <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
-      :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod" validation="required" />
-    <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
-      <FormKit type="textarea" label="Iné osoby"
-        placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
-        help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
-        rows="3" />
-    </div>
+  <div class="my-2">
+    <template v-if="countOfPravOsobaFromZakladatelia >= 1 && countOfFyzOsobaFromZakladatelia == 0">
+      <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
+        :options="{ 2: 'Iné osoby' }" :value="2" name="konecny_uzivatelia_vyhod" validation="required"
+      />
+      <FormKit type="textarea" v-model="companyOrZivnostModel.note" label="Konečným užívateľom výhod sú iné osoby"
+          placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          rows="3"
+          validation="required"
+        />
+    </template>
+    <template v-else>
+      <FormKit v-model="companyOrZivnostModel.konecny_uzivatelia_vyhod" type="radio" label="Konečným užívateľom výhod sú"
+        :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod" validation="required"
+      />
+      <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
+        <FormKit type="textarea" v-model="companyOrZivnostModel.note" label="Iné osoby"
+          placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
+          rows="3"
+          validation="required"
+        />
+      </div>
+    </template>
   </div>
   <div class="my-4">
     <FormKit v-model="companyOrZivnostModel.sposob_konania_konatelov" type="radio" label="Spôsob konania konateľov"
@@ -260,8 +309,9 @@
     Počet pridaných zakladatelov {{ countOfZakladatelia }}
     {{ zakladateliaSpolocniciList }}
     {{ konateliaList }}
+    rozsah_splatenia {{ calculatedRozsahSplatenia }}
   </div>
-  <div v-if="countOfKonatelia == 0 || countOfZakladatelia == 0"
+  <div v-if="countOfKonatelFromZakladatelia == 0 || countOfZakladatelia == 0"
     class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
     <b>Prosím pridajte minimálne jedného zakladateľa a konateľa spoločnosťi.</b>
   </div>
@@ -269,7 +319,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, onMounted, reactive, watch, ref, toRef, type Ref, effect } from 'vue';
-import { PencilIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, XMarkIcon, UserIcon } from '@heroicons/vue/24/outline'
 import { useVfm, VueFinalModal } from 'vue-final-modal'
 import { getNode } from '@formkit/core'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
@@ -279,8 +329,6 @@ import { Tippy } from "vue-tippy";
 import 'tippy.js/dist/tippy.css' // optional for styling
 
 const vfm = useVfm()
-const modalAddOrEditSpolocnikZakladatel = Symbol('modalAddOrEditSpolocnikZakladatel')
-const modalAddOrEditKonatel = Symbol('modalAddOrEditKonatel')
 const modalRemoveSpolocnikZakladatel = Symbol('modalRemoveSpolocnikZakladatel')
 const modalRemoveKonatel = Symbol('modalRemoveKonatel')
 const buttonModalText = ref<string>()
@@ -289,7 +337,6 @@ const titleModalText = ref<string>('Modal Title')
 let isCheckboxHidden = ref(false);
 
 onMounted(()=> {
-  console.log("onMounted");
   zakladateliaSpolocniciList.value.length = 0  
   konateliaList.value.length = 0
 })
@@ -304,6 +351,24 @@ const countOfZakladatelia = computed(() => {
   return zakladateliaSpolocniciList.value.length
 })
 
+const countOfKonatelFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value.filter(item => item.je_konatel).length;
+});
+
+const countOfPravOsobaFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value.filter(member => member.typ_zakladatela == 2).length;
+});
+
+const countOfFyzOsobaFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value.filter(member => member.typ_zakladatela == 1).length;
+});
+
+const konatelNamesFromZakladatelia = computed(() => {
+  return zakladateliaSpolocniciList.value
+    .filter(item => item.je_konatel)
+    .map(item => ({ first_name: item.first_name, last_name: item.last_name }));
+});
+
 const countOfKonatelia = computed(() => {
   return konateliaList.value.length
 })
@@ -316,7 +381,7 @@ let companyOrZivnostModel = ref({
   dic: '',
   icdph: '',
   headquarters_id: 0,
-  imanie_vyska: 0,
+  imanie_vyska: 5000,
   imanie_splatene: 0,
   is_dph: false,
   zaciatok_opravnenia: '',
@@ -444,7 +509,13 @@ effect(() => {
 });
 
 const calculatedRozsahSplatenia = computed(() => {
-  return zakladateliaSpolocniciList.value.reduce((acc, item) => acc + (item.rozsah_splatenia_vkladu as number), 0);
+  return zakladateliaSpolocniciList.value.reduce((acc, item) => {
+    let rozsah_splatenia_vkladu = Number(item.rozsah_splatenia_vkladu);
+    if (isNaN(rozsah_splatenia_vkladu)) {
+      rozsah_splatenia_vkladu = 0;  // or handle error
+    }
+    return acc + rozsah_splatenia_vkladu;
+  }, 0);
 });
 
 effect(() => {
@@ -498,6 +569,81 @@ async function isRodneCisloUnique(node: any) {
   }
 }
 
+function validateMinRozsahSplatenia(node) {
+  if(zakladateliaSpolocniciList.value.length == 1 && node.value < 5000) {
+    return false;
+  }
+  else if(zakladateliaSpolocniciList.value.length >= 2 && node.value < 2500)  {
+    return false;     
+  } else {
+    return true;
+  }
+}
+
+function validateAllRozsahSplatenia(node) {
+  if(calculatedRozsahSplatenia.value == node.value){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+function validateImanieVyska(node) {
+  if(calculatedImanieVyska.value == node.value){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+function validatePodielVSpolocnosti(node){
+    // Update the podiel_v_spolocnosti of the item at the given index
+    zakladateliaSpolocniciList.value[node.props.index].podiel_v_spolocnosti = Number(node.value);
+
+    // Calculate the sum of podiel_v_spolocnosti for all items
+    let podiel = zakladateliaSpolocniciList.value.reduce((acc, item) => {
+      let podiel_v_spolocnosti = Number(item.podiel_v_spolocnosti);
+      if (isNaN(podiel_v_spolocnosti)) {
+        podiel_v_spolocnosti = 0;  // or handle error
+      }
+      return acc + podiel_v_spolocnosti;
+    }, 0);
+    
+    console.log(podiel)
+    if(podiel > 100){
+      return false
+    }
+    else {
+      return true
+    }
+}
+
+function validateVyskaVkladu(node){
+    // Update the podiel_v_spolocnosti of the item at the given index
+    zakladateliaSpolocniciList.value[node.props.index].vyska_vkladu = Number(node.value);
+
+    // Calculate the sum of podiel_v_spolocnosti for all items
+    let vyskaVkladu = zakladateliaSpolocniciList.value.reduce((acc, item) => {
+      let vyska_vkladu = Number(item.vyska_vkladu);
+      if (isNaN(vyska_vkladu)) {
+        vyska_vkladu = 0;  // or handle error
+      }
+      return acc + vyska_vkladu;
+    }, 0);
+    
+    if(zakladateliaSpolocniciList.value.length == 1 && vyskaVkladu < 5000){
+      return false
+    }
+    else if(zakladateliaSpolocniciList.value.length >= 2 && vyskaVkladu < 2500) {
+      return false
+    }
+    else {
+      return true
+    }
+}
+
 watch(zakladateliaSpolocniciList, (newList) => {let checkedIndex = newList.findIndex(item => item.je_spravca_vkladu === true);
   isCheckboxHidden.value = checkedIndex !== -1;
 }, { deep: true });
@@ -544,7 +690,8 @@ defineExpose({
   zakladateliaSpolocniciList,
   konateliaList,
   countOfKonatelia,
-  countOfZakladatelia
+  countOfZakladatelia,
+  countOfKonatelFromZakladatelia
 })
 
 </script>

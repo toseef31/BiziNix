@@ -171,7 +171,7 @@ let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
 const isNextButtonDisabled = computed(() => {
-  if(companyMembersAndDetails.value?.countOfZakladatelia >= 1 && companyMembersAndDetails.value?.countOfKonatelia >= 1){
+  if(companyMembersAndDetails.value?.countOfZakladatelia >= 1 && companyMembersAndDetails.value?.countOfKonatelFromZakladatelia >= 1){
     return false
   }
   else {
@@ -391,10 +391,11 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
   }
 }
 
-async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any> {
+async function addMultipleCompanyMembersSpolocnici(companyId: any, companyName: any): Promise<any> {
 
-  companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: any) => {
+  companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: number) => {
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
+    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
   })
 
   let zakladatelia = ref({
@@ -410,10 +411,11 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any>
   }
 }
 
-async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> {
+async function addMultipleCompanyMembersKonatelia(companyId: any, companyName: any): Promise<any> {
 
-  companyMembersAndDetails.value.konateliaList.forEach((item, index: any) => {
+  companyMembersAndDetails.value.konateliaList.forEach((item, index: number) => {
     companyMembersAndDetails.value.konateliaList[index].company_id = companyId
+    companyMembersAndDetails.value.konateliaList[index].obchodne_meno = companyName
   })
 
   let konatelia = ref({
@@ -520,8 +522,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
 
     const companyRes = await addCompany(userId, regHqRes.id);
     
-    await addMultipleCompanyMembersSpolocnici(companyRes.data.company.id)
-    await addMultipleCompanyMembersKonatelia(companyRes.data.company.id)
+    await addMultipleCompanyMembersSpolocnici(companyRes.data.company.id, companyRes.data.company.name)
+    await addMultipleCompanyMembersKonatelia(companyRes.data.company.id, companyRes.data.company.name)
 
     let invoiceProfileId = null as unknown as number;
     if(invoiceData.value.createNewInvoiceProfile){
