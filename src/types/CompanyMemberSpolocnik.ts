@@ -26,5 +26,11 @@ export default interface CompanyMemberSpolocnik {
   je_konatel?: boolean
   typ_dokladu_totoznosti?: string
   cislo_dokladu_totoznosti?: string
-  je_zastupitel: boolean
+  zastupitel?: {
+    first_name: string,
+    last_name: string,
+    date_of_birth: string,
+    rodne_cislo: string
+    je_zastupitel: true
+  }
 }

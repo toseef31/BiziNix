@@ -381,8 +381,7 @@ async function addCompanyMember(companyId: number){
     je_konatel: false,
     typ_dokladu_totoznosti: '',
     cislo_dokladu_totoznosti: '',
-    typ_zakladatela: 1,
-    je_zastupitel: false
+    typ_zakladatela: 1
   }
 
   return store.dispatch('addSingleCompanyMember', member)

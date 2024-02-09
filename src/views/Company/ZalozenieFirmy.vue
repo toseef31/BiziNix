@@ -171,7 +171,9 @@ let user = ref<User>();
 let companyOrZivnostModel = ref<Company>({} as any);
 
 const isNextButtonDisabled = computed(() => {
-  if(companyMembersAndDetails.value?.countOfZakladatelia >= 1 && companyMembersAndDetails.value?.countOfKonatelFromZakladatelia >= 1){
+  if(companyMembersAndDetails.value?.countOfKonatelFromZakladatelia >= 1
+    || companyMembersAndDetails.value?.countOfKonatelia >= 1
+  ){
     return false
   }
   else {
@@ -410,6 +412,33 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any, companyName: 
     toast.error('Error: ' + err)
   }
 }
+
+// async function addMultipleCompanyMembersZastupitelia(companyId: any, companyName: any): Promise<any> {
+
+//   let zastupitelia = ref();
+
+//   companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: number) => {
+//     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
+//     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
+
+//     if(companyMembersAndDetails.value.zakladateliaSpolocniciList[index].zastupitel?.first_name){
+//       zastupitelia.value.push(companyMembersAndDetails.value.zakladateliaSpolocniciList[index].zastupitel)
+//     }
+
+//   })
+
+//   let zakladatelia = ref({
+//     members: companyMembersAndDetails.value.zakladateliaSpolocniciList
+//   })
+
+//   try {
+//     const res = await store.dispatch('addMultipleCompanyMembers', zakladatelia.value)
+//     console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
+//     return res
+//   } catch(err) {
+//     toast.error('Error: ' + err)
+//   }
+// }
 
 async function addMultipleCompanyMembersKonatelia(companyId: any, companyName: any): Promise<any> {
 

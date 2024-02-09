@@ -101,14 +101,17 @@
       <div v-if="value.typ_zakladatela == 2">
         <h2 class="text-xl my-4 text-white">Zastúpenie osobou (konateľ)</h2>
         <div class="grid grid-cols-2 gap-4">
-          <FormKit type="text" v-model="zastupitel.first_name" label="Krstné meno" validation="required|length:2" />
-          <FormKit type="text" v-model="zastupitel.last_name" label="Priezvisko" validation="required|length:2" />
-          <FormKit type="date" style="color-scheme: dark;" v-model="zastupitel.date_of_birth" autocomplete="date_of_birth"
-            label="Dátum narodenia" validation="required" />           
-          <FormKit type="text" v-model="zastupitel.rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-            validation="required|length:9"
-            validation-visibility="blur"
-          />            
+          <FormKit type="group" name="zastupitel">
+            <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
+            <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
+            <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth"
+              label="Dátum narodenia" validation="required"
+            />           
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
+              validation="required|length:9"
+              validation-visibility="blur"
+            />            
+          </FormKit>
         </div>    
       </div>
         <!-- <div class="text-white">Rod. cislo: {{ rodneCislo.cislo }}</div> -->
@@ -311,7 +314,7 @@
     {{ konateliaList }}
     rozsah_splatenia {{ calculatedRozsahSplatenia }}
   </div>
-  <div v-if="countOfKonatelFromZakladatelia == 0 || countOfZakladatelia == 0"
+  <div v-if="countOfKonatelia == 0 || countOfZakladatelia == 0"
     class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
     <b>Prosím pridajte minimálne jedného zakladateľa a konateľa spoločnosťi.</b>
   </div>
@@ -403,35 +406,35 @@ let companyOrZivnostModel = ref({
 let zakladateliaSpolocniciList: Ref<CompanyMemberSpolocnik[]> = ref<CompanyMemberSpolocnik[]>([]);
 let konateliaList: Ref<CompanyMemberKonatel[]> = ref<CompanyMemberKonatel[]>([]);
 
-let zastupitel = ref({
-  company_id: null,
-  ico: '',
-  typ_zakladatela: 1,
-  obchodne_meno: '',
-  first_name: '',
-  last_name: '',
-  title_before: '',
-  title_after: '',
-  gender: '',
-  nationality: '',
-  date_of_birth: '',
-  rodne_cislo: '',
-  street: '',
-  street_number: '',
-  street_number2: '',
-  city: '',
-  psc: '',
-  country: '',
-  typ_dokladu_totoznosti: '',
-  cislo_dokladu_totoznosti: '',
-  vyska_vkladu: 0,
-  podiel_v_spolocnosti: 0,
-  rozsah_splatenia_vkladu: 0,
-  je_spravca_vkladu: false,
-  je_zakladatel: false,
-  je_konatel: false,
-  je_zastupitel: true
-});
+// let zastupitel = ref({
+//   company_id: null,
+//   ico: '',
+//   typ_zakladatela: 1,
+//   obchodne_meno: '',
+//   first_name: '',
+//   last_name: '',
+//   title_before: '',
+//   title_after: '',
+//   gender: '',
+//   nationality: '',
+//   date_of_birth: '',
+//   rodne_cislo: '',
+//   street: '',
+//   street_number: '',
+//   street_number2: '',
+//   city: '',
+//   psc: '',
+//   country: '',
+//   typ_dokladu_totoznosti: '',
+//   cislo_dokladu_totoznosti: '',
+//   vyska_vkladu: 0,
+//   podiel_v_spolocnosti: 0,
+//   rozsah_splatenia_vkladu: 0,
+//   je_spravca_vkladu: false,
+//   je_zakladatel: false,
+//   je_konatel: false,
+//   je_zastupitel: true
+// });
 
 function getDefaultNewItemSpolocnik(): CompanyMemberSpolocnik {
   return {
@@ -460,8 +463,7 @@ function getDefaultNewItemSpolocnik(): CompanyMemberSpolocnik {
     rozsah_splatenia_vkladu: 5000,
     je_spravca_vkladu: false,
     je_zakladatel: true,
-    je_konatel: true,
-    je_zastupitel: false
+    je_konatel: false
   };
 }
 
@@ -476,6 +478,7 @@ function getDefaultNewItemKonatel(): CompanyMemberKonatel {
     date_of_birth: '',
     rodne_cislo: '',
     street: '',
+    obchodne_meno: '',
     street_number: '',
     street_number2: '',
     city: '',
