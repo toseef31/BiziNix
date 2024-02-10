@@ -10,10 +10,11 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 8080,
   },
-  plugins: [vue(), vueJsx()],
+  plugins: [vue(),vueJsx()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
 });
+  

@@ -314,7 +314,7 @@
     {{ konateliaList }}
     rozsah_splatenia {{ calculatedRozsahSplatenia }}
   </div>
-  <div v-if="countOfKonatelia == 0 || countOfZakladatelia == 0"
+  <div v-if="countOfKonatelFromZakladatelia == 0 && countOfKonatelia == 0"
     class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
     <b>Prosím pridajte minimálne jedného zakladateľa a konateľa spoločnosťi.</b>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen justify-between">
+  <div class="flex flex-col h-screen justify-between bg-gray-bizinix">
     <Disclosure as="nav" class="bg-gray-900 hidden sm:block" v-slot="{ open }">
       <div class="mx-auto max-w-full px-4 sm:px-6">
         <div class="relative flex items-center justify-between h-12">
