@@ -292,8 +292,6 @@ async function getCompanies(userId) {
     .dispatch("getAllCompaniesByUserId", userId)
     .then((response) => {
       companies.value = response.data.data;
-      if(companies.value.length > 0)
-        existingCompany.value = true;
     }).catch((err) => {
       toast.error('Error: ' + err)
     });
@@ -302,7 +300,6 @@ async function getCompanies(userId) {
 onMounted(async () => {
   if (store.state.user.userId) {
     await getCompanies(user.value.userId);
-    currentCompany.value = store.state.selectedCompany;
   }
 });
 
