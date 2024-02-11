@@ -194,12 +194,12 @@
     </EditItemForCompany>
     <!-- Konatelia -->
     <EditItemForCompany title="Konatelia">
-      <div v-for="(konatelDiv, index ) in konateliaFromOrSr" class="grid grid-cols-2 items-center space-y-4">
+      <div v-for="(konatelDiv, index ) in konateliaFromOrSr" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
           <h3 :index="index" class="text-lg" :class="{ 'text-cross': compareArraysAtIndex(konateliaFromOrSr, newKonateliaList, index) }">{{ konatelDiv.name }}</h3>
-          <div v-for="newKonatel in newKonateliaList">
-            <h3 class="text-lg">{{ newKonatel?.first_name + " " + newKonatel?.last_name}}</h3>             
-          </div>
+          <div v-if="newKonateliaList[index]">
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }}</h3>             
+          </div>  
         </div>
         <div class="space-x-4">
           <button @click="openEditKonatel(index)" class="bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
