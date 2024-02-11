@@ -276,11 +276,12 @@ import type Doklad from "@/types/Document";
 import { useRouter } from "vue-router";
 import { Dialog, DialogPanel } from '@headlessui/vue';
 import * as FileSaver from "file-saver";
+declare var saveAs: typeof FileSaver.saveAs;
 import moment from "moment";
 import * as _ from "lodash";
 import type Company from "@/types/Company";
 import { toast } from "vue3-toastify";
-import { CreditCardIcon } from "@heroicons/vue/24/outline" 
+import { CreditCardIcon } from "@heroicons/vue/24/outline"
 
 const documents = computed(() => store.state.documents);
 const router = useRouter();
@@ -315,8 +316,8 @@ watch(
   }
 );
 
-function saveAs(filename: string, blob: Blob) {
-  FileSaver.saveAs(blob, filename);
+function saveFile(filename: string, blob: Blob) {
+  saveAs(blob, filename);
 }
 
 function editDocument(document: Doklad) {
@@ -445,7 +446,7 @@ async function downlaodSingleDocument(document: any) {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: "application/pdf" });
 
-        saveAs("document", blob);
+        saveFile("document", blob);
       })
       .catch((e: Error) => {
         toast.error('Error: ' + e);
@@ -463,7 +464,7 @@ async function downlaodSingleDocument(document: any) {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray]);
 
-        saveAs(document.pdf, blob);
+        saveFile(document.pdf, blob);
       })
       .catch((e: Error) => {
         toast.error('Error: ' + e);
@@ -489,7 +490,7 @@ async function downloadMultipleDocuments() {
           const byteArray = new Uint8Array(byteNumbers);
           const blob = new Blob([byteArray], { type: "application/pdf" });
 
-          saveAs("document", blob);
+          saveFile("document", blob);
         })
         .catch((e: Error) => {
           toast.error('Error: ' + e);
@@ -506,7 +507,7 @@ async function downloadMultipleDocuments() {
           const byteArray = new Uint8Array(byteNumbers);
           const blob = new Blob([byteArray]);
 
-          saveAs(value.pdf, blob);
+          saveFile(value.pdf, blob);
         })
         .catch((e: Error) => {
           toast.error('Error: ' + e);

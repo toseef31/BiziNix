@@ -85,6 +85,7 @@
 import store from '@/store';
 import { onMounted, ref } from 'vue';
 import * as FileSaver from "file-saver";
+declare var saveAs: typeof FileSaver.saveAs;
 import * as _ from "lodash";
 import dayjs from "dayjs";
 import { toast } from 'vue3-toastify';
@@ -98,8 +99,8 @@ function formatDate(dateString: string) {
     return date.format("DD.MM.YYYY");
 }
 
-function saveAs(filename: string, blob: Blob) {
-    FileSaver.saveAs(blob, filename);
+function saveFile(filename: string, blob: Blob) {
+    saveAs(blob, filename);
 }
 
 async function downloadInvoice(invoice: any) {
@@ -124,7 +125,7 @@ async function downloadInvoice(invoice: any) {
                             }
                             const byteArray = new Uint8Array(byteNumbers);
                             const blob = new Blob([byteArray], { type: 'application/pdf' });
-                            saveAs(singleOrderInvoice.value.file_name, blob);
+                            saveFile(singleOrderInvoice.value.file_name, blob);
                         });
                 })
                 .catch(async (e: Error) => {
@@ -141,7 +142,7 @@ async function downloadInvoice(invoice: any) {
                                     }
                                     const byteArray = new Uint8Array(byteNumbers);
                                     const blob = new Blob([byteArray], { type: 'application/pdf' });
-                                    saveAs(singleOrderInvoice.value.file_name, blob);
+                                    saveFile(singleOrderInvoice.value.file_name, blob);
                                 });
                         })
                 });
