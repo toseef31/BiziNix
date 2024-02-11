@@ -1,61 +1,68 @@
 <template>
   <!-- PRVA SEKCIA -->
   <div
-    class="relative z-0 h-full w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
+    class="relative z-0 h-fit w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
     style="
       height: calc(100vh - 200px);
       background-image: url('../src/assets/2.png');
     "
   >
-    <img
-      src="@/assets/robot_stripes.png"
-      class="absolute bottom-[-82px] right-0"
-      style="height: calc(100vh - 260px)"
-    />
     <div
       class="w-full flex h-full"
       style="
         background-image: linear-gradient(to top,rgba(17, 24, 39, 0.75) 0%,rgba(17, 24, 39, 0.95) 100%);
       "
     >
-      <div class="container flex-col justify-center mx-auto flex h-full">
-        <div class="text-5xl text-white leading-normal font-bold">
-          Vytvárajte a<br />
-          spravujte
-        </div>
-        <div class="text-base text-white my-4">
-          <div class="flex items-center space-x-2">
+      <div class="container flex-col justify-center mx-auto flex h-full py-8">
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-col">
+            <div class="text-5xl text-white leading-normal font-bold">
+              Vytvárajte a<br />
+              spravujte
+            </div>
+            <div class="text-base text-white my-4">
+              <div class="flex items-center space-x-2">
+                <div>
+                  Faktúry, ponuky, zmluvy a všetky<br />
+                  dokumenty, ktoré vaša firma<br />
+                  potrebujte
+                </div>
+              </div>
+            </div>
+            <div class="mt-5">
+              <div
+                @click="redirect()"
+                class="w-[400px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+              >
+                <span class="text-center w-full"
+                  >Vyskúšať zadarmo na 3 mesiace</span
+                >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+          <div class="flex flex-col">
             <div>
-              Faktúry, ponuky, zmluvy a všetky<br />
-              dokumenty, ktoré vaša firma<br />
-              potrebujte
+              <img src="@/assets/robot_stripes.png" class="max-w-xs lg:max-w-md" />
             </div>
           </div>
+
         </div>
-        <div class="mt-5">
-          <div
-            @click="redirect()"
-            class="w-[400px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-          >
-            <span class="text-center w-full"
-              >Vyskúšať zadarmo na 3 mesiace</span
-            >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>
