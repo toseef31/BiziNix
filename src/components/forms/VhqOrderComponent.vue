@@ -246,7 +246,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
   order.value.amount_vat = (totalForPay.value) * 0.2;
   order.value.items[0].price = hqDataRef.value.vhq_package.price * 12;
   order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
-  order.value.items[0].description = "Zakúpenie virtuálneho sídla: "+store.state.selectedVhq.name;
+  order.value.items[0].description = "Zakúpenie virtuálneho sídla: "+store.state.selectedVhq.id;
 
   order.value.fakturacne_udaje_id = invoiceProfileId
 
