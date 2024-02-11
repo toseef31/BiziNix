@@ -84,8 +84,7 @@
 <script setup lang="ts">
 import store from '@/store';
 import { onMounted, ref } from 'vue';
-import * as FileSaver from "file-saver";
-declare var saveAs: typeof FileSaver.saveAs;
+import saveAs from "file-saver";
 import * as _ from "lodash";
 import dayjs from "dayjs";
 import { toast } from 'vue3-toastify';
@@ -100,7 +99,7 @@ function formatDate(dateString: string) {
 }
 
 function saveFile(filename: string, blob: Blob) {
-    saveAs(blob, filename);
+  saveAs(blob, filename);
 }
 
 async function downloadInvoice(invoice: any) {
@@ -129,6 +128,7 @@ async function downloadInvoice(invoice: any) {
                         });
                 })
                 .catch(async (e: Error) => {
+                    console.log(e);
                     data.type = 1;
                     await store.dispatch("getOrderInvoiceForOrderByType", data)
                         .then(async (response) => {
