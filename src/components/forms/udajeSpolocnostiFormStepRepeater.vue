@@ -206,7 +206,7 @@
           validation="required|length:9"
           validation-visibility="blur" />
         <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
-          :options="['Slovensko', 'Česká republika']" validation="required" />
+          :options="['Slovenská republika', 'Česká republika']" validation="required" />
         <FormKit type="text" name="city" label="Mesto" validation="required" />
         <FormKit type="text" name="psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" label="Ulica" validation="required" />

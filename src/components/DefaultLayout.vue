@@ -463,8 +463,7 @@ import { useRouter } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
-let user = ref();
-user = computed(() => store.state.user);
+let user = computed(() => store.state.user);
 const isLoading = ref(true)
 
 onBeforeMount(async () => {
@@ -477,7 +476,7 @@ onBeforeMount(async () => {
 })
 
 watch(user.value, (newValue, oldValue) => {
-  console.log("Watchh")
+  console.log("Watch user in default layout")
   console.log(newValue)
   if(newValue.userId){
     isLoading.value = false
