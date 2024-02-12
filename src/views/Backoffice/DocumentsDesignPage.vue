@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full min-h-screen flex justify-center bg-gray-400">
+  <div class="w-full min-h-screen flex justify-center">
     <div class="flex flex-col py-20 w-full px-20">
       <div class="flex flex-col text-4xl text-gray-600 pb-10">
         Nastavenia dokladov
       </div>
-      <div class="text-white pb-4">
+      <div class="text-black pb-4">
         Prajete si vykonať zmeny Vašich firemných údajov ? <router-link :to="{ name: 'CompanyDetails', params: { activeTab: 2 } }" class=" text-teal-600">Kliknite sem</router-link>
       </div>  
       <div class="flex flex-row pb-10">
@@ -29,7 +29,7 @@
               :class="[
                 company.doc_template_id == template.id
                   ? 'border-teal-500 border-4'
-                  : '',
+                  : 'border-2 border-gray-800',
                 '',
               ]"
             />
@@ -161,8 +161,8 @@
         </div>
       </div>
       <div class="flex flex-row">
-        <div class="flex flex-col">
-          <div class="text-2xl text-gray-600 pb-4">
+        <div class="flex flex-col bg-gray-800 py-2 px-4 rounded-xl">
+          <div class="text-2xl text-gray-100 pb-4">
             Formát číslovania dokladov
           </div>
           <FormKit
