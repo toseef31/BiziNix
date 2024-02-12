@@ -255,8 +255,8 @@ async function sendMails() {
         mails.value.forEach((mail) => {
             const row = {
                 description: "Zásielka č. " + mail.id + " od: " + mail.sender,
-                price: 0,
-                price_vat: 0
+                price: totalToPay.value/mails.value.length,
+                price_vat: totalToPay.value/mails.value.length * 0.2
             };
             order.value.items.push(row);
         });
