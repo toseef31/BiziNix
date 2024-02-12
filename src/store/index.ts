@@ -4,6 +4,7 @@ import type Mail from "@/types/Mail";
 import type Company from "@/types/Company";
 
 export const store = createStore({
+  devtools: true,
   state: {
     user: {
       data: {} as any,

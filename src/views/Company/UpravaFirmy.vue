@@ -150,7 +150,7 @@ import { getValidationMessages } from '@formkit/validation';
 import { getNode } from '@formkit/core';
 import { toast } from "vue3-toastify";
 
-const searchFormDiv = ref(null);
+const searchFormDiv = ref();
 const scrollToDiv = () => {
   searchFormDiv.value.scrollIntoView({ behavior: 'smooth' });
 };
