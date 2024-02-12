@@ -21,6 +21,8 @@
     "@formkit/vue": "^1.5.7",
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.0.18",
+    "@sentry/vite-plugin": "^2.14.0",
+    "@sentry/vue": "^7.100.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue-stripe/vue-stripe": "^4.5.0",
     "@vueform/multiselect": "^2.6.2",
