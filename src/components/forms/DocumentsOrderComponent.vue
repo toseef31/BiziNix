@@ -235,7 +235,21 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
             });
           });
         } else {
-          await addHeadquarter(address_id).then(async () => {
+          if(doCompanyDataRef.value.currentCompany.id == 0) {
+              await addHeadquarter(address_id).then(async () => {
+              await addCompany(userId).then(async () => {
+                addOrder(userId, invoiceProfileId, true).then(() => {
+                  router.push({
+                    name: "Thanks You New Order",
+                    params: {
+                      orderId: orderFromRes.id,
+                    },
+                  });
+                });
+              });
+            });
+          } else {
+            await addHeadquarter(address_id).then(async () => {
               addOrder(userId, invoiceProfileId, true).then(() => {
                 router.push({
                   name: "Thanks You New Order",
@@ -245,6 +259,7 @@ async function continueFirstTimeActivation(userId, invoiceProfileId, address_id)
                 });
               });
           });
+          }
         }
       } else {
         addOrder(userId, invoiceProfileId, true).then(() => {
