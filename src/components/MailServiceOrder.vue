@@ -323,8 +323,8 @@ async function scanMails() {
         mails.value.forEach((mail) => {
             const row = {
                 description: "Zásielka č. " + mail.id + " od: " + mail.sender,
-                price: 0,
-                price_vat: 0
+                price: payAmount.value/mails.value.length,
+                price_vat: payAmount.value/mails.value.length * 0.2
             };
             order.value.items.push(row);
         });
