@@ -201,9 +201,17 @@
             <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }}</h3>             
           </div>  
         </div>
-        <div class="space-x-4">
+        <div class="flex space-x-4">
           <button @click="openEditKonatel(index)" class="bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
           <button @click="openEditCancelKonatel(index)" class="bg-bizinix-teal p-2 rounded">Zruš konateľa {{ index }}</button>
+          <button>
+            <Tippy>
+              <ReceiptRefundIcon @click.prevent="returnChangesBack(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+              <template #content>
+                Vrátiť zmeny späť
+              </template>
+            </Tippy>
+          </button>
         </div>
         <VueFinalModal
           :modal-id="modalIdAddOrEditKonatel"
@@ -235,12 +243,6 @@
               label="Dátum narodenia" validation="required" />
             <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie" :options="['Muž', 'Žena']"
               validation="required" />
-            <FormKit type="text" name="nationality" label="Štátna príslušnosť " validation="required|length:2" />
-            <FormKit type="select" name="typ_dokladu_totoznosti" label="Typ dokladu totožnosti" validation-visibility="blur"
-              placeholder="Vyberte typ dokladu tožnosti" :options="['Občiansky preukaz', 'Cestovný pas', 'Vodičský preukaz']"
-              validation="required" />
-            <FormKit type="text" name="cislo_dokladu_totoznosti" label="Číslo dokladu totožnosti"
-              validation="required|length:5" />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
             <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
@@ -348,7 +350,9 @@ import { toast } from "vue3-toastify";
 import type Address from '@/types/Address';
 import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
-import { number } from '@formkit/icons';
+import { Tippy } from "vue-tippy";
+import 'tippy.js/dist/tippy.css' // optional for styling
+import { PencilIcon, XMarkIcon, UserIcon, ReceiptRefundIcon } from '@heroicons/vue/24/outline'
 
 // defineProps<{
 //   indexKonatel: number
@@ -452,7 +456,7 @@ function openEditCompanyName() {
 
 function openEditKonatel(index: number) {
   vfm.open(modalIdAddOrEditKonatel)?.then(() => {    
-    newKonateliaList.value.length = konateliaFromOrSr.value.length
+    newKonateliaList.value.length = konateliaFromOrSr.value.length        
     konatelIndex = index
     console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
     // get current konatel if index exist if no then work with konatel
@@ -603,7 +607,6 @@ watch(obchodneSidloVirtuOrNormal, (newValue) => {
   }
 })
 
-
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
   if (array1FromOrSr[index] && array2[index]) {
@@ -629,6 +632,48 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
     console.info('Index out of bounds or item does not exist');
     return false;
   }
+}
+
+function returnChangesBack(index: number){
+  //newKonateliaList.value[index] = Object.assign({}, konatelObject);
+
+  let fullName: string[] = konateliaFromOrSr.value[index].name.split(" ");
+  console.log("Full name get kon", fullName)
+  console.log("Full lenght get kon", fullName.length)
+  if(fullName.length === 3 && fullName[0].includes(".") == true){
+    newKonateliaList.value[index].title_before = fullName[0]    
+    newKonateliaList.value[index].first_name = fullName[1]
+    newKonateliaList.value[index].last_name = fullName[2] 
+    newKonateliaList.value[index].title_after = fullName[3]    
+  }
+  else if(fullName.length >= 4 && fullName[0].includes(".") == true, fullName[1].includes(".") == true){
+    newKonateliaList.value[index].title_before = fullName[0] + " " +  fullName[1]
+    newKonateliaList.value[index].first_name = fullName[2]
+    newKonateliaList.value[index].last_name = fullName[3] 
+    newKonateliaList.value[index].title_after = fullName[4]
+  }
+  else if(fullName.length >= 4 && fullName[0].includes(".") == true && fullName[1].includes(".") == false){
+    newKonateliaList.value[index].title_before = fullName[0]
+    newKonateliaList.value[index].first_name = fullName[1]
+    newKonateliaList.value[index].last_name = fullName[2] 
+    newKonateliaList.value[index].title_after = fullName[3]
+  }  
+  else {
+    newKonateliaList.value[index].title_before = ''
+    newKonateliaList.value[index].first_name = fullName[0]
+    newKonateliaList.value[index].last_name = fullName[1]
+    newKonateliaList.value[index].title_after = ''
+  }
+  newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country
+  newKonateliaList.value[index].city = konateliaFromOrSr.value[index].city
+  newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip
+  newKonateliaList.value[index].street = konateliaFromOrSr.value[index].street
+  newKonateliaList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
+  newKonateliaList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  // no values from orsr
+  newKonateliaList.value[index].date_of_birth = ''
+  newKonateliaList.value[index].rodne_cislo = ''
+  newKonateliaList.value[index].gender = ''
 }
 
 //test data

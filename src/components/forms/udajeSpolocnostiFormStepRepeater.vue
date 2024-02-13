@@ -76,6 +76,7 @@
             validation="required|min:750|max:5000"
             help="Zadajte hodnotu napr. 5000"
           />
+           <!-- Automaticky počitať od výšky vkladu -->
           <FormKit type="number" :index="index" name="podiel_v_spolocnosti" label="Podiel v spoločnosti %"
             :validation-rules="{ validatePodielVSpolocnosti }"
             validation="required|max:100|min:0|validatePodielVSpolocnosti"
@@ -83,6 +84,7 @@
               validatePodielVSpolocnosti: 'Podiel všetkých spoločníkov je väčší než 100 %.'
             }"
             help="Zadajte hodnotu 0 - 100" />
+            <!-- // Rozsah splatenia vkladu € moze byt max do vysky vkladu alebo 1- max vyska vkladu -->
           <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu €" validation="required|min:750"
             help="Zadajte hodnotu napr. 5000" />
         </div>
