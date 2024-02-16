@@ -196,9 +196,9 @@
     <EditItemForCompany title="Konatelia">
       <div v-for="(konatelDiv, index ) in konateliaFromOrSr" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
-          <h3 :index="index" class="text-lg" :class="{ 'text-cross': compareArraysAtIndex(konateliaFromOrSr, newKonateliaList, index) }">{{ konatelDiv.name }}</h3>
-          <div v-if="newKonateliaList[index]">
-            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }}</h3>             
+          <h3 :index="index" class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.name }}</h3>
+          <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index])">
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].hasChange }}</h3>             
           </div>  
         </div>
         <div class="flex space-x-4">
@@ -388,7 +388,8 @@ let konatelObject: CompanyMemberKonatel = {
   obchodne_meno: '',
   city: '',
   psc: '',
-  je_konatel: true
+  je_konatel: true,
+  hasChange: false,
 };
 let konatel = ref(konatelObject);
 let newKonateliaList = ref<CompanyMemberKonatel[]>([])
@@ -449,6 +450,21 @@ async function search({ search }: any) {
   return [];
 }
 
+const konateliaFromOrSr = computed(() => {
+  if(companyFromOsRs.value){
+    //const list = [{}];
+    //const emptyList = companyFromOsRs?.value.statutarny_organ.konateľ === 0 ? companyFromOsRs.value.statutarny_organ.konatelia : companyFromOsRs?.value.statutarny_organ.konateľ
+    if(companyFromOsRs?.value.statutarny_organ.konateľ){
+      return companyFromOsRs?.value.statutarny_organ.konateľ;
+    }
+    else if(companyFromOsRs?.value.statutarny_organ.konatelia){
+      return companyFromOsRs?.value.statutarny_organ.konatelia
+    }
+    else {
+      return [];
+    }
+  }
+})
 
 function openEditCompanyName() {
   vfm.open(modalIdAddOrEditCompanyName)
@@ -523,7 +539,8 @@ function closeModalAndSaveOrEditKonatel() {
   console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditKonatel)?.then(() => {
     if (konatelIndex >= 0 && konatelIndex < newKonateliaList.value.length) {
-    newKonateliaList.value[konatelIndex] = konatel.value;
+      konatel.value.hasChange = true;
+      newKonateliaList.value[konatelIndex] = konatel.value;
     } else {
       console.error('Index out of bounds');
     }
@@ -539,33 +556,14 @@ function closeModalAndSaveCanceledKonatel() {
 }
 
 function getSpecificKonatel(index:number){
-  let fullName: string[] = konateliaFromOrSr.value[index].name.split(" ");
-  console.log("Full name get kon", fullName)
-  console.log("Full lenght get kon", fullName.length)
-  if(fullName.length === 3 && fullName[0].includes(".") == true){
-    konatel.value.title_before = fullName[0]    
-    konatel.value.first_name = fullName[1]
-    konatel.value.last_name = fullName[2] 
-    konatel.value.title_after = fullName[3]    
-  }
-  else if(fullName.length >= 4 && fullName[0].includes(".") == true, fullName[1].includes(".") == true){
-    konatel.value.title_before = fullName[0] + " " +  fullName[1]
-    konatel.value.first_name = fullName[2]
-    konatel.value.last_name = fullName[3] 
-    konatel.value.title_after = fullName[4]
-  }
-  else if(fullName.length >= 4 && fullName[0].includes(".") == true && fullName[1].includes(".") == false){
-    konatel.value.title_before = fullName[0]
-    konatel.value.first_name = fullName[1]
-    konatel.value.last_name = fullName[2] 
-    konatel.value.title_after = fullName[3]
-  }  
-  else {
-    konatel.value.title_before = ''
-    konatel.value.first_name = fullName[0]
-    konatel.value.last_name = fullName[1]
-    konatel.value.title_after = ''
-  }
+  
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
+  
+  konatel.value.title_before = fullNameWithTitlesFromOrSr.title_before    
+  konatel.value.first_name = fullNameWithTitlesFromOrSr.first_name
+  konatel.value.last_name = fullNameWithTitlesFromOrSr.last_name
+  konatel.value.title_after = fullNameWithTitlesFromOrSr.title_after
+
   konatel.value.country = konateliaFromOrSr.value[index].country
   konatel.value.city = konateliaFromOrSr.value[index].city
   konatel.value.psc = konateliaFromOrSr.value[index].zip
@@ -573,22 +571,6 @@ function getSpecificKonatel(index:number){
   konatel.value.street_number = konateliaFromOrSr.value[index].number.split("/")[0]
   konatel.value.street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
 }
-
-const konateliaFromOrSr = computed(() => {
-  if(companyFromOsRs.value){
-    //const list = [{}];
-    //const emptyList = companyFromOsRs?.value.statutarny_organ.konateľ === 0 ? companyFromOsRs.value.statutarny_organ.konatelia : companyFromOsRs?.value.statutarny_organ.konateľ
-    if(companyFromOsRs?.value.statutarny_organ.konateľ){
-      return companyFromOsRs?.value.statutarny_organ.konateľ;
-    }
-    else if(companyFromOsRs?.value.statutarny_organ.konatelia){
-      return companyFromOsRs?.value.statutarny_organ.konatelia
-    }
-    else {
-      return [];
-    }
-  }
-})
 
 const isNextButtonDisabledHq = computed(() => {
   if(obchodneSidloVirtuOrNormal.value === 'virtualne'){
@@ -606,6 +588,14 @@ watch(obchodneSidloVirtuOrNormal, (newValue) => {
     store.state.selectedVhqPackage = {};
   }
 })
+
+function checkHasChange(item: CompanyMemberKonatel): boolean {
+  if (item && item.hasChange === true) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
@@ -636,45 +626,60 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
 
 function returnChangesBack(index: number){
   //newKonateliaList.value[index] = Object.assign({}, konatelObject);
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
+  newKonateliaList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
+  newKonateliaList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
+  newKonateliaList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
+  newKonateliaList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
 
-  let fullName: string[] = konateliaFromOrSr.value[index].name.split(" ");
-  console.log("Full name get kon", fullName)
-  console.log("Full lenght get kon", fullName.length)
-  if(fullName.length === 3 && fullName[0].includes(".") == true){
-    newKonateliaList.value[index].title_before = fullName[0]    
-    newKonateliaList.value[index].first_name = fullName[1]
-    newKonateliaList.value[index].last_name = fullName[2] 
-    newKonateliaList.value[index].title_after = fullName[3]    
-  }
-  else if(fullName.length >= 4 && fullName[0].includes(".") == true, fullName[1].includes(".") == true){
-    newKonateliaList.value[index].title_before = fullName[0] + " " +  fullName[1]
-    newKonateliaList.value[index].first_name = fullName[2]
-    newKonateliaList.value[index].last_name = fullName[3] 
-    newKonateliaList.value[index].title_after = fullName[4]
-  }
-  else if(fullName.length >= 4 && fullName[0].includes(".") == true && fullName[1].includes(".") == false){
-    newKonateliaList.value[index].title_before = fullName[0]
-    newKonateliaList.value[index].first_name = fullName[1]
-    newKonateliaList.value[index].last_name = fullName[2] 
-    newKonateliaList.value[index].title_after = fullName[3]
-  }  
-  else {
-    newKonateliaList.value[index].title_before = ''
-    newKonateliaList.value[index].first_name = fullName[0]
-    newKonateliaList.value[index].last_name = fullName[1]
-    newKonateliaList.value[index].title_after = ''
-  }
   newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country
   newKonateliaList.value[index].city = konateliaFromOrSr.value[index].city
   newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip
   newKonateliaList.value[index].street = konateliaFromOrSr.value[index].street
   newKonateliaList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
   newKonateliaList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  // set hasChange back to false
+  newKonateliaList.value[index].hasChange = false
   // no values from orsr
   newKonateliaList.value[index].date_of_birth = ''
   newKonateliaList.value[index].rodne_cislo = ''
   newKonateliaList.value[index].gender = ''
 }
+
+function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
+  let fullName: string[] = fullNameWithTitleFromOrSr.split(" ");
+  let fullNameWithTitle = {
+    title_before: '',
+    first_name: '',
+    last_name: '',
+    title_after: ''    
+  };
+
+  if(fullName.length === 3 && fullName[0].includes(".")) {
+    // Case when there is a title before the name and no title after
+    fullNameWithTitle.title_before = fullName[0];
+    fullNameWithTitle.first_name = fullName[1];
+    fullNameWithTitle.last_name = fullName[2];
+  } else if(fullName.length >= 4 && fullName[0].includes(".") && !fullName[1].includes(".")) {
+    // Case when there is a title before the name and a title after
+    fullNameWithTitle.title_before = fullName[0];
+    fullNameWithTitle.first_name = fullName[1];
+    fullNameWithTitle.last_name = fullName[2];
+    fullNameWithTitle.title_after = fullName[3];
+  } else if(fullName.length >= 4 && fullName[0].includes(".") && fullName[1].includes(".")) {
+    // Case when there are two titles before the name
+    fullNameWithTitle.title_before = fullName[0] + " " +  fullName[1];
+    fullNameWithTitle.first_name = fullName[2];
+    fullNameWithTitle.last_name = fullName[3];
+    fullNameWithTitle.title_after = fullName[4] || ''; // Use empty string if no title after
+  } else {
+    // Case when there are no titles
+    fullNameWithTitle.first_name = fullName[0];
+    fullNameWithTitle.last_name = fullName[1];
+  }
+  return fullNameWithTitle;
+}
+
 
 //test data
 const companyData = ref({

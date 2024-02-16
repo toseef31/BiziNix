@@ -16,5 +16,6 @@ export default interface CompanyMemberKonatel {
   city: string
   psc: string
   je_konatel: true
-  addedFromZakladatelia?: boolean
+  addedFromZakladatelia?: boolean,
+  hasChange?: boolean
 }
