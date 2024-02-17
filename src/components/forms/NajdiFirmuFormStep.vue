@@ -5,6 +5,7 @@
     type="autocomplete"
     label="IČO spoločnosti"
     placeholder="Zadajte IČO spoločnosti"
+    value="54639425"
     :options="search"
     validation="required|length:6"
     empty-message="Subjekt nebol nájdený, zadajte správne ičo."
@@ -16,11 +17,12 @@
       </div>
     </template>
   </FormKit>
-  <div class="flex flex-col space-y-4 last:mb-4">
+  <div v-if="companyFromOsRs?.obchodne_meno" class="flex flex-col space-y-4 last:mb-4">
     {{companyFromOsRs}}
     Konateliaaa: {{ konateliaFromOrSr }}
     Konatelia lenght {{ konateliaFromOrSr?.length }}
     <br><b>New Konatelia {{ newKonateliaList }}</b>
+    <p>Newly added konatel {{ newlyAddedKonatelList }}</p>
     <!-- Nazov spolocnosti -->
     <EditItemForCompany title="Obchodné meno">
       <div class="grid grid-cols-2 items-center">
@@ -109,7 +111,7 @@
                 <FormKit
                   type="form"
                   id="form_sidlo" name="new_sidlo"
-                  @submit="closeModalAndSaveOrEditSidlo"
+                  @submit="closeModalAndSubmitOrEditSidlo"
                   :config="{ validationVisibility: 'live' }"
                   submit-label="Pridať"
                   #default="{ value, state: { valid } }"
@@ -196,14 +198,16 @@
     <EditItemForCompany title="Konatelia">
       <div v-for="(konatelDiv, index ) in konateliaFromOrSr" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
-          <h3 :index="index" class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.name }}</h3>
-          <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index])">
-            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].hasChange }}</h3>             
+          <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.name }}</h3>
+          <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index]) && !checkCanceled(newKonateliaList[index])">
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>
+            <h4 class="text-base">{{ newKonateliaList[index]?.city }}, {{ newKonateliaList[index]?.street }} {{ newKonateliaList[index]?.street_number }}/{{ newKonateliaList[index]?.street_number2 }}, {{ newKonateliaList[index]?.psc }}</h4>
+            <h4 class="text-base">{{ newKonateliaList[index]?.country }} </h4>
           </div>  
         </div>
         <div class="flex space-x-4">
-          <button @click="openEditKonatel(index)" class="bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
-          <button @click="openEditCancelKonatel(index)" class="bg-bizinix-teal p-2 rounded">Zruš konateľa {{ index }}</button>
+          <button @click="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
+          <button @click="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
           <button>
             <Tippy>
               <ReceiptRefundIcon @click.prevent="returnChangesBack(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -212,8 +216,20 @@
               </template>
             </Tippy>
           </button>
+        </div> 
+      </div>
+      <div v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
+        <div>
+          <h3 :index="index" class="text-lg">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.first_name }} {{ newlyAddedKonatel.last_name }} {{ newlyAddedKonatel.title_after }}</h3> 
+          <h4 :index="index" class="text-base">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
-        <VueFinalModal
+        <div class="flex space-x-4">
+          <button @click="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
+        </div>
+      </div>
+      <button @click="openAddKonatel()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať konateľa</button>
+      <!-- Edit konatel -->
+      <VueFinalModal
           :modal-id="modalIdAddOrEditKonatel"
           display-directive="if"
           :clickToClose="false"
@@ -222,14 +238,19 @@
           class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
           content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
         >
+        <div v-if="!addOperation">
           <h3 class="text-white text-2xl">Zmeniť osobné údaje konateľa</h3>
           <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
           <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
+        </div>        
+        <div v-else>
+          <h3 class="text-white text-2xl">Pridať konateľa</h3>                    
+        </div>
           <!-- get konatel via openEditKonatel and asign to form via property name="" -->
           <FormKit
             type="form"
             id="form_new_konatelia" name="new_konatelia"
-            @submit="closeModalAndSaveOrEditKonatel"
+            @submit="closeModalAndSubmitOrEditKonatel"
             :config="{ validationVisibility: 'live' }"
             submit-label="Pridať"
             #default="{ value, state: { valid } }"
@@ -240,7 +261,8 @@
             <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
             <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
             <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth"
-              label="Dátum narodenia" validation="required" />
+              label="Dátum narodenia" validation="required"
+            />
             <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie" :options="['Muž', 'Žena']"
               validation="required" />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
@@ -255,6 +277,7 @@
             <FormKit type="text" name="street" label="Ulica" validation="required" />
             <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
             <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit v-if="addOperation" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
           </div>
             <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
             <button
@@ -289,17 +312,18 @@
           <FormKit
             type="form"
             id="form_cancel_konatelia" name="cancel_konatelia"
-            @submit="closeModalAndSaveCanceledKonatel"
-            :config="{ validationVisibility: 'blur' }"
+            @submit="closeModalAndSubmitCanceledKonatel"
+            :config="{ validationVisibility: 'live' }"
             submit-label="Pridať"
             #default="{ value, state: { valid } }"
-            :actions="false"            
+            :actions="false"
+            v-model="konatel"            
           >
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormKit type="text" name="rodne_cislo_odvolat" label="Rodné číslo" id="rodne_cislo_odvolat"
-              validation="length:9"
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo_odvolat"
+              validation="required|length:9"
             />
-            <FormKit type="date" style="color-scheme: dark;" name="datum_odvolat_od"
+            <FormKit type="date" style="color-scheme: dark;" name="cancel_from_date"
               label="Odvolať od" validation="required"
             />
           </div>
@@ -320,8 +344,7 @@
             </button>
           </div>
           </FormKit>  
-        </VueFinalModal>  
-      </div>
+        </VueFinalModal>     
     </EditItemForCompany>
     <EditItemForCompany title="Spoločníci">
     </EditItemForCompany>
@@ -352,7 +375,7 @@ import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import { Tippy } from "vue-tippy";
 import 'tippy.js/dist/tippy.css' // optional for styling
-import { PencilIcon, XMarkIcon, UserIcon, ReceiptRefundIcon } from '@heroicons/vue/24/outline'
+import { ReceiptRefundIcon } from '@heroicons/vue/24/outline'
 
 // defineProps<{
 //   indexKonatel: number
@@ -361,12 +384,15 @@ import { PencilIcon, XMarkIcon, UserIcon, ReceiptRefundIcon } from '@heroicons/v
 const companyFromOsRs = ref();
 const vfm = useVfm()
 const modalIdAddOrEditCompanyName = Symbol('modalIdAddOrEditCompanyName')
+const modalIdAddOrEditSidlo = Symbol('modalIdAddOrEditSidlo')
 const modalIdAddOrEditKonatel = Symbol('modalIdAddOrEditKonatel')
 const modalIdCancelKonatel = Symbol('modalICancelKonatel')
-const modalIdAddOrEditSidlo = Symbol('modalIdAddOrEditSidlo')
+const modalIdCancelSpolocnik = Symbol('modalIdCancelSpolocnik')
+const modalIdAddSpolocnik = Symbol('modalIdAddSpolocnik')
 const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
+let addOperation = false;
 let newCompanyFullName = reactive({
   newCompanyName: '',
   newCompanyPravForm: ''
@@ -389,10 +415,14 @@ let konatelObject: CompanyMemberKonatel = {
   city: '',
   psc: '',
   je_konatel: true,
-  hasChange: false,
+  has_change: false,
+  should_be_canceled: false,
+  cancel_from_date: '',
+  new_konatel_date_from: ''
 };
 let konatel = ref(konatelObject);
-let newKonateliaList = ref<CompanyMemberKonatel[]>([])
+let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
+let newlyAddedKonatelList = ref<CompanyMemberKonatel[]>([]) // new added konatel
 
 let obchodneSidloVirtuOrNormal = ref("vlastnePrenajate")
 let newHqAddress = ref({
@@ -466,13 +496,83 @@ const konateliaFromOrSr = computed(() => {
   }
 })
 
+const spolocniciFromOrSr = computed(() => {
+  if(companyFromOsRs.value.spolocnici){
+      return companyFromOsRs.value.spolocnici;
+    }
+    else {
+      return [];
+    }
+})
+
+
+//#region company name
 function openEditCompanyName() {
   vfm.open(modalIdAddOrEditCompanyName)
 }
 
+// submit form and close modal
+function closeModalAndSaveOrEditCompanyName() {
+  console.log("Calling submit function!")
+  vfm.close(modalIdAddOrEditCompanyName)?.then(() => {
+    console.log("then");
+  })
+}
+
+function closeModalForCompanyName(){ 
+  vfm.closeAll().then(() => {
+  })
+}
+//#endregion
+
+//#region sidlo
+function openEditSidlo(){
+  vfm.open(modalIdAddOrEditSidlo)
+}
+
+// submit form and close modal
+function closeModalAndSubmitOrEditSidlo() {
+  console.log("Calling submit function!")
+  vfm.close(modalIdAddOrEditSidlo)?.then(() => {
+    console.log("then");
+  })
+}
+
+function closeModalForSidlo(){ 
+  vfm.closeAll().then(() => {
+  })
+}
+//#endregion
+
+function getSpecificKonatel(index:number){
+  
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
+  
+  konatel.value.title_before = fullNameWithTitlesFromOrSr.title_before    
+  konatel.value.first_name = fullNameWithTitlesFromOrSr.first_name
+  konatel.value.last_name = fullNameWithTitlesFromOrSr.last_name
+  konatel.value.title_after = fullNameWithTitlesFromOrSr.title_after
+  
+  konatel.value.rodne_cislo = ''
+  konatel.value.date_of_birth = ''
+
+  konatel.value.country = konateliaFromOrSr.value[index].country
+  konatel.value.city = konateliaFromOrSr.value[index].city
+  konatel.value.psc = konateliaFromOrSr.value[index].zip
+  konatel.value.street = konateliaFromOrSr.value[index].street
+  konatel.value.street_number = konateliaFromOrSr.value[index].number.split("/")[0]
+  konatel.value.street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  konatel.value.has_change = false;
+  konatel.value.should_be_canceled = false;
+  konatel.value.cancel_from_date = '';
+  konatel.value.new_konatel_date_from = '';
+}
+
+//#region edit konatel
 function openEditKonatel(index: number) {
-  vfm.open(modalIdAddOrEditKonatel)?.then(() => {    
-    newKonateliaList.value.length = konateliaFromOrSr.value.length        
+  addOperation = false;
+  vfm.open(modalIdAddOrEditKonatel)?.then(() => {  
+    newKonateliaList.value.length = konateliaFromOrSr.value.length
     konatelIndex = index
     console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
     // get current konatel if index exist if no then work with konatel
@@ -486,29 +586,20 @@ function openEditKonatel(index: number) {
   })
 }
 
-function openEditCancelKonatel(index: number) {
-  vfm.open(modalIdCancelKonatel)?.then(() => {
-    konatelIndex = index
-    getSpecificKonatel(index)
-  })
-}
-
-const modalInstanceKonatel = useModal({
-  component: VueFinalModal,
-  attrs: {}
-});
-
-function openEditSidlo(){
-  vfm.open(modalIdAddOrEditSidlo)
-}
-
-function closeModalForCompanyName(){ 
-  vfm.closeAll().then(() => {
-  })
-}
-
-function closeModalForSidlo(){ 
-  vfm.closeAll().then(() => {
+// submit form and close modal
+function closeModalAndSubmitOrEditKonatel() {
+  console.log("Calling submit function!")
+  vfm.close(modalIdAddOrEditKonatel)?.then(() => {
+    if(addOperation){
+      addNewKonatelToList();
+    } 
+    else if(konatelIndex >= 0 && konatelIndex < newKonateliaList.value.length) {
+      konatel.value.has_change = true;
+      newKonateliaList.value[konatelIndex] = konatel.value;
+    }
+    else {
+      console.error("No index in array");
+    }
   })
 }
 
@@ -516,60 +607,59 @@ function closeModalForKonatel(){
   vfm.closeAll().then(() => {
   })
 }
+//#endregion
+
+//#region Cancel konatel
+// open modal
+function openEditCancelKonatel(index: number) {
+  vfm.open(modalIdCancelKonatel)?.then(() => {
+    newKonateliaList.value.length = konateliaFromOrSr.value.length
+    konatelIndex = index
+    getSpecificKonatel(index)
+  })
+}
+
+// submit form and close modal
+function closeModalAndSubmitCanceledKonatel() {
+  console.log("Calling submit function Cancel Konatel!")
+  vfm.close(modalIdCancelKonatel)?.then(() => {
+    konatel.value.should_be_canceled = true;
+    konatel.value.has_change = true;
+    newKonateliaList.value[konatelIndex] = konatel.value
+  })
+}
+
 function closeModalForCancelKonatel(){ 
   vfm.closeAll().then(() => {
   })
 }
+//#endregion
 
-function closeModalAndSaveOrEditCompanyName() {
-  console.log("Calling submit function!")
-  vfm.close(modalIdAddOrEditCompanyName)?.then(() => {
-    console.log("then");
+//#region  Add new konatel
+function openAddKonatel() {
+  addOperation = true;
+  konatel.value = Object.assign({}, konatelObject);
+  vfm.open(modalIdAddOrEditKonatel)?.then(() => {
   })
 }
 
-function closeModalAndSaveOrEditSidlo() {
-  console.log("Calling submit function!")
-  vfm.close(modalIdAddOrEditSidlo)?.then(() => {
-    console.log("then");
-  })
+function addNewKonatelToList(){
+  newlyAddedKonatelList.value.push(konatel.value)
 }
 
-function closeModalAndSaveOrEditKonatel() {
+//#endregion
+
+function closeModalAndAdd() {
   console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditKonatel)?.then(() => {
-    if (konatelIndex >= 0 && konatelIndex < newKonateliaList.value.length) {
-      konatel.value.hasChange = true;
-      newKonateliaList.value[konatelIndex] = konatel.value;
-    } else {
-      console.error('Index out of bounds');
-    }
-  }).finally(() => {
   })
 }
 
-function closeModalAndSaveCanceledKonatel() {
+function closeModalAndSaveAdddKonatel() {
   console.log("Calling submit function!")
   vfm.close(modalIdCancelKonatel)?.then(() => {
     console.log("then");
   })
-}
-
-function getSpecificKonatel(index:number){
-  
-  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
-  
-  konatel.value.title_before = fullNameWithTitlesFromOrSr.title_before    
-  konatel.value.first_name = fullNameWithTitlesFromOrSr.first_name
-  konatel.value.last_name = fullNameWithTitlesFromOrSr.last_name
-  konatel.value.title_after = fullNameWithTitlesFromOrSr.title_after
-
-  konatel.value.country = konateliaFromOrSr.value[index].country
-  konatel.value.city = konateliaFromOrSr.value[index].city
-  konatel.value.psc = konateliaFromOrSr.value[index].zip
-  konatel.value.street = konateliaFromOrSr.value[index].street
-  konatel.value.street_number = konateliaFromOrSr.value[index].number.split("/")[0]
-  konatel.value.street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
 }
 
 const isNextButtonDisabledHq = computed(() => {
@@ -590,12 +680,83 @@ watch(obchodneSidloVirtuOrNormal, (newValue) => {
 })
 
 function checkHasChange(item: CompanyMemberKonatel): boolean {
-  if (item && item.hasChange === true) {
+  if (item && item.has_change === true) {
     return true;
   } else {
     return false;
   }
 }
+
+function checkCanceled(item: CompanyMemberKonatel): boolean {
+  if (item && item.should_be_canceled === true) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function returnChangesBack(index: number){
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
+  newKonateliaList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
+  newKonateliaList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
+  newKonateliaList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
+  newKonateliaList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
+
+  newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country
+  newKonateliaList.value[index].city = konateliaFromOrSr.value[index].city
+  newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip
+  newKonateliaList.value[index].street = konateliaFromOrSr.value[index].street
+  newKonateliaList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
+  newKonateliaList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  // set hasChange back to false
+  newKonateliaList.value[index].has_change = false
+  newKonateliaList.value[index].cancel_from_date = ''
+  newKonateliaList.value[index].new_konatel_date_from = ''
+  newKonateliaList.value[index].should_be_canceled = false
+  // no values from orsr
+  newKonateliaList.value[index].date_of_birth = ''
+  newKonateliaList.value[index].rodne_cislo = ''
+  newKonateliaList.value[index].gender = ''
+}
+
+function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
+  let fullName: string[] = fullNameWithTitleFromOrSr.split(" ");
+  let fullNameWithTitle = {
+    title_before: '',
+    first_name: '',
+    last_name: '',
+    title_after: ''    
+  };
+
+  if(fullName.length === 3 && fullName[0].includes(".")) {
+    // Case when there is a title before the name and no title after
+    fullNameWithTitle.title_before = fullName[0];
+    fullNameWithTitle.first_name = fullName[1];
+    fullNameWithTitle.last_name = fullName[2];
+  } else if(fullName.length >= 4 && fullName[0].includes(".") && !fullName[1].includes(".")) {
+    // Case when there is a title before the name and a title after
+    fullNameWithTitle.title_before = fullName[0];
+    fullNameWithTitle.first_name = fullName[1];
+    fullNameWithTitle.last_name = fullName[2];
+    fullNameWithTitle.title_after = fullName[3] || '' + '' + ' ' + fullName[4] || '' + ' ' + fullName[5] || '';
+  } else if(fullName.length >= 4 && fullName[0].includes(".") && fullName[1].includes(".")) {
+    // Case when there are two titles before the name
+    fullNameWithTitle.title_before = fullName[0] + " " +  fullName[1];
+    fullNameWithTitle.first_name = fullName[2];
+    fullNameWithTitle.last_name = fullName[3];
+    fullNameWithTitle.title_after = fullName[4] || '' + ' ' + fullName[5] || '' + + ' ' + fullName[6] || ''; // Use empty string if no title after
+  } else {
+    // Case when there are no titles
+    fullNameWithTitle.first_name = fullName[0];
+    fullNameWithTitle.last_name = fullName[1];
+  }
+  return fullNameWithTitle;
+}
+
+function deleteNewKonatel(index: number){
+  newlyAddedKonatelList.value.splice(index, 1);
+}
+
 
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
@@ -623,64 +784,6 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
     return false;
   }
 }
-
-function returnChangesBack(index: number){
-  //newKonateliaList.value[index] = Object.assign({}, konatelObject);
-  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
-  newKonateliaList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
-  newKonateliaList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
-  newKonateliaList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
-  newKonateliaList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
-
-  newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country
-  newKonateliaList.value[index].city = konateliaFromOrSr.value[index].city
-  newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip
-  newKonateliaList.value[index].street = konateliaFromOrSr.value[index].street
-  newKonateliaList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
-  newKonateliaList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
-  // set hasChange back to false
-  newKonateliaList.value[index].hasChange = false
-  // no values from orsr
-  newKonateliaList.value[index].date_of_birth = ''
-  newKonateliaList.value[index].rodne_cislo = ''
-  newKonateliaList.value[index].gender = ''
-}
-
-function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
-  let fullName: string[] = fullNameWithTitleFromOrSr.split(" ");
-  let fullNameWithTitle = {
-    title_before: '',
-    first_name: '',
-    last_name: '',
-    title_after: ''    
-  };
-
-  if(fullName.length === 3 && fullName[0].includes(".")) {
-    // Case when there is a title before the name and no title after
-    fullNameWithTitle.title_before = fullName[0];
-    fullNameWithTitle.first_name = fullName[1];
-    fullNameWithTitle.last_name = fullName[2];
-  } else if(fullName.length >= 4 && fullName[0].includes(".") && !fullName[1].includes(".")) {
-    // Case when there is a title before the name and a title after
-    fullNameWithTitle.title_before = fullName[0];
-    fullNameWithTitle.first_name = fullName[1];
-    fullNameWithTitle.last_name = fullName[2];
-    fullNameWithTitle.title_after = fullName[3];
-  } else if(fullName.length >= 4 && fullName[0].includes(".") && fullName[1].includes(".")) {
-    // Case when there are two titles before the name
-    fullNameWithTitle.title_before = fullName[0] + " " +  fullName[1];
-    fullNameWithTitle.first_name = fullName[2];
-    fullNameWithTitle.last_name = fullName[3];
-    fullNameWithTitle.title_after = fullName[4] || ''; // Use empty string if no title after
-  } else {
-    // Case when there are no titles
-    fullNameWithTitle.first_name = fullName[0];
-    fullNameWithTitle.last_name = fullName[1];
-  }
-  return fullNameWithTitle;
-}
-
-
 //test data
 const companyData = ref({
       typ_sudu: "MS",
@@ -815,7 +918,7 @@ defineExpose({
 
 </script>
 
-<style>
+<style scoped>
 .text-cross {
   text-decoration: line-through;
 }
