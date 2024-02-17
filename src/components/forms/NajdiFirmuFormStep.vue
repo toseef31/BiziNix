@@ -347,6 +347,19 @@
         </VueFinalModal>     
     </EditItemForCompany>
     <EditItemForCompany title="Spoločníci">
+      <div class="grid grid-cols-2">
+        <div v-for="(spolocnikDiv, index ) in spolocniciFromOrSr" :key="index" class="items-center space-y-4">
+          <div>
+            <span>{{ vyskyVkladovFromOrSr[index].splatene }} {{ vyskyVkladovFromOrSr[index].currency }} {{ calculatePercentageAtIndex(index) }}%</span>
+            <ProgressBar :progress="calculatePercentageAtIndex(index)" />
+            <h3 class="text-lg">{{ spolocnikDiv.name }}</h3>
+            <h4 class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
+            <h4 class="text-base">{{ spolocnikDiv.city }}</h4>
+            <h4 class="text-base">{{ spolocnikDiv.country }}</h4>
+            <!-- <button @click="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 mt-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button> -->
+          </div>
+        </div>
+      </div>
     </EditItemForCompany>
     <EditItemForCompany title="Spôsob konania konateľov">
     </EditItemForCompany>
@@ -376,6 +389,9 @@ import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import { Tippy } from "vue-tippy";
 import 'tippy.js/dist/tippy.css' // optional for styling
 import { ReceiptRefundIcon } from '@heroicons/vue/24/outline'
+import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
+import ProgressBar from '@/components/ProgressBar.vue';
+import type SpolocnikFromOrSr from '@/types/SpolocnikFromOrSr';
 
 // defineProps<{
 //   indexKonatel: number
@@ -388,15 +404,17 @@ const modalIdAddOrEditSidlo = Symbol('modalIdAddOrEditSidlo')
 const modalIdAddOrEditKonatel = Symbol('modalIdAddOrEditKonatel')
 const modalIdCancelKonatel = Symbol('modalICancelKonatel')
 const modalIdCancelSpolocnik = Symbol('modalIdCancelSpolocnik')
-const modalIdAddSpolocnik = Symbol('modalIdAddSpolocnik')
+const modalIdAddOrEditSpolocnik = Symbol('modalIdAddOrEditSpolocnik')
 const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
+
 let addOperation = false;
 let newCompanyFullName = reactive({
   newCompanyName: '',
   newCompanyPravForm: ''
 })
+
 let konatelIndex: number;
 let konatelObject: CompanyMemberKonatel = {
   company_id: null,
@@ -421,8 +439,49 @@ let konatelObject: CompanyMemberKonatel = {
   new_konatel_date_from: ''
 };
 let konatel = ref(konatelObject);
+
+let spolocnikIndex: number;
+let spolocnikObject: CompanyMemberSpolocnik = {
+  company_id: null,
+  first_name: '',
+  last_name: '',
+  title_before: '',
+  title_after: '',
+  gender: '',
+  rodne_cislo: '',
+  date_of_birth: '',
+  street: '',
+  street_number: '',
+  street_number2: '',
+  country: '',
+  obchodne_meno: '',
+  city: '',
+  psc: '',
+  has_change: false,
+  nationality: '',
+  je_zakladatel: true
+};
+let spolocnik = ref(spolocnikObject);
+let spolocnikFromOrSr = {
+  name: '',
+  street: '',
+  city: '',
+  country: null || 'Slovenská republika',
+  number: '',
+  since: ''
+}
+// let vyskaVkladuFromOrSr = {
+//   name: '',
+//   vklad: '',
+//   city: '',
+//   splatene: 0,
+//   currency: '',
+// }
+
 let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
 let newlyAddedKonatelList = ref<CompanyMemberKonatel[]>([]) // new added konatel
+let newSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // edited spolocnik
+let newlyAddedSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // new added spolocnil
 
 let obchodneSidloVirtuOrNormal = ref("vlastnePrenajate")
 let newHqAddress = ref({
@@ -460,51 +519,93 @@ onUnmounted(() => {
 })
 
 async function search({ search }: any) {
-  if (!search) return [];
-  if (search.length > 5) {
-    const searchQuery = {
-      searchQuery: search,
-    };
-    const res = await store
-      .dispatch("getCompanyFromOrsrByIco", searchQuery.searchQuery)
-      .catch((err) => {
-        toast.error('Error: ' + err);
-      });
-      console.log(res)
+  if (!search || search.length <= 5) return [];  
+  
+  try {
+    const res = await store.dispatch("getCompanyFromOrsrByIco", search);
+    console.log(res);
     return [{
-        label: res.data.obchodne_meno,
-        value: res.data,
-        city: res.data.adresa.city
+      label: res.data.obchodne_meno,
+      value: res.data,
+      city: res.data.adresa.city
     }];
+  } catch (err) {
+    toast.error('Error: ' + err);
+    return [];
   }
-  return [];
 }
 
 const konateliaFromOrSr = computed(() => {
-  if(companyFromOsRs.value){
-    //const list = [{}];
-    //const emptyList = companyFromOsRs?.value.statutarny_organ.konateľ === 0 ? companyFromOsRs.value.statutarny_organ.konatelia : companyFromOsRs?.value.statutarny_organ.konateľ
-    if(companyFromOsRs?.value.statutarny_organ.konateľ){
-      return companyFromOsRs?.value.statutarny_organ.konateľ;
+  const konatelia = companyFromOsRs?.value.statutarny_organ.konateľ || companyFromOsRs?.value.statutarny_organ.konatelia || [];
+  return konatelia.map(konatel => ({
+    name: konatel.name, // replace with actual property
+    street: konatel.street, // replace with actual property
+    city: konatel.city, // replace with actual property
+    country: konatel.country || 'Slovenská republika',
+    number: konatel.number, // replace with actual property
+    since: konatel.since, // replace with actual property
+    zip: konatel.zip // replace with actual property
+  }));
+});
+
+const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {  
+  return companyFromOsRs.value.spolocnici?.map((spolocnik:SpolocnikFromOrSr) => {
+    let name = '';
+    if (spolocnik.function) {
+      name = spolocnik.function
+    } else {
+      name = spolocnik.name
     }
-    else if(companyFromOsRs?.value.statutarny_organ.konatelia){
-      return companyFromOsRs?.value.statutarny_organ.konatelia
+    return {
+      name: name,
+      street: spolocnik.street || '',
+      city: spolocnik.city || '',
+      country: spolocnik.country || 'Slovenská republika',
+      number: spolocnik.number || '',
+      since: spolocnik.since || ''
+    };
+  }) || [];
+});
+
+const vyskyVkladovFromOrSr = computed(() => {
+  return companyFromOsRs.value.vyska_vkladu?.map((vklad) => ({
+    name: vklad.name || '',
+    vklad: vklad.vklad || '',
+    city: vklad.city || '',
+    splatene: vklad.splatene || 0,
+    currency: vklad.currency
+  })) || [];
+});
+
+const zakladneImanieFromOrSr = computed(() => {
+  const vyska_vkladu = companyFromOsRs.value.zakladne_imanie;
+  return vyska_vkladu ? {
+    imanie: vyska_vkladu.imanie || 0,
+    splatene: vyska_vkladu.splatene || 0,
+    currency: vyska_vkladu.currency,
+  } : {};
+});
+
+const calculatePercentages = () => {
+  return vyskyVkladovFromOrSr.value.map(item => {
+    if (item.vklad === zakladneImanieFromOrSr.value.splatene) {
+      return '100%';
+    } else {
+      let percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
+      return `${percentage.toFixed(2)}%`;
     }
-    else {
-      return [];
-    }
+  });
+};
+
+const calculatePercentageAtIndex = (index: number) => {
+  const item = vyskyVkladovFromOrSr.value[index];
+  if (item.vklad === zakladneImanieFromOrSr.value.splatene) {
+    return 100;
+  } else {
+    let percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
+    return Math.round(percentage);
   }
-})
-
-const spolocniciFromOrSr = computed(() => {
-  if(companyFromOsRs.value.spolocnici){
-      return companyFromOsRs.value.spolocnici;
-    }
-    else {
-      return [];
-    }
-})
-
+};
 
 //#region company name
 function openEditCompanyName() {
@@ -649,18 +750,45 @@ function addNewKonatelToList(){
 
 //#endregion
 
-function closeModalAndAdd() {
-  console.log("Calling submit function!")
-  vfm.close(modalIdAddOrEditKonatel)?.then(() => {
-  })
+function getSpecificSpolocnik(index:number){
+  
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
+  
+  spolocnik.value.title_before = fullNameWithTitlesFromOrSr.title_before    
+  spolocnik.value.first_name = fullNameWithTitlesFromOrSr.first_name
+  spolocnik.value.last_name = fullNameWithTitlesFromOrSr.last_name
+  spolocnik.value.title_after = fullNameWithTitlesFromOrSr.title_after
+
+  spolocnik.value.rodne_cislo = ''
+  spolocnik.value.date_of_birth = ''
+
+  spolocnik.value.country = spolocniciFromOrSr.value[index].country as string
+  spolocnik.value.city = spolocniciFromOrSr.value[index].city
+  spolocnik.value.psc = spolocniciFromOrSr.value[index].zip as string
+  spolocnik.value.street = spolocniciFromOrSr.value[index].street
+  spolocnik.value.street_number = spolocniciFromOrSr.value[index].number.split("/")[0]
+  spolocnik.value.street_number2 = spolocniciFromOrSr.value[index].number.split("/")[1]
+  spolocnik.value.has_change = false;  
 }
 
-function closeModalAndSaveAdddKonatel() {
-  console.log("Calling submit function!")
-  vfm.close(modalIdCancelKonatel)?.then(() => {
-    console.log("then");
+//#region edit spolocnik
+function openEditSpolocnik(index: number){
+  addOperation = false; 
+  vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
+    newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
+    spolocnikIndex = index;
+    console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
+    // get current konatel if index exist if no then work with konatel
+    if(newKonateliaList.value[index] !== undefined){
+      konatel.value = newKonateliaList.value[index];
+      console.log("if");
+    } else {
+      console.log("Start editing konatel orSr at index:", konatelIndex);
+      getSpecificSpolocnik(index)
+    }
   })
 }
+//#endregion
 
 const isNextButtonDisabledHq = computed(() => {
   if(obchodneSidloVirtuOrNormal.value === 'virtualne'){
@@ -679,7 +807,7 @@ watch(obchodneSidloVirtuOrNormal, (newValue) => {
   }
 })
 
-function checkHasChange(item: CompanyMemberKonatel): boolean {
+function checkHasChange(item: CompanyMemberKonatel | CompanyMemberSpolocnik ): boolean {
   if (item && item.has_change === true) {
     return true;
   } else {
@@ -721,6 +849,7 @@ function returnChangesBack(index: number){
 
 function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
   let fullName: string[] = fullNameWithTitleFromOrSr.split(" ");
+  
   let fullNameWithTitle = {
     title_before: '',
     first_name: '',
@@ -784,136 +913,7 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
     return false;
   }
 }
-//test data
-const companyData = ref({
-      typ_sudu: "MS",
-      prislusny_sud: "Bratislava III",
-      oddiel: "Sro",
-      vlozka: "66264/B",
-      typ_osoby: "pravnicka",
-      hlavicka: "Spoločnosť zapísaná v obchodnom registri Mestského súdu Bratislava III, oddiel Sro, vložka 66264/B.",
-      hlavicka_kratka: "MS Bratislava III, oddiel Sro, vložka 66264/B",
-      obchodne_meno: "Top 1 Accounting, s.r.o.",
-      obchodne_meno_since: "09.07.2010",
-      likvidacia: 0,
-      adresa: {
-        street: "Cintorínska",
-        number: "12",
-        city: "Bratislava - mestská časť Staré Mesto",
-        zip: "81108",
-        since: "21.01.2021"
-      },
-      ico: 45633461,
-      den_zapisu: "01.07.2010",
-      pravna_forma: "Spoločnosť s ručením obmedzeným",
-      predmet_cinnosti: [
-        "kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)",
-        "sprostredkovateľská činnosť v oblasti služieb",
-        "počítačové služby",
-        "služby súvisiace s počítačovým spracovaním údajov",
-        "poskytovanie úverov alebo pôžičiek z peňažných zdrojov získaných výlučne bez verejnej výzvy a bez verejnej ponuky majetkových hodnôt",
-        "administratívne služby",
-        "činnosť podnikateľských, organizačných a ekonomických poradcov",
-        "vedenie účtovníctva",
-        "reklamné a marketingové služby",
-        "Fotografické služby",
-        "Čistiace a upratovacie služby",
-        "Skladovanie a pomocné činnosti v doprave",
-        "Prenájom hnuteľných vecí",
-        "Vykonávanie mimoškolskej vzdelávacej činnosti",
-        "Uskutočňovanie stavieb a ich zmien",
-        "Prípravné práce k realizácii stavby",
-        "Dokončovacie stavebné práce pri realizácii exteriérov a interiérov",
-        "Výskum a vývoj v oblasti prírodných, technických, spoločenských a humanitných vied",
-        "Prevádzkovanie športových zariadení a zariadení slúžiacich na regeneráciu a rekondíciu",
-        "Organizovanie športových, kultúrnych a iných spoločenských podujatí",
-        "Prevádzkovanie kultúrnych, spoločenských a zábavných zariadení",
-        "Prenájom nehnuteľností spojený s poskytovaním iných než základných služieb spojených s prenájmom",
-        "Verejné obstarávanie",
-        "Ubytovacie služby v ubytovacích zariadeniach s prevádzkovaním pohostinských činností v týchto zariadeniach a v chatovej osade triedy 3, v kempingoch triedy 3 a 4"
-      ],
-      spolocnici: [
-        {
-          name: "MK Tax Audit Advisory s. r. o.",
-          street: "Cintorínska",
-          city: "Bratislava - mestská časť Staré Mesto",
-          number: "12",
-          zip: "81108",
-          since: "21.01.2021"
-        },
-        {
-          name: "Ing. PhDr. Michal Kováčik",
-          street: "Cintorínska",
-          city: "Bratislava - mestská časť Staré Mesto",
-          number: "12",
-          zip: "81108",
-          since: "21.01.2021"
-        }
-      ],
-      vyska_vkladu: [
-        {
-          name: "MK Tax Audit Advisory s. r. o.",
-          vklad: 2500,
-          splatene: 2500,
-          currency: "EUR"
-        },
-        {
-          name: "Ing. PhDr. Michal Kováčik",
-          vklad: 2500,
-          splatene: 2500,
-          currency: "EUR"
-        }
-      ],
-      statutarny_organ: {
-        konateľ: [
-          {
-            name: "Romana Kováčik",
-            street: "Cintorínska",
-            city: "Bratislava - mestská časť Staré Mesto",
-            number: "12",
-            zip: "81108",
-            since: "01.06.2021"
-          }
-        ]
-      },
-      konanie_menom_spolocnosti: "V mene spoločnosti koná a za spoločnosť podpisuje konateľ spoločnosti samostatne a to tak, že k vytlačenému alebo napísanému obchodnému menu spoločnosti a menu a funkcii konajúceho pripojí svoj vlastnoručný podpis.",
-      zakladne_imanie: {
-        imanie: 5000,
-        splatene: 5000,
-        currency: "EUR"
-      },
-      dalsie_skutocnosti: [
-        {
-          eventText: "Spoločnosť bola založená spoločenskou zmluvou zo dňa 10.06.2010 v zmysle príslušných ustanovení zákona č. 513/1991 Zb. Obchodný zákonník.",
-          eventDate: "09.07.2010"
-        },
-        {
-          eventText: "Zápisnica z valného zhromaždenia zo dňa 25.02.2011",
-          eventDate: "26.03.2011"
-        },
-        {
-          eventText: "Zápisnica z mimoriadneho valného zhromaždenia zo dňa 21.06.2011.",
-          eventDate: "06.08.2011"
-        },
-        {
-          eventText: "Zápisnica z valného zhromaždenia zo dňa 13.1.2012",
-          eventDate: "23.02.2012"
-        },
-        {
-          eventText: "Zápisnica z valného zhromaždenia zo dňa 27.04.2013.",
-          eventDate: "21.05.2013"
-        },
-        {
-          eventText: "Zápisnica z valného zhromaždenia zo dňa 16.11.2015.",
-          eventDate: "12.12.2015"
-        }
-      ],
-      datum_aktualizacie: "20.12.2023",
-      datum_vypisu: "21.12.2023"
-    });
-
 defineExpose({
-
 })
 
 </script>
