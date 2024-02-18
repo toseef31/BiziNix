@@ -264,7 +264,8 @@
               label="Dátum narodenia" validation="required"
             />
             <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie" :options="['Muž', 'Žena']"
-              validation="required" />
+              validation="required"
+            />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
             <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
@@ -346,6 +347,7 @@
           </FormKit>  
         </VueFinalModal>     
     </EditItemForCompany>
+    <!-- Spolicnici -->
     <EditItemForCompany title="Spoločníci">
       <div class="grid grid-cols-2">
         <div v-for="(spolocnikDiv, index ) in spolocniciFromOrSr" :key="index" class="items-center space-y-4">
@@ -356,10 +358,93 @@
             <h4 class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
             <h4 class="text-base">{{ spolocnikDiv.city }}</h4>
             <h4 class="text-base">{{ spolocnikDiv.country }}</h4>
-            <!-- <button @click="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 mt-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button> -->
+            <button @click="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Zmeniť údaje {{ index }}</button>
           </div>
         </div>
       </div>
+      <!-- Edit Spolocnik Modal-->
+        <VueFinalModal
+          :modal-id="modalIdAddOrEditSpolocnik"
+          display-directive="if"
+          :clickToClose="false"
+          :escToClose="false"
+          :lockscroll="true"
+          class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+          content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+        >
+          <div v-if="!addOperation">
+            <h3 class="text-white text-2xl">Zmeniť osobné údaje Spoločníka</h3>
+            <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
+            <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
+          </div>        
+          <div v-else>
+            <h3 class="text-white text-2xl">Prevod podielu</h3>                    
+          </div>
+            <!-- get spolocnik via openEditSpolocnik and asign to form values via property name="" -->
+            <FormKit
+              type="form"
+              id="form_new_spolocnici" name="new_spolocnici"
+              @submit="closeModalAndSubmitOrEditSpolocnik"
+              :config="{ validationVisibility: 'live' }"
+              submit-label="Uložiť"
+              #default="{ value, state: { valid } }"
+              :actions="false"
+              v-model="spolocnik"
+            >
+              <FormKit type="select" name="typ_zakladatela"
+                label="Typ zakladateľa"
+                :options="[
+                  { value: 1, label: 'Fyzická osoba' },
+                  { value: 2, label: 'Právnicka osoba' }
+                ]"
+                validation="required"
+              />
+                <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
+                  <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
+                  <FormKit type="text" name="ico" label="IČO" />
+                </div>
+                <div v-if="value.typ_zakladatela != 2" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
+                  <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
+                  <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth"
+                    label="Dátum narodenia" validation="required" />
+                  <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie" :options="['Muž', 'Žena']"
+                    validation="required"
+                  />
+                  <FormKit type="text" name="title_before" label="Titul pred menom" />
+                  <FormKit type="text" name="title_after" label="Titul za menom" />
+                  <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
+                    validation="required|length:9"
+                    validation-visibility="blur"
+                    />
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
+                    :options="['Slovensko', 'Česká republika']" validation="required" />
+                  <FormKit type="text" name="city" label="Mesto" validation="required" />
+                  <FormKit type="text" name="psc" label="PSČ" validation="required" />
+                  <FormKit type="text" name="street" label="Ulica" validation="required" />
+                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
+                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+                </div>
+                <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                  <button
+                    class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                    type="button"
+                    @click.prevent="closeModalSpolocnik"
+                  >
+                    Zrušiť
+                  </button>
+                  <button
+                    :disabled="!valid"
+                    type="submit"
+                    class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                  >
+                    Uložiť
+                  </button>
+                </div>
+            </FormKit>  
+        </VueFinalModal>
     </EditItemForCompany>
     <EditItemForCompany title="Spôsob konania konateľov">
     </EditItemForCompany>
@@ -391,7 +476,10 @@ import 'tippy.js/dist/tippy.css' // optional for styling
 import { ReceiptRefundIcon } from '@heroicons/vue/24/outline'
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 import ProgressBar from '@/components/ProgressBar.vue';
-import type SpolocnikFromOrSr from '@/types/SpolocnikFromOrSr';
+import type KonatelFromOrSr from '@/types/FromOrSrParser/KonatelFromOrSr';
+import type SpolocnikFromOrSr from '@/types/FromOrSrParser/SpolocnikFromOrSr';
+import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFromOrSr';
+import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
 
 // defineProps<{
 //   indexKonatel: number
@@ -462,21 +550,6 @@ let spolocnikObject: CompanyMemberSpolocnik = {
   je_zakladatel: true
 };
 let spolocnik = ref(spolocnikObject);
-let spolocnikFromOrSr = {
-  name: '',
-  street: '',
-  city: '',
-  country: null || 'Slovenská republika',
-  number: '',
-  since: ''
-}
-// let vyskaVkladuFromOrSr = {
-//   name: '',
-//   vklad: '',
-//   city: '',
-//   splatene: 0,
-//   currency: '',
-// }
 
 let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
 let newlyAddedKonatelList = ref<CompanyMemberKonatel[]>([]) // new added konatel
@@ -535,7 +608,7 @@ async function search({ search }: any) {
   }
 }
 
-const konateliaFromOrSr = computed(() => {
+const konateliaFromOrSr = computed<KonatelFromOrSr[]>(() => {
   const konatelia = companyFromOsRs?.value.statutarny_organ.konateľ || companyFromOsRs?.value.statutarny_organ.konatelia || [];
   return konatelia.map(konatel => ({
     name: konatel.name, // replace with actual property
@@ -549,25 +622,34 @@ const konateliaFromOrSr = computed(() => {
 });
 
 const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {  
-  return companyFromOsRs.value.spolocnici?.map((spolocnik:SpolocnikFromOrSr) => {
-    let name = '';
+  return companyFromOsRs.value.spolocnici.map((spolocnik: SpolocnikFromOrSr) => {
+    // pravnicka osoba if function exist
     if (spolocnik.function) {
-      name = spolocnik.function
-    } else {
-      name = spolocnik.name
+      return {
+        function: spolocnik.function,
+        name: spolocnik.function,
+        street: spolocnik.name.split(" ")[0],
+        city: spolocnik.street,
+        country: spolocnik.city || 'Slovenská republika',
+        number: '',
+        since: spolocnik.since || ''
+      }    
     }
-    return {
-      name: name,
-      street: spolocnik.street || '',
-      city: spolocnik.city || '',
-      country: spolocnik.country || 'Slovenská republika',
-      number: spolocnik.number || '',
-      since: spolocnik.since || ''
-    };
-  }) || [];
+    // fyzicka osoba if function not exist
+    else {
+      return {
+        name: spolocnik.name,
+        street: spolocnik.street || '',
+        city: spolocnik.city || '',
+        country: spolocnik.country || 'Slovenská republika',
+        number: spolocnik.number || '',
+        since: spolocnik.since || ''
+      } 
+    }
+  })
 });
 
-const vyskyVkladovFromOrSr = computed(() => {
+const vyskyVkladovFromOrSr = computed<VyskaVkladuFromOrSr[]>(() => {
   return companyFromOsRs.value.vyska_vkladu?.map((vklad) => ({
     name: vklad.name || '',
     vklad: vklad.vklad || '',
@@ -577,14 +659,15 @@ const vyskyVkladovFromOrSr = computed(() => {
   })) || [];
 });
 
-const zakladneImanieFromOrSr = computed(() => {
-  const vyska_vkladu = companyFromOsRs.value.zakladne_imanie;
-  return vyska_vkladu ? {
-    imanie: vyska_vkladu.imanie || 0,
-    splatene: vyska_vkladu.splatene || 0,
-    currency: vyska_vkladu.currency,
-  } : {};
+const zakladneImanieFromOrSr = computed<ZakladneImanieFromOrSr>(() => {
+  const zakladne_imanie = companyFromOsRs.value.zakladne_imanie;
+  return {
+    imanie: zakladne_imanie.imanie,
+    splatene: zakladne_imanie.splatene,
+    currency: zakladne_imanie.currency,
+  };
 });
+
 
 const calculatePercentages = () => {
   return vyskyVkladovFromOrSr.value.map(item => {
@@ -657,9 +740,9 @@ function getSpecificKonatel(index:number){
   konatel.value.rodne_cislo = ''
   konatel.value.date_of_birth = ''
 
-  konatel.value.country = konateliaFromOrSr.value[index].country
+  konatel.value.country = konateliaFromOrSr.value[index].country as string
   konatel.value.city = konateliaFromOrSr.value[index].city
-  konatel.value.psc = konateliaFromOrSr.value[index].zip
+  konatel.value.psc = konateliaFromOrSr.value[index].zip as string
   konatel.value.street = konateliaFromOrSr.value[index].street
   konatel.value.street_number = konateliaFromOrSr.value[index].number.split("/")[0]
   konatel.value.street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
@@ -752,16 +835,24 @@ function addNewKonatelToList(){
 
 function getSpecificSpolocnik(index:number){
   
-  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
-  
-  spolocnik.value.title_before = fullNameWithTitlesFromOrSr.title_before    
-  spolocnik.value.first_name = fullNameWithTitlesFromOrSr.first_name
-  spolocnik.value.last_name = fullNameWithTitlesFromOrSr.last_name
-  spolocnik.value.title_after = fullNameWithTitlesFromOrSr.title_after
-
-  spolocnik.value.rodne_cislo = ''
-  spolocnik.value.date_of_birth = ''
-
+  if(spolocniciFromOrSr.value[index].function){
+    // prav osoba / firma
+    spolocnik.value.typ_zakladatela = 2
+    spolocnik.value.obchodne_meno = spolocniciFromOrSr.value[index].name
+    spolocnik.value.ico = ''
+  }
+  else{
+      // fiz osoba
+    spolocnik.value.typ_zakladatela = 1
+    let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);  
+    spolocnik.value.title_before = fullNameWithTitlesFromOrSr.title_before    
+    spolocnik.value.first_name = fullNameWithTitlesFromOrSr.first_name
+    spolocnik.value.last_name = fullNameWithTitlesFromOrSr.last_name
+    spolocnik.value.title_after = fullNameWithTitlesFromOrSr.title_after
+    spolocnik.value.rodne_cislo = ''
+    spolocnik.value.date_of_birth = ''  
+    spolocnik.value.gender = ''
+  }
   spolocnik.value.country = spolocniciFromOrSr.value[index].country as string
   spolocnik.value.city = spolocniciFromOrSr.value[index].city
   spolocnik.value.psc = spolocniciFromOrSr.value[index].zip as string
@@ -779,15 +870,27 @@ function openEditSpolocnik(index: number){
     spolocnikIndex = index;
     console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
     // get current konatel if index exist if no then work with konatel
-    if(newKonateliaList.value[index] !== undefined){
-      konatel.value = newKonateliaList.value[index];
+    if(newSpolocnikList.value[index] !== undefined){
+      spolocnik.value = newSpolocnikList.value[index];
       console.log("if");
     } else {
-      console.log("Start editing konatel orSr at index:", konatelIndex);
+      console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
       getSpecificSpolocnik(index)
     }
   })
 }
+
+function closeModalAndSubmitOrEditSpolocnik(){
+  vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
+    // to do    
+    spolocnik.value.has_change = true;
+  })
+}
+
+function closeModalSpolocnik(){
+  vfm.closeAll();
+}
+
 //#endregion
 
 const isNextButtonDisabledHq = computed(() => {
@@ -830,9 +933,9 @@ function returnChangesBack(index: number){
   newKonateliaList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
   newKonateliaList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
 
-  newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country
+  newKonateliaList.value[index].country = konateliaFromOrSr.value[index].country as string
   newKonateliaList.value[index].city = konateliaFromOrSr.value[index].city
-  newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip
+  newKonateliaList.value[index].psc = konateliaFromOrSr.value[index].zip as string
   newKonateliaList.value[index].street = konateliaFromOrSr.value[index].street
   newKonateliaList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
   newKonateliaList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
