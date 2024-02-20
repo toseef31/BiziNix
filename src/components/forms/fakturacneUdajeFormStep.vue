@@ -165,6 +165,7 @@ async function fetchInvoiceProfiles() {
     })
   } else {
     isLoading.value = false
+    createNewInvoiceProfile.value = true;
     return []
   }
 }
