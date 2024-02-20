@@ -11,9 +11,6 @@
                 class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
                 @change="switchSelect($event)"
               >
-              <option>
-                Vyberte si sídlo
-              </option>
                 <option
                   v-for="vhq in vhqs"
                   :value="vhq.id"
@@ -78,7 +75,7 @@ function switchSelect(event: any) {
 onBeforeMount(async () => {
   await store.dispatch("vhqs");
   store.state.selectedVhq = vhqs.value.find(
-    (item: any) => item.id == 0
+    (item: any) => item.id == 1
   );
 });
 

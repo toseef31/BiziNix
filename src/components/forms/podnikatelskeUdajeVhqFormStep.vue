@@ -189,9 +189,11 @@ function addNewCompany() {
     existingCompany.value = false;
   } else {
     companies.value.pop();
-    store.state.selectedCompany = companies.value[0];
-    currentCompany.value = store.state.selectedCompany;
     existingCompany.value = true;
+    if(user.value.userId) {
+      store.state.selectedCompany = companies.value[0];
+      currentCompany.value = store.state.selectedCompany;
+    }
   }
 }
 
