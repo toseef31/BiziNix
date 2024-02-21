@@ -23,10 +23,6 @@
           <p class="text-xl">Objednávka sa nenašla, alebo nebola prijatá.</p>
         </div>
       </template>
-      <div class="p-4 text-center font-bold" v-if="!loading && !user">
-        Nezabudnite si pred prihlásením aktivovať svoj účet.<br>
-        Aktivačný link nájdete vo Vašej emailovej schránke.
-      </div>
       <div class="p-4 text-center">Ďakujeme za dôveru.</div>
     </div>
   </main>

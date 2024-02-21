@@ -7,6 +7,10 @@
                 <div class="text-2xl text-gray-300">
                     Za Vašu objednávku č. <b>{{ order.id }}</b>
                 </div>
+                <div class="py-4 text-2xl font-bold text-teal-500">
+                  Nezabudnite si pred prvým prihlásením aktivovať svoj účet.<br>
+                  Aktivačný link nájdete vo Vašej emailovej schránke.
+                </div>
                 <div class="text-gray-400 pt-4">
                     Užívajte si našu službu na 3 mesiace zdarma. Za každý feedback budeme vďační!
                 </div>

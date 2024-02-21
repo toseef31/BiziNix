@@ -7,6 +7,10 @@
               <div class="text-3xl text-gray-300">
                 Za Vašu objednávku č. <b>{{ order.id }}</b>
               </div>
+              <div class="py-4 text-2xl font-bold text-teal-500">
+                Nezabudnite si pred prvým prihlásením aktivovať svoj účet.<br>
+                Aktivačný link nájdete vo Vašej emailovej schránke.
+              </div>
             </div>
             <div>
               <img src="../../assets/bizinix-robot-heart.png" class="w-52">

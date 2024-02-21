@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="w-full min-h-[90vh] flex flex-row">
-      <div v-if="!isLoading" class="flex flex-col basis-1/12 pl-2 py-2 relative">
+      <div v-if="!isLoading && selectedCompany.sidlo_typ_balika" class="flex flex-col basis-1/12 pl-2 py-2 relative">
         <div class="sticky top-[75vh]">
           <div class="text-sm px-8">
             V prípade záujmu o
