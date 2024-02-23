@@ -294,6 +294,7 @@ async function getCompanies(userId) {
     .dispatch("getAllCompaniesByUserId", userId)
     .then((response) => {
       companies.value = response.data.data;
+      currentCompany.value = companies.value[0];
       existingCompany.value = true;
     }).catch((err) => {
       toast.error('Error: ' + err)

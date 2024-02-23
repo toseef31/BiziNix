@@ -264,6 +264,8 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
 async function updateCompany() {
   companyDataRef.value.currentCompany.sidlo_typ_balika = hqDataRef.value.vhq_package.name;
 
+  console.log(companyDataRef.value.currentCompany)
+
   await store
     .dispatch("updateCompany", companyDataRef.value.currentCompany)
     .then((res) => {
