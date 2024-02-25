@@ -420,7 +420,6 @@ const today = moment(new Date()).format("YYYY-MM-DD");
 const mailsData = ref();
 const selectedCompany = ref();
 const mails = computed(() => store.state.mails as Mail[]);
-const userAddress = computed(() => store.state.user.address as any);
 
 const showDeleteModalDialog = ref(false);
 
@@ -705,7 +704,6 @@ async function refreshData() {
 }
 
 onBeforeMount(async () => {
-  store.dispatch("userAddress");
   store.state.mySubmenuActive = 2;
   await refreshData();
 });

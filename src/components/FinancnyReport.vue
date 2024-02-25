@@ -280,7 +280,8 @@ async function getChartData(val: any) {
         }
     }
 
-    await store
+    if(company.value.fakturacia_zaplatene_do && company.value.fakturacia_deaktivovane == 0) {
+        await store
         .dispatch("getCompanyFindataFinstat", ico)
         .then((res) => {
             if(res.data.Ratios) {
@@ -309,7 +310,6 @@ async function getChartData(val: any) {
             toast.error('Error: ' + err);
         });
 
-    if(company.value.fakturacia_zaplatene_do && company.value.fakturacia_deaktivovane == 0) {
         await store
         .dispatch("getFinDataForCompany", company.value.id)
         .then((response) => {
