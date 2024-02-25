@@ -314,7 +314,7 @@
                               class="relative z-50">
                               <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
                               <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
-                                <DialogPanel class="w-full max-w-lg bg-gray-900 rounded">
+                                <DialogPanel class="w-full max-w-lg rounded">
                                   <div class="bg-gray-700 bg-opacity-95 rounded-lg">
                                     <div class="flex flex-row justify-start py-8 px-8 text-white font-bold text-xl">
                                       Naozaj chcete túto zásielku skartovať?
@@ -559,13 +559,13 @@ function scanMails() {
 }
 
 async function shredMails() {
-  checkedMails.value.forEach((mail) => {
-    if (mail.status == 1) {
-      mail.shred_requested = 1;
-    }
-  });
-
   if (checkedMails.value.length > 0) {
+    checkedMails.value.forEach((mail) => {
+    if (mail.status == 1) {
+        mail.shred_requested = 1;
+      }
+    });
+
     await store
       .dispatch("updateMultipleMails", checkedMails.value)
       .then(async () => {
@@ -591,13 +591,14 @@ function sendSingleMail(mail: any) {
   });
 }
 
-function shredSingleMail(mail: any) {
+async function shredSingleMail(mail: any) {
   selectedMail.value = mail;
   if (selectedMail.value) {
     selectedMail.value.shred_requested = true;
-    store
+    await store
       .dispatch("updateMail", selectedMail.value)
-      .then(() => {
+      .then(async () => {
+        await getMails(mailsData.value.current_page, searchQuery.value, dateFrom.value, dateTo.value, '', selectedColumn.value);
         showDeleteModalDialog.value = false;
       })
       .catch((err) => {
