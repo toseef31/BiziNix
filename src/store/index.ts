@@ -197,7 +197,6 @@ export const store = createStore({
     },
     async markNotificationAsRead({ commit, dispatch }, notification_id) {
       const { data } = await axiosClient.post("/users/readNotification", notification_id);
-      dispatch("getNotifications");
       return data;
     },
     async addInvoiceProfile({ commit, dispatch }, invoiceProfile) {

@@ -52,7 +52,7 @@
                       </div>
                       <div class="flex">
                         <button class="px-4 flex justify-center items-center bg-teal-500 hover:bg-teal-700 rounded-md"
-                          v-on:click="notificationAction(notification.data.action)">
+                          v-on:click="notificationAction(notification.data)">
                           <span class="px-2 py-2">Prejsť</span>
                           <ArrowRightIcon class="h-6 w-6" aria-hidden="true" />
                         </button>
@@ -193,8 +193,8 @@ function redirectToByName(rname: string) {
   }
 }
 
-function notificationAction(action: string) {
-  switch (action) {
+async function notificationAction(data: any) {
+  switch (data.action) {
     case 'bankaccount':
       store.state.myCompanyDetailsTab = 3;
       return router.push({
@@ -213,6 +213,14 @@ function notificationAction(action: string) {
         name: "Doklady"
       });
     case 'mails':
+      const notifyData = JSON.parse(data.data);
+      if(notifyData.company_id != currentCompany.value.id){
+        await store.dispatch("getCompanyById", notifyData.company_id).then((response) => {
+          store.state.selectedCompany = response.data;
+        }).catch((error) => {
+          console.log(error);
+        })
+      }
       return router.push({
         name: "Sídlo a pošta"
       });
@@ -225,6 +233,7 @@ async function markAsRead(notification) {
     notification_id: notification.id
   }
   await store.dispatch("markNotificationAsRead", notification_id);
+  store.state.notifications = notifications.value.filter((item) => { return (item.id != notification.id); });
 }
 
 const userNavigation = [
