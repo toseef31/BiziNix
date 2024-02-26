@@ -264,7 +264,7 @@
                             </div>
                           </td>
                           <td class="whitespace-nowrap py-4 pl-3 pr-4 text-left text-sm font-medium sm:pr-6">
-                            <div class="flex-1 py-4 px-3 text-left" v-if="!mail.scan_requested">
+                            <div class="flex-1 py-4 px-3 text-left" v-if="!mail.scan_requested && (mail.status == 2 || mail.status == 4)">
                               <button class="font-medium text-gray-900 hover:underline" v-on:click="scanSingleMail(mail)">
                                 Vyžiadať scan
                               </button>
