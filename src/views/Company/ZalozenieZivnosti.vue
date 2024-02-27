@@ -330,7 +330,8 @@ async function addCompany(user: User, userId: any, hqId: any) {
   companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
   companyOrZivnostModel.value.doc_sncounter_id = 1
   companyOrZivnostModel.value.doc_template_id = 1
-  companyOrZivnostModel.value.status = 2
+  companyOrZivnostModel.value.status = 2 // neaktívna spoločnosť
+  companyOrZivnostModel.value.sub_status = 1 // zakladanie spoločnosti je v priebehu
   companyOrZivnostModel.value.owner = userId
   companyOrZivnostModel.value.headquarters_id = hqId
   companyOrZivnostModel.value.is_dph = false

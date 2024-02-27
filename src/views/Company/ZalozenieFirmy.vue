@@ -370,6 +370,7 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     name: companyMembersAndDetails.value.companyOrZivnostModel.name + ' ' + companyMembersAndDetails.value.pravnaForma,
     type: companyMembersAndDetails.value.companyOrZivnostModel.type,
     status: companyMembersAndDetails.value.companyOrZivnostModel.status,
+    sub_status: companyMembersAndDetails.value.companyOrZivnostModel.sub_status,
     owner: userId,
     headquarters_id: hqId,
     doc_sncounter_id: 1,
