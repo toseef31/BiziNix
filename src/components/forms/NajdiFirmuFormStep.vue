@@ -1017,6 +1017,16 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
   }
 }
 defineExpose({
+  companyFromOsRs,
+  konateliaFromOrSr,
+  spolocniciFromOrSr,
+  newCompanyFullName,
+  newlyAddedKonatelList,
+  newlyAddedSpolocnikList,
+  obchodneSidloVirtuOrNormal, // if virtual then select from store
+  newHqAddress,
+  headquarterInfo,
+  selectedVhqFromStore
 })
 
 </script>

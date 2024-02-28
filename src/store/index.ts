@@ -519,11 +519,15 @@ export const store = createStore({
       return data;
     },
     //#endregion
-    //#region orders
-    
+    //#region orders    
     async addOrder({ commit }, order) {
       const { data } = await axiosClient.post("/orders/add", order);
       commit("setOrder", data); // setOrder is defined as muttation below
+      return data;
+    },
+    async addCompanyUpdateOrder({ commit }, companyUpdateOrder) {
+      const { data } = await axiosClient.post("/orders/addCompanyUpdateOrder", companyUpdateOrder);
+      //commit("setOrder", data); // setOrder is defined as muttation below
       return data;
     },
     async getOrderById({ commit }, id) {
