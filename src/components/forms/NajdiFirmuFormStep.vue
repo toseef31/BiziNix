@@ -200,7 +200,7 @@
         <div>
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.name }}</h3>
           <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index]) && !checkCanceled(newKonateliaList[index])">
-            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>            
             <h4 class="text-base">{{ newKonateliaList[index]?.city }}, {{ newKonateliaList[index]?.street }} {{ newKonateliaList[index]?.street_number }}/{{ newKonateliaList[index]?.street_number2 }}, {{ newKonateliaList[index]?.psc }}</h4>
             <h4 class="text-base">{{ newKonateliaList[index]?.country }} </h4>
           </div>  
@@ -238,7 +238,7 @@
           class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
           content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
         >
-        <div v-if="!addOperation">
+        <div v-if="!addOperationKonatel">
           <h3 class="text-white text-2xl">Zmeniť osobné údaje konateľa</h3>
           <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
           <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
@@ -278,7 +278,7 @@
             <FormKit type="text" name="street" label="Ulica" validation="required" />
             <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
             <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
-            <FormKit v-if="addOperation" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
+            <FormKit v-if="addOperationKonatel" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
           </div>
             <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
             <button
@@ -354,13 +354,40 @@
           <div>
             <span>{{ vyskyVkladovFromOrSr[index].splatene }} {{ vyskyVkladovFromOrSr[index].currency }} {{ calculatePercentageAtIndex(index) }}%</span>
             <ProgressBar :progress="calculatePercentageAtIndex(index)" />
-            <h3 class="text-lg">{{ spolocnikDiv.name }}</h3>
-            <h4 class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
-            <h4 class="text-base">{{ spolocnikDiv.city }}</h4>
-            <h4 class="text-base">{{ spolocnikDiv.country }}</h4>
-            <button @click="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Zmeniť údaje {{ index }}</button>
+            <h3 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-lg">{{ spolocnikDiv.name }}</h3>
+            <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
+            <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.city }}</h4>
+            <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.country }}</h4>
+            <div
+              v-if="newSpolocnikList[index] && checkHasChange(newSpolocnikList[index])"
+              class="flex flex-row items-center"
+            >
+              <div>
+                <h3 class="text-lg font-bold">{{ (newSpolocnikList[index]?.title_before || '') + " " + (newSpolocnikList[index]?.first_name || '') + " " + (newSpolocnikList[index]?.last_name || '') + " " +  (newSpolocnikList[index]?.title_after || '') }} {{ newSpolocnikList[index]?.obchodne_meno || '' }} {{ newSpolocnikList[index]?.has_change || '' }}</h3>
+                <h4 class="text-base">{{ newSpolocnikList[index]?.city || '' }}, {{ newSpolocnikList[index]?.street || '' }} {{ newSpolocnikList[index]?.street_number || '' }}/{{ newSpolocnikList[index]?.street_number2 || '' }}, {{ newSpolocnikList[index]?.psc || '' }}</h4>
+                <h4 class="text-base">{{ newSpolocnikList[index]?.country || '' }} </h4>
+              </div>
+              <div>
+                <button>
+                  <Tippy>
+                    <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                    <template #content>
+                      Vrátiť zmeny späť
+                    </template>
+                  </Tippy>
+                </button>
+              </div>
+            </div>  
+            <div class="flex flex-col mt-2 space-y-4">
+              <button @click="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
+              <button @click="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušIť podiel {{ index }}</button>            
+            </div>
           </div>
         </div>
+      </div>
+      <div class="mt-4 pt-2 border-t border-t-gray-700">
+        {{ newSharesTransfersList }}
+        <button @click="() => console.log('Makaj toto treba spravit')" class="bg-bizinix-teal p-2 mr-4 rounded">Pridať spoločníka cez navýšenie základného imania</button>        
       </div>
       <!-- Edit Spolocnik Modal-->
         <VueFinalModal
@@ -372,7 +399,7 @@
           class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
           content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
         >
-          <div v-if="!addOperation">
+          <div v-if="!addOperationSpolocnik && !isPrevodPodielu">
             <h3 class="text-white text-2xl">Zmeniť osobné údaje Spoločníka</h3>
             <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
             <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
@@ -391,7 +418,15 @@
               :actions="false"
               v-model="spolocnik"
             >
-              <FormKit type="select" name="typ_zakladatela"
+              <!-- Prevod podielu -->
+              <div v-if="isPrevodPodielu">
+                <div class="text-white">{{ nadobudatelia }}</div>
+                <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
+                  :options="nadobudatelia"                
+                />
+              </div>
+              <div v-if="selectedNadobudatel == 'Iná osoba' || !isPrevodPodielu">
+                <FormKit type="select" name="typ_zakladatela"
                 label="Typ zakladateľa"
                 :options="[
                   { value: 1, label: 'Fyzická osoba' },
@@ -427,22 +462,47 @@
                   <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
                   <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
                 </div>
-                <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
-                  <button
-                    class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
-                    type="button"
-                    @click.prevent="closeModalSpolocnik"
-                  >
-                    Zrušiť
-                  </button>
-                  <button
-                    :disabled="!valid"
-                    type="submit"
-                    class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
-                  >
-                    Uložiť
-                  </button>
+              </div>
+              <div v-if="isPrevodPodielu">
+                <FormKit v-model="mnozstvoPodielu" type="radio" label="Mňožstvo podielu"
+                :options="[
+                    { value: 'fullTransfer', label: 'Vsetko' },
+                    { value: 'partialTransfer', label: 'Časť obchodného podielu' }
+                  ]"
+                />
+                <div v-if="mnozstvoPodielu == 'partialTransfer'">
+                  <FormKit type="text" v-model="prevodPodieluFromTo.amount" label="Čast podielu v EUR" />
                 </div>
+                <div class="flex flex-row space-x-4">
+                  <FormKit type="text" v-model="prevodPodieluFromTo.priceForTransfer" label="Cena za prevod obch. podielu" />
+                  <FormKit
+                    type="select"
+                    label="Mena"
+                    v-model="prevodPodieluFromTo.currency"
+                    :options="[
+                      { value: 'EUR', label: 'EUR'},
+                      { value: 'CZK', label: 'CZK (Kč)'},
+                      { value: 'USD', label: 'USD ($)'}
+                    ]"
+                  /> 
+                </div>                  
+              </div>
+              <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalSpolocnik"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                  Uložiť
+                </button>
+              </div>
             </FormKit>  
         </VueFinalModal>
     </EditItemForCompany>
@@ -480,6 +540,7 @@ import type KonatelFromOrSr from '@/types/FromOrSrParser/KonatelFromOrSr';
 import type SpolocnikFromOrSr from '@/types/FromOrSrParser/SpolocnikFromOrSr';
 import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFromOrSr';
 import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
+import type SharesTransfers from '@/types/editCompany/SharesTransfers';
 
 // defineProps<{
 //   indexKonatel: number
@@ -497,7 +558,10 @@ const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 
-let addOperation = false;
+let addOperationKonatel = false;
+let isPrevodPodielu = false;
+let addOperationSpolocnik = false;
+
 let newCompanyFullName = reactive({
   newCompanyName: '',
   newCompanyPravForm: ''
@@ -531,6 +595,7 @@ let konatel = ref(konatelObject);
 let spolocnikIndex: number;
 let spolocnikObject: CompanyMemberSpolocnik = {
   company_id: null,
+  typ_zakladatela: '',
   first_name: '',
   last_name: '',
   title_before: '',
@@ -550,12 +615,23 @@ let spolocnikObject: CompanyMemberSpolocnik = {
   je_zakladatel: true
 };
 let spolocnik = ref(spolocnikObject);
+let mnozstvoPodielu = ref('fullTransfer');
+let prevodPodieluFromTo = ref({
+  from: '',
+  to: '',
+  amount: '',
+  percentageOfAmount: 0,
+  fullTransfer: false,
+  partialTransfer: false,
+  priceForTransfer: '',
+  currency: ''
+});
 
 let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
 let newlyAddedKonatelList = ref<CompanyMemberKonatel[]>([]) // new added konatel
 let newSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // edited spolocnik
 let newlyAddedSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // new added spolocnil
-
+let newSharesTransfersList = ref<SharesTransfers[]>([])
 let obchodneSidloVirtuOrNormal = ref("vlastnePrenajate")
 let newHqAddress = ref({
   street: '',
@@ -580,6 +656,14 @@ let headquarterInfo = ref({
   img: '',
   address_id: 0
 })
+
+let nadobudatelia = computed(() => [
+  {
+    label: '',
+    value: '' as string | Object,
+  }
+]);
+let selectedNadobudatel;
 
 onMounted( () => {
   store.state.selectedVhq = {};
@@ -660,13 +744,27 @@ const vyskyVkladovFromOrSr = computed<VyskaVkladuFromOrSr[]>(() => {
 });
 
 const zakladneImanieFromOrSr = computed<ZakladneImanieFromOrSr>(() => {
-  const zakladne_imanie = companyFromOsRs.value.zakladne_imanie;
-  return {
-    imanie: zakladne_imanie.imanie,
-    splatene: zakladne_imanie.splatene,
-    currency: zakladne_imanie.currency,
-  };
+  if(companyFromOsRs.value.vyska_vkladu){
+    let vyska_vkladu = companyFromOsRs.value.vyska_vkladu;
+    let totalVkladFromVyskaVkladu = vyska_vkladu.reduce((total, item) => total + item.splatene, 0);
+    let totalSplateneFromVyskaVkladu = vyska_vkladu.reduce((total, item) => total + item.splatene, 0);
+    let currency = vyska_vkladu.every(vklad => vklad.currency === "EUR") ? "EUR" : "MIXED Currency";
+    // zakladne_imanie sa vyparilo?
+    //const zakladne_imanie = companyFromOsRs.value.zakladne_imanie;
+    return {
+      imanie: totalVkladFromVyskaVkladu,
+      splatene: totalSplateneFromVyskaVkladu,
+      currency: currency,
+    };
+  } else {
+    return {
+      imanie: 0, // default value
+      splatene: 0, // default value
+      currency: '', // default value
+    };
+  }
 });
+
 
 
 const calculatePercentages = () => {
@@ -684,11 +782,16 @@ const calculatePercentageAtIndex = (index: number) => {
   const item = vyskyVkladovFromOrSr.value[index];
   if (item.vklad === zakladneImanieFromOrSr.value.splatene) {
     return 100;
-  } else {
+  } else if (zakladneImanieFromOrSr.value.splatene !== 0) {
     let percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
     return Math.round(percentage);
+  } else {
+    // Handle the case when zakladneImanieFromOrSr.value.splatene is zero
+    // You can return a specific value or throw an error
+    return 0; // or throw new Error("Division by zero");
   }
 };
+
 
 //#region company name
 function openEditCompanyName() {
@@ -754,7 +857,7 @@ function getSpecificKonatel(index:number){
 
 //#region edit konatel
 function openEditKonatel(index: number) {
-  addOperation = false;
+  addOperationKonatel = false;
   vfm.open(modalIdAddOrEditKonatel)?.then(() => {  
     newKonateliaList.value.length = konateliaFromOrSr.value.length
     konatelIndex = index
@@ -774,7 +877,7 @@ function openEditKonatel(index: number) {
 function closeModalAndSubmitOrEditKonatel() {
   console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditKonatel)?.then(() => {
-    if(addOperation){
+    if(addOperationKonatel){
       addNewKonatelToList();
     } 
     else if(konatelIndex >= 0 && konatelIndex < newKonateliaList.value.length) {
@@ -821,7 +924,7 @@ function closeModalForCancelKonatel(){
 
 //#region  Add new konatel
 function openAddKonatel() {
-  addOperation = true;
+  addOperationKonatel = true;
   konatel.value = Object.assign({}, konatelObject);
   vfm.open(modalIdAddOrEditKonatel)?.then(() => {
   })
@@ -833,15 +936,20 @@ function addNewKonatelToList(){
 
 //#endregion
 
-function getSpecificSpolocnik(index:number){
-  
+function getSpecificSpolocnik(index: number){  
   if(spolocniciFromOrSr.value[index].function){
     // prav osoba / firma
     spolocnik.value.typ_zakladatela = 2
     spolocnik.value.obchodne_meno = spolocniciFromOrSr.value[index].name
     spolocnik.value.ico = ''
   }
-  else{
+  else if(spolocniciFromOrSr.value[index].name.includes('s. r.') || spolocniciFromOrSr.value[index].name.includes('o. z.')){
+    // prav osoba / firma
+    spolocnik.value.typ_zakladatela = 2
+    spolocnik.value.obchodne_meno = spolocniciFromOrSr.value[index].name
+    spolocnik.value.ico = ''
+  }
+  else {
       // fiz osoba
     spolocnik.value.typ_zakladatela = 1
     let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);  
@@ -859,12 +967,12 @@ function getSpecificSpolocnik(index:number){
   spolocnik.value.street = spolocniciFromOrSr.value[index].street
   spolocnik.value.street_number = spolocniciFromOrSr.value[index].number.split("/")[0]
   spolocnik.value.street_number2 = spolocniciFromOrSr.value[index].number.split("/")[1]
-  spolocnik.value.has_change = false;  
+  spolocnik.value.has_change = false;
 }
 
 //#region edit spolocnik
 function openEditSpolocnik(index: number){
-  addOperation = false; 
+  addOperationSpolocnik = false; 
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
     spolocnikIndex = index;
@@ -880,15 +988,110 @@ function openEditSpolocnik(index: number){
   })
 }
 
+function openPreviestPodielSpolocnika(index: number){
+  addOperationSpolocnik = false; 
+  isPrevodPodielu = true;
+  prevodPodieluFromTo.value.amount = '';
+  prevodPodieluFromTo.value.priceForTransfer = '';
+  spolocnik.value = Object.assign({}, spolocnikObject);
+  nadobudatelia.value.length = 0;
+  if(spolocniciFromOrSr.value.length >= 2){
+    let mappedSpolicniciFromOrOs = spolocniciFromOrSr.value.map(spolocnikFromOrSr => ({
+      label: spolocnikFromOrSr.name,
+      value: spolocnikFromOrSr
+    }))
+    nadobudatelia.value.push(...mappedSpolicniciFromOrOs)
+  }
+  nadobudatelia.value.push({
+      label: 'Iná osoba',
+      value: 'Iná osoba'
+  })
+  if(nadobudatelia.value.length >= 2){
+      nadobudatelia.value.splice(index, 1) // splice due to preselect
+  }
+  vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
+    // newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
+    spolocnikIndex = index;
+    // console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
+    // // get current konatel if index exist if no then work with konatel
+    // if(newSpolocnikList.value[index] !== undefined){
+    //   spolocnik.value = newSpolocnikList.value[index];
+    //   console.log("if");
+    // } else {
+    //   console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
+    //   getSpecificSpolocnik(index)
+    // }
+  })
+}
+
+function addNewSpolocnikTolist(){
+  newlyAddedSpolocnikList.value.push(spolocnik.value)
+}
+
 function closeModalAndSubmitOrEditSpolocnik(){
+  
+  console.log("Calling submit function Spolocnik!")
   vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
+    if(addOperationSpolocnik){
+      addNewSpolocnikTolist();
+    }
+    else if(isPrevodPodielu){
+      let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
+      // newSharesTransfersList.value.push({
+      //   nameFrom: spolocniciFromOrSr.value[spolocnikIndex].name,
+      //   nameTo: spolocnik.value.first_name + " " + spolocnik.value.last_name || spolocnik.value.obchodne_meno,
+      //   transferType: mnozstvoPodielu.value, // full or partial
+      //   amount: mnozstvoPodielu.value === 'fullTransfer' ? amountFromCurrentSpolocnik : prevodPodieluFromTo.value.amount, // if partial then not amountFromCurrentSpolocnik
+      //   priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
+      //   currency: prevodPodieluFromTo.value.currency
+      // })
+
+      //***** to do when Nabodudatelia is not iná osoba
+      newSharesTransfersList.value.push({
+        sharesFrom: {
+          name: spolocniciFromOrSr.value[spolocnikIndex].name,
+          city: spolocniciFromOrSr.value[spolocnikIndex].city,
+          street: spolocniciFromOrSr.value[spolocnikIndex].street,
+          streetNumber: spolocniciFromOrSr.value[spolocnikIndex].number,
+          country: spolocniciFromOrSr.value[spolocnikIndex].country as string,
+          psc: spolocniciFromOrSr.value[spolocnikIndex].zip as string,
+        },
+        sharesTo: {
+          typOsoby: spolocnik.value.typ_zakladatela as string,
+          name: spolocnik.value.first_name + " " + spolocnik.value.last_name || spolocnik.value.obchodne_meno,
+          city: spolocnik.value.city,
+          street: spolocnik.value.street,
+          streetNumber: spolocnik.value.street_number +"/"+spolocnik.value.street_number2,
+          psc: spolocnik.value.psc,
+          date_of_birth: spolocnik.value.date_of_birth,
+          country: spolocnik.value.country,
+          rodneCislo: spolocnik.value.rodne_cislo,
+          pohlavie: prevodPodieluFromTo.value.currency,
+          title_before: spolocnik.value.title_before,
+          title_after: spolocnik.value.title_after
+        },
+        transferType:mnozstvoPodielu.value, // full or partial
+        amountOfTransfer: mnozstvoPodielu.value === 'fullTransfer' ? amountFromCurrentSpolocnik.toString() : prevodPodieluFromTo.value.amount, // if partial then not amountFromCurrentSpolocnik
+        priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
+        currency: prevodPodieluFromTo.value.currency,
+      })
+    }
+    else if(spolocnikIndex >= 0 && spolocnikIndex < newSpolocnikList.value.length){
+      spolocnik.value.has_change = true;
+      newSpolocnikList.value[spolocnikIndex] = spolocnik.value
+    }
+    else {
+      console.error("No index in array Spolocni");
+    }
     // to do    
     spolocnik.value.has_change = true;
+    isPrevodPodielu = false
   })
 }
 
 function closeModalSpolocnik(){
   vfm.closeAll();
+  isPrevodPodielu = false;
 }
 
 //#endregion
@@ -950,6 +1153,29 @@ function returnChangesBack(index: number){
   newKonateliaList.value[index].gender = ''
 }
 
+function returnChangesBackSpolocnici(index: number){
+  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
+  newSpolocnikList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
+  newSpolocnikList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
+  newSpolocnikList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
+  newSpolocnikList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
+
+  newSpolocnikList.value[index].country = konateliaFromOrSr.value[index].country as string
+  newSpolocnikList.value[index].city = konateliaFromOrSr.value[index].city
+  newSpolocnikList.value[index].psc = konateliaFromOrSr.value[index].zip as string
+  newSpolocnikList.value[index].street = konateliaFromOrSr.value[index].street
+  newSpolocnikList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
+  newSpolocnikList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  // set hasChange back to false
+  newSpolocnikList.value[index].has_change = false
+  // no values from orsr
+  newSpolocnikList.value[index].obchodne_meno = ''
+  newSpolocnikList.value[index].ico = ''
+  newSpolocnikList.value[index].date_of_birth = ''
+  newSpolocnikList.value[index].rodne_cislo = ''
+  newSpolocnikList.value[index].gender = ''
+}
+
 function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
   let fullName: string[] = fullNameWithTitleFromOrSr.split(" ");
   
@@ -970,13 +1196,13 @@ function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {
     fullNameWithTitle.title_before = fullName[0];
     fullNameWithTitle.first_name = fullName[1];
     fullNameWithTitle.last_name = fullName[2];
-    fullNameWithTitle.title_after = fullName[3] || '' + '' + ' ' + fullName[4] || '' + ' ' + fullName[5] || '';
+    fullNameWithTitle.title_after = (fullName[3] || '') + ' ' + (fullName[4] || '') + ' ' + (fullName[5] || '');
   } else if(fullName.length >= 4 && fullName[0].includes(".") && fullName[1].includes(".")) {
     // Case when there are two titles before the name
     fullNameWithTitle.title_before = fullName[0] + " " +  fullName[1];
     fullNameWithTitle.first_name = fullName[2];
     fullNameWithTitle.last_name = fullName[3];
-    fullNameWithTitle.title_after = fullName[4] || '' + ' ' + fullName[5] || '' + + ' ' + fullName[6] || ''; // Use empty string if no title after
+    fullNameWithTitle.title_after = (fullName[4] || '') + ' ' + (fullName[5] || '') + ' ' + (fullName[6] || '');
   } else {
     // Case when there are no titles
     fullNameWithTitle.first_name = fullName[0];
@@ -1026,7 +1252,9 @@ defineExpose({
   obchodneSidloVirtuOrNormal, // if virtual then select from store
   newHqAddress,
   headquarterInfo,
-  selectedVhqFromStore
+  selectedVhqFromStore,
+  newKonateliaList,
+  newSpolocnikList
 })
 
 </script>
@@ -1035,4 +1263,4 @@ defineExpose({
 .text-cross {
   text-decoration: line-through;
 }
-</style>
+</style>@/types/editCompany/SharesTransfers

@@ -16,7 +16,7 @@ export default interface CompanyMemberSpolocnik {
   city: string
   psc: string
   nationality: string
-  typ_zakladatela?: number | null
+  typ_zakladatela?: number | null | string
   obchodne_meno: string
   vyska_vkladu?: number | null
   podiel_v_spolocnosti?: number | null

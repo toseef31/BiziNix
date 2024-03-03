@@ -113,6 +113,8 @@ import type Headquarters from "@/types/Headquarters";
 import { getValidationMessages } from '@formkit/validation';
 import { getNode } from '@formkit/core';
 import { toast } from "vue3-toastify";
+import type CompanyMemberKonatel from "@/types/CompanyMemberKonatel";
+import type CompanyMemberSpolocnik from "@/types/CompanyMemberSpolocnik";
 
 const searchFormDiv = ref();
 const scrollToDiv = () => {
@@ -158,8 +160,8 @@ interface CompanyData {
     ico: number;
     pravna_forma: string;
     predmet_cinnosti: string[];
-    spolocnici: SpolocnikOrKonatelOrProku[];
-    konatelia: SpolocnikOrKonatelOrProku[];
+    spolocnici: CompanyMemberSpolocnik[];
+    konatelia: CompanyMemberKonatel[];
     vyska_vkladu: VyskaVkladu[];
     statutarny_organ: object;
     konanie_menom_spolocnosti: string;
@@ -394,6 +396,8 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.actualCompany.ico = najfiFirmuForm.value.companyFromOsRs.ico
   newCompanyData.actualCompany.sidlo = najfiFirmuForm.value.companyFromOsRs.adresa
   newCompanyData.actualCompany.predmet_cinnosti = najfiFirmuForm.value.companyFromOsRs.predmet_cinnosti
+  newCompanyData.actualCompany.spolocnici = najfiFirmuForm.value.companyFromOsRs.spolocnici
+  newCompanyData.actualCompany.konatelia = najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konatelia
   
   // updated company
   const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;
@@ -406,10 +410,12 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
     newCompanyData.updatedCompany.sidlo = najfiFirmuForm.value.selectedVhqFromStore
   }
   // to do predmet cinnosti
+  newCompanyData.updatedCompany.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
+  newCompanyData.updatedCompany.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
   try {
     const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
-    console.log("Adding order: " + JSON.stringify(res));
-    return res.order;
+    console.log("Adding companyUpdate: " + JSON.stringify(res));
+    return res;
   } catch (err: any) {
     console.log(err.response.data);
   }
