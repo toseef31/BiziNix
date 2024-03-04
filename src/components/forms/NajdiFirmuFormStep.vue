@@ -5,7 +5,7 @@
     type="autocomplete"
     label="IČO spoločnosti"
     placeholder="Zadajte IČO spoločnosti"
-    value="54639425"
+    value="45633461"
     :options="search"
     validation="required|length:6"
     empty-message="Subjekt nebol nájdený, zadajte správne ičo."
@@ -418,6 +418,7 @@
               :actions="false"
               v-model="spolocnik"
             >
+            Selected nabodudatel {{ selectedNadobudatel }}
               <!-- Prevod podielu -->
               <div v-if="isPrevodPodielu">
                 <div class="text-white">{{ nadobudatelia }}</div>
@@ -541,6 +542,7 @@ import type SpolocnikFromOrSr from '@/types/FromOrSrParser/SpolocnikFromOrSr';
 import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFromOrSr';
 import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
+import { values } from 'lodash';
 
 // defineProps<{
 //   indexKonatel: number
@@ -624,7 +626,7 @@ let prevodPodieluFromTo = ref({
   fullTransfer: false,
   partialTransfer: false,
   priceForTransfer: '',
-  currency: ''
+  currency: 'EUR'
 });
 
 let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
@@ -633,6 +635,7 @@ let newSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // edited spolocnik
 let newlyAddedSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // new added spolocnil
 let newSharesTransfersList = ref<SharesTransfers[]>([])
 let obchodneSidloVirtuOrNormal = ref("vlastnePrenajate")
+let selectedNadobudatel = ref();
 let newHqAddress = ref({
   street: '',
   street_number: '',
@@ -663,7 +666,6 @@ let nadobudatelia = computed(() => [
     value: '' as string | Object,
   }
 ]);
-let selectedNadobudatel;
 
 onMounted( () => {
   store.state.selectedVhq = {};
@@ -716,6 +718,7 @@ const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {
         city: spolocnik.street,
         country: spolocnik.city || 'Slovenská republika',
         number: '',
+        psc: spolocnik.zip || '',
         since: spolocnik.since || ''
       }    
     }
@@ -727,6 +730,7 @@ const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {
         city: spolocnik.city || '',
         country: spolocnik.country || 'Slovenská republika',
         number: spolocnik.number || '',
+        psc: spolocnik.zip || '',
         since: spolocnik.since || ''
       } 
     }
@@ -1008,10 +1012,11 @@ function openPreviestPodielSpolocnika(index: number){
   })
   if(nadobudatelia.value.length >= 2){
       nadobudatelia.value.splice(index, 1) // splice due to preselect
+      selectedNadobudatel.value = nadobudatelia.value[0].__original;
   }
+  spolocnikIndex = index;
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
-    // newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
-    spolocnikIndex = index;
+    // newSpolocnikList.value.length = spolocniciFromOrSr.value.length;    
     // console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
     // // get current konatel if index exist if no then work with konatel
     // if(newSpolocnikList.value[index] !== undefined){
@@ -1029,7 +1034,6 @@ function addNewSpolocnikTolist(){
 }
 
 function closeModalAndSubmitOrEditSpolocnik(){
-  
   console.log("Calling submit function Spolocnik!")
   vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
     if(addOperationSpolocnik){
@@ -1037,16 +1041,9 @@ function closeModalAndSubmitOrEditSpolocnik(){
     }
     else if(isPrevodPodielu){
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
-      // newSharesTransfersList.value.push({
-      //   nameFrom: spolocniciFromOrSr.value[spolocnikIndex].name,
-      //   nameTo: spolocnik.value.first_name + " " + spolocnik.value.last_name || spolocnik.value.obchodne_meno,
-      //   transferType: mnozstvoPodielu.value, // full or partial
-      //   amount: mnozstvoPodielu.value === 'fullTransfer' ? amountFromCurrentSpolocnik : prevodPodieluFromTo.value.amount, // if partial then not amountFromCurrentSpolocnik
-      //   priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
-      //   currency: prevodPodieluFromTo.value.currency
-      // })
-
-      //***** to do when Nabodudatelia is not iná osoba
+      if(newSharesTransfersList.value.length){
+        newSharesTransfersList.value.splice(spolocnikIndex, 1);
+      }
       newSharesTransfersList.value.push({
         sharesFrom: {
           name: spolocniciFromOrSr.value[spolocnikIndex].name,
@@ -1058,15 +1055,15 @@ function closeModalAndSubmitOrEditSpolocnik(){
         },
         sharesTo: {
           typOsoby: spolocnik.value.typ_zakladatela as string,
-          name: spolocnik.value.first_name + " " + spolocnik.value.last_name || spolocnik.value.obchodne_meno,
-          city: spolocnik.value.city,
-          street: spolocnik.value.street,
-          streetNumber: spolocnik.value.street_number +"/"+spolocnik.value.street_number2,
-          psc: spolocnik.value.psc,
+          name: ((spolocnik.value.first_name + " " + spolocnik.value.last_name).trim() || spolocnik.value.obchodne_meno || selectedNadobudatel.value.name),
+          city: spolocnik.value.city || selectedNadobudatel.value.city,
+          street: spolocnik.value.street || selectedNadobudatel.value.street,
+          streetNumber: ((spolocnik.value.street_number +"/"+spolocnik.value.street_number2).trim() || selectedNadobudatel.value.number),
+          psc: spolocnik.value.psc || selectedNadobudatel.value.psc,
           date_of_birth: spolocnik.value.date_of_birth,
-          country: spolocnik.value.country,
+          country: spolocnik.value.country || selectedNadobudatel.value.country,
           rodneCislo: spolocnik.value.rodne_cislo,
-          pohlavie: prevodPodieluFromTo.value.currency,
+          pohlavie: spolocnik.value.gender,
           title_before: spolocnik.value.title_before,
           title_after: spolocnik.value.title_after
         },
@@ -1086,6 +1083,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
     // to do    
     spolocnik.value.has_change = true;
     isPrevodPodielu = false
+    selectedNadobudatel.value = ''
   })
 }
 
