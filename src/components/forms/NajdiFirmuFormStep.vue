@@ -387,6 +387,7 @@
       </div>
       <div class="mt-4 pt-2 border-t border-t-gray-700">
         {{ newSharesTransfersList }}
+        <div>Selected nadobudatel: {{ selectedNadobudatel }}</div>
         <button @click="() => console.log('Makaj toto treba spravit')" class="bg-bizinix-teal p-2 mr-4 rounded">Pridať spoločníka cez navýšenie základného imania</button>        
       </div>
       <!-- Edit Spolocnik Modal-->
@@ -418,10 +419,11 @@
               :actions="false"
               v-model="spolocnik"
             >
-            Selected nabodudatel {{ selectedNadobudatel }}
               <!-- Prevod podielu -->
-              <div v-if="isPrevodPodielu">
-                <div class="text-white">{{ nadobudatelia }}</div>
+              <div class="text-white" v-if="isPrevodPodielu">
+                Spolocnik index {{ spolocnikIndex }}<br>
+                Selected nabodudatel {{ selectedNadobudatel }}<br>
+                <br><div>{{ nadobudatelia }}</div>
                 <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
                   :options="nadobudatelia"                
                 />
@@ -465,7 +467,7 @@
                 </div>
               </div>
               <div v-if="isPrevodPodielu">
-                <FormKit v-model="mnozstvoPodielu" type="radio" label="Mňožstvo podielu"
+                <FormKit v-model="mnozstvoPodielu" type="radio" label="Mňožstvo podielu" validation="required"
                 :options="[
                     { value: 'fullTransfer', label: 'Vsetko' },
                     { value: 'partialTransfer', label: 'Časť obchodného podielu' }
@@ -475,7 +477,7 @@
                   <FormKit type="text" v-model="prevodPodieluFromTo.amount" label="Čast podielu v EUR" />
                 </div>
                 <div class="flex flex-row space-x-4">
-                  <FormKit type="text" v-model="prevodPodieluFromTo.priceForTransfer" label="Cena za prevod obch. podielu" />
+                  <FormKit type="text" v-model="prevodPodieluFromTo.priceForTransfer" label="Cena za prevod obch. podielu" validation="required" />
                   <FormKit
                     type="select"
                     label="Mena"
@@ -995,10 +997,9 @@ function openEditSpolocnik(index: number){
 function openPreviestPodielSpolocnika(index: number){
   addOperationSpolocnik = false; 
   isPrevodPodielu = true;
-  prevodPodieluFromTo.value.amount = '';
-  prevodPodieluFromTo.value.priceForTransfer = '';
-  spolocnik.value = Object.assign({}, spolocnikObject);
+  spolocnikIndex = index;
   nadobudatelia.value.length = 0;
+  selectedNadobudatel.value = ''
   if(spolocniciFromOrSr.value.length >= 2){
     let mappedSpolicniciFromOrOs = spolocniciFromOrSr.value.map(spolocnikFromOrSr => ({
       label: spolocnikFromOrSr.name,
@@ -1010,22 +1011,25 @@ function openPreviestPodielSpolocnika(index: number){
       label: 'Iná osoba',
       value: 'Iná osoba'
   })
+
   if(nadobudatelia.value.length >= 2){
-      nadobudatelia.value.splice(index, 1) // splice due to preselect
-      selectedNadobudatel.value = nadobudatelia.value[0].__original;
+        nadobudatelia.value.splice(index, 1) // splice due to preselect
+        selectedNadobudatel.value = nadobudatelia.value[0].__original
   }
-  spolocnikIndex = index;
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
-    // newSpolocnikList.value.length = spolocniciFromOrSr.value.length;    
-    // console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
-    // // get current konatel if index exist if no then work with konatel
-    // if(newSpolocnikList.value[index] !== undefined){
-    //   spolocnik.value = newSpolocnikList.value[index];
-    //   console.log("if");
-    // } else {
-    //   console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
-    //   getSpecificSpolocnik(index)
-    // }
+    if(newSharesTransfersList.value.length == 0){
+      prevodPodieluFromTo.value.amount = '';
+      prevodPodieluFromTo.value.priceForTransfer = '';
+      spolocnik.value = Object.assign({}, spolocnikObject);
+    }
+    else if(newSharesTransfersList.value.length > 0) {    
+      mnozstvoPodielu.value = newSharesTransfersList.value[index]?.transferType, // full or partial
+      prevodPodieluFromTo.value.amount = newSharesTransfersList.value[index]?.amountOfTransfer
+      prevodPodieluFromTo.value.priceForTransfer = newSharesTransfersList.value[index]?.priceForTransfer
+      prevodPodieluFromTo.value.currency = newSharesTransfersList.value[index]?.currency
+      console.log("Selected nadobudalte in if: ", selectedNadobudatel.value)
+      selectedNadobudatel.value = newSharesTransfersList.value[index]?.sharesFrom
+    }  
   })
 }
 
@@ -1041,10 +1045,8 @@ function closeModalAndSubmitOrEditSpolocnik(){
     }
     else if(isPrevodPodielu){
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
-      if(newSharesTransfersList.value.length){
-        newSharesTransfersList.value.splice(spolocnikIndex, 1);
-      }
-      newSharesTransfersList.value.push({
+      newSharesTransfersList.value.length = vyskyVkladovFromOrSr.value.length;
+      newSharesTransfersList.value.splice(spolocnikIndex, 1, {
         sharesFrom: {
           name: spolocniciFromOrSr.value[spolocnikIndex].name,
           city: spolocniciFromOrSr.value[spolocnikIndex].city,
@@ -1055,7 +1057,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         },
         sharesTo: {
           typOsoby: spolocnik.value.typ_zakladatela as string,
-          name: ((spolocnik.value.first_name + " " + spolocnik.value.last_name).trim() || spolocnik.value.obchodne_meno || selectedNadobudatel.value.name),
+          name: selectedNadobudatel.value.name || ((spolocnik.value.first_name + " " + spolocnik.value.last_name).trim() || spolocnik.value.obchodne_meno),
           city: spolocnik.value.city || selectedNadobudatel.value.city,
           street: spolocnik.value.street || selectedNadobudatel.value.street,
           streetNumber: ((spolocnik.value.street_number +"/"+spolocnik.value.street_number2).trim() || selectedNadobudatel.value.number),
@@ -1067,11 +1069,12 @@ function closeModalAndSubmitOrEditSpolocnik(){
           title_before: spolocnik.value.title_before,
           title_after: spolocnik.value.title_after
         },
-        transferType:mnozstvoPodielu.value, // full or partial
+        transferType: mnozstvoPodielu.value, // full or partial
         amountOfTransfer: mnozstvoPodielu.value === 'fullTransfer' ? amountFromCurrentSpolocnik.toString() : prevodPodieluFromTo.value.amount, // if partial then not amountFromCurrentSpolocnik
         priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
         currency: prevodPodieluFromTo.value.currency,
       })
+      console.log("Selected nadobudatel", selectedNadobudatel.value)
     }
     else if(spolocnikIndex >= 0 && spolocnikIndex < newSpolocnikList.value.length){
       spolocnik.value.has_change = true;
@@ -1083,7 +1086,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
     // to do    
     spolocnik.value.has_change = true;
     isPrevodPodielu = false
-    selectedNadobudatel.value = ''
+    //selectedNadobudatel.value = ''
   })
 }
 
@@ -1252,7 +1255,8 @@ defineExpose({
   headquarterInfo,
   selectedVhqFromStore,
   newKonateliaList,
-  newSpolocnikList
+  newSpolocnikList,
+  newSharesTransfersList
 })
 
 </script>
@@ -1261,4 +1265,4 @@ defineExpose({
 .text-cross {
   text-decoration: line-through;
 }
-</style>@/types/editCompany/SharesTransfers
+</style>

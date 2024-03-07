@@ -61,6 +61,18 @@
       </div>
     </div>
   </template>
+  <div class="flex justify-end my-4">
+    <FormKit
+      type="checkbox"
+      label="Všeobecné obchodné podmienky"
+      validation="accepted"
+      validation-visibility="dirty"
+    >
+      <template #label="context">
+        <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
+      </template>
+    </FormKit>    
+  </div>
   <!-- <button @click.prevent="LogValForInfoiceProfile"> logValFor Invoice profile </button> -->
 </template>
 

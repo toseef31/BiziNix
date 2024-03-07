@@ -65,6 +65,10 @@
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
               <fakturacneUdajeFormStep ref="invoiceDataForm" />
+              <template #stepNext>
+                <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+              </template>
+
             </FormKit>
           </FormKit>
           <details>
@@ -76,17 +80,6 @@
               <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
             </div> -->
-            <FormKit
-              type="checkbox"
-              label="Všeobecné obchodné podmienky"
-              validation="accepted"
-              validation-visibility="dirty"
-            >
-              <template #label="context">
-                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-              </template>
-            </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
@@ -115,6 +108,7 @@ import { getNode } from '@formkit/core';
 import { toast } from "vue3-toastify";
 import type CompanyMemberKonatel from "@/types/CompanyMemberKonatel";
 import type CompanyMemberSpolocnik from "@/types/CompanyMemberSpolocnik";
+import type SharesTransfers from "@/types/editCompany/SharesTransfers";
 
 const searchFormDiv = ref();
 const scrollToDiv = () => {
@@ -139,7 +133,7 @@ const messages = ref([])
 interface CompanyData {
   order_id: number;
   user_id: number;
-  actualCompany: {
+  actual_company: {
     obchodne_meno: string;
     sidlo: object;
     ico: number;
@@ -154,7 +148,7 @@ interface CompanyData {
     ine_zmeny: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
   };
-  updatedCompany: {
+  updated_company: {
     obchodne_meno: string;
     sidlo: object;
     ico: number;
@@ -169,6 +163,7 @@ interface CompanyData {
     ine_zmeny: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
   };
+  sharesTransfers: SharesTransfers[]
 }
 
 interface SpolocnikOrKonatelOrProku {
@@ -218,7 +213,7 @@ let order = ref({
 const newCompanyData: CompanyData = {
   order_id: 0, // Provide your desired value
   user_id: 0, // Provide your desired value
-  actualCompany: {
+  actual_company: {
     obchodne_meno: "", // Provide your desired values
     sidlo: {}, // Provide your desired values (empty object in this case)
     ico: 0, // Provide your desired value
@@ -233,7 +228,7 @@ const newCompanyData: CompanyData = {
     ine_zmeny: [], // Empty array for other changes
     prokurista: [], // Empty array for procurators
   },
-  updatedCompany: {
+  updated_company: {
     obchodne_meno: "", // Provide your desired values
     sidlo: {}, // Provide your desired values (empty object in this case)
     ico: 0, // Provide your desired value
@@ -248,6 +243,7 @@ const newCompanyData: CompanyData = {
     ine_zmeny: [], // Empty array for other changes
     prokurista: [], // Empty array for procurators
   },
+  sharesTransfers: []
 };
 
 //let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
@@ -346,11 +342,11 @@ async function addInvoiceProfile(invoiceAddressId, userId) {
     })
 }
 
-async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Promise<any> {
+async function addOrder(userId: number, invoiceAddressId?: number): Promise<any> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceDataForm.value.paymentOptions
   order.value.user_id = userId
-  order.value.description = 'Objednávka záloženie firmy: ' + companyId
+  order.value.description = 'Úprava firmy.'
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
@@ -372,7 +368,7 @@ async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Pr
   //   })
   // });
 
-  order.value.fakturacne_udaje_id = invoiceAddressId
+  order.value.fakturacne_udaje_id = invoiceAddressId as number
 
   //order.value.amount = totalForPay.value
   //order.value.amount_vat = totalForPay.value * 0.2
@@ -391,27 +387,28 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.order_id = orderId
   newCompanyData.user_id = userId
   // actual company
-  newCompanyData.actualCompany.obchodne_meno = najfiFirmuForm.value.companyFromOsRs.obchodne_meno
-  newCompanyData.actualCompany.pravna_forma = najfiFirmuForm.value.companyFromOsRs.pravna_forma
-  newCompanyData.actualCompany.ico = najfiFirmuForm.value.companyFromOsRs.ico
-  newCompanyData.actualCompany.sidlo = najfiFirmuForm.value.companyFromOsRs.adresa
-  newCompanyData.actualCompany.predmet_cinnosti = najfiFirmuForm.value.companyFromOsRs.predmet_cinnosti
-  newCompanyData.actualCompany.spolocnici = najfiFirmuForm.value.companyFromOsRs.spolocnici
-  newCompanyData.actualCompany.konatelia = najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konatelia
+  newCompanyData.actual_company.obchodne_meno = najfiFirmuForm.value.companyFromOsRs.obchodne_meno
+  newCompanyData.actual_company.pravna_forma = najfiFirmuForm.value.companyFromOsRs.pravna_forma
+  newCompanyData.actual_company.ico = najfiFirmuForm.value.companyFromOsRs.ico
+  newCompanyData.actual_company.sidlo = najfiFirmuForm.value.companyFromOsRs.adresa
+  newCompanyData.actual_company.predmet_cinnosti = najfiFirmuForm.value.companyFromOsRs.predmet_cinnosti
+  newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOsRs.spolocnici
+  newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konatelia
   
   // updated company
   const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;
-  newCompanyData.updatedCompany.obchodne_meno = `${newCompanyName} ${newCompanyPravForm}`;
-  newCompanyData.updatedCompany.pravna_forma = `${newCompanyPravForm}`;
-  newCompanyData.updatedCompany.ico = najfiFirmuForm.value.companyFromOsRs.ico
+  newCompanyData.updated_company.obchodne_meno = `${newCompanyName} ${newCompanyPravForm}`;
+  newCompanyData.updated_company.pravna_forma = `${newCompanyPravForm}`;
+  newCompanyData.updated_company.ico = najfiFirmuForm.value.companyFromOsRs.ico
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
-    newCompanyData.updatedCompany.sidlo = najfiFirmuForm.value.newHqAddress
+    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.newHqAddress
   } else {
-    newCompanyData.updatedCompany.sidlo = najfiFirmuForm.value.selectedVhqFromStore
+    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.selectedVhqFromStore
   }
   // to do predmet cinnosti
-  newCompanyData.updatedCompany.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
-  newCompanyData.updatedCompany.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
+  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
+  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
+  newCompanyData.sharesTransfers = najfiFirmuForm.value.newSharesTransfersList
   try {
     const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
     console.log("Adding companyUpdate: " + JSON.stringify(res));
@@ -424,14 +421,14 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
 const newSustmiApp = async (formdata: any, node: any) => {
 
   try {    
-    let userId = null as unknown as number;
+    let userId: number;
     if(!userIdFromStore.value){
       userId = await registerUserAndReturnUserId(userRegisterForm.value.user);
     } else {
       userId = userIdFromStore.value
     }
 
-    let invoiceProfileId = null as unknown as number;
+    let invoiceProfileId: number;
     if(invoiceDataForm.value.createNewInvoiceProfile){
       let invoiceAddressRes: any;
       if(!invoiceDataForm.value.orderingAsCompany){
@@ -447,7 +444,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
     else {
       invoiceProfileId = invoiceDataForm.value.invoiceProfileId
     }
-
+    console.log("Invoice profile ID is: ", invoiceProfileId)
     const orderRes = await addOrder(userId, invoiceProfileId)
     await addUpdatedCompany(orderRes.id, userId);
         
