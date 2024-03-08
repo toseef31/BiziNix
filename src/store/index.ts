@@ -229,6 +229,10 @@ export const store = createStore({
       );
       return response;
     },
+    async getGroupOfSubjectOfBusiness({ comit }, id: number) {
+      const { data } = await axiosClient.get(`/subjectOfBusiness/${id}/getGroup`);
+      return data;
+    },
     async getHeadquartersTypes() {
       const response = await axiosClient.get(
         "/headquarters/getHeadquartersTypes"

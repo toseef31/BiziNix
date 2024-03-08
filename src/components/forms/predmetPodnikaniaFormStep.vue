@@ -62,7 +62,7 @@
         <vue-horizontal responsive v-if="!loading">
             <section v-for="(component, index) in components" :key="index">
                 <!-- Render the components from the array with props -->
-                <component :is="component.component" :image="component.image" :title="component.title" @click.prevent="addSubjectOfBusinessToAutoselect(component.obj)" />
+                <component :is="component.component" :image="component.image" :title="component.title" @click.prevent="addSubjectOfBusinessToAutoselect(component.categoryId)" />
             </section>
         </vue-horizontal>
         <div v-else>
@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import store from '@/store';
 import { getNode } from '@formkit/core';
-import { onBeforeMount, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import SignleSubjectOfBusinnesWithImg from './SignleSubjectOfBusinnesWithImg.vue'
 import VueHorizontal from "vue-horizontal";
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
@@ -98,32 +98,8 @@ const imgSource = "src/assets/predmety-podnikania/"
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 const uniqueSubjects = ref<Company['subjects_of_business']>([]);
 
-const arrOfObjGrafika: Company['subjects_of_business'] = [
-    { id: 6, title: "Dizajnérske činnosti", price: 0, description: null, category_id: 1 },
-    { id: 27, title: "Počítačové služby a služby súvisiace s počítačovým spracovaním údajov", price: 0, description: null, category_id: 1 },
-    { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienky", price: 0, description: null, category_id: 1 },
-    { id: 1, title: "Administratívne služby", price: 0, description: null, category_id: 1 },
-    { id: 55, title: "Služby súvisiace s produkciou filmov, videozáznamov a zvukových nahrávok", price: 0, description: null, category_id: 1 },
-    { id: 2, title: "Činnosť podnikateľských, organizačných a ekonomických poradcov", price: 0, description: null, category_id: 1 },
-    { id: 17, title: "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)", price: 0, description: null, category_id: 1 },
-    { id: 63, title: "Sprostredkovateľská činnosť v oblasti obchodu, služieb, výroby", price: 0, description: null, category_id: 1 },
-    { id: 75, title: "Vydavateľská činnosť, polygrafická výroba a knihárske práce", price: 0, description: null, category_id: 1 },
-    { id: 77, title: "Vykonávanie mimoškolskej vzdelávacej činnosti", price: 0, description: null, category_id: 1 }
-];
-
-const arrOfObjDoprava: Company['subjects_of_business'] = [
-  { id: 19, title: "Nákladná cestná doprava vykonávaná vozidlami s celkovou hmotnosťou do 3,5 t vrátane prípojného vozidla", price: 0, description: null, category_id: 1 },
-  { id: 31, title: "Poskytovanie služieb osobného charakteru", price: 0, description: null, category_id: 1 },
-  { id: 53, title: "Skladovanie a pomocné činnosti v doprave", price: 0, description: null, category_id: 1 },
-  { id: 69, title: "Údržba motorových vozidiel bez zásahu do motorickej časti vozidla", price: 0, description: null, category_id: 1 },
-  { id: 41, title: "Prenájom hnuteľných vecí", price: 0, description: null, category_id: 1 },
-  { id: 17, title: "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)", price: 0, description: null, category_id: 1 },
-  { id: 63, title: "Sprostredkovateľská činnosť v oblasti obchodu, služieb, výroby", price: 0, description: null, category_id: 1 },
-  { id: 27, title: "Počítačové služby a služby súvisiace s počítačovým spracovaním údajov", price: 0, description: null, category_id: 1 },
-  { id: 52, title: "Reklamné a marketingové služby, prieskum trhu a verejnej mienky", price: 0, description: null, category_id: 1 },
-  { id: 1, title: "Administratívne služby", price: 0, description: null, category_id: 1 },
-  { id: 4, title: "Čistiace a upratovacie služby", price: 0, description: null, category_id: 1 },
-];
+let arrOfObjGrafika: Company['subjects_of_business'] = [];
+let arrOfObjDoprava: Company['subjects_of_business'] = [];
 
 const arrOfObjAdministrativa: Company['subjects_of_business'] = [
   { id: 1, title: "Administratívne služby", price: 0, description: null, category_id: 1 },
@@ -245,63 +221,54 @@ const arrOfObjHandMade: Company['subjects_of_business'] = [
     { id: 27, title: "Počítačové služby a služby súvisiace s počítačovým spracovaním údajov", price: 0, description: null, category_id: 1 }
 ];
 
-onBeforeMount(() => {
-})
-
-function addSubjectOfBusinessToAutoselect(objOfArray: any) {
-
-  subjects_of_business.value.push(...objOfArray)
-  console.log("aa")
-    // console.log("aa")
-    // const node = getNode('multiSelId')
-    // myModelForVal.value.push('CZ')
-    // console.log(subjects_of_business.value)
+async function addSubjectOfBusinessToAutoselect(categoryId: number) {
+  loading.value = true;
+  let response = await store.dispatch("getGroupOfSubjectOfBusiness", categoryId);
+  let dataForcategory: Company['subjects_of_business'] = Object.values(response.data);
+  subjects_of_business.value.push(...dataForcategory)
+  loading.value = false;
 }
 
 async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
+  const res = await store.dispatch("getAllSubjectOfBusiness")
+  console.log(res);
+  loading.value = false
+  if(res.data.data){
+    // Filter out items that already exist in subjects_of_business
+    const newData = res.data.data.filter((item: any) => {
+      return !subjects_of_business.value.some((subject: any) => subject.title === item.title);
+    });
 
-const res = await store.dispatch("getAllSubjectOfBusiness")
-console.log(res);
-loading.value = false
-if(res.data.data){
-
-  // Filter out items that already exist in subjects_of_business
-  const newData = res.data.data.filter((item: any) => {
-    return !subjects_of_business.value.some((subject: any) => subject.title === item.title);
-  });
-
-  if(!search){
-    return newData.map((item: any) => ({ label: item.title, value: item }))  
-  }    
-  else {
-    const filteredData = newData.filter((item: any) =>
-      item.title.toLowerCase().includes(search.toLowerCase())
-    );
-    const mappedData = filteredData.map((item: any) => ({
-      label: item.title,
-      value: item,
-    }));
-    return mappedData
-  }  
+    if(!search){
+      return newData.map((item: any) => ({ label: item.title, value: item }))  
+    }    
+    else {
+      const filteredData = newData.filter((item: any) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+      const mappedData = filteredData.map((item: any) => ({
+        label: item.title,
+        value: item,
+      }));
+      return mappedData
+    }  
+  }
+  loading.value = false
+  return []
 }
-
-loading.value = false
-return []
-}
-
 
 const components = [ 
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "grafika.png", title: "Grafika a design", obj: arrOfObjGrafika },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "doprava.png", title: "Doprava", obj: arrOfObjDoprava },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "administrativa.png", title: "Administratíva", obj: arrOfObjAdministrativa },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "stavba.png", title: "Stavbárčina", obj: arrOfObjStavba },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "edukacia.png", title: "Edukácia", obj: arrOfObjEdu },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "polnohospo.png", title: "Poľnohospodárstvo", obj: arrOfObjPolnoHos },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "zdravie.png", title: "Zdravie", obj: arrOfObjZdravie },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "marketing.png", title: "Marketing", obj: arrOfObjMarketing },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "obchod.png", title: "Obchod", obj: arrOfObjObchod },
-    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "handmade.png", title: "Handmade", obj: arrOfObjHandMade },
- ];
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "grafika.png", title: "Grafika a design", categoryId: 1 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "doprava.png", title: "Doprava", categoryId: 2 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "administrativa.png", title: "Administratíva", categoryId: 3 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "stavba.png", title: "Stavbárčina", categoryId: 4 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "edukacia.png", title: "Edukácia", categoryId: 5 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "polnohospo.png", title: "Poľnohospodárstvo", categoryId: 6 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "zdravie.png", title: "Zdravie", categoryId: 7 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "marketing.png", title: "Marketing", categoryId: 8 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "obchod.png", title: "Obchod", categoryId: 9 },
+    { component: SignleSubjectOfBusinnesWithImg, image: imgSource +  "handmade.png", title: "Handmade", categoryId: 10 },
+  ];
 
  const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business.value)
 

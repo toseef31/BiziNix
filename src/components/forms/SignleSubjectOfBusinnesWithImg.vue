@@ -19,12 +19,8 @@ export default defineComponent({
     title: {
       type: String,
       required: true,
-    },
-    // items: {
-    //   type: Array as () => SingleSubjectOfBusinessWithImg[],
-    //   required: true,
-    // },
-  },
+    }
+  }
 });
 
 </script>
