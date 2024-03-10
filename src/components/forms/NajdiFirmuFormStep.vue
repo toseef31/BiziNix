@@ -218,10 +218,12 @@
           </button>
         </div> 
       </div>
-      <div v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
+      <div v-if="newlyAddedKonatelList.length" v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
+          <span>{{ newlyAddedKonatel.splatene }} € {{ calculatePercentageAtIndex(index) }}%</span>
+          <ProgressBar :progress="calculatePercentageAtIndex(index)" />
           <h3 :index="index" class="text-lg">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.first_name }} {{ newlyAddedKonatel.last_name }} {{ newlyAddedKonatel.title_after }}</h3> 
-          <h4 :index="index" class="text-base">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
+          <h4 :index="index" class="text-base">{{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
         <div class="flex space-x-4">
           <button @click="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
@@ -379,16 +381,30 @@
               </div>
             </div>  
             <div class="flex flex-col mt-2 space-y-4">
-              <button @click="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
-              <button @click="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušIť podiel {{ index }}</button>            
+              <button @click.prevent="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušIť podiel {{ index }}</button>            
             </div>
           </div>
+        </div>
+      </div>
+      <!-- New added spolicnici -->
+      <div v-if="newlyAddedSpolocnikList.length" v-for="(newSpolocnik, index ) in newlyAddedSpolocnikList" :key="index" class="grid grid-cols-2 items-center space-y-4 mt-4">
+        <div>
+          <span>{{ newSpolocnik.rozsah_splatenia_vkladu }} {{ calculatePercentageAtIndex(index) }}%</span>
+          <ProgressBar :progress="calculatePercentageAtIndex(index)" />
+          <h3 class="text-lg font-bold">{{ (newSpolocnik.title_before || '') + " " + (newSpolocnik.first_name || '') + " " + (newSpolocnik.last_name || '') + " " +  (newSpolocnik.title_after || '') }} {{ newSpolocnik.obchodne_meno || '' }}</h3>
+          <h4 class="text-base">{{ newSpolocnik.city || '' }}, {{ newSpolocnik.street || '' }} {{ newSpolocnik.street_number || '' }}/{{ newSpolocnik.street_number2 || '' }}, {{ newSpolocnik.psc || '' }}</h4>
+          <h4 class="text-base">{{ newSpolocnik.country || '' }} </h4>
+        </div>
+        <div class="flex space-x-4">
+          <button @click="deleteNewSpolocnik(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať spoločníka {{ index }}</button>          
         </div>
       </div>
       <div class="mt-4 pt-2 border-t border-t-gray-700">
         {{ newSharesTransfersList }}
         <div>Selected nadobudatel: {{ selectedNadobudatel }}</div>
-        <button @click="() => console.log('Makaj toto treba spravit')" class="bg-bizinix-teal p-2 mr-4 rounded">Pridať spoločníka cez navýšenie základného imania</button>        
+        <div>Newly added spolicnici {{ newlyAddedSpolocnikList }}</div>
+        <button @click.prevent="openAddSpolocnik" class="bg-bizinix-teal p-2 mr-4 rounded">+ Pridať spoločníka cez navýšenie základného imania</button>        
       </div>
       <!-- Edit Spolocnik Modal-->
         <VueFinalModal
@@ -404,8 +420,11 @@
             <h3 class="text-white text-2xl">Zmeniť osobné údaje Spoločníka</h3>
             <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
             <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
+          </div>
+          <div v-if="addOperationSpolocnik">
+            <h3 class="text-white text-2xl">Pridať spoločníka (bez prevodu obchodného podielu)</h3>
           </div>        
-          <div v-else>
+          <div v-if="isPrevodPodielu">
             <h3 class="text-white text-2xl">Prevod podielu</h3>                    
           </div>
             <!-- get spolocnik via openEditSpolocnik and asign to form values via property name="" -->
@@ -427,6 +446,14 @@
                 <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
                   :options="nadobudatelia"                
                 />
+              </div>
+              <div v-if="addOperationSpolocnik">
+                <div class="text-white my-4">Nový spoločník preberá vklad do základného imania spoločnosti vo výške</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <FormKit type="number" name="vyska_vkladu" label="Výška vkladu" validation="required|min:750" />
+                  <FormKit type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti" validation="required" />
+                  <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu" validation="required|min:750" />
+                </div>
               </div>
               <div v-if="selectedNadobudatel == 'Iná osoba' || !isPrevodPodielu">
                 <FormKit type="select" name="typ_zakladatela"
@@ -616,7 +643,10 @@ let spolocnikObject: CompanyMemberSpolocnik = {
   psc: '',
   has_change: false,
   nationality: '',
-  je_zakladatel: true
+  je_zakladatel: true,
+  vyska_vkladu: 0,
+  podiel_v_spolocnosti: 0,
+  rozsah_splatenia_vkladu: 0,
 };
 let spolocnik = ref(spolocnikObject);
 let mnozstvoPodielu = ref('fullTransfer');
@@ -785,18 +815,33 @@ const calculatePercentages = () => {
 };
 
 const calculatePercentageAtIndex = (index: number) => {
+  let itemInNewKonatel;
+  if(newlyAddedSpolocnikList.value.length){
+    itemInNewKonatel = newlyAddedSpolocnikList.value[index]?.rozsah_splatenia_vkladu;
+  }
   const item = vyskyVkladovFromOrSr.value[index];
+  let percentage;
   if (item.vklad === zakladneImanieFromOrSr.value.splatene) {
-    return 100;
+    percentage = 100;
   } else if (zakladneImanieFromOrSr.value.splatene !== 0) {
-    let percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
-    return Math.round(percentage);
+    percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
   } else {
     // Handle the case when zakladneImanieFromOrSr.value.splatene is zero
     // You can return a specific value or throw an error
-    return 0; // or throw new Error("Division by zero");
+    percentage = 0; // or throw new Error("Division by zero");
   }
+
+  let percentageInNewKonatel;
+  if (itemInNewKonatel && zakladneImanieFromOrSr.value.splatene !== 0) {
+    percentageInNewKonatel = (itemInNewKonatel / zakladneImanieFromOrSr.value.splatene) * 100;
+  } else {
+    percentageInNewKonatel = 0; // or throw new Error("Division by zero");
+  }
+
+  return Math.round(percentage + percentageInNewKonatel);
 };
+
+
 
 
 //#region company name
@@ -1033,6 +1078,14 @@ function openPreviestPodielSpolocnika(index: number){
   })
 }
 
+function openAddSpolocnik(){
+  addOperationSpolocnik = true;
+  isPrevodPodielu = false;
+  isPrevodPodielu = false;  
+  spolocnik.value = Object.assign({}, spolocnikObject);
+  vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {});
+}
+
 function addNewSpolocnikTolist(){
   newlyAddedSpolocnikList.value.push(spolocnik.value)
 }
@@ -1085,7 +1138,9 @@ function closeModalAndSubmitOrEditSpolocnik(){
     }
     // to do    
     spolocnik.value.has_change = true;
-    isPrevodPodielu = false
+    addOperationSpolocnik = false;
+    isPrevodPodielu = false;
+    isPrevodPodielu = false;  
     //selectedNadobudatel.value = ''
   })
 }
@@ -1161,12 +1216,12 @@ function returnChangesBackSpolocnici(index: number){
   newSpolocnikList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
   newSpolocnikList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
 
-  newSpolocnikList.value[index].country = konateliaFromOrSr.value[index].country as string
-  newSpolocnikList.value[index].city = konateliaFromOrSr.value[index].city
-  newSpolocnikList.value[index].psc = konateliaFromOrSr.value[index].zip as string
-  newSpolocnikList.value[index].street = konateliaFromOrSr.value[index].street
-  newSpolocnikList.value[index].street_number = konateliaFromOrSr.value[index].number.split("/")[0]
-  newSpolocnikList.value[index].street_number2 = konateliaFromOrSr.value[index].number.split("/")[1]
+  newSpolocnikList.value[index].country = spolocniciFromOrSr.value[index].country as string
+  newSpolocnikList.value[index].city = spolocniciFromOrSr.value[index].city
+  newSpolocnikList.value[index].psc = spolocniciFromOrSr.value[index].zip as string
+  newSpolocnikList.value[index].street = spolocniciFromOrSr.value[index].street
+  newSpolocnikList.value[index].street_number = spolocniciFromOrSr.value[index].number.split("/")[0]
+  newSpolocnikList.value[index].street_number2 = spolocniciFromOrSr.value[index].number.split("/")[1]
   // set hasChange back to false
   newSpolocnikList.value[index].has_change = false
   // no values from orsr
@@ -1175,6 +1230,9 @@ function returnChangesBackSpolocnici(index: number){
   newSpolocnikList.value[index].date_of_birth = ''
   newSpolocnikList.value[index].rodne_cislo = ''
   newSpolocnikList.value[index].gender = ''
+  newSpolocnikList.value[index].vyska_vkladu = 0
+  newSpolocnikList.value[index].podiel_v_spolocnosti = 0
+  newSpolocnikList.value[index].rozsah_splatenia_vkladu = 0
 }
 
 function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
@@ -1216,6 +1274,9 @@ function deleteNewKonatel(index: number){
   newlyAddedKonatelList.value.splice(index, 1);
 }
 
+function deleteNewSpolocnik(index: number){
+  newlyAddedSpolocnikList.value.splice(index, 1);
+}
 
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
