@@ -220,8 +220,6 @@
       </div>
       <div v-if="newlyAddedKonatelList.length" v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
-          <span>{{ newlyAddedKonatel.splatene }} € {{ calculatePercentageAtIndex(index) }}%</span>
-          <ProgressBar :progress="calculatePercentageAtIndex(index)" />
           <h3 :index="index" class="text-lg">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.first_name }} {{ newlyAddedKonatel.last_name }} {{ newlyAddedKonatel.title_after }}</h3> 
           <h4 :index="index" class="text-base">{{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
