@@ -106,15 +106,15 @@
               </template>
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+            <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
+            <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+            <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
+          </div>
           <details>
             <pre>{{ value }}</pre>
           </details>    
-            <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
-              <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
-              <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
-            </div>
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
