@@ -20,18 +20,13 @@
 
         <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
           <fakturacneUdajeFormStep ref="doInvoiceDataRef" />
+          <template #stepNext>
+            <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+          </template>
         </FormKit>
       </FormKit>
-      <FormKit type="checkbox" label="Všeobecné obchodné podmienky" validation="accepted" validation-visibility="dirty">
-        <template #label="context">
-          <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými
-              podmienkami poskytovania služby</a>.</span>
-        </template>
-      </FormKit>
-      <FormKit type="submit" label="Objednať" />
       <div v-show="firstTimeActivation">
-        <label class="text-xs italic text-gray-300">Prvú faktúru obdržíte o 3 mesiace.<br>Dovtedy Vám nebudeme nič
-          účtovať.</label>
+        <label class="text-sm italic text-gray-300">Prvú faktúru obdržíte o 3 mesiace. Dovtedy Vám nebudeme nič účtovať.</label>
       </div>
     </FormKit>
   </div>
