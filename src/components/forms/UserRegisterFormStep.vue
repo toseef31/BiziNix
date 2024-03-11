@@ -32,12 +32,8 @@
       help="Email ktorý budete používať aj na prihlasenie do účtu."
     />
   </div>
-  <div v-if="!userId" class="grid grid-cols-2 md:grid-cols-2 gap-4">
-    <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
-    <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
-  </div>
   <div v-if="isValidEmail &&!isEmailUnique && !userId">
-    <div class="mb-4 flex items-center py-3 px-4 bg-red-500 rounded">
+    <div v-if="user.email" class="mb-4 flex items-center py-3 px-4 bg-red-500 rounded">
       Účet s emailom <u><b>{{ user.email }}</b></u> je už zaregistrovaný, zadajte iný email alebo sa prihláste.
     </div>
     <div v-if="errorMsg" class="flex items-center justify-between py-3 mb-3 px-4 bg-red-500 rounded">
@@ -57,6 +53,10 @@
         label="Prihlásiť sa"
         @click.prevent="login"
       />
+  </div>
+  <div v-if="!userId" class="grid grid-cols-2 md:grid-cols-2 gap-4">
+    <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
+    <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
   </div>
   </template>
 </template>
