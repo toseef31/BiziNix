@@ -101,6 +101,9 @@
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
               <fakturacneUdajeFormStep ref="invoiceData" />
+              <template #stepNext>
+                <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+              </template>
             </FormKit>
           </FormKit>
           <details>
@@ -112,17 +115,6 @@
               <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
             </div>
-            <FormKit
-              type="checkbox"
-              label="Všeobecné obchodné podmienky"
-              validation="accepted"
-              validation-visibility="dirty"
-            >
-              <template #label="context">
-                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-              </template>
-            </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
