@@ -595,6 +595,65 @@
     <EditItemForCompany title="Predmet podnikania">
     </EditItemForCompany>
     <EditItemForCompany title="Základné imanie">
+      <div class="flex items-center space-x-4">
+        <div>Zakladné imanie {{ zakladneImanieFromOrSr.splatene }} EUR</div>        
+        <button @click.prevent="openChangeZakladneImanie" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje</button>
+      </div>
+      <div class="flex flex-row mt-3" v-for="(zakladneImanie, index) in newZakladneImanie" :key="index">
+        <div>{{ zakladneImanie.change_for }} {{ zakladneImanie.operation }} {{ zakladneImanie.value }} €</div> <button @click.prevent="() => newZakladneImanie.splice(index, 1)">Zrušiť</button>
+      </div>
+      <VueFinalModal
+        :modal-id="modalIdChangeZakladneImanie"
+        display-directive="if"
+        :clickToClose="false"
+        :escToClose="false"
+        :lockscroll="true"
+        class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+        content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+      >
+        <h3 class="text-white text-2xl">
+          Základné imanie
+        </h3>
+        <FormKit
+          type="form"
+          id="form_change_zakladne_imanie" name="change_zakladne_imanie"
+          @submit="closeAndSubmitChangeZakladneImanie"
+          :config="{ validationVisibility: 'live' }"
+          submit-label="Uložiť"
+          #default="{ value, state: { valid } }"
+          :actions="false"
+        >      
+          <div class="my-4 space-y-2">
+            <FormKit v-model="zakladne_imanie" type="radio" label="Základné imanie"
+              :options="zakladne_imanie_options" name="zakladne_imanie" validation="required"
+            />
+            <FormKit type="select" label="Vyberte zo zoznamu SPOLOČNÍKA"
+              v-model="selected_spolocnik_for_imanie"
+              :options="zakladne_imanie_spolocnici_options"
+              validation="required"
+            />
+            <FormKit v-if="zakladne_imanie === '+'" v-model="zakladne_imanie_hodnota" type="text" label="Hodnota o ktorú chcete zvýšiť (+)" validation="required" />
+            <FormKit v-if="zakladne_imanie === '-'" v-model="zakladne_imanie_hodnota" type="text" label="Hodnota o ktorú chcete znížiť (-)" validation="required" />
+          </div>
+          <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+            <button
+              class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+              type="button"
+              @click.prevent="cancelModalChangeZakladneImanie"
+            >
+              Zrušiť
+            </button>
+            <button
+              :disabled="!valid"
+              type="submit"
+              class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+            >
+              Uložiť
+            </button>
+          </div>
+          <pre wrap>{{ value }}</pre>
+        </FormKit>    
+      </VueFinalModal>   
     </EditItemForCompany>
     <EditItemForCompany title="Prokurista">
     </EditItemForCompany>
@@ -625,7 +684,7 @@ import type SpolocnikFromOrSr from '@/types/FromOrSrParser/SpolocnikFromOrSr';
 import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFromOrSr';
 import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
-import { includes, values } from 'lodash';
+import { includes, split, values } from 'lodash';
 
 // defineProps<{
 //   indexKonatel: number
@@ -640,6 +699,7 @@ const modalIdCancelKonatel = Symbol('modalICancelKonatel')
 const modalIdCancelSpolocnik = Symbol('modalIdCancelSpolocnik')
 const modalIdAddOrEditSpolocnik = Symbol('modalIdAddOrEditSpolocnik')
 const modalIdAddOrEditSposobKonania = Symbol('modalIdAddOrEditSposobKonania')
+const modalIdChangeZakladneImanie = Symbol('modalIdChangeZakladneImanie')
 const loading = ref(true);
 const subjects_of_business = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
@@ -647,6 +707,22 @@ const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 let addOperationKonatel = false;
 let isPrevodPodielu = false;
 let addOperationSpolocnik = false;
+let zakladne_imanie = ref("+")
+let zakladne_imanie_selected = ref()
+
+let zakladne_imanie_hodnota = ref()
+let selected_spolocnik_for_imanie = ref()
+let zakladne_imanie_spolocnici_options = ref([
+  { label: '', value: ''}
+])
+let zakladne_imanie_options  = ref([
+  { label: 'Znížiť', value: '-' },
+  { label: 'Zvýšiť', value: '+'}
+]);
+let newZakladneImanie = ref([
+  { change_for: '', operation: '', value: null as number | null }
+]);
+
 let sposob_konania_konatelov = ref()
 let sposob_konania_konatelov_selected = ref()
 let sposob_konania_konatelov_ine = ref()
@@ -808,7 +884,7 @@ const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {
     if (spolocnik.function) {
       return {
         function: spolocnik.function,
-        name: spolocnik.function,
+        name: spolocnik.function as string,
         street: spolocnik.name.split(" ")[0],
         city: spolocnik.street,
         country: spolocnik.city || 'Slovenská republika',
@@ -820,7 +896,7 @@ const spolocniciFromOrSr = computed<SpolocnikFromOrSr[]>(() => {
     // fyzicka osoba if function not exist
     else {
       return {
-        name: spolocnik.name,
+        name: spolocnik.name  as string,
         street: spolocnik.street || '',
         city: spolocnik.city || '',
         country: spolocnik.country || 'Slovenská republika',
@@ -1091,11 +1167,11 @@ function openPreviestPodielSpolocnika(index: number){
   nadobudatelia.value.length = 0;
   selectedNadobudatel.value = ''
   if(spolocniciFromOrSr.value.length >= 2){
-    let mappedSpolicniciFromOrOs = spolocniciFromOrSr.value.map(spolocnikFromOrSr => ({
+    let mappedSpolicniciFromOrSr = spolocniciFromOrSr.value.map(spolocnikFromOrSr => ({
       label: spolocnikFromOrSr.name,
       value: spolocnikFromOrSr
     }))
-    nadobudatelia.value.push(...mappedSpolicniciFromOrOs)
+    nadobudatelia.value.push(...mappedSpolicniciFromOrSr)
   }
   nadobudatelia.value.push({
       label: 'Iná osoba',
@@ -1231,6 +1307,34 @@ function cancelModalEditSposobKonanie(){
 
 //#endregion
 
+//#region  zakladne imanie
+function openChangeZakladneImanie(){
+  zakladne_imanie_spolocnici_options.value.length = 0;
+  spolocniciFromOrSr.value.forEach(spolocnik => {
+    zakladne_imanie_spolocnici_options.value.push(
+      { label: spolocnik.name, value: spolocnik.name }
+    )
+  });
+  selected_spolocnik_for_imanie.value = spolocniciFromOrSr.value[0].name;  
+  vfm.open(modalIdChangeZakladneImanie)?.then(() => {
+    // actions after open modal
+  })
+}
+
+function closeAndSubmitChangeZakladneImanie() {
+  //newZakladneImanie.value.length = 0;
+  newZakladneImanie.value.push({
+    change_for: selected_spolocnik_for_imanie.value, operation: zakladne_imanie.value, value: zakladne_imanie_hodnota.value
+  })
+  vfm.closeAll();
+}
+
+function cancelModalChangeZakladneImanie (){
+  vfm.closeAll();
+}
+
+//#endregion
+
 const isNextButtonDisabledHq = computed(() => {
   if(obchodneSidloVirtuOrNormal.value === 'virtualne'){
     if(!selectedVhqFromStore.value.name) {
@@ -1356,8 +1460,6 @@ function deleteNewKonatel(index: number){
 function deleteNewSpolocnik(index: number){
   newlyAddedSpolocnikList.value.splice(index, 1);
 }
-
-
 
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
