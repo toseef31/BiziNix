@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axiosClient from "@/axios";
+import axios from 'axios';
 import type Mail from "@/types/Mail";
 import type Company from "@/types/Company";
 
@@ -232,6 +233,14 @@ export const store = createStore({
     async getGroupOfSubjectOfBusiness({ comit }, id: number) {
       const { data } = await axiosClient.get(`/subjectOfBusiness/${id}/getGroup`);
       return data;
+    },
+    async getGroupOfSubjectOfBusinessForEditCompany({ comit }, ico: number) {
+      const { data } = await axios.get(`https://adversea.com/api/rpo-service/business-data/business-subjects?org-ICO=${ico}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      return data.business_subjects;
     },
     async getHeadquartersTypes() {
       const response = await axiosClient.get(

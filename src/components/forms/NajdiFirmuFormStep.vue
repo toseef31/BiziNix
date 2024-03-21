@@ -593,6 +593,30 @@
       </VueFinalModal>   
     </EditItemForCompany>
     <EditItemForCompany title="Predmet podnikania">
+      <FormKit
+      type="autocomplete"
+      name="subjects_of_business"
+      label="Predmet podnikania"
+      :options="loadSubjectOfBusiness"
+      placeholder="Vyhľadajte alebo vyberte predmet podnikania"
+      multiple
+      open-on-click
+      v-model="subjects_of_business"
+      selection-appearance="option"
+      @input="calculatePriceForBusinessOfcategories"
+      validation="required"
+      load-on-created
+    >      <template #option="{ option }">
+        <div class="formkit-option grow p-2">
+          <span>{{ option.label }}</span> <span class="font-medium">({{ option.__original?.price }} €)</span>
+        </div>
+      </template>
+    </FormKit>
+      <div class="grid gap-4 grid-cols-2 border border-gray-800" v-for="(subject, index) in sbj">
+        <div>{{subject.description}}</div>
+        <button class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
+      </div>
+      <button @click.prevent="callgetSubjectOfBusinness">Call func</button>
     </EditItemForCompany>
     <EditItemForCompany title="Základné imanie">
       <div class="flex items-center space-x-4">
@@ -685,6 +709,7 @@ import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFr
 import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
 import { includes, split, values } from 'lodash';
+import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
 
 // defineProps<{
 //   indexKonatel: number
@@ -736,7 +761,59 @@ let newCompanyFullName = reactive({
   newCompanyName: '',
   newCompanyPravForm: ''
 })
-
+let sbj = [
+      {
+         "description": "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Sprostredkovateľská činnosť v oblasti obchodu, služieb, výroby",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Činnosť podnikateľských, organizačných a ekonomických poradcov",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Reklamné a marketingové služby, prieskum trhu a verejnej mienky",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Administratívne služby",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Prenájom hnuteľných vecí",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Počítačové služby a služby súvisiace počítačovým spracovaním údajov",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Vykonávanie mimoškolskej vzdelávacej činnosti",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Vedenie účtovníctva",
+         "effective_from": "2021-03-26",
+         "effective_to": null
+      },
+      {
+         "description": "Daňové poradenstvo",
+         "effective_from": "2021-10-27",
+         "effective_to": null
+      }
+   ];
+  
 let konatelIndex: number;
 let konatelObject: CompanyMemberKonatel = {
   company_id: null,
@@ -863,6 +940,12 @@ async function search({ search }: any) {
     toast.error('Error: ' + err);
     return [];
   }
+}
+
+async function callgetSubjectOfBusinness(){
+  let ico = 45633461;
+  const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", ico);
+  console.log(res);
 }
 
 const konateliaFromOrSr = computed<KonatelFromOrSr[]>(() => {
@@ -1487,6 +1570,38 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
     return false;
   }
 }
+
+async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
+  const res = await store.dispatch("getAllSubjectOfBusiness")
+  console.log(res);
+  loading.value = false
+  if(res.data.data){
+    // Filter out items that already exist in subjects_of_business
+    const newData = res.data.data.filter((item: any) => {
+      return !subjects_of_business.value.some((subject: any) => subject.title === item.title);
+    });
+
+    if(!search){
+      return newData.map((item: any) => ({ label: item.title, value: item }))  
+    }    
+    else {
+      const filteredData = newData.filter((item: any) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+      const mappedData = filteredData.map((item: any) => ({
+        label: item.title,
+        value: item,
+      }));
+      return mappedData
+    }  
+  }
+  loading.value = false
+  return []
+}
+
+const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business.value)
+
+
 defineExpose({
   companyFromOrSr,
   konateliaFromOrSr,
