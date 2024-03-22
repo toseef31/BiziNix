@@ -614,7 +614,7 @@
     </FormKit>
       <div class="grid gap-4 grid-cols-2 border border-gray-800" v-for="(subject, index) in sbj">
         <div>{{subject.description}}</div>
-        <button class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
+        <button @click.prevent="" class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
       </div>
       <button @click.prevent="callgetSubjectOfBusinness">Call func</button>
     </EditItemForCompany>
@@ -761,58 +761,8 @@ let newCompanyFullName = reactive({
   newCompanyName: '',
   newCompanyPravForm: ''
 })
-let sbj = [
-      {
-         "description": "Kúpa tovaru na účely jeho predaja konečnému spotrebiteľovi (maloobchod) alebo iným prevádzkovateľom živnosti (veľkoobchod)",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Sprostredkovateľská činnosť v oblasti obchodu, služieb, výroby",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Činnosť podnikateľských, organizačných a ekonomických poradcov",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Reklamné a marketingové služby, prieskum trhu a verejnej mienky",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Administratívne služby",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Prenájom hnuteľných vecí",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Počítačové služby a služby súvisiace počítačovým spracovaním údajov",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Vykonávanie mimoškolskej vzdelávacej činnosti",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Vedenie účtovníctva",
-         "effective_from": "2021-03-26",
-         "effective_to": null
-      },
-      {
-         "description": "Daňové poradenstvo",
-         "effective_from": "2021-10-27",
-         "effective_to": null
-      }
-   ];
+
+let sbj = ref();
   
 let konatelIndex: number;
 let konatelObject: CompanyMemberKonatel = {
@@ -1601,6 +1551,16 @@ async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
 
 const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business.value)
 
+watch(
+      () => companyFromOrSr.value?.ico,
+      async (newValue, oldValue) => {
+        if (newValue) {
+          const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
+          sbj.value = res;
+          console.log(`New ICO value: ${newValue}`);
+        }
+      }
+    );
 
 defineExpose({
   companyFromOrSr,

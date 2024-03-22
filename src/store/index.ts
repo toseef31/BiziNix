@@ -235,10 +235,12 @@ export const store = createStore({
       return data;
     },
     async getGroupOfSubjectOfBusinessForEditCompany({ comit }, ico: number) {
-      const { data } = await axios.get(`https://adversea.com/api/rpo-service/business-data/business-subjects?org-ICO=${ico}`, {
+      const { data } = await axios.get(`https://adversea.com/api/gateway-service/screening/rpo/business-data/business-subjects?ico=${ico}`, {
         headers: {
           'Content-Type': 'application/json',
-        }
+          'Cache-control': 'max-age=0',
+          'X-Adversea-Api-Key': 's-VbqKi2mCnCR9sqYXhzquiQrN6UnFL8iq9P3chqt66KbgHmw1'
+        },
       })
       return data.business_subjects;
     },
