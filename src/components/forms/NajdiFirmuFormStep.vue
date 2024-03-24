@@ -601,7 +601,7 @@
       placeholder="Vyhľadajte alebo vyberte predmet podnikania"
       multiple
       open-on-click
-      v-model="subjects_of_business"
+      v-model="subjects_of_business_new"
       selection-appearance="option"
       @input="calculatePriceForBusinessOfcategories"
       validation="required"
@@ -613,8 +613,9 @@
       </template>
     </FormKit>
       <div class="grid gap-4 grid-cols-2 border border-gray-800" v-for="(subject, index) in sbj">
-        <div>{{subject.description}}</div>
-        <button @click.prevent="" class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
+        <div :class="{ 'text-cross': checkIfSbjIsRemoved(subject.description) }">{{subject.description}}</div>
+        <button v-if="!checkIfSbjIsRemoved(subject.description)" @click.prevent="removeOldSbj(subject.description)" class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
+        <button v-if="checkIfSbjIsRemoved(subject.description)" @click.prevent="addSbjBack(subject.description)" class="bg-bizinix-teal p-2 rounded max-w-32">Pridať</button>
       </div>
       <button @click.prevent="callgetSubjectOfBusinness">Call func</button>
     </EditItemForCompany>
@@ -726,7 +727,7 @@ const modalIdAddOrEditSpolocnik = Symbol('modalIdAddOrEditSpolocnik')
 const modalIdAddOrEditSposobKonania = Symbol('modalIdAddOrEditSposobKonania')
 const modalIdChangeZakladneImanie = Symbol('modalIdChangeZakladneImanie')
 const loading = ref(true);
-const subjects_of_business = ref<Company['subjects_of_business']>([]);
+const subjects_of_business_new = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 
 let addOperationKonatel = false;
@@ -762,7 +763,8 @@ let newCompanyFullName = reactive({
   newCompanyPravForm: ''
 })
 
-let sbj = ref();
+let sbj = ref([]);
+let sbj_old_removed = ref<string[]>([]);
   
 let konatelIndex: number;
 let konatelObject: CompanyMemberKonatel = {
@@ -1528,7 +1530,7 @@ async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   if(res.data.data){
     // Filter out items that already exist in subjects_of_business
     const newData = res.data.data.filter((item: any) => {
-      return !subjects_of_business.value.some((subject: any) => subject.title === item.title);
+      return !subjects_of_business_new.value.some((subject: any) => subject.title === item.title);
     });
 
     if(!search){
@@ -1549,18 +1551,37 @@ async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   return []
 }
 
-const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business.value)
+const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  = useCalculatePriceForBusinessCategories(subjects_of_business_new.value)
 
-watch(
-      () => companyFromOrSr.value?.ico,
-      async (newValue, oldValue) => {
-        if (newValue) {
-          const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
-          sbj.value = res;
-          console.log(`New ICO value: ${newValue}`);
-        }
-      }
-    );
+watch(() => companyFromOrSr.value?.ico, async (newValue, oldValue) => {
+    if (newValue) {
+      const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
+      sbj.value = res;
+      console.log(`New ICO value: ${newValue}`);
+    }
+  }
+);
+
+function removeOldSbj(subject: string){
+  sbj_old_removed.value.push(subject)        
+}
+
+function checkIfSbjIsRemoved(sbjName: string){
+  if(sbj_old_removed.value.includes(sbjName)){
+    let index = sbj.value.indexOf(sbjName);
+    if(index = -1){
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+function addSbjBack(sbjName: string){
+  let index = sbj_old_removed.value.indexOf(sbjName);
+  sbj_old_removed.value.splice(index, 1);
+  console.log(sbj_old_removed.value)
+}
 
 defineExpose({
   companyFromOrSr,
@@ -1575,7 +1596,10 @@ defineExpose({
   selectedVhqFromStore,
   newKonateliaList,
   newSpolocnikList,
-  newSharesTransfersList
+  newSharesTransfersList,
+  sbj_old_removed,
+  subjects_of_business_new,
+  newZakladneImanie
 })
 
 </script>

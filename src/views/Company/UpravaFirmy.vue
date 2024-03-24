@@ -146,6 +146,7 @@ interface CompanyData {
     konanie_menom_spolocnosti: string;
     zakladne_imanie: object;
     ine_zmeny: string[];
+    removed_subject_business: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
   };
   updated_company: {
@@ -159,8 +160,9 @@ interface CompanyData {
     vyska_vkladu: VyskaVkladu[];
     statutarny_organ: object;
     konanie_menom_spolocnosti: string;
-    zakladne_imanie: object;
+    zakladne_imanie: object[];
     ine_zmeny: string[];
+    removed_subject_business: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
   };
   sharesTransfers: SharesTransfers[]
@@ -226,6 +228,7 @@ const newCompanyData: CompanyData = {
     konanie_menom_spolocnosti: "", // Provide your desired value
     zakladne_imanie: {}, // Provide your desired values (empty object in this case)
     ine_zmeny: [], // Empty array for other changes
+    removed_subject_business: [], // Empty not needed for acutal company
     prokurista: [], // Empty array for procurators
   },
   updated_company: {
@@ -241,6 +244,7 @@ const newCompanyData: CompanyData = {
     konanie_menom_spolocnosti: "", // Provide your desired value
     zakladne_imanie: {}, // Provide your desired values (empty object in this case)
     ine_zmeny: [], // Empty array for other changes
+    removed_subject_business: [], // Empty array for removed sbj
     prokurista: [], // Empty array for procurators
   },
   sharesTransfers: []
@@ -409,6 +413,11 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
   newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
   newCompanyData.sharesTransfers = najfiFirmuForm.value.newSharesTransfersList
+  newCompanyData.updated_company.removed_subject_business = najfiFirmuForm.value.sbj_old_removed
+  newCompanyData.updated_company.predmet_cinnosti = najfiFirmuForm.value.subjects_of_business_new.map(element => {
+    return element.title as string
+  });
+  newCompanyData.updated_company.zakladne_imanie = najfiFirmuForm.value.newZakladneImanie
   try {
     const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
     console.log("Adding companyUpdate: " + JSON.stringify(res));
