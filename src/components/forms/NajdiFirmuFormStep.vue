@@ -92,6 +92,7 @@
           </div>
           <div v-else>
             <h3 class="text-lg font-bold">{{ selectedVhqFromStore.name }}</h3>
+            <h3 class="text-lg font-bold">{{ selectedPacageFromStore.name }}</h3>
           </div>
         </div>
         <div>
@@ -166,7 +167,10 @@
                     <div class="flex flex-col md:flex-row gap-8 mb-4">
                           <div>
                             <div class="pb-8 font-bold text-lg w-full text-left"> Vyberte si sídlo</div>
-                            <VirtualHqSlider></VirtualHqSlider>
+                              <VirtualHqSlider></VirtualHqSlider>
+                            </div>
+                            <div>
+                              <VirtualHqPackage></VirtualHqPackage>
                           </div>
                         </div>
                     <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
@@ -681,8 +685,93 @@
       </VueFinalModal>   
     </EditItemForCompany>
     <EditItemForCompany title="Prokurista">
+      <button v-if="newProkuristaList.length">
+        <Tippy>
+          <ReceiptRefundIcon @click.prevent="" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+          <template #content>
+            Vrátiť zmeny späť
+          </template>
+        </Tippy>
+      </button>
+      <div v-for="(prokurista, index ) in newProkuristaList" :key="index" class="grid grid-cols-2 items-center space-y-4">
+        <h3 class="text-lg font-bold">{{ prokurista.title_before + " " + prokurista.first_name + " " + prokurista.last_name + " " +  prokurista.title_after }} {{ prokurista.has_change }}</h3>            
+        <h4 class="text-base">{{ prokurista?.city }}, {{ prokurista?.street }} {{ prokurista?.street_number }}/{{ prokurista?.street_number2 }}, {{ prokurista?.psc }}</h4>
+        <h4 class="text-base">{{ prokurista?.country }} </h4>        
+      </div>
+      <button @click="openAddProkurista()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať prokuristu</button>
+      <!-- Edit Prokurista -->
+      <VueFinalModal
+          :modal-id="modalIdAddOrEditProkurista"
+          display-directive="if"
+          :clickToClose="false"
+          :escToClose="false"
+          :lockscroll="true"
+          class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+          content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+        >
+        <div>
+          <h3 class="text-white text-2xl">Pridať prokuristu</h3>                    
+        </div>
+          <!-- get prokurista via "" and asign to form via property name="" -->
+          <FormKit
+            type="form"
+            id="form_new_konatelia" name="new_konatelia"
+            @submit="closeModalAndSubmitOrEditProkurista"
+            :config="{ validationVisibility: 'live' }"
+            submit-label="Pridať"
+            #default="{ value, state: { valid } }"
+            :actions="false"
+            v-model="konatel"
+          >
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
+            <FormKit type="text" name="last_name" label="Priezvisko" validation="required|length:2" />
+            <FormKit type="date" style="color-scheme: dark;" name="date_of_birth" autocomplete="date_of_birth"
+              label="Dátum narodenia" validation="required"
+            />
+            <FormKit type="select" name="gender" label="Pohlavie" placeholder="Vyberte pohlavie" :options="['Muž', 'Žena']"
+              validation="required"
+            />
+            <FormKit type="text" name="title_before" label="Titul pred menom" />
+            <FormKit type="text" name="title_after" label="Titul za menom" />
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
+              validation="required|length:9"
+              validation-visibility="blur" />
+            <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
+              :options="['Slovenská republika', 'Česká republika']" validation="required" />
+            <FormKit type="text" name="city" label="Mesto" validation="required" />
+            <FormKit type="text" name="psc" label="PSČ" validation="required" />
+            <FormKit type="text" name="street" label="Ulica" validation="required" />
+            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
+            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit v-if="addOperationKonatel" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
+          </div>
+            <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+            <button
+              class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+              type="button"
+              @click.prevent="() => vfm.closeAll()"
+            >
+              Zrušiť
+            </button>
+            <button
+              :disabled="!valid"
+              type="submit"
+              class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+            >
+            Potvrdiť
+            </button>
+          </div>
+          </FormKit>  
+        </VueFinalModal>
     </EditItemForCompany>
     <EditItemForCompany title="Iné zmeny">
+      <FormKit
+        type="textarea"
+        v-model="ine_zmeny"
+        name="inezmeny"
+        label=""
+      />      
     </EditItemForCompany>
   </div>
 </template>
@@ -709,7 +798,7 @@ import type SpolocnikFromOrSr from '@/types/FromOrSrParser/SpolocnikFromOrSr';
 import type ZakladneImanieFromOrSr from '@/types/FromOrSrParser/ZakladneImanieFromOrSr';
 import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr';
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
-import { includes, split, values } from 'lodash';
+import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
 
 // defineProps<{
@@ -721,6 +810,7 @@ const vfm = useVfm()
 const modalIdAddOrEditCompanyName = Symbol('modalIdAddOrEditCompanyName')
 const modalIdAddOrEditSidlo = Symbol('modalIdAddOrEditSidlo')
 const modalIdAddOrEditKonatel = Symbol('modalIdAddOrEditKonatel')
+const modalIdAddOrEditProkurista = Symbol('modalIdAddOrEditKonatel')
 const modalIdCancelKonatel = Symbol('modalICancelKonatel')
 const modalIdCancelSpolocnik = Symbol('modalIdCancelSpolocnik')
 const modalIdAddOrEditSpolocnik = Symbol('modalIdAddOrEditSpolocnik')
@@ -729,10 +819,14 @@ const modalIdChangeZakladneImanie = Symbol('modalIdChangeZakladneImanie')
 const loading = ref(true);
 const subjects_of_business_new = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
+const selectedPacageFromStore = computed(() => store.getters.getSelectedVhqPackage)
+
+let ine_zmeny = ref("");
 
 let addOperationKonatel = false;
 let isPrevodPodielu = false;
 let addOperationSpolocnik = false;
+
 let zakladne_imanie = ref("+")
 let zakladne_imanie_selected = ref()
 
@@ -790,6 +884,7 @@ let konatelObject: CompanyMemberKonatel = {
   new_konatel_date_from: ''
 };
 let konatel = ref(konatelObject);
+let prokurista = ref(konatelObject);
 
 let spolocnikIndex: number;
 let spolocnikObject: CompanyMemberSpolocnik = {
@@ -830,6 +925,7 @@ let prevodPodieluFromTo = ref({
 });
 
 let newKonateliaList = ref<CompanyMemberKonatel[]>([]) // edited konatel
+let newProkuristaList = ref<CompanyMemberKonatel[]>([]) // edited prokurista
 let newlyAddedKonatelList = ref<CompanyMemberKonatel[]>([]) // new added konatel
 let newSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // edited spolocnik
 let newlyAddedSpolocnikList = ref<CompanyMemberSpolocnik[]>([]) // new added spolocnil
@@ -1143,6 +1239,26 @@ function addNewKonatelToList(){
 
 //#endregion
 
+//#region Prokurista
+function openAddProkurista() {
+  prokurista.value = Object.assign({}, konatelObject);
+  vfm.open(modalIdAddOrEditProkurista)?.then(() => {
+  })
+}
+
+function closeModalAndSubmitOrEditProkurista() {
+  console.log("Calling submit function!")
+  vfm.close(modalIdAddOrEditProkurista)?.then(() => { // to doooooo
+    newProkuristaList.value.push(prokurista.value);
+  })
+}
+
+function returnChangeBackProkurista(){
+  newProkuristaList.value.length = 0;    
+}
+
+//#endregion
+
 function getSpecificSpolocnik(index: number){  
   if(spolocniciFromOrSr.value[index].function){
     // prav osoba / firma
@@ -1372,7 +1488,7 @@ function cancelModalChangeZakladneImanie (){
 
 const isNextButtonDisabledHq = computed(() => {
   if(obchodneSidloVirtuOrNormal.value === 'virtualne'){
-    if(!selectedVhqFromStore.value.name) {
+    if(!selectedVhqFromStore.value.name || !selectedPacageFromStore.value.name) {
       return true
     }
   } else {
@@ -1594,12 +1710,18 @@ defineExpose({
   newHqAddress,
   headquarterInfo,
   selectedVhqFromStore,
+  selectedPacageFromStore,
   newKonateliaList,
   newSpolocnikList,
   newSharesTransfersList,
   sbj_old_removed,
   subjects_of_business_new,
-  newZakladneImanie
+  newZakladneImanie,
+  sposob_konania_konatelov,
+  sposob_konania_konatelov_ine,
+  newProkuristaList,
+  ine_zmeny,
+  finalPriceForBusinessCategori
 })
 
 </script>

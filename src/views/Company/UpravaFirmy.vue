@@ -71,15 +71,15 @@
 
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+            <p>Poplatok za úpravy firmy {{ order.items[0].price }} €.</p>
+            <p>Poplatok za predmety podnikania {{ najfiFirmuForm?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+            <p v-if="najfiFirmuForm?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých nových predmetov podnikania <b>{{ najfiFirmuForm?.subjects_of_business_new.length }}</b>.</p>
+          </div>
           <details>
             <pre>{{ value }}</pre>
           </details>    
-            <!-- <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
-              <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
-              <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
-            </div> -->
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
@@ -145,7 +145,7 @@ interface CompanyData {
     statutarny_organ: object;
     konanie_menom_spolocnosti: string;
     zakladne_imanie: object;
-    ine_zmeny: string[];
+    ine_zmeny: string;
     removed_subject_business: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
   };
@@ -161,9 +161,9 @@ interface CompanyData {
     statutarny_organ: object;
     konanie_menom_spolocnosti: string;
     zakladne_imanie: object[];
-    ine_zmeny: string[];
+    ine_zmeny: string;
     removed_subject_business: string[];
-    prokurista: SpolocnikOrKonatelOrProku[];
+    prokurista: CompanyMemberKonatel[];
   };
   sharesTransfers: SharesTransfers[]
 }
@@ -227,7 +227,7 @@ const newCompanyData: CompanyData = {
     statutarny_organ: {}, // Provide your desired values (empty object in this case)
     konanie_menom_spolocnosti: "", // Provide your desired value
     zakladne_imanie: {}, // Provide your desired values (empty object in this case)
-    ine_zmeny: [], // Empty array for other changes
+    ine_zmeny: '', // Empty array for other changes
     removed_subject_business: [], // Empty not needed for acutal company
     prokurista: [], // Empty array for procurators
   },
@@ -242,15 +242,15 @@ const newCompanyData: CompanyData = {
     vyska_vkladu: [], // Empty array for contributions
     statutarny_organ: {}, // Provide your desired values (empty object in this case)
     konanie_menom_spolocnosti: "", // Provide your desired value
-    zakladne_imanie: {}, // Provide your desired values (empty object in this case)
-    ine_zmeny: [], // Empty array for other changes
+    zakladne_imanie: [{}], // Provide your desired values (empty object in this case)
+    ine_zmeny: '', // Empty array for other changes
     removed_subject_business: [], // Empty array for removed sbj
     prokurista: [], // Empty array for procurators
   },
   sharesTransfers: []
 };
 
-//let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
+let totalForPay = computed(() => najfiFirmuForm.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
 
 const isUdajeSpolocnostiStepValid = ref({
   valid: false
@@ -351,6 +351,13 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
   order.value.payment_method = invoiceDataForm.value.paymentOptions
   order.value.user_id = userId
   order.value.description = 'Úprava firmy.'
+
+  order.value.items.push({
+        description: 'Úprava firmy',
+        price: 10 * 12,
+        price_vat: (10 * 12) * 0.2,
+      })
+
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
@@ -358,24 +365,25 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
       price_vat: 0 * 0.2,
     })
     order.value.items.push({
-      description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
-      price: selectedVhqPackageFromStore.value.price * 12,
-      price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
-    })
+        description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
+        price: selectedVhqPackageFromStore.value.price * 12,
+        price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
+      })
   }
 
-  // subjects_of_business.value.subjects_of_business.forEach(element => {
-  //   order.value.items.push({
-  //     description: element.title as string,
-  //     price: element.price as number,
-  //     price_vat: (element.price as number) * 0.2
-  //   })
-  // });
+  najfiFirmuForm.value.subjects_of_business_new.forEach(element => {
+    order.value.items.push({
+      description: element.title as string,
+      price: element.price as number,
+      price_vat: (element.price as number) * 0.2
+    })
+
+  });
 
   order.value.fakturacne_udaje_id = invoiceAddressId as number
 
-  //order.value.amount = totalForPay.value
-  //order.value.amount_vat = totalForPay.value * 0.2
+  order.value.amount = totalForPay.value
+  order.value.amount_vat = totalForPay.value * 0.2
 
   try {
     const res = await store.dispatch('addOrder', order.value);
@@ -391,19 +399,20 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.order_id = orderId
   newCompanyData.user_id = userId
   // actual company
-  newCompanyData.actual_company.obchodne_meno = najfiFirmuForm.value.companyFromOsRs.obchodne_meno
-  newCompanyData.actual_company.pravna_forma = najfiFirmuForm.value.companyFromOsRs.pravna_forma
-  newCompanyData.actual_company.ico = najfiFirmuForm.value.companyFromOsRs.ico
-  newCompanyData.actual_company.sidlo = najfiFirmuForm.value.companyFromOsRs.adresa
-  newCompanyData.actual_company.predmet_cinnosti = najfiFirmuForm.value.companyFromOsRs.predmet_cinnosti
-  newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOsRs.spolocnici
-  newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOsRs.statutarny_organ.konatelia
+  newCompanyData.actual_company.obchodne_meno = najfiFirmuForm.value.companyFromOrSr.obchodne_meno
+  newCompanyData.actual_company.pravna_forma = najfiFirmuForm.value.companyFromOrSr.pravna_forma
+  newCompanyData.actual_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
+  newCompanyData.actual_company.sidlo = najfiFirmuForm.value.companyFromOrSr.adresa
+  newCompanyData.actual_company.predmet_cinnosti = najfiFirmuForm.value.companyFromOrSr.predmet_cinnosti
+  newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOrSr.spolocnici
+  newCompanyData.actual_company.konanie_menom_spolocnosti = najfiFirmuForm.value.companyFromOrSr.konanie_menom_spolocnosti
+  newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konatelia
   
   // updated company
   const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;
   newCompanyData.updated_company.obchodne_meno = `${newCompanyName} ${newCompanyPravForm}`;
   newCompanyData.updated_company.pravna_forma = `${newCompanyPravForm}`;
-  newCompanyData.updated_company.ico = najfiFirmuForm.value.companyFromOsRs.ico
+  newCompanyData.updated_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
     newCompanyData.updated_company.sidlo = najfiFirmuForm.value.newHqAddress
   } else {
@@ -412,12 +421,15 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   // to do predmet cinnosti
   newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
   newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
+  newCompanyData.updated_company.konanie_menom_spolocnosti = najfiFirmuForm.value.sposob_konania_konatelov + " " + najfiFirmuForm.value?.sposob_konania_konatelov_ine
   newCompanyData.sharesTransfers = najfiFirmuForm.value.newSharesTransfersList
   newCompanyData.updated_company.removed_subject_business = najfiFirmuForm.value.sbj_old_removed
   newCompanyData.updated_company.predmet_cinnosti = najfiFirmuForm.value.subjects_of_business_new.map(element => {
     return element.title as string
   });
-  newCompanyData.updated_company.zakladne_imanie = najfiFirmuForm.value.newZakladneImanie
+  newCompanyData.updated_company.zakladne_imanie.push(...najfiFirmuForm.value.newZakladneImanie);
+  newCompanyData.updated_company.prokurista.push(...najfiFirmuForm.value.newProkuristaList);
+  newCompanyData.updated_company.ine_zmeny = najfiFirmuForm.value.ine_zmeny
   try {
     const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
     console.log("Adding companyUpdate: " + JSON.stringify(res));
