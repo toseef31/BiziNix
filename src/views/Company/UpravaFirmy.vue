@@ -352,12 +352,6 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
   order.value.user_id = userId
   order.value.description = 'Úprava firmy.'
 
-  order.value.items.push({
-        description: 'Úprava firmy',
-        price: 10 * 12,
-        price_vat: (10 * 12) * 0.2,
-      })
-
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
