@@ -687,14 +687,14 @@
     <EditItemForCompany title="Prokurista">
       <button v-if="newProkuristaList.length">
         <Tippy>
-          <ReceiptRefundIcon @click.prevent="" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+          <ReceiptRefundIcon @click.prevent="returnChangeBackProkurista" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
           <template #content>
             Vrátiť zmeny späť
           </template>
         </Tippy>
       </button>
-      <div v-for="(prokurista, index ) in newProkuristaList" :key="index" class="grid grid-cols-2 items-center space-y-4">
-        <h3 class="text-lg font-bold">{{ prokurista.title_before + " " + prokurista.first_name + " " + prokurista.last_name + " " +  prokurista.title_after }} {{ prokurista.has_change }}</h3>            
+      <div v-for="(prokurista, index ) in newProkuristaList" :key="index" class="">
+        <h3 class="text-lg font-bold">{{ prokurista.title_before + " " + prokurista.first_name + " " + prokurista.last_name + " " +  prokurista.title_after }}</h3>            
         <h4 class="text-base">{{ prokurista?.city }}, {{ prokurista?.street }} {{ prokurista?.street_number }}/{{ prokurista?.street_number2 }}, {{ prokurista?.psc }}</h4>
         <h4 class="text-base">{{ prokurista?.country }} </h4>        
       </div>
@@ -721,7 +721,7 @@
             submit-label="Pridať"
             #default="{ value, state: { valid } }"
             :actions="false"
-            v-model="konatel"
+            v-model="prokurista"
           >
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
@@ -744,9 +744,8 @@
             <FormKit type="text" name="street" label="Ulica" validation="required" />
             <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
             <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
-            <FormKit v-if="addOperationKonatel" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
           </div>
-            <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+          <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
             <button
               class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
               type="button"
@@ -759,9 +758,9 @@
               type="submit"
               class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
             >
-            Potvrdiť
+              Potvrdiť
             </button>
-          </div>
+         </div>
           </FormKit>  
         </VueFinalModal>
     </EditItemForCompany>
@@ -774,6 +773,39 @@
       />      
     </EditItemForCompany>
   </div>
+
+  <!-- Confirm Changes Modal -->
+  <VueFinalModal
+    :modal-id="modalIdReturnChangeBack"
+    display-directive="if"
+    :clickToClose="false"
+    :escToClose="false"
+    :lockscroll="true"
+    class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+    content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+  >
+  <div class="text-white">
+    <h3 class="text-2xl">
+      Potvrdenie
+    </h3>
+    <div class="my-8">Naozaj chcete zrušiť zmeny?</div>
+    <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+      <button
+        class="w-full md:w-1/2 font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+        type="button"
+        @click.prevent="() => vfm.closeAll()"
+      >
+        Zrušiť
+      </button>
+      <button
+        @click.prevent="submitReturnChangeBack('prokurista')"  
+        class="w-full md:w-1/2 font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+      >
+        Potvrdiť
+      </button>
+    </div>
+  </div>
+  </VueFinalModal>
 </template>
 
 <script setup lang="ts">
@@ -816,6 +848,7 @@ const modalIdCancelSpolocnik = Symbol('modalIdCancelSpolocnik')
 const modalIdAddOrEditSpolocnik = Symbol('modalIdAddOrEditSpolocnik')
 const modalIdAddOrEditSposobKonania = Symbol('modalIdAddOrEditSposobKonania')
 const modalIdChangeZakladneImanie = Symbol('modalIdChangeZakladneImanie')
+const modalIdReturnChangeBack = Symbol('modalIdReturnChangeBack')
 const loading = ref(true);
 const subjects_of_business_new = ref<Company['subjects_of_business']>([]);
 const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
@@ -1254,7 +1287,21 @@ function closeModalAndSubmitOrEditProkurista() {
 }
 
 function returnChangeBackProkurista(){
-  newProkuristaList.value.length = 0;    
+  vfm.open(modalIdReturnChangeBack)?.then(() => {
+
+  })
+}
+
+function submitReturnChangeBack(modalName: string){
+  switch(modalName){
+    case 'prokurista': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => { newProkuristaList.value.length = 0 })
+      break;
+    }
+    default: {
+      console.log('The input does not match any predefined strings');      
+    }
+  }
 }
 
 //#endregion
@@ -1721,7 +1768,8 @@ defineExpose({
   sposob_konania_konatelov_ine,
   newProkuristaList,
   ine_zmeny,
-  finalPriceForBusinessCategori
+  finalPriceForBusinessCategori,
+  zakladneImanieFromOrSr
 })
 
 </script>

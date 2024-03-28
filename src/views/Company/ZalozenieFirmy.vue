@@ -373,10 +373,10 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
     sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
     subjects_of_business: subjects_of_business.value.subjects_of_business,
+    note: companyMembersAndDetails.value.companyOrZivnostModel.note + companyMembersAndDetails.value.note_sposob_konania_ine,
     sidlo_typ_balika: sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'? selectedVhqPackageFromStore.value.name : null
   };
-
-
+  
   try {
     const res = await store.dispatch('addCompany', companyOrZivnostModelData);
     console.log("Adding company: " + JSON.stringify(res));
@@ -391,6 +391,7 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any, companyName: 
   companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: number) => {
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
+    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].je_zakladatel = true
   })
 
   let zakladatelia = ref({
@@ -411,6 +412,7 @@ async function addMultipleCompanyMembersKonatelia(companyId: any, companyName: a
   companyMembersAndDetails.value.konateliaList.forEach((item, index: number) => {
     companyMembersAndDetails.value.konateliaList[index].company_id = companyId
     companyMembersAndDetails.value.konateliaList[index].obchodne_meno = companyName
+    companyMembersAndDetails.value.konateliaList[index].je_konatel = true
   })
 
   let konatelia = ref({

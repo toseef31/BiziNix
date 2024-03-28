@@ -144,7 +144,7 @@ interface CompanyData {
     vyska_vkladu: VyskaVkladu[];
     statutarny_organ: object;
     konanie_menom_spolocnosti: string;
-    zakladne_imanie: object;
+    zakladne_imanie: string;
     ine_zmeny: string;
     removed_subject_business: string[];
     prokurista: SpolocnikOrKonatelOrProku[];
@@ -226,7 +226,7 @@ const newCompanyData: CompanyData = {
     vyska_vkladu: [], // Empty array for contributions
     statutarny_organ: {}, // Provide your desired values (empty object in this case)
     konanie_menom_spolocnosti: "", // Provide your desired value
-    zakladne_imanie: {}, // Provide your desired values (empty object in this case)
+    zakladne_imanie: '', // Provide your desired values (empty object in this case)
     ine_zmeny: '', // Empty array for other changes
     removed_subject_business: [], // Empty not needed for acutal company
     prokurista: [], // Empty array for procurators
@@ -407,6 +407,7 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOrSr.spolocnici
   newCompanyData.actual_company.konanie_menom_spolocnosti = najfiFirmuForm.value.companyFromOrSr.konanie_menom_spolocnosti
   newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konatelia
+  newCompanyData.actual_company.zakladne_imanie = najfiFirmuForm.value.zakladneImanieFromOrSr.splatene + " " + najfiFirmuForm.value.zakladneImanieFromOrSr.currency
   
   // updated company
   const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;

@@ -305,7 +305,7 @@
           3: 'Iné'
         }" name="sposob_konania_konatelov" validation="required" />
     <div v-if="companyOrZivnostModel.sposob_konania_konatelov == 3" class="mt-2">
-      <FormKit type="textarea" label="Iný spôsov konania konateľov" rows="3" />
+      <FormKit type="textarea" v-model="note_sposob_konania_ine" label="Iný spôsov konania konateľov" rows="3" />
     </div>
 
   </div>
@@ -406,6 +406,8 @@ let companyOrZivnostModel = ref({
   }]
 })
 
+let note_sposob_konania_ine = ref('');
+
 let zakladateliaSpolocniciList: Ref<CompanyMemberSpolocnik[]> = ref<CompanyMemberSpolocnik[]>([]);
 let konateliaList: Ref<CompanyMemberKonatel[]> = ref<CompanyMemberKonatel[]>([]);
 
@@ -488,7 +490,7 @@ function getDefaultNewItemKonatel(): CompanyMemberKonatel {
     psc: '',
     country: '',
     je_konatel: true,
-    addedFromZakladatelia: false
+    added_from_zakladatelia: false
   };
 }
 
@@ -697,7 +699,8 @@ defineExpose({
   konateliaList,
   countOfKonatelia,
   countOfZakladatelia,
-  countOfKonatelFromZakladatelia
+  countOfKonatelFromZakladatelia,
+  note_sposob_konania_ine
 })
 
 </script>
