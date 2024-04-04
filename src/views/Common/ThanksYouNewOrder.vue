@@ -11,7 +11,7 @@
         </div>
       </template>
       <template v-else-if="!loading && order">
-        <CompanyThanksYou v-if="order && order.order_type === 'company'" />
+        <CompanyThanksYou v-if="order && order.order_type === 'company' || order.order_type ==='cupdate'" />
         <DocumentsThanksYou v-else-if="order && order.order_type === 'documents'" />
         <VhqThanksYouVue v-else-if="order && order.order_type === 'vhq'" />
         <MailThanksYouVue v-else-if="order && order.order_type === 'mail'" />

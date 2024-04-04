@@ -1,0 +1,28 @@
+export default interface SharesTransfers {
+  sharesFrom: {
+    name: string,
+    city: string,
+    street: string,
+    streetNumber: string,
+    psc: string,
+    country: string,
+  },
+  sharesTo: {
+    typOsoby: number | string,
+    name: string,
+    city: string,
+    street: string,
+    streetNumber: string,
+    psc: string,
+    date_of_birth: string,
+    country: string,
+    rodneCislo: string,
+    pohlavie: string,
+    title_before: string,
+    title_after: string,
+  },
+  transferType: string,
+  amountOfTransfer: string,
+  priceForTransfer: string,
+  currency: string,
+}

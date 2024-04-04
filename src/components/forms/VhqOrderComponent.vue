@@ -24,19 +24,15 @@
 
         <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
           <fakturacneUdajeFormStep ref="invoiceData" />
+          <template #stepNext>
+            <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+          </template>
         </FormKit>
 
       </FormKit>
       <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
         Celkom k platbe <b>{{ totalForPay }} € / rok</b>.
       </div>
-      <FormKit type="checkbox" label="Všeobecné obchodné podmienky" validation="accepted" validation-visibility="dirty">
-        <template #label="context">
-          <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými
-              podmienkami poskytovania služby</a>.</span>
-        </template>
-      </FormKit>
-      <FormKit type="submit" label="Objednať" />
     </FormKit>
   </div>
 </template>

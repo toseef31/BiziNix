@@ -101,28 +101,20 @@
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
               <fakturacneUdajeFormStep ref="invoiceData" />
+              <template #stepNext>
+                <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+              </template>
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+            <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
+            <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+            <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
+          </div>
           <details>
             <pre>{{ value }}</pre>
           </details>    
-            <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
-              <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
-              <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
-            </div>
-            <FormKit
-              type="checkbox"
-              label="Všeobecné obchodné podmienky"
-              validation="accepted"
-              validation-visibility="dirty"
-            >
-              <template #label="context">
-                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-              </template>
-            </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
@@ -370,6 +362,7 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     name: companyMembersAndDetails.value.companyOrZivnostModel.name + ' ' + companyMembersAndDetails.value.pravnaForma,
     type: companyMembersAndDetails.value.companyOrZivnostModel.type,
     status: companyMembersAndDetails.value.companyOrZivnostModel.status,
+    sub_status: companyMembersAndDetails.value.companyOrZivnostModel.sub_status,
     owner: userId,
     headquarters_id: hqId,
     doc_sncounter_id: 1,
@@ -380,10 +373,10 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
     sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
     subjects_of_business: subjects_of_business.value.subjects_of_business,
+    note: companyMembersAndDetails.value.companyOrZivnostModel.note + companyMembersAndDetails.value.note_sposob_konania_ine,
     sidlo_typ_balika: sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'? selectedVhqPackageFromStore.value.name : null
   };
-
-
+  
   try {
     const res = await store.dispatch('addCompany', companyOrZivnostModelData);
     console.log("Adding company: " + JSON.stringify(res));
@@ -398,6 +391,7 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any, companyName: 
   companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: number) => {
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
+    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].je_zakladatel = true
   })
 
   let zakladatelia = ref({
@@ -418,6 +412,7 @@ async function addMultipleCompanyMembersKonatelia(companyId: any, companyName: a
   companyMembersAndDetails.value.konateliaList.forEach((item, index: number) => {
     companyMembersAndDetails.value.konateliaList[index].company_id = companyId
     companyMembersAndDetails.value.konateliaList[index].obchodne_meno = companyName
+    companyMembersAndDetails.value.konateliaList[index].je_konatel = true
   })
 
   let konatelia = ref({

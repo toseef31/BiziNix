@@ -56,39 +56,7 @@
             tab-style="tab"
           >
             <FormKit type="step" name="icoFirmy" label="IČO firmy" next-label="Pokračovať">
-              <NajdiFirmuFormStep ref="najdi_firmu" />
-            </FormKit>
-
-            <FormKit type="step" name="predmetPodnikania" label="Predmet podnikanie" next-label="Pokračovať">
-              <predmetPodnikaniaFormStep ref="subjects_of_business" />
-            </FormKit>
-
-            <FormKit type="step" name="obchodneSidlo" label="Obchodné sídlo" previous-label="Naspäť">
-              <obchodneSidloFormStep ref="sidloCompanyAddress" />
-              <template #stepNext="{ handlers, node }">
-                <!-- incrementStep returns a callable function -->
-                <FormKit
-                  type="button"
-                  :disabled="isNextButtonDisabledHq"
-                  @click="handlers.incrementStep(1)()"
-                  label="Pokračovať"
-                  data-next="true"
-                />
-              </template>
-            </FormKit>
-
-            <FormKit type="step" name="udajeSpolocnosti" label="Údaje o spoločnosti" id="udajeSpolocnostiStep" previous-label="Naspäť">
-              <udajeSpolocnostiFormStep ref="companyMembersAndDetails" />
-              <template #stepNext="{ handlers, node }">
-                <!-- incrementStep returns a callable function -->
-                <FormKit
-                  type="button"
-                  :disabled="isNextButtonDisabled"
-                  @click="handlers.incrementStep(1)()"
-                  label="Pokračovať"
-                  data-next="true"
-                />
-              </template>
+              <NajdiFirmuFormStep ref="najfiFirmuForm" />
             </FormKit>
 
             <FormKit type="step" name="userRegister" label="Užívateľský účet" next-label="Pokračovať">
@@ -96,29 +64,22 @@
             </FormKit>
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
-              <fakturacneUdajeFormStep ref="invoiceData" />
+              <fakturacneUdajeFormStep ref="invoiceDataForm" />
+              <template #stepNext>
+                <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+              </template>
+
             </FormKit>
           </FormKit>
+          <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
+            <p>Poplatok za úpravy firmy {{ order.items[0].price }} €.</p>
+            <p>Poplatok za predmety podnikania {{ najfiFirmuForm?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+            <p v-if="najfiFirmuForm?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých nových predmetov podnikania <b>{{ najfiFirmuForm?.subjects_of_business_new.length }}</b>.</p>
+          </div>
           <details>
             <pre>{{ value }}</pre>
           </details>    
-            <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
-              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
-              <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-              <p v-if="sidloCompanyAddress?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
-              <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
-            </div>
-            <FormKit
-              type="checkbox"
-              label="Všeobecné obchodné podmienky"
-              validation="accepted"
-              validation-visibility="dirty"
-            >
-              <template #label="context">
-                <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-              </template>
-            </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
         </FormKit>
         <button @click="logujData">New log Submit</button>
         <p>Selected Vhq:</p>
@@ -137,18 +98,17 @@ import { ref, onBeforeMount, onMounted, computed, toRef } from "vue";
 import router from "@/router";
 import type User from "@/types/User";
 import NajdiFirmuFormStep from "@/components/forms/NajdiFirmuFormStep.vue";
-import predmetPodnikaniaFormStep from "@/components/forms/predmetPodnikaniaFormStep.vue";
-import podnikatelskeUdajeFormStep from "@/components/forms/podnikatelskeUdajeFormStep.vue";
-import obchodneSidloFormStep from "@/components/forms/obchodneSidloFormStep.vue";
-import udajeSpolocnostiFormStep from "@/components/forms/udajeSpolocnostiFormStep.vue";
 import userRegisterFormStep from "@/components/forms/UserRegisterFormStep.vue";
 import fakturacneUdajeFormStep from "@/components/forms/fakturacneUdajeFormStep.vue";
-import type Company from "@/types/Company";
+//import type Company from "@/types/Company";
 import type Address from "@/types/Address";
 import type Headquarters from "@/types/Headquarters";
 import { getValidationMessages } from '@formkit/validation';
 import { getNode } from '@formkit/core';
 import { toast } from "vue3-toastify";
+import type CompanyMemberKonatel from "@/types/CompanyMemberKonatel";
+import type CompanyMemberSpolocnik from "@/types/CompanyMemberSpolocnik";
+import type SharesTransfers from "@/types/editCompany/SharesTransfers";
 
 const searchFormDiv = ref();
 const scrollToDiv = () => {
@@ -162,35 +122,74 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let najdi_firmu = ref<InstanceType<typeof NajdiFirmuFormStep>>(null as any)
-let subjects_of_business = ref<InstanceType<typeof predmetPodnikaniaFormStep>>(null as any)
-let sidloCompanyAddress = ref<InstanceType<typeof obchodneSidloFormStep>>(null as any)
-let companyMembersAndDetails = ref<InstanceType<typeof udajeSpolocnostiFormStep>>(null as any);
+let najfiFirmuForm = ref<InstanceType<typeof NajdiFirmuFormStep>>(null as any)
 let userRegisterForm = ref<InstanceType<typeof userRegisterFormStep>>(null as any)
-let invoiceData = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any)
+let invoiceDataForm = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any)
 let user = ref<User>();
-let companyOrZivnostModel = ref<Company>({} as any);
 
-const isNextButtonDisabled = computed(() => {
-  if(companyMembersAndDetails.value?.countOfZakladatelia >= 1 && companyMembersAndDetails.value?.countOfKonatelia >= 1){
-    return false
-  }
-  else {
-    return true
-  }
-})
-
-const isNextButtonDisabledHq = computed(() => {
-  if(sidloCompanyAddress.value?.obchodneSidloVirtuOrNormal === 'virtualne'){
-    if(!selectedVhqFromStore.value.name) {
-      return true
-    }
-  } else {
-    return false
-  }
-})
 
 const messages = ref([])
+
+interface CompanyData {
+  order_id: number;
+  user_id: number;
+  actual_company: {
+    obchodne_meno: string;
+    sidlo: object;
+    ico: number;
+    pravna_forma: string;
+    predmet_cinnosti: string[];
+    spolocnici: SpolocnikOrKonatelOrProku[];
+    konatelia: SpolocnikOrKonatelOrProku[];
+    vyska_vkladu: VyskaVkladu[];
+    statutarny_organ: object;
+    konanie_menom_spolocnosti: string;
+    zakladne_imanie: string;
+    ine_zmeny: string;
+    removed_subject_business: string[];
+    prokurista: SpolocnikOrKonatelOrProku[];
+  };
+  updated_company: {
+    obchodne_meno: string;
+    sidlo: object;
+    ico: number;
+    pravna_forma: string;
+    predmet_cinnosti: string[];
+    spolocnici: CompanyMemberSpolocnik[];
+    konatelia: CompanyMemberKonatel[];
+    vyska_vkladu: VyskaVkladu[];
+    statutarny_organ: object;
+    konanie_menom_spolocnosti: string;
+    zakladne_imanie: object[];
+    ine_zmeny: string;
+    removed_subject_business: string[];
+    prokurista: CompanyMemberKonatel[];
+  };
+  sharesTransfers: SharesTransfers[]
+}
+
+interface SpolocnikOrKonatelOrProku {
+  function?: string
+  country: string | null;
+  pohlavie?: string;
+  titul_before?: string;
+  titul_after?: string;
+  name: string;
+  street: string;
+  city: string;
+  number: string;
+  zip: string;
+  since?: string; // optional field
+  datum_narodenia?: string;
+  rodne_cislo?: string;
+}
+
+interface VyskaVkladu {
+  name: string;
+  vklad: number;
+  splatene: number;
+  currency: string;
+}
 
 let order = ref({
   payment_date: '' as any,
@@ -201,20 +200,57 @@ let order = ref({
   amount_vat: 0, // vat je čisto len dph
   is_paid: false,
   user_id: 0,
-  company_id: 0,
   is_tos_accepted: true,
   is_advocate_requested: true,
   items: [
     {
-      description: "Založenie firmy",
+      description: "Úprava firmy",
       price: 20, // finalna cena za polozku s dph
       price_vat: 20 * 0.2 // toto je len dph
     }
   ],
-  fakturacne_udaje_id: 0
+  fakturacne_udaje_id: 0,
 })
 
-let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
+const newCompanyData: CompanyData = {
+  order_id: 0, // Provide your desired value
+  user_id: 0, // Provide your desired value
+  actual_company: {
+    obchodne_meno: "", // Provide your desired values
+    sidlo: {}, // Provide your desired values (empty object in this case)
+    ico: 0, // Provide your desired value
+    pravna_forma: "", // Provide your desired value
+    predmet_cinnosti: [], // Empty array for activities
+    spolocnici: [], // Empty array for partners
+    konatelia: [], // Empty array for directors
+    vyska_vkladu: [], // Empty array for contributions
+    statutarny_organ: {}, // Provide your desired values (empty object in this case)
+    konanie_menom_spolocnosti: "", // Provide your desired value
+    zakladne_imanie: '', // Provide your desired values (empty object in this case)
+    ine_zmeny: '', // Empty array for other changes
+    removed_subject_business: [], // Empty not needed for acutal company
+    prokurista: [], // Empty array for procurators
+  },
+  updated_company: {
+    obchodne_meno: "", // Provide your desired values
+    sidlo: {}, // Provide your desired values (empty object in this case)
+    ico: 0, // Provide your desired value
+    pravna_forma: "", // Provide your desired value
+    predmet_cinnosti: [], // Empty array for activities
+    spolocnici: [], // Empty array for partners
+    konatelia: [], // Empty array for directors
+    vyska_vkladu: [], // Empty array for contributions
+    statutarny_organ: {}, // Provide your desired values (empty object in this case)
+    konanie_menom_spolocnosti: "", // Provide your desired value
+    zakladne_imanie: [{}], // Provide your desired values (empty object in this case)
+    ine_zmeny: '', // Empty array for other changes
+    removed_subject_business: [], // Empty array for removed sbj
+    prokurista: [], // Empty array for procurators
+  },
+  sharesTransfers: []
+};
+
+let totalForPay = computed(() => najfiFirmuForm.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
 
 const isUdajeSpolocnostiStepValid = ref({
   valid: false
@@ -240,9 +276,9 @@ function showErrors(node: any) {
 
 function logujData(){
   console.log('Formdata Udaje Spolocnosti', isUdajeSpolocnostiStepValid.value)
-  console.log('Subject of business',companyOrZivnostModel.value.subjects_of_business)
+  //console.log('Subject of business',companyOrZivnostModel.value.subjects_of_business)
   console.log(user.value)
-  console.log(companyOrZivnostModel.value)
+  //console.log(companyOrZivnostModel.value)
   //console.log(fakturacne_udaje.value)
   //console.log(zakladateliaSpolocnici.value)
   //console.log(konatelia.value)
@@ -261,42 +297,6 @@ async function registerAddress(userAddress: Address): Promise<any> {
   }
 }
 
- async function registerHqAddress(): Promise<any> {
-
-  try {    
-    let hqAddress: Address = {
-      street: "",
-      street_number: "",
-      street_number2: "",
-      city: "",
-      psc: "",
-      country: ""
-    };
-    if(sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'){
-      hqAddress.street = selectedVhqFromStore.value.address.street
-      hqAddress.street_number = selectedVhqFromStore.value.address.street_number
-      hqAddress.street_number2 = selectedVhqFromStore.value.address.street_number2
-      hqAddress.city = selectedVhqFromStore.value.address.city
-      hqAddress.psc = selectedVhqFromStore.value.address.psc
-      hqAddress.country = selectedVhqFromStore.value.address.country
-      // probaly add updated_at and updated_at?
-    } else {
-      hqAddress = sidloCompanyAddress.value.hqAddress;
-    }
-
-    const res = await store.dispatch('registerAddress', hqAddress);
-    console.log("Registering HQ address: " + JSON.stringify(res));
-    return res;
-  } catch (err: any) {
-    if (err.response && err.response.data && err.response.data.errors) {
-      errorMsg.value = JSON.stringify(err.response.data.errors);
-    } else {
-      errorMsg.value = 'Nastala chyba pri registrácii HQ adresy.';
-    }
-  }
-}
-
-
 async function registerUserAndReturnUserId(user: User): Promise<any> {
   try {
     const res = await store.dispatch('registerUser', user);
@@ -312,120 +312,6 @@ async function registerUserAndReturnUserId(user: User): Promise<any> {
   }
 }
 
-async function addHeadquarter(hqAddressId: any): Promise<any> {
-
-  
-  const hqInfo = sidloCompanyAddress.value.headquarterInfo;
-  const companyOrZivnostModel = companyMembersAndDetails.value.companyOrZivnostModel;
-  
-  let headquarterData = {
-    address_id: hqAddressId,
-    name: "Sidlo pre spoločnosť " + companyOrZivnostModel.name,
-    description: "Sidlo pre spoločnosť " + companyOrZivnostModel.name,
-    owner_name: hqInfo.owner_name,
-    headquarters_type: hqInfo.headquarters_type,
-    forwarding: hqInfo.forwarding,
-    registry: hqInfo.registry,
-    scanning: hqInfo.scanning,
-    shredding: hqInfo.shredding,
-    img: hqInfo.img,
-    is_virtual: hqInfo.is_virtual,
-    price: hqInfo.price
-  } as Headquarters;
-  
-  // if virtual only
-  if(sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'){
-    headquarterData.name = selectedVhqFromStore.value.name
-    headquarterData.owner_name = selectedVhqFromStore.value.name
-    headquarterData.headquarters_type = 3
-    if(selectedVhqPackageFromStore.value.name == 'Mini'){
-      headquarterData.registry = true
-    }
-    else if(selectedVhqPackageFromStore.value.name != 'Mini'){
-      headquarterData.forwarding = true
-      headquarterData.registry = true
-      headquarterData.scanning = true
-      headquarterData.shredding = true
-    }
-    headquarterData.img = selectedVhqFromStore.value.img
-    headquarterData.is_virtual = true
-    headquarterData.price = selectedVhqPackageFromStore.value.price * 12 // ročna platba za balík
-    // base price only for HQ , other price for pcg to order.items?
-  }
-
-  try {
-    const res = await store.dispatch('addHeadquarter', headquarterData);
-    console.log("Adding HQ: " + JSON.stringify(res));
-    return res.headquarters;
-  } catch (err: any) {
-    console.log(err.response?.data?.errors);
-    errorMsg.value = JSON.stringify(err.response?.data?.errors);
-  }
-}
-
-async function addCompany(userId: any, hqId: any): Promise<any> {
-
-  const companyOrZivnostModelData = {
-    name: companyMembersAndDetails.value.companyOrZivnostModel.name + ' ' + companyMembersAndDetails.value.pravnaForma,
-    type: companyMembersAndDetails.value.companyOrZivnostModel.type,
-    status: companyMembersAndDetails.value.companyOrZivnostModel.status,
-    owner: userId,
-    headquarters_id: hqId,
-    imanie_vyska: companyMembersAndDetails.value.companyOrZivnostModel.imanie_vyska,
-    imanie_splatene: companyMembersAndDetails.value.companyOrZivnostModel.imanie_splatene,
-    is_dph: companyMembersAndDetails.value.companyOrZivnostModel.is_dph,
-    konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
-    sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
-    subjects_of_business: subjects_of_business.value.subjects_of_business
-  };
-
-  try {
-    const res = await store.dispatch('addCompany', companyOrZivnostModelData);
-    console.log("Adding company: " + JSON.stringify(res));
-    return res;
-  } catch (err) {
-    toast.error('Error: ' + err);
-  }
-}
-
-async function addMultipleCompanyMembersSpolocnici(companyId: any): Promise<any> {
-
-  companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: any) => {
-    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
-  })
-
-  let zakladatelia = ref({
-    members: companyMembersAndDetails.value.zakladateliaSpolocniciList
-  })
-
-  try {
-    const res = await store.dispatch('addMultipleCompanyMembers', zakladatelia.value)
-    console.log("Adding Multiple Company Members Spolocnici: " + JSON.stringify(res))
-    return res
-  } catch(err) {
-    toast.error('Error: ' + err)
-  }
-}
-
-async function addMultipleCompanyMembersKonatelia(companyId: any): Promise<any> {
-
-  companyMembersAndDetails.value.konateliaList.forEach((item, index: any) => {
-    companyMembersAndDetails.value.konateliaList[index].company_id = companyId
-  })
-
-  let konatelia = ref({
-    members: companyMembersAndDetails.value.konateliaList
-  })
-
-  try {
-    const res = await store.dispatch('addMultipleCompanyMembers', konatelia.value)
-    console.log("Adding Multiple Company Members Konatelia: " + JSON.stringify(res))
-    return res
-  } catch (err: any){
-    toast.error('Error: ' + err)
-  }
-
-}
 
 async function registerInvoiceAddress(invoiceAddress: Address) {
   try {
@@ -440,12 +326,12 @@ async function registerInvoiceAddress(invoiceAddress: Address) {
 async function addInvoiceProfile(invoiceAddressId, userId) {
   
   let faktProfil = {
-    first_name: invoiceData.value.fakturacne_udaje.first_name,
-    last_name: invoiceData.value.fakturacne_udaje.last_name,
-    name: invoiceData.value.fakturacne_udaje.name,
-    ico: invoiceData.value.fakturacne_udaje.ico,
-    dic: invoiceData.value.fakturacne_udaje.dic,
-    ic_dph: invoiceData.value.fakturacne_udaje.ic_dph,
+    first_name: invoiceDataForm.value.fakturacne_udaje.first_name,
+    last_name: invoiceDataForm.value.fakturacne_udaje.last_name,
+    name: invoiceDataForm.value.fakturacne_udaje.name,
+    ico: invoiceDataForm.value.fakturacne_udaje.ico,
+    dic: invoiceDataForm.value.fakturacne_udaje.dic,
+    ic_dph: invoiceDataForm.value.fakturacne_udaje.ic_dph,
     address_id: invoiceAddressId,
     user_id: userId
   }
@@ -460,34 +346,35 @@ async function addInvoiceProfile(invoiceAddressId, userId) {
     })
 }
 
-async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Promise<any> {
+async function addOrder(userId: number, invoiceAddressId?: number): Promise<any> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  order.value.payment_method = invoiceData.value.paymentOptions
-  order.value.company_id = companyId
+  order.value.payment_method = invoiceDataForm.value.paymentOptions
   order.value.user_id = userId
-  order.value.description = 'Objednávka záloženie firmy: ' + companyId
-  if(sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'){
+  order.value.description = 'Úprava firmy.'
+
+  if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
       price: 0,
       price_vat: 0 * 0.2,
     })
     order.value.items.push({
-      description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
-      price: selectedVhqPackageFromStore.value.price * 12,
-      price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
-    })
+        description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
+        price: selectedVhqPackageFromStore.value.price * 12,
+        price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
+      })
   }
 
-  subjects_of_business.value.subjects_of_business.forEach(element => {
+  najfiFirmuForm.value.subjects_of_business_new.forEach(element => {
     order.value.items.push({
       description: element.title as string,
       price: element.price as number,
       price_vat: (element.price as number) * 0.2
     })
+
   });
 
-  order.value.fakturacne_udaje_id = invoiceAddressId
+  order.value.fakturacne_udaje_id = invoiceAddressId as number
 
   order.value.amount = totalForPay.value
   order.value.amount_vat = totalForPay.value * 0.2
@@ -502,43 +389,81 @@ async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Pr
 
 }
 
+async function addUpdatedCompany(orderId: number, userId: number) : Promise<any> {
+  newCompanyData.order_id = orderId
+  newCompanyData.user_id = userId
+  // actual company
+  newCompanyData.actual_company.obchodne_meno = najfiFirmuForm.value.companyFromOrSr.obchodne_meno
+  newCompanyData.actual_company.pravna_forma = najfiFirmuForm.value.companyFromOrSr.pravna_forma
+  newCompanyData.actual_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
+  newCompanyData.actual_company.sidlo = najfiFirmuForm.value.companyFromOrSr.adresa
+  newCompanyData.actual_company.predmet_cinnosti = najfiFirmuForm.value.companyFromOrSr.predmet_cinnosti
+  newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOrSr.spolocnici
+  newCompanyData.actual_company.konanie_menom_spolocnosti = najfiFirmuForm.value.companyFromOrSr.konanie_menom_spolocnosti
+  newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konatelia
+  newCompanyData.actual_company.zakladne_imanie = najfiFirmuForm.value.zakladneImanieFromOrSr.splatene + " " + najfiFirmuForm.value.zakladneImanieFromOrSr.currency
+  
+  // updated company
+  const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;
+  newCompanyData.updated_company.obchodne_meno = `${newCompanyName} ${newCompanyPravForm}`;
+  newCompanyData.updated_company.pravna_forma = `${newCompanyPravForm}`;
+  newCompanyData.updated_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
+  if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
+    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.newHqAddress
+  } else {
+    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.selectedVhqFromStore
+  }
+  // to do predmet cinnosti
+  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
+  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
+  newCompanyData.updated_company.konanie_menom_spolocnosti = najfiFirmuForm.value.sposob_konania_konatelov + " " + najfiFirmuForm.value?.sposob_konania_konatelov_ine
+  newCompanyData.sharesTransfers = najfiFirmuForm.value.newSharesTransfersList
+  newCompanyData.updated_company.removed_subject_business = najfiFirmuForm.value.sbj_old_removed
+  newCompanyData.updated_company.predmet_cinnosti = najfiFirmuForm.value.subjects_of_business_new.map(element => {
+    return element.title as string
+  });
+  newCompanyData.updated_company.zakladne_imanie.push(...najfiFirmuForm.value.newZakladneImanie);
+  newCompanyData.updated_company.prokurista.push(...najfiFirmuForm.value.newProkuristaList);
+  newCompanyData.updated_company.ine_zmeny = najfiFirmuForm.value.ine_zmeny
+  try {
+    const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
+    console.log("Adding companyUpdate: " + JSON.stringify(res));
+    return res;
+  } catch (err: any) {
+    console.log(err.response.data);
+  }
+}
+
 const newSustmiApp = async (formdata: any, node: any) => {
 
   try {    
-    let userId = null as unknown as number;
+    let userId: number;
     if(!userIdFromStore.value){
       userId = await registerUserAndReturnUserId(userRegisterForm.value.user);
     } else {
       userId = userIdFromStore.value
     }
-    const hqAddressRes = await registerHqAddress();
 
-    const regHqRes = await addHeadquarter(hqAddressRes.address_id);
-
-    const companyRes = await addCompany(userId, regHqRes.id);
-    
-    await addMultipleCompanyMembersSpolocnici(companyRes.company.id)
-    await addMultipleCompanyMembersKonatelia(companyRes.company.id)
-
-    let invoiceProfileId = null as unknown as number;
-    if(invoiceData.value.createNewInvoiceProfile){
+    let invoiceProfileId: number;
+    if(invoiceDataForm.value.createNewInvoiceProfile){
       let invoiceAddressRes: any;
-      if(!invoiceData.value.orderingAsCompany){
-        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+      if(!invoiceDataForm.value.orderingAsCompany){
+        invoiceAddressRes = await registerInvoiceAddress(invoiceDataForm.value.invoiceAddress)
       }
-      else if (invoiceData.value.orderingAsCompany) {
-        invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
+      else if (invoiceDataForm.value.orderingAsCompany) {
+        invoiceAddressRes = await registerInvoiceAddress(invoiceDataForm.value.invoiceAddress)
       }
       console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
       const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
       invoiceProfileId = response.id
     }
     else {
-      invoiceProfileId = invoiceData.value.invoiceProfileId
+      invoiceProfileId = invoiceDataForm.value.invoiceProfileId
     }
-
-    const orderRes = await addOrder(companyRes.company.id, userId, invoiceProfileId)
-    
+    console.log("Invoice profile ID is: ", invoiceProfileId)
+    const orderRes = await addOrder(userId, invoiceProfileId)
+    await addUpdatedCompany(orderRes.id, userId);
+        
     if(orderRes.id){
 
       console.log("SUPER! Objednávka bola spracovaná.")

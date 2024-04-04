@@ -32,13 +32,9 @@
       help="Email ktorý budete používať aj na prihlasenie do účtu."
     />
   </div>
-  <div v-if="!userId" class="grid grid-cols-2 md:grid-cols-2 gap-4">
-    <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
-    <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
-  </div>
   <div v-if="isValidEmail &&!isEmailUnique && !userId">
-    <div class="mb-4 flex items-center py-3 px-4 bg-red-500 rounded">
-      Účet s emailom <b>{{ user.email }}</b> je už zaregistrovaný, zadajte iný email alebo sa prihláste.
+    <div v-if="user.email" class="mb-4 flex items-center py-3 px-4 bg-red-500 rounded">
+      Účet s emailom <u><b>{{ user.email }}</b></u> je už zaregistrovaný, zadajte iný email alebo sa prihláste.
     </div>
     <div v-if="errorMsg" class="flex items-center justify-between py-3 mb-3 px-4 bg-red-500 rounded">
       {{ errorMsg }}
@@ -58,13 +54,17 @@
         @click.prevent="login"
       />
   </div>
+  <div v-if="!userId" class="grid grid-cols-2 md:grid-cols-2 gap-4">
+    <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
+    <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
+  </div>
   </template>
 </template>
 
 <script setup lang="ts">
 import store from '@/store';
 import type User from '@/types/User';
-import { onMounted, computed, ref } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 
 const userData = computed(() => { return store.getters.getUserData as User });
 const isEmailUnique = ref(true)
@@ -73,12 +73,7 @@ const loading = ref(true);
 // Regular expression for matching email addresses
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userId = computed(() => { return store.getters.getUserId })
-let errorMsg = ref();
-
-function btnLog(){
-  console.log("Loading hodnota je: ", loading.value)
-}
-  
+let errorMsg = ref();  
 const userForLogin = {
     email: '',
     password: ''
@@ -99,9 +94,9 @@ let user = ref({
     password_confirmation: '',
 } as User)
 
-onMounted( () => {
+onBeforeMount( async () => {
   if(userId.value){
-    store.dispatch("getUserDataByUserId", userId.value)
+    await store.dispatch("getUserDataByUserId", userId.value)
     loading.value = false
     disabledInputs.value = true
     user.value.first_name = userData.value.first_name

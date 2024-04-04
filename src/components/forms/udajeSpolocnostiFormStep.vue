@@ -440,7 +440,8 @@ let companyOrZivnostModel = ref({
   owner: 0,
   note: '',
   type: 1, // type 1 sro, type 2 živnosť
-  status: 2, // Zakladanie spoločnosti je v priebehu
+  status: 2, // neaktívna spoločnosť
+  sub_status: 1, // Zakladanie spoločnosti je v priebehu
   subjects_of_business: [{
     id: '',
     title: '',

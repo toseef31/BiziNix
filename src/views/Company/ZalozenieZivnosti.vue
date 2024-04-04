@@ -68,6 +68,9 @@
 
             <FormKit type="step" name="fakturacneUdaje" label="Fakturačné údaje" previous-label="Naspäť">
               <fakturacneUdajeFormStep ref="invoiceData" />
+              <template #stepNext>
+                <FormKit type="submit" label="Objednať s povinnosťou platby" />                
+              </template>
             </FormKit>
           </FormKit>
 
@@ -77,17 +80,6 @@
               <p v-if="businessInfo?.placeOfBusinness == 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
           </div>
-          <FormKit
-            type="checkbox"
-            label="Všeobecné obchodné podmienky"
-            validation="accepted"
-            validation-visibility="dirty"
-          >
-            <template #label="context">
-              <span :class="context.classes.label">Súhlasím so <a href="/obchodne-podmienky" target="_blank">všeobecnými podmienkami poskytovania služby</a>.</span>
-            </template>
-          </FormKit>
-          <FormKit type="submit" label="Objednať s povinnosťou platby" />
           <details>
             <pre>{{ value }}</pre>
           </details>
@@ -330,7 +322,8 @@ async function addCompany(user: User, userId: any, hqId: any) {
   companyOrZivnostModel.value.type = 2 // 2 is zivnost 1 is sro
   companyOrZivnostModel.value.doc_sncounter_id = 1
   companyOrZivnostModel.value.doc_template_id = 1
-  companyOrZivnostModel.value.status = 2
+  companyOrZivnostModel.value.status = 2 // neaktívna spoločnosť
+  companyOrZivnostModel.value.sub_status = 1 // zakladanie spoločnosti je v priebehu
   companyOrZivnostModel.value.owner = userId
   companyOrZivnostModel.value.headquarters_id = hqId
   companyOrZivnostModel.value.is_dph = false

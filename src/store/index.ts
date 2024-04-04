@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axiosClient from "@/axios";
+import axios from 'axios';
 import type Mail from "@/types/Mail";
 import type Company from "@/types/Company";
 
@@ -228,6 +229,20 @@ export const store = createStore({
         "/subjectOfBusiness/getAllSubjectsOfBusiness"
       );
       return response;
+    },
+    async getGroupOfSubjectOfBusiness({ comit }, id: number) {
+      const { data } = await axiosClient.get(`/subjectOfBusiness/${id}/getGroup`);
+      return data;
+    },
+    async getGroupOfSubjectOfBusinessForEditCompany({ comit }, ico: number) {
+      const { data } = await axios.get(`https://adversea.com/api/gateway-service/screening/rpo/business-data/business-subjects?ico=${ico}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-control': 'max-age=0',
+          'X-Adversea-Api-Key': 's-VbqKi2mCnCR9sqYXhzquiQrN6UnFL8iq9P3chqt66KbgHmw1'
+        },
+      })
+      return data.business_subjects;
     },
     async getHeadquartersTypes() {
       const response = await axiosClient.get(
@@ -519,11 +534,15 @@ export const store = createStore({
       return data;
     },
     //#endregion
-    //#region orders
-    
+    //#region orders    
     async addOrder({ commit }, order) {
       const { data } = await axiosClient.post("/orders/add", order);
       commit("setOrder", data); // setOrder is defined as muttation below
+      return data;
+    },
+    async addCompanyUpdateOrder({ commit }, companyUpdateOrder) {
+      const { data } = await axiosClient.post("/orders/addCompanyUpdateOrder", companyUpdateOrder);
+      //commit("setOrder", data); // setOrder is defined as muttation below
       return data;
     },
     async getOrderById({ commit }, id) {
