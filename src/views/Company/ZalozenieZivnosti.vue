@@ -429,7 +429,7 @@ async function addOrder(companyId: any, userId: any, invoiceProfileId?: any) {
   order.value.description = "Objednávka založenie živnosti: " + companyId    
   if(businessInfo.value.placeOfBusinness == 'virtualne'){
     order.value.items.push({
-      description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
+      description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.id,
       price: 0,
       price_vat: 0 * 0.2,
     })

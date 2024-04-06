@@ -354,7 +354,7 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
 
   if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
-      description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.name + ' na rok',
+      description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.id,
       price: 0,
       price_vat: 0 * 0.2,
     })
