@@ -89,7 +89,7 @@ const order = ref({
   is_advocate_requested: true,
   items: [
     {
-      description: "Zakúpenie virtuálneho sídla",
+      description: "Virtuálne sídlo:",
       price: 0,
       price_vat: 0,
     },
@@ -240,9 +240,13 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
 
   order.value.amount = totalForPay.value;
   order.value.amount_vat = (totalForPay.value) * 0.2;
-  order.value.items[0].price = hqDataRef.value.vhq_package.price * 12;
-  order.value.items[0].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
-  order.value.items[0].description = "Zakúpenie virtuálneho sídla: "+store.state.selectedVhq.id;
+  order.value.items[0].price = 0;
+  order.value.items[0].price_vat = 0;
+  order.value.items[0].description = "Virtuálne sídlo: "+store.state.selectedVhq.id;
+
+  order.value.items[1].price = hqDataRef.value.vhq_package.price * 12;
+  order.value.items[1].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
+  order.value.items[1].description = "Virtual balík: "+store.state.vhq_package.name;
 
   order.value.fakturacne_udaje_id = invoiceProfileId
 
