@@ -93,6 +93,11 @@ const order = ref({
       price: 0,
       price_vat: 0,
     },
+    {
+      description: "Virtual balík:",
+      price: 0,
+      price_vat: 0,
+    },
   ],
   fakturacne_udaje_id: 0
 });
@@ -246,7 +251,7 @@ function addOrder(userId, invoiceProfileId): Promise<Response> {
 
   order.value.items[1].price = hqDataRef.value.vhq_package.price * 12;
   order.value.items[1].price_vat = (hqDataRef.value.vhq_package.price * 12) * 0.2;
-  order.value.items[1].description = "Virtual balík: "+store.state.vhq_package.name;
+  order.value.items[1].description = "Virtual balík: "+hqDataRef.value.vhq_package.name;
 
   order.value.fakturacne_udaje_id = invoiceProfileId
 
