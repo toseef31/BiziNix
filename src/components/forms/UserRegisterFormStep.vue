@@ -17,7 +17,7 @@
   </div>
   <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
     <FormKit type="text" :disabled="disabledInputs" name="phone" v-model="user.phone" autocomplete="phone" label="Telefonné číslo" validation="required|length:9" />
-    <FormKit type="email" v-if="!userId" name="email"
+    <FormKit type="email" v-if="!userData.id" name="email"
       v-model="user.email"
       label="Email"
       :validation-rules="{ emailIsUnique }"
@@ -26,13 +26,13 @@
       validation-visibility="live"                  
       help="Email ktorý budete používať aj na prihlasenie do účtu."
     />
-    <FormKit type="email" v-if="userId" :disabled="disabledInputs" name="email"
+    <FormKit type="email" v-if="userData.id" :disabled="disabledInputs" name="email"
       v-model="user.email"
       label="Email"
       help="Email ktorý budete používať aj na prihlasenie do účtu."
     />
   </div>
-  <div v-if="isValidEmail &&!isEmailUnique && !userId">
+  <div v-if="isValidEmail &&!isEmailUnique && !userData.id">
     <div v-if="user.email" class="mb-4 flex items-center py-3 px-4 bg-red-500 rounded">
       Účet s emailom <u><b>{{ user.email }}</b></u> je už zaregistrovaný, zadajte iný email alebo sa prihláste.
     </div>
@@ -54,7 +54,7 @@
         @click.prevent="login"
       />
   </div>
-  <div v-if="!userId" class="grid grid-cols-2 md:grid-cols-2 gap-4">
+  <div v-if="!userData.id" class="grid grid-cols-2 md:grid-cols-2 gap-4">
     <FormKit type="password" autocomplete="new-password" v-model="user.password" name="password" label="Heslo" validation="required|length:8" />
     <FormKit type="password" autocomplete="new-password"  v-model="user.password_confirmation" name="password_confirmation" label="Zopakujte heslo" validation="required|confirm:password" />
   </div>
@@ -72,7 +72,6 @@ const disabledInputs = ref(false)
 const loading = ref(true);
 // Regular expression for matching email addresses
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const userId = computed(() => { return store.getters.getUserId })
 let errorMsg = ref();  
 const userForLogin = {
     email: '',
@@ -95,14 +94,14 @@ let user = ref({
 } as User)
 
 onBeforeMount( async () => {
-  if(userId.value){
-    await store.dispatch("getUserDataByUserId", userId.value)
-    loading.value = false
+  if(userData.value.id){
+    //await store.dispatch("getUserDataByUserId", userId.value)
     disabledInputs.value = true
     user.value.first_name = userData.value.first_name
     user.value.last_name = userData.value.last_name
     user.value.phone = userData.value.phone
     user.value.email = userData.value.email
+    loading.value = false
   } else {
     loading.value = false
   }
@@ -125,7 +124,7 @@ async function isEmailAlreadyRegistered(node: any) {
 }
 
 async function emailIsUnique(node: any){
-  if(!userId.value){
+  if(!userData.value.id){
     const result = await isEmailAlreadyRegistered(node.value)
     return result
   } else {
