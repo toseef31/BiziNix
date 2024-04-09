@@ -3,7 +3,9 @@
     <div class="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-gray-900 shadow">
       <div class="flex flex-1 justify-between px-4">
         <div class="flex justify-start p-4">
-          <img class="w-6" src="../assets/logo-small.png" alt="Logo Bizinix" />
+          <router-link :to="{ path: '/' }">
+            <img class="w-6" src="../assets/logo-small.png" alt="Logo Bizinix" />
+          </router-link>
         </div>
         <div class="flex flex-1 justify-end py-2">
           <Menu as="nav" class="flex px-2 items-center justify-between flex-wrap gap-4">

@@ -288,7 +288,7 @@
         :options="{ 1: 'Spoločníci/zakladatelia', 2: 'Iné osoby' }" name="konecny_uzivatelia_vyhod" validation="required"
       />
       <div v-if="companyOrZivnostModel.konecny_uzivatelia_vyhod == 2" class="mt-2">
-        <FormKit type="textarea" v-model="companyOrZivnostModel.note" label="Iné osoby"
+        <FormKit type="textarea" v-model="ine_osoby" label="Iné osoby"
           placeholder="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
           help="Uveďte mená a priezviská, adresu bydliska, dátum narodenia, rodné číslo, číslo pasu alebo občianskeho preukazu."
           rows="3"
@@ -407,6 +407,7 @@ let companyOrZivnostModel = ref({
 })
 
 let note_sposob_konania_ine = ref('');
+let ine_osoby = ref('');
 
 let zakladateliaSpolocniciList: Ref<CompanyMemberSpolocnik[]> = ref<CompanyMemberSpolocnik[]>([]);
 let konateliaList: Ref<CompanyMemberKonatel[]> = ref<CompanyMemberKonatel[]>([]);
@@ -700,7 +701,8 @@ defineExpose({
   countOfKonatelia,
   countOfZakladatelia,
   countOfKonatelFromZakladatelia,
-  note_sposob_konania_ine
+  note_sposob_konania_ine,
+  ine_osoby
 })
 
 </script>

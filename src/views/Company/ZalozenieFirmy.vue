@@ -373,7 +373,9 @@ async function addCompany(userId: any, hqId: any): Promise<any> {
     konecny_uzivatelia_vyhod: companyMembersAndDetails.value.companyOrZivnostModel.konecny_uzivatelia_vyhod,
     sposob_konania_konatelov: companyMembersAndDetails.value.companyOrZivnostModel.sposob_konania_konatelov,
     subjects_of_business: subjects_of_business.value.subjects_of_business,
-    note: companyMembersAndDetails.value.companyOrZivnostModel.note + companyMembersAndDetails.value.note_sposob_konania_ine,
+    note: companyMembersAndDetails.value.companyOrZivnostModel.note,
+    kuv_details: companyMembersAndDetails.value.ine_osoby,// konecny uzivatelia vyhod
+    skk_details: companyMembersAndDetails.value.note_sposob_konania_ine,// sposob konania konatelov
     sidlo_typ_balika: sidloCompanyAddress.value.obchodneSidloVirtuOrNormal === 'virtualne'? selectedVhqPackageFromStore.value.name : null
   };
   
