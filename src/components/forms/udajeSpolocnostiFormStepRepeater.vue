@@ -485,6 +485,7 @@ function getDefaultNewItemKonatel(): CompanyMemberKonatel {
     rodne_cislo: '',
     street: '',
     obchodne_meno: '',
+    nationality: '',
     street_number: '',
     street_number2: '',
     city: '',

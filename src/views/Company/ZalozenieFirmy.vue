@@ -392,7 +392,9 @@ async function addMultipleCompanyMembersSpolocnici(companyId: any, companyName: 
 
   companyMembersAndDetails.value.zakladateliaSpolocniciList.forEach((item, index: number) => {
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].company_id = companyId
-    companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
+    if(companyMembersAndDetails.value.zakladateliaSpolocniciList[index].typ_zakladatela == 1){    
+      companyMembersAndDetails.value.zakladateliaSpolocniciList[index].obchodne_meno = companyName
+    }
     companyMembersAndDetails.value.zakladateliaSpolocniciList[index].je_zakladatel = true
   })
 

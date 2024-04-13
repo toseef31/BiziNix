@@ -12,7 +12,8 @@ export default interface CompanyMemberKonatel {
   street_number: string
   street_number2: string
   country: string
-  obchodne_meno: string
+  obchodne_meno: string,
+  nationality: string,
   city: string
   psc: string
   je_konatel: true
