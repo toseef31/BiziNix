@@ -9,6 +9,8 @@ export default interface SharesTransfers {
   },
   sharesTo: {
     typOsoby: number | string,
+    obchodne_meno: string,
+    ico?: string,
     name: string,
     city: string,
     street: string,

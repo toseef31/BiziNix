@@ -608,7 +608,6 @@
       v-model="subjects_of_business_new"
       selection-appearance="option"
       @input="calculatePriceForBusinessOfcategories"
-      validation="required"
       load-on-created
     >      <template #option="{ option }">
         <div class="formkit-option grow p-2">
@@ -914,7 +913,8 @@ let konatelObject: CompanyMemberKonatel = {
   has_change: false,
   should_be_canceled: false,
   cancel_from_date: '',
-  new_konatel_date_from: ''
+  new_konatel_date_from: '',
+  nationality: ''
 };
 let konatel = ref(konatelObject);
 let prokurista = ref(konatelObject);
@@ -1428,8 +1428,10 @@ function closeModalAndSubmitOrEditSpolocnik(){
           psc: spolocniciFromOrSr.value[spolocnikIndex].zip as string,
         },
         sharesTo: {
-          typOsoby: spolocnik.value.typ_zakladatela as string,
-          name: selectedNadobudatel.value.name || ((spolocnik.value.first_name + " " + spolocnik.value.last_name).trim() || spolocnik.value.obchodne_meno),
+          typOsoby: spolocnik.value.typ_zakladatela as string,          
+          name: selectedNadobudatel.value.name || ((spolocnik.value.first_name + " " + spolocnik.value.last_name)),
+          obchodne_meno: spolocnik.value.obchodne_meno,
+          ico: spolocnik.value.ico,
           city: spolocnik.value.city || selectedNadobudatel.value.city,
           street: spolocnik.value.street || selectedNadobudatel.value.street,
           streetNumber: ((spolocnik.value.street_number +"/"+spolocnik.value.street_number2).trim() || selectedNadobudatel.value.number),

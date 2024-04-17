@@ -485,13 +485,19 @@ async function addOrder(companyId: any, userId: any, invoiceAddressId?: any): Pr
     })
   }
 
-  subjects_of_business.value.subjects_of_business.forEach(element => {
-    order.value.items.push({
-      description: element.title as string,
-      price: element.price as number,
-      price_vat: (element.price as number) * 0.2
-    })
-  });
+  order.value.items.push({
+    description: 'Počet predmetov podnikania: ' + subjects_of_business.value.subjects_of_business.length,
+    price: subjects_of_business.value?.finalPriceForBusinessCategori,
+    price_vat: (subjects_of_business.value?.finalPriceForBusinessCategori) * 0.2
+  })
+
+  // subjects_of_business.value.subjects_of_business.forEach(element => {
+  //   order.value.items.push({
+  //     description: element.title as string,
+  //     price: element.price as number,
+  //     price_vat: (element.price as number) * 0.2
+  //   })
+  // });
 
   order.value.fakturacne_udaje_id = invoiceAddressId
 

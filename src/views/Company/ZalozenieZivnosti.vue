@@ -427,6 +427,7 @@ async function addOrder(companyId: any, userId: any, invoiceProfileId?: any) {
   order.value.company_id = companyId
   order.value.user_id = userId
   order.value.description = "Objednávka založenie živnosti: " + companyId    
+  
   if(businessInfo.value.placeOfBusinness == 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.id,
@@ -439,14 +440,20 @@ async function addOrder(companyId: any, userId: any, invoiceProfileId?: any) {
       price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
     })
   }
+
+  order.value.items.push({
+    description: 'Počet predmetov podnikania: ' + companyOrZivnostModel.value.subjects_of_business.length,
+    price: subjects_of_business.value?.finalPriceForBusinessCategori,
+    price_vat: (subjects_of_business.value?.finalPriceForBusinessCategori) * 0.2
+  })
   
-  companyOrZivnostModel.value.subjects_of_business.forEach(element => {
-    order.value.items.push({
-      description: element.title as string,
-      price: element.price as number,
-      price_vat: (element.price as number) * 0.2
-    })
-  });
+  // companyOrZivnostModel.value.subjects_of_business.forEach(element => {
+  //   order.value.items.push({
+  //     description: element.title as string,
+  //     price: element.price as number,
+  //     price_vat: (element.price as number) * 0.2
+  //   })
+  // });
 
   order.value.fakturacne_udaje_id = invoiceProfileId
 

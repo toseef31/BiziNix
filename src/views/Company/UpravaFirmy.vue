@@ -56,7 +56,7 @@
             tab-style="tab"
           >
             <FormKit type="step" name="icoFirmy" label="IČO firmy" next-label="Pokračovať">
-              <NajdiFirmuFormStep ref="najfiFirmuForm" />
+              <NajdiFirmuFormStep ref="najdiFirmuForm" />
             </FormKit>
 
             <FormKit type="step" name="userRegister" label="Užívateľský účet" next-label="Pokračovať">
@@ -73,9 +73,9 @@
           </FormKit>
           <div class="p-4 mb-4 text-white border rounded-md border-bizinix-border border-solid">
             <p>Poplatok za úpravy firmy {{ order.items[0].price }} €.</p>
-            <p>Poplatok za predmety podnikania {{ najfiFirmuForm?.finalPriceForBusinessCategori ?? 0 }} €.</p>
-            <p v-if="najfiFirmuForm?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
-            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých nových predmetov podnikania <b>{{ najfiFirmuForm?.subjects_of_business_new.length }}</b>.</p>
+            <p>Poplatok za predmety podnikania {{ najdiFirmuForm?.finalPriceForBusinessCategori ?? 0 }} €.</p>
+            <p v-if="najdiFirmuForm?.obchodneSidloVirtuOrNormal === 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
+            <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých nových predmetov podnikania <b>{{ najdiFirmuForm?.subjects_of_business_new.length }}</b>.</p>
           </div>
           <details>
             <pre>{{ value }}</pre>
@@ -122,7 +122,7 @@ let errorMsg = ref('');
 let errorMsgHq = ref('');
 let errorMsgCompany = ref('');
 let sucessMsg = ref('');
-let najfiFirmuForm = ref<InstanceType<typeof NajdiFirmuFormStep>>(null as any)
+let najdiFirmuForm = ref<InstanceType<typeof NajdiFirmuFormStep>>(null as any)
 let userRegisterForm = ref<InstanceType<typeof userRegisterFormStep>>(null as any)
 let invoiceDataForm = ref<InstanceType<typeof fakturacneUdajeFormStep>>(null as any)
 let user = ref<User>();
@@ -250,7 +250,7 @@ const newCompanyData: CompanyData = {
   sharesTransfers: []
 };
 
-let totalForPay = computed(() => najfiFirmuForm.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
+let totalForPay = computed(() => najdiFirmuForm.value?.finalPriceForBusinessCategori + order.value.items[0].price + ((selectedVhqPackageFromStore.value?.price ?? 0) * 12 ))
 
 const isUdajeSpolocnostiStepValid = ref({
   valid: false
@@ -352,7 +352,7 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
   order.value.user_id = userId
   order.value.description = 'Úprava firmy.'
 
-  if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
+  if(najdiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
     order.value.items.push({
       description: 'Virtuálne sídlo: ' + selectedVhqFromStore.value.id,
       price: 0,
@@ -365,14 +365,19 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
       })
   }
 
-  najfiFirmuForm.value.subjects_of_business_new.forEach(element => {
-    order.value.items.push({
-      description: element.title as string,
-      price: element.price as number,
-      price_vat: (element.price as number) * 0.2
-    })
+  order.value.items.push({
+    description: 'Počet predmetov podnikania: ' + najdiFirmuForm.value.subjects_of_business_new.length,
+    price: najdiFirmuForm?.value.finalPriceForBusinessCategori,
+    price_vat: (najdiFirmuForm?.value.finalPriceForBusinessCategori) * 0.2
+  })
 
-  });
+  // najdiFirmuForm.value.subjects_of_business_new.forEach(element => {
+  //   order.value.items.push({
+  //     description: element.title as string,
+  //     price: element.price as number,
+  //     price_vat: (element.price as number) * 0.2
+  //   })
+  // });
 
   order.value.fakturacne_udaje_id = invoiceAddressId as number
 
@@ -393,38 +398,40 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.order_id = orderId
   newCompanyData.user_id = userId
   // actual company
-  newCompanyData.actual_company.obchodne_meno = najfiFirmuForm.value.companyFromOrSr.obchodne_meno
-  newCompanyData.actual_company.pravna_forma = najfiFirmuForm.value.companyFromOrSr.pravna_forma
-  newCompanyData.actual_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
-  newCompanyData.actual_company.sidlo = najfiFirmuForm.value.companyFromOrSr.adresa
-  newCompanyData.actual_company.predmet_cinnosti = najfiFirmuForm.value.companyFromOrSr.predmet_cinnosti
-  newCompanyData.actual_company.spolocnici = najfiFirmuForm.value.companyFromOrSr.spolocnici
-  newCompanyData.actual_company.konanie_menom_spolocnosti = najfiFirmuForm.value.companyFromOrSr.konanie_menom_spolocnosti
-  newCompanyData.actual_company.konatelia = najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konateľ || najfiFirmuForm.value.companyFromOrSr.statutarny_organ.konatelia
-  newCompanyData.actual_company.zakladne_imanie = najfiFirmuForm.value.zakladneImanieFromOrSr.splatene + " " + najfiFirmuForm.value.zakladneImanieFromOrSr.currency
+  newCompanyData.actual_company.obchodne_meno = najdiFirmuForm.value.companyFromOrSr.obchodne_meno
+  newCompanyData.actual_company.pravna_forma = najdiFirmuForm.value.companyFromOrSr.pravna_forma
+  newCompanyData.actual_company.ico = najdiFirmuForm.value.companyFromOrSr.ico
+  newCompanyData.actual_company.sidlo = najdiFirmuForm.value.companyFromOrSr.adresa
+  newCompanyData.actual_company.predmet_cinnosti = najdiFirmuForm.value.companyFromOrSr.predmet_cinnosti
+  newCompanyData.actual_company.spolocnici = najdiFirmuForm.value.companyFromOrSr.spolocnici
+  newCompanyData.actual_company.konanie_menom_spolocnosti = najdiFirmuForm.value.companyFromOrSr.konanie_menom_spolocnosti
+  newCompanyData.actual_company.konatelia = najdiFirmuForm.value.companyFromOrSr.statutarny_organ.konateľ || najdiFirmuForm.value.companyFromOrSr.statutarny_organ.konatelia
+  newCompanyData.actual_company.zakladne_imanie = najdiFirmuForm.value.zakladneImanieFromOrSr.splatene + " " + najdiFirmuForm.value.zakladneImanieFromOrSr.currency
   
   // updated company
-  const { newCompanyName, newCompanyPravForm } = najfiFirmuForm.value.newCompanyFullName;
+  const { newCompanyName, newCompanyPravForm } = najdiFirmuForm.value.newCompanyFullName;
   newCompanyData.updated_company.obchodne_meno = `${newCompanyName} ${newCompanyPravForm}`;
   newCompanyData.updated_company.pravna_forma = `${newCompanyPravForm}`;
-  newCompanyData.updated_company.ico = najfiFirmuForm.value.companyFromOrSr.ico
-  if(najfiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
-    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.newHqAddress
+  newCompanyData.updated_company.ico = najdiFirmuForm.value.companyFromOrSr.ico
+  if(najdiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
+    newCompanyData.updated_company.sidlo = najdiFirmuForm.value.newHqAddress
   } else {
-    newCompanyData.updated_company.sidlo = najfiFirmuForm.value.selectedVhqFromStore
+    newCompanyData.updated_company.sidlo = najdiFirmuForm.value.selectedVhqFromStore
   }
   // to do predmet cinnosti
-  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newKonateliaList)
-  newCompanyData.updated_company.konatelia.push(...najfiFirmuForm.value.newlyAddedKonatelList)
-  newCompanyData.updated_company.konanie_menom_spolocnosti = najfiFirmuForm.value.sposob_konania_konatelov + " " + najfiFirmuForm.value?.sposob_konania_konatelov_ine
-  newCompanyData.sharesTransfers = najfiFirmuForm.value.newSharesTransfersList
-  newCompanyData.updated_company.removed_subject_business = najfiFirmuForm.value.sbj_old_removed
-  newCompanyData.updated_company.predmet_cinnosti = najfiFirmuForm.value.subjects_of_business_new.map(element => {
+  newCompanyData.updated_company.spolocnici.push(...najdiFirmuForm.value.newSpolocnikList)
+  newCompanyData.updated_company.spolocnici.push(...najdiFirmuForm.value.newlyAddedSpolocnikList)
+  newCompanyData.updated_company.konatelia.push(...najdiFirmuForm.value.newKonateliaList)
+  newCompanyData.updated_company.konatelia.push(...najdiFirmuForm.value.newlyAddedKonatelList)
+  newCompanyData.updated_company.konanie_menom_spolocnosti = najdiFirmuForm.value.sposob_konania_konatelov + " " + najdiFirmuForm.value?.sposob_konania_konatelov_ine
+  newCompanyData.sharesTransfers = najdiFirmuForm.value.newSharesTransfersList
+  newCompanyData.updated_company.removed_subject_business = najdiFirmuForm.value.sbj_old_removed
+  newCompanyData.updated_company.predmet_cinnosti = najdiFirmuForm.value.subjects_of_business_new.map(element => {
     return element.title as string
   });
-  newCompanyData.updated_company.zakladne_imanie.push(...najfiFirmuForm.value.newZakladneImanie);
-  newCompanyData.updated_company.prokurista.push(...najfiFirmuForm.value.newProkuristaList);
-  newCompanyData.updated_company.ine_zmeny = najfiFirmuForm.value.ine_zmeny
+  newCompanyData.updated_company.zakladne_imanie.push(...najdiFirmuForm.value.newZakladneImanie);
+  newCompanyData.updated_company.prokurista.push(...najdiFirmuForm.value.newProkuristaList);
+  newCompanyData.updated_company.ine_zmeny = najdiFirmuForm.value.ine_zmeny
   try {
     const res = await store.dispatch('addCompanyUpdateOrder', newCompanyData);
     console.log("Adding companyUpdate: " + JSON.stringify(res));
