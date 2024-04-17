@@ -73,7 +73,12 @@
       <div>
         <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
           <FormKit type="number" :index="index" name="vyska_vkladu" label="Výška vkladu €"
-            validation="required|min:750|max:5000"
+            :validation-rules="{ validateVyskaVkladu }"
+            validation="required|min:750|validateVyskaVkladu"
+            validation-visibility="live"
+            :validation-messages="{
+              validateVyskaVkladu: 'Pri jednom spoločníkovi/zakladatelovi sa vyžaduje vklad. min 5000 €.'
+            }"
             help="Zadajte hodnotu napr. 5000"
           />
            <!-- Automaticky počitať od výšky vkladu -->
@@ -608,6 +613,25 @@ function validateImanieVyska(node) {
   }
 }
 
+function validateVyskaVkladu(node){
+  zakladateliaSpolocniciList.value[node.props.index].vyska_vkladu = Number(node.value);
+  
+  let vyskaVkladu = zakladateliaSpolocniciList.value.reduce((acc, item) => {
+    let vyska_vkladu = Number(item.vyska_vkladu);
+    if (isNaN(vyska_vkladu)) {
+      vyska_vkladu = 0;  // or handle error
+    }
+    return acc + vyska_vkladu;
+  }, 0);
+
+  if(zakladateliaSpolocniciList.value.length === 1 && vyskaVkladu < 5000){
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
 function validatePodielVSpolocnosti(node){
     // Update the podiel_v_spolocnosti of the item at the given index
     zakladateliaSpolocniciList.value[node.props.index].podiel_v_spolocnosti = Number(node.value);
@@ -630,29 +654,29 @@ function validatePodielVSpolocnosti(node){
     }
 }
 
-function validateVyskaVkladu(node){
-    // Update the podiel_v_spolocnosti of the item at the given index
-    zakladateliaSpolocniciList.value[node.props.index].vyska_vkladu = Number(node.value);
+// function validateVyskaVkladu(node){
+//     // Update the podiel_v_spolocnosti of the item at the given index
+//     zakladateliaSpolocniciList.value[node.props.index].vyska_vkladu = Number(node.value);
 
-    // Calculate the sum of podiel_v_spolocnosti for all items
-    let vyskaVkladu = zakladateliaSpolocniciList.value.reduce((acc, item) => {
-      let vyska_vkladu = Number(item.vyska_vkladu);
-      if (isNaN(vyska_vkladu)) {
-        vyska_vkladu = 0;  // or handle error
-      }
-      return acc + vyska_vkladu;
-    }, 0);
+//     // Calculate the sum of podiel_v_spolocnosti for all items
+//     let vyskaVkladu = zakladateliaSpolocniciList.value.reduce((acc, item) => {
+//       let vyska_vkladu = Number(item.vyska_vkladu);
+//       if (isNaN(vyska_vkladu)) {
+//         vyska_vkladu = 0;  // or handle error
+//       }
+//       return acc + vyska_vkladu;
+//     }, 0);
     
-    if(zakladateliaSpolocniciList.value.length == 1 && vyskaVkladu < 5000){
-      return false
-    }
-    else if(zakladateliaSpolocniciList.value.length >= 2 && vyskaVkladu < 2500) {
-      return false
-    }
-    else {
-      return true
-    }
-}
+//     if(zakladateliaSpolocniciList.value.length == 1 && vyskaVkladu < 5000){
+//       return false
+//     }
+//     else if(zakladateliaSpolocniciList.value.length >= 2 && vyskaVkladu < 2500) {
+//       return false
+//     }
+//     else {
+//       return true
+//     }
+// }
 
 watch(zakladateliaSpolocniciList, (newList) => {let checkedIndex = newList.findIndex(item => item.je_spravca_vkladu === true);
   isCheckboxHidden.value = checkedIndex !== -1;
