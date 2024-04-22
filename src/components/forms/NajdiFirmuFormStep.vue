@@ -384,7 +384,7 @@
             </div>  
             <div class="flex flex-col mt-2 space-y-4">
               <button @click.prevent="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
-              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušIť podiel {{ index }}</button>            
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>            
             </div>
           </div>
         </div>
@@ -406,6 +406,9 @@
         {{ newSharesTransfersList }}
         <div>Selected nadobudatel: {{ selectedNadobudatel }}</div>
         <div>Newly added spolicnici {{ newlyAddedSpolocnikList }}</div>
+        <div><b>let Spolocnik</b> {{ spolocnik }}</div>
+        <div><b>Spolocnik object</b> {{ spolocnikObject }}</div>
+        <div><b>Edited Spolocnik</b> {{ newSpolocnikList }}</div>
         <button @click.prevent="openAddSpolocnik" class="bg-bizinix-teal p-2 mr-4 rounded">+ Pridať spoločníka cez navýšenie základného imania</button>        
       </div>
       <!-- Edit Spolocnik Modal-->
@@ -628,7 +631,7 @@
         <button @click.prevent="openChangeZakladneImanie" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje</button>
       </div>
       <div class="flex flex-row mt-3" v-for="(zakladneImanie, index) in newZakladneImanie" :key="index">
-        <div>{{ zakladneImanie.change_for }} {{ zakladneImanie.operation }} {{ zakladneImanie.value }} €</div> <button @click.prevent="() => newZakladneImanie.splice(index, 1)">Zrušiť</button>
+        <div v-if="zakladneImanie.change_for">{{ zakladneImanie.change_for }} {{ zakladneImanie.operation }} {{ zakladneImanie.value }} €</div> <button v-if="zakladneImanie.change_for" class="ml-4" @click.prevent="() => newZakladneImanie.splice(index, 1)">Zrušiť</button>
       </div>
       <VueFinalModal
         :modal-id="modalIdChangeZakladneImanie"
@@ -1343,12 +1346,13 @@ function getSpecificSpolocnik(index: number){
 //#region edit spolocnik
 function openEditSpolocnik(index: number){
   addOperationSpolocnik = false; 
+  isPrevodPodielu = false; 
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
     spolocnikIndex = index;
     console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
     // get current konatel if index exist if no then work with konatel
-    if(newSpolocnikList.value[index] !== undefined){
+    if(newSpolocnikList.value[index] && (newSpolocnikList.value[index].first_name?.length >= 1 || newSpolocnikList.value[index].obchodne_meno?.length >= 1)){
       spolocnik.value = newSpolocnikList.value[index];
       console.log("if");
     } else {
@@ -1377,14 +1381,14 @@ function openPreviestPodielSpolocnika(index: number){
   })
 
   if(nadobudatelia.value.length >= 2){
-        nadobudatelia.value.splice(index, 1) // splice due to preselect
-        selectedNadobudatel.value = nadobudatelia.value[0].__original
+    nadobudatelia.value.splice(index, 1) // splice due to preselect
+    selectedNadobudatel.value = nadobudatelia.value[0].__original
   }
+  spolocnik.value = Object.assign({}, spolocnikObject);
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     if(newSharesTransfersList.value.length == 0){
       prevodPodieluFromTo.value.amount = '';
       prevodPodieluFromTo.value.priceForTransfer = '';
-      spolocnik.value = Object.assign({}, spolocnikObject);
     }
     else if(newSharesTransfersList.value.length > 0) {    
       mnozstvoPodielu.value = newSharesTransfersList.value[index]?.transferType, // full or partial
@@ -1402,6 +1406,7 @@ function openAddSpolocnik(){
   isPrevodPodielu = false;
   isPrevodPodielu = false;  
   spolocnik.value = Object.assign({}, spolocnikObject);
+  spolocnik.value.typ_zakladatela = 1
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {});
 }
 
@@ -1412,8 +1417,14 @@ function addNewSpolocnikTolist(){
 function closeModalAndSubmitOrEditSpolocnik(){
   console.log("Calling submit function Spolocnik!")
   vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
-    if(addOperationSpolocnik){
+    if(addOperationSpolocnik){                
       addNewSpolocnikTolist();
+      let spolocnikName = (spolocnik.value.first_name && spolocnik.value.last_name) ? (spolocnik.value.first_name + " " + spolocnik.value.last_name) : spolocnik.value.obchodne_meno;  
+      newZakladneImanie.value.push({
+        change_for: 'Pridaný nový spoločník ' + spolocnikName,
+        operation: '+',
+        value: spolocnik.value.rozsah_splatenia_vkladu as number
+      })
     }
     else if(isPrevodPodielu){
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
@@ -1462,6 +1473,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
     addOperationSpolocnik = false;
     isPrevodPodielu = false;
     isPrevodPodielu = false;  
+    spolocnik.value = Object.assign({}, spolocnikObject);
     //selectedNadobudatel.value = ''
   })
 }
@@ -1593,29 +1605,30 @@ function returnChangesBack(index: number){
 }
 
 function returnChangesBackSpolocnici(index: number){
-  let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
-  newSpolocnikList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
-  newSpolocnikList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
-  newSpolocnikList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
-  newSpolocnikList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
+  newSpolocnikList.value.splice(index, 1, {});
+  // let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
+  // newSpolocnikList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
+  // newSpolocnikList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
+  // newSpolocnikList.value[index].last_name = fullNameWithTitlesFromOrSr.last_name
+  // newSpolocnikList.value[index].title_after = fullNameWithTitlesFromOrSr.title_after  
 
-  newSpolocnikList.value[index].country = spolocniciFromOrSr.value[index].country as string
-  newSpolocnikList.value[index].city = spolocniciFromOrSr.value[index].city
-  newSpolocnikList.value[index].psc = spolocniciFromOrSr.value[index].zip as string
-  newSpolocnikList.value[index].street = spolocniciFromOrSr.value[index].street
-  newSpolocnikList.value[index].street_number = spolocniciFromOrSr.value[index].number.split("/")[0]
-  newSpolocnikList.value[index].street_number2 = spolocniciFromOrSr.value[index].number.split("/")[1]
-  // set hasChange back to false
-  newSpolocnikList.value[index].has_change = false
-  // no values from orsr
-  newSpolocnikList.value[index].obchodne_meno = ''
-  newSpolocnikList.value[index].ico = ''
-  newSpolocnikList.value[index].date_of_birth = ''
-  newSpolocnikList.value[index].rodne_cislo = ''
-  newSpolocnikList.value[index].gender = ''
-  newSpolocnikList.value[index].vyska_vkladu = 0
-  newSpolocnikList.value[index].podiel_v_spolocnosti = 0
-  newSpolocnikList.value[index].rozsah_splatenia_vkladu = 0
+  // newSpolocnikList.value[index].country = spolocniciFromOrSr.value[index].country as string
+  // newSpolocnikList.value[index].city = spolocniciFromOrSr.value[index].city
+  // newSpolocnikList.value[index].psc = spolocniciFromOrSr.value[index].zip as string
+  // newSpolocnikList.value[index].street = spolocniciFromOrSr.value[index].street
+  // newSpolocnikList.value[index].street_number = spolocniciFromOrSr.value[index].number.split("/")[0]
+  // newSpolocnikList.value[index].street_number2 = spolocniciFromOrSr.value[index].number.split("/")[1]
+  // // set hasChange back to false
+  // newSpolocnikList.value[index].has_change = false
+  // // no values from orsr
+  // newSpolocnikList.value[index].obchodne_meno = ''
+  // newSpolocnikList.value[index].ico = ''
+  // newSpolocnikList.value[index].date_of_birth = ''
+  // newSpolocnikList.value[index].rodne_cislo = ''
+  // newSpolocnikList.value[index].gender = ''
+  // newSpolocnikList.value[index].vyska_vkladu = 0
+  // newSpolocnikList.value[index].podiel_v_spolocnosti = 0
+  // newSpolocnikList.value[index].rozsah_splatenia_vkladu = 0
 }
 
 function nameComposerFromOrSr(fullNameWithTitleFromOrSr: string) {  
