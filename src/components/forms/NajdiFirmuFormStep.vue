@@ -27,67 +27,77 @@
     <EditItemForCompany title="Obchodné meno">
       <div class="grid grid-cols-2 items-center">
         <div>
-          <h3 v-bind:class="{ 'text-cross': newCompanyFullName.newCompanyName != ''  }" class="text-lg">{{ companyFromOrSr?.obchodne_meno }}</h3>
-          <h3 class="text-lg font-bold">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h3>
+          <h3 v-bind:class="{ 'text-cross': newCompanyFullName.newCompanyName != '' }" class="text-lg">{{ companyFromOrSr?.obchodne_meno }}</h3>
+          <h3 v-if="newCompanyFullName.newCompanyName" class="text-lg font-bold">{{ newCompanyFullName.newCompanyName + " " + newCompanyFullName.newCompanyPravForm}}</h3>
         </div>
-        <div>
+        <div class="flex space-x-4 items-center">
           <button @click.prevent="openEditCompanyName" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
-          <VueFinalModal
-              :modal-id="modalIdAddOrEditCompanyName"
-              display-directive="if"
-              :clickToClose="false"
-              :escToClose="false"
-              :lockscroll="true"
-              class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
-              content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
-            >
-              <h3 class="text-white text-2xl">
-                Obchodné meno
-              </h3>
-              <p class="text-white mb-4" >Obchodné meno nemôže byť totožné s už existujúcim. Názov si overte cez www.orsr.sk alebo www.rpo.sk. Čiarky, pomlčky, medzery, veľké/malé písmená a podobne nie sú dostatočným odlišovacím znakom.</p>
-              <FormKit
-                type="form"
-                id="form_new_business_name" name="new_business_name"
-                @submit="closeModalAndSaveOrEditCompanyName"
-                :config="{ validationVisibility: 'live' }"
-                submit-label="Pridať"
-                #default="{ value, state: { valid } }"
-                :actions="false"
-              >
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="text" name="new_business_name" v-model="newCompanyFullName.newCompanyName" label="Nové obchodné meno" placeholder="Napíšte nové obchodné meno" validation="required|length:2" />
-                  <FormKit type="select" name="pravnaForma" label="Právna forma" v-model="newCompanyFullName.newCompanyPravForm" placeholder="Vybrať"
-                    :options="['s. r. o.', ', s. r. o.', ', spol. s r. o.']" validation="required"
-                  />
-                  </div>
-                  <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
-                    <button
-                      class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
-                      type="button"
-                      @click.prevent="closeModalForCompanyName"
-                    >
-                      Zrušiť
-                    </button>
-                    <button
-                      :disabled="!valid"
-                      type="submit"
-                      class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
-                    >
-                      Potvrdiť
-                    </button>
-                  </div>
-              </FormKit>
-            </VueFinalModal>         
+          <div>
+            <button v-if="newCompanyFullName.newCompanyName">
+              <Tippy>
+                <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('companyName')" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                <template #content>
+                  Vrátiť zmeny späť
+                </template>
+              </Tippy>
+            </button>          
+          </div>
+        </div>
+      </div>
+      <VueFinalModal
+          :modal-id="modalIdAddOrEditCompanyName"
+          display-directive="if"
+          :clickToClose="false"
+          :escToClose="false"
+          :lockscroll="true"
+          class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+          content-class="flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+        >
+          <h3 class="text-white text-2xl">
+            Obchodné meno
+          </h3>
+          <p class="text-white mb-4" >Obchodné meno nemôže byť totožné s už existujúcim. Názov si overte cez www.orsr.sk alebo www.rpo.sk. Čiarky, pomlčky, medzery, veľké/malé písmená a podobne nie sú dostatočným odlišovacím znakom.</p>
+          <FormKit
+            type="form"
+            id="form_new_business_name" name="new_business_name"
+            @submit="closeModalAndSaveOrEditCompanyName"
+            :config="{ validationVisibility: 'live' }"
+            submit-label="Pridať"
+            #default="{ value, state: { valid } }"
+            :actions="false"
+          >
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <FormKit type="text" name="new_business_name" v-model="newCompanyFullName.newCompanyName" label="Nové obchodné meno" placeholder="Napíšte nové obchodné meno" validation="required|length:2" />
+              <FormKit type="select" name="pravnaForma" label="Právna forma" v-model="newCompanyFullName.newCompanyPravForm" placeholder="Vybrať"
+                :options="['s. r. o.', ', s. r. o.', ', spol. s r. o.']" validation="required"
+              />
               </div>
-            </div>
+              <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalForCompanyName"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                  Potvrdiť
+                </button>
+              </div>
+          </FormKit>
+        </VueFinalModal>         
     </EditItemForCompany>
     <!-- Sídlo -->    
     <EditItemForCompany title="Sídlo">
       <div class="grid grid-cols-2 items-center">
         <div>
-          <h3 v-bind:class="{ 'text-cross': newHqAddress.country != '' || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.street + " " + companyFromOrSr?.adresa.number }}</h3>
-          <h3 v-bind:class="{ 'text-cross': newHqAddress.city != '' || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.city + " " + companyFromOrSr?.adresa.zip }}</h3>
-          <div v-if="obchodneSidloVirtuOrNormal == 'vlastnePrenajate'">
+          <h3 v-bind:class="{ 'text-cross': newHqAddress.city?.length || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.street + " " + companyFromOrSr?.adresa.number }}</h3>
+          <h3 v-bind:class="{ 'text-cross': newHqAddress.city?.length  || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.city + " " + companyFromOrSr?.adresa.zip }}</h3>
+          <div v-if="newHqAddress.city">
             <h3 class="text-lg font-bold">{{ newHqAddress.country + " " + newHqAddress.city  + " " + newHqAddress.psc + " " + newHqAddress.street + " " + newHqAddress.street_number }}</h3>
           </div>
           <div v-else>
@@ -95,108 +105,118 @@
             <h3 class="text-lg font-bold">{{ selectedPacageFromStore.name }}</h3>
           </div>
         </div>
-        <div>
+        <div class="flex items-center space-x-4 ">
           <button @click="openEditSidlo" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
-          <VueFinalModal
-              :modal-id="modalIdAddOrEditSidlo"
-              display-directive="if"
-              :clickToClose="false"
-              :escToClose="false"
-              :lockscroll="true"
-              class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
-              content-class="text-white flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+          <div>
+            <button v-if="newHqAddress.city || selectedVhqFromStore.name">
+              <Tippy>
+                <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('sidlo')" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                <template #content>
+                  Vrátiť zmeny späť
+                </template>
+              </Tippy>
+            </button>          
+          </div>
+        </div>
+      </div>
+      <VueFinalModal
+          :modal-id="modalIdAddOrEditSidlo"
+          display-directive="if"
+          :clickToClose="false"
+          :escToClose="false"
+          :lockscroll="true"
+          class="block md:flex md:justify-center md:items-center overflow-x-hidden overflow-y-auto"
+          content-class="text-white flex flex-col max-w-5xl m-4 p-4 bg-gray-bizinix border border-bizinix-border rounded space-y-2"
+        >
+            <h3 class="text-white text-2xl">
+              Sídlo
+            </h3>
+            <FormKit
+              type="form"
+              id="form_sidlo" name="new_sidlo"
+              @submit="closeModalAndSubmitOrEditSidlo"
+              :config="{ validationVisibility: 'live' }"
+              submit-label="Pridať"
+              #default="{ value, state: { valid } }"
+              :actions="false"
             >
-                <h3 class="text-white text-2xl">
-                  Sídlo
-                </h3>
-                <FormKit
-                  type="form"
-                  id="form_sidlo" name="new_sidlo"
-                  @submit="closeModalAndSubmitOrEditSidlo"
-                  :config="{ validationVisibility: 'live' }"
-                  submit-label="Pridať"
-                  #default="{ value, state: { valid } }"
-                  :actions="false"
-                >
-                <FormKit type="radio" v-model="obchodneSidloVirtuOrNormal" label="O aké sídlo máte záujem?" name="obchodneSidloVirtuOrNormal"
-                  :options="
-                      [
-                        { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
-                        { value: 'virtualne', label: 'Virtuálne sídlo' }
-                      ]"
-                      validation="required"
+            <FormKit type="radio" v-model="obchodneSidloVirtuOrNormal" label="O aké sídlo máte záujem?" name="obchodneSidloVirtuOrNormal"
+              :options="
+                  [
+                    { value: 'vlastnePrenajate', label: 'Vlastné alebo prenajaté' },
+                    { value: 'virtualne', label: 'Virtuálne sídlo' }
+                  ]"
+                  validation="required"
+            />
+              <div v-if="obchodneSidloVirtuOrNormal === 'vlastnePrenajate'">
+                <div class="grid grid-cols-3 gap-4">
+                  <FormKit type="select" name="country" id="country" label="Štát" v-model="newHqAddress.country" placeholder="Vyberte štát"
+                    :options="['Slovensko','Česká republika']" validation="required" validation-visibility="dirty"
+                  />
+                <FormKit type="text" name="city" v-model="newHqAddress.city" label="Obec" validation="required" />
+                <FormKit type="text" name="psc" v-model="newHqAddress.psc" label="PSČ" validation="required" />
+                <FormKit type="text" name="street" v-model="newHqAddress.street" label="Ulica" validation="required" />
+                <FormKit type="text" name="street_number" v-model="newHqAddress.street_number" label="Súpisne číslo"
+                  validation="require_one:street_number2"
+                  help="Čislo pred lomítkom"
                 />
-                  <div v-if="obchodneSidloVirtuOrNormal === 'vlastnePrenajate'">
-                    <div class="grid grid-cols-3 gap-4">
-                      <FormKit type="select" name="country" id="country" label="Štát" v-model="newHqAddress.country" placeholder="Vyberte štát"
-                        :options="['Slovensko','Česká republika']" validation="required" validation-visibility="dirty"
-                      />
-                    <FormKit type="text" name="city" v-model="newHqAddress.city" label="Obec" validation="required" />
-                    <FormKit type="text" name="psc" v-model="newHqAddress.psc" label="PSČ" validation="required" />
-                    <FormKit type="text" name="street" v-model="newHqAddress.street" label="Ulica" validation="required" />
-                    <FormKit type="text" name="street_number" v-model="newHqAddress.street_number" label="Súpisne číslo"
-                      validation="require_one:street_number2"
-                      help="Čislo pred lomítkom"
-                    />
-                    <FormKit type="text" name="street_number2" v-model="newHqAddress.street_number2" label="Orientačné číslo"
-                      validation="require_one:street_number"
-                      help="Čislo za lomítkom"
-                    />
-                    </div>
-                    <div class="mb-4">
-                      <p>
-                        Na vytvorenie dokumentu "Súhlas vlastníka nehnuteľnosti" so zápisom nehnuteľnosti do obchodného registra ako sídla spoločnosti budeme potrebovať nasledovné údaje:
-                      </p>
-                    </div>
-                    <div class="flex flex-col md:flex-row md:space-x-4">
-                      <FormKit type="select" name="headquarters_type" id="headquarters_type_company" label="Druh priestoru"
-                        v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
-                        :options="[
-                          { label: 'Nebytový priestor', value: 1 },
-                          { label: 'Byt v bytovom dome', value: 2 },
-                          { label: 'Iná budova', value: 3 },
-                          { label: 'Rodinný dom', value: 4 },
-                          { label: 'Samostatne stojaca garáž', value: 5 }
-                        ]"
-                        validation="required" validation-visibility="dirty"
-                      />
-                      <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
-                    </div>
-                  </div>
-                  <div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
-                    <div class="flex flex-col md:flex-row gap-8 mb-4">
-                          <div>
-                            <div class="pb-8 font-bold text-lg w-full text-left"> Vyberte si sídlo</div>
-                              <VirtualHqSlider></VirtualHqSlider>
-                            </div>
-                            <div>
-                              <VirtualHqPackage></VirtualHqPackage>
-                          </div>
-                        </div>
-                    <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
-                        <b>Prosím vyberte sídlo.</b>
-                    </div>
-                  </div>
-                  <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
-                    <button
-                      class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
-                      type="button"
-                      @click.prevent="closeModalForSidlo"
-                    >
-                      Zrušiť
-                    </button>
-                    <button
-                      :disabled="!valid || isNextButtonDisabledHq"
-                      type="submit"
-                      class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
-                    >
-                      Potvrdiť
-                    </button>
-                  </div>
-                </FormKit>
-              </VueFinalModal>         
+                <FormKit type="text" name="street_number2" v-model="newHqAddress.street_number2" label="Orientačné číslo"
+                  validation="require_one:street_number"
+                  help="Čislo za lomítkom"
+                />
+                </div>
+                <div class="mb-4">
+                  <p>
+                    Na vytvorenie dokumentu "Súhlas vlastníka nehnuteľnosti" so zápisom nehnuteľnosti do obchodného registra ako sídla spoločnosti budeme potrebovať nasledovné údaje:
+                  </p>
+                </div>
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                  <FormKit type="select" name="headquarters_type" id="headquarters_type_company" label="Druh priestoru"
+                    v-model="headquarterInfo.headquarters_type" placeholder="Vyberte druh priestoru"
+                    :options="[
+                      { label: 'Nebytový priestor', value: 1 },
+                      { label: 'Byt v bytovom dome', value: 2 },
+                      { label: 'Iná budova', value: 3 },
+                      { label: 'Rodinný dom', value: 4 },
+                      { label: 'Samostatne stojaca garáž', value: 5 }
+                    ]"
+                    validation="required" validation-visibility="dirty"
+                  />
+                  <FormKit type="text" name="ownerName" v-model="headquarterInfo.owner_name" label="Vlastník priestoru" validation="required" />
+                </div>
               </div>
-            </div>
+              <div v-if="obchodneSidloVirtuOrNormal === 'virtualne'">
+                <div class="flex flex-col md:flex-row gap-8 mb-4">
+                      <div>
+                        <div class="pb-8 font-bold text-lg w-full text-left"> Vyberte si sídlo</div>
+                          <VirtualHqSlider></VirtualHqSlider>
+                        </div>
+                        <div>
+                          <VirtualHqPackage></VirtualHqPackage>
+                      </div>
+                    </div>
+                <div v-if="!store.state.selectedVhq.name" class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
+                    <b>Prosím vyberte sídlo.</b>
+                </div>
+              </div>
+              <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
+                <button
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-transparent px-9 py-3 border border-bizinix-border hover:border-teal-700 rounded"
+                  type="button"
+                  @click.prevent="closeModalForSidlo"
+                >
+                  Zrušiť
+                </button>
+                <button
+                  :disabled="!valid || isNextButtonDisabledHq"
+                  type="submit"
+                  class="w-full md:w-1/2 text-white font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
+                >
+                  Potvrdiť
+                </button>
+              </div>
+            </FormKit>
+          </VueFinalModal>         
     </EditItemForCompany>
     <!-- Konatelia -->
     <EditItemForCompany title="Konatelia">
@@ -689,7 +709,7 @@
     <EditItemForCompany title="Prokurista">
       <button v-if="newProkuristaList.length">
         <Tippy>
-          <ReceiptRefundIcon @click.prevent="returnChangeBackProkurista" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+          <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('prokurista')" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
           <template #content>
             Vrátiť zmeny späť
           </template>
@@ -800,7 +820,7 @@
         Zrušiť
       </button>
       <button
-        @click.prevent="submitReturnChangeBack('prokurista')"  
+        @click.prevent="submitReturnChangeBack(sectionName)"  
         class="w-full md:w-1/2 font-bold disabled:bg-gray-700 disabled:border-gray-700 bg-bizinix-teal hover:border-teal-700 hover:bg-teal-700 px-9 py-3 border border-bizinix-border rounded"
       >
         Potvrdiť
@@ -857,6 +877,7 @@ const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 const selectedPacageFromStore = computed(() => store.getters.getSelectedVhqPackage)
 
 let ine_zmeny = ref("");
+let sectionName = ref("");
 
 let addOperationKonatel = false;
 let isPrevodPodielu = false;
@@ -978,18 +999,8 @@ let newHqAddress = ref({
 } as Address)
 
 let headquarterInfo = ref({
-  name: '',
-  description: '',
   headquarters_type: 0,
-  owner_name: '',
-  price: 0,
-  registry: false,
-  forwarding: false,
-  scanning: false,
-  shredding: false,
-  is_virtual: false,
-  img: '',
-  address_id: 0
+  owner_name: '',  
 })
 
 let nadobudatelia = computed(() => [
@@ -1147,6 +1158,8 @@ function closeModalAndSaveOrEditCompanyName() {
 
 function closeModalForCompanyName(){ 
   vfm.closeAll().then(() => {
+    newCompanyFullName.newCompanyName = "";
+    newCompanyFullName.newCompanyPravForm = "";
   })
 }
 //#endregion
@@ -1166,6 +1179,12 @@ function closeModalAndSubmitOrEditSidlo() {
 
 function closeModalForSidlo(){ 
   vfm.closeAll().then(() => {
+    newHqAddress.value = {} as Address;
+    headquarterInfo.value.headquarters_type = 0;
+    headquarterInfo.value.owner_name = "";        
+    store.state.selectedVhq = {};
+    store.state.selectedVhqPackage = {}
+    obchodneSidloVirtuOrNormal.value = "vlastnePrenajate";
   })
 }
 //#endregion
@@ -1289,7 +1308,8 @@ function closeModalAndSubmitOrEditProkurista() {
   })
 }
 
-function returnChangeBackProkurista(){
+function openReturnChangeBackModal(section: string){      
+  sectionName.value = section;
   vfm.open(modalIdReturnChangeBack)?.then(() => {
 
   })
@@ -1297,10 +1317,32 @@ function returnChangeBackProkurista(){
 
 function submitReturnChangeBack(modalName: string){
   switch(modalName){
-    case 'prokurista': {
-      vfm.close(modalIdReturnChangeBack)?.then(() => { newProkuristaList.value.length = 0 })
+    case 'companyName': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        newCompanyFullName.newCompanyName = '';
+        newCompanyFullName.newCompanyPravForm = '';
+        sectionName.value = "";
+      })      
       break;
     }
+    case 'sidlo': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        newHqAddress.value = {} as Address;
+        headquarterInfo.value.headquarters_type = 0;
+        headquarterInfo.value.owner_name = "";        
+        store.state.selectedVhq = {};
+        store.state.selectedVhqPackage = {}
+        sectionName.value = "";
+      })
+      break;
+    }
+    case 'prokurista': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        newProkuristaList.value.length = 0;
+        sectionName.value = "";
+      })
+      break;
+    }    
     default: {
       console.log('The input does not match any predefined strings');      
     }

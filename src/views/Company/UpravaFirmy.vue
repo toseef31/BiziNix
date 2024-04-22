@@ -415,6 +415,7 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.updated_company.ico = najdiFirmuForm.value.companyFromOrSr.ico
   if(najdiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
     newCompanyData.updated_company.sidlo = najdiFirmuForm.value.newHqAddress
+    newCompanyData.updated_company.sidlo = najdiFirmuForm.value.headquarterInfo
   } else {
     newCompanyData.updated_company.sidlo = najdiFirmuForm.value.selectedVhqFromStore
   }
