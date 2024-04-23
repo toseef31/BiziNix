@@ -234,9 +234,9 @@
         <div class="flex space-x-4">
           <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
           <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
-          <button>
+          <button v-if="checkHasChange(newKonateliaList[index])">
             <Tippy>
-              <ReceiptRefundIcon @click.prevent="returnChangesBack(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+              <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('konatelia', index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
               <template #content>
                 Vrátiť zmeny späť
               </template>
@@ -394,6 +394,12 @@
                 <h4 class="text-base">{{ newSpolocnikList[index]?.country || '' }} </h4>
               </div>
               <div>
+
+              </div>
+            </div>  
+            <div class="flex flex-col mt-2 space-y-4">
+              <div class="flex flex-row">
+                <button @click.prevent="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
                 <button>
                   <Tippy>
                     <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -403,9 +409,6 @@
                   </Tippy>
                 </button>
               </div>
-            </div>  
-            <div class="flex flex-col mt-2 space-y-4">
-              <button @click.prevent="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
               <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>            
             </div>
           </div>
@@ -425,12 +428,14 @@
         </div>
       </div>
       <div class="mt-4 pt-2 border-t border-t-gray-700">
-        {{ newSharesTransfersList }}
-        <div>Selected nadobudatel: {{ selectedNadobudatel }}</div>
-        <div>Newly added spolicnici {{ newlyAddedSpolocnikList }}</div>
-        <div><b>let Spolocnik</b> {{ spolocnik }}</div>
-        <div><b>Spolocnik object</b> {{ spolocnikObject }}</div>
-        <div><b>Edited Spolocnik</b> {{ newSpolocnikList }}</div>
+        <!-- <div>
+          {{ newSharesTransfersList }}
+          <div>Selected nadobudatel: {{ selectedNadobudatel }}</div>
+          <div>Newly added spolicnici {{ newlyAddedSpolocnikList }}</div>
+          <div><b>let Spolocnik</b> {{ spolocnik }}</div>
+          <div><b>Spolocnik object</b> {{ spolocnikObject }}</div>
+          <div><b>Edited Spolocnik</b> {{ newSpolocnikList }}</div>
+        </div> -->
         <button @click.prevent="openAddSpolocnik" class="bg-bizinix-teal p-2 mr-4 rounded">+ Pridať spoločníka cez navýšenie základného imania</button>        
       </div>
       <!-- Edit Spolocnik Modal-->
@@ -879,7 +884,8 @@ const selectedVhqFromStore = computed(() => store.getters.getSelectedVhq)
 const selectedPacageFromStore = computed(() => store.getters.getSelectedVhqPackage)
 
 let ine_zmeny = ref("");
-let sectionName = ref("");
+let sectionName: string;
+let indexForReturnChangeBack: number | undefined;
 
 let addOperationKonatel = false;
 let isPrevodPodielu = false;
@@ -1310,8 +1316,9 @@ function closeModalAndSubmitOrEditProkurista() {
   })
 }
 
-function openReturnChangeBackModal(section: string){      
-  sectionName.value = section;
+function openReturnChangeBackModal(section: string, index?: number){      
+  sectionName = section;
+  indexForReturnChangeBack = index;
   vfm.open(modalIdReturnChangeBack)?.then(() => {
 
   })
@@ -1323,7 +1330,7 @@ function submitReturnChangeBack(modalName: string){
       vfm.close(modalIdReturnChangeBack)?.then(() => {
         newCompanyFullName.newCompanyName = '';
         newCompanyFullName.newCompanyPravForm = '';
-        sectionName.value = "";
+        sectionName = "";
       })      
       break;
     }
@@ -1334,14 +1341,20 @@ function submitReturnChangeBack(modalName: string){
         headquarterInfo.value.owner_name = "";        
         store.state.selectedVhq = {};
         store.state.selectedVhqPackage = {}
-        sectionName.value = "";
+        sectionName = "";
+      })
+      break;
+    }
+    case 'konatelia': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        returnChangesBackKonatelia(indexForReturnChangeBack as number);
       })
       break;
     }
     case 'prokurista': {
       vfm.close(modalIdReturnChangeBack)?.then(() => {
         newProkuristaList.value.length = 0;
-        sectionName.value = "";
+        sectionName = "";
       })
       break;
     }    
@@ -1624,7 +1637,7 @@ function checkCanceled(item: CompanyMemberKonatel): boolean {
   }
 }
 
-function returnChangesBack(index: number){
+function returnChangesBackKonatelia(index: number){
   let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(konateliaFromOrSr.value[index].name);
   newKonateliaList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
   newKonateliaList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
