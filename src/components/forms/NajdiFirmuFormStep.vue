@@ -375,11 +375,22 @@
     </EditItemForCompany>
     <!-- Spolicnici -->
     <EditItemForCompany title="Spoločníci">
-      <div class="grid grid-cols-2">
+      <div class="grid grid-cols-2 gap-4">
         <div v-for="(spolocnikDiv, index ) in spolocniciFromOrSr" :key="index" class="items-center space-y-4">
           <div>
             <span>{{ vyskyVkladovFromOrSr[index].splatene }} {{ vyskyVkladovFromOrSr[index].currency }} {{ calculatePercentageAtIndex(index) }}%</span>
             <ProgressBar :progress="calculatePercentageAtIndex(index)" />
+            <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="flex flex-row border-t border-b border-gray-600 py-1 my-4">
+              {{ newSharesTransfersList[index]?.sharesFrom.name }} <CurrencyEuroIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.amountOfTransfer }} {{ newSharesTransfersList[index]?.currency }} <ArrowRightCircleIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.sharesTo.name }}
+              <button v-if="newSharesTransfersList[index]">
+                <Tippy>
+                  <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('shares', index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                  <template #content>
+                    Vrátiť zmeny späť
+                  </template>
+                </Tippy>
+              </button>
+            </div>
             <h3 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-lg">{{ spolocnikDiv.name }}</h3>
             <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
             <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.city }}</h4>
@@ -393,23 +404,20 @@
                 <h4 class="text-base">{{ newSpolocnikList[index]?.city || '' }}, {{ newSpolocnikList[index]?.street || '' }} {{ newSpolocnikList[index]?.street_number || '' }}/{{ newSpolocnikList[index]?.street_number2 || '' }}, {{ newSpolocnikList[index]?.psc || '' }}</h4>
                 <h4 class="text-base">{{ newSpolocnikList[index]?.country || '' }} </h4>
               </div>
-              <div>
-
-              </div>
             </div>  
             <div class="flex flex-col mt-2 space-y-4">
               <div class="flex flex-row">
-                <button @click.prevent="openEditSpolocnik(index)" class="bg-bizinix-teal p-2 mr-4 rounded">Zmeniť údaje {{ index }}</button>
-                <button>
+                <button @click.prevent="openEditSpolocnik(index)" class="w-full bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
+                <button v-if="checkHasChange(newSpolocnikList[index])">
                   <Tippy>
-                    <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                    <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
                     <template #content>
                       Vrátiť zmeny späť
                     </template>
                   </Tippy>
                 </button>
               </div>
-              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal mr-4 p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>            
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>            
             </div>
           </div>
         </div>
@@ -645,12 +653,12 @@
         </div>
       </template>
     </FormKit>
-      <div class="grid gap-4 grid-cols-2 border border-gray-800" v-for="(subject, index) in sbj">
-        <div :class="{ 'text-cross': checkIfSbjIsRemoved(subject.description) }">{{subject.description}}</div>
-        <button v-if="!checkIfSbjIsRemoved(subject.description)" @click.prevent="removeOldSbj(subject.description)" class="bg-bizinix-teal p-2 rounded max-w-32">Odobrať</button>
+      <div class="grid gap-4 grid-cols-[80%_20%] border border-gray-800" v-for="(subject, index) in sbj">
+        <div :class="{ 'text-cross': checkIfSbjIsRemoved(subject.description) }" class="p-2">{{subject.description}}</div>
+        <button v-if="!checkIfSbjIsRemoved(subject.description)" @click.prevent="removeOldSbj(subject.description)" class="bg-bizinix-teal px-3 py-2 rounded max-w-32">Odobrať</button>
         <button v-if="checkIfSbjIsRemoved(subject.description)" @click.prevent="addSbjBack(subject.description)" class="bg-bizinix-teal p-2 rounded max-w-32">Pridať</button>
       </div>
-      <button @click.prevent="callgetSubjectOfBusinness">Call func</button>
+      <!-- <button @click.prevent="callgetSubjectOfBusinness">Call func</button> -->
     </EditItemForCompany>
     <EditItemForCompany title="Základné imanie">
       <div class="flex items-center space-x-4">
@@ -851,7 +859,7 @@ import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import { Tippy } from "vue-tippy";
 import 'tippy.js/dist/tippy.css' // optional for styling
-import { ReceiptRefundIcon } from '@heroicons/vue/24/outline'
+import { ReceiptRefundIcon, ArrowRightCircleIcon, CurrencyEuroIcon } from '@heroicons/vue/24/outline'
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 import ProgressBar from '@/components/ProgressBar.vue';
 import type KonatelFromOrSr from '@/types/FromOrSrParser/KonatelFromOrSr';
@@ -1351,6 +1359,20 @@ function submitReturnChangeBack(modalName: string){
       })
       break;
     }
+    case 'shares': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        newSharesTransfersList.value.splice(indexForReturnChangeBack as number, 1, {
+            sharesFrom: { name: '', city: '', country: '', psc: '', street: '', streetNumber: '' },
+            sharesTo: { typOsoby: '', obchodne_meno: '', ico: '', name: '', city: '', street: '', streetNumber: '', psc: '', date_of_birth: '', country: '', rodneCislo: '', pohlavie: '', title_before: '', title_after: '', },
+            transferType: '',
+            amountOfTransfer: '',
+            priceForTransfer: '',
+            currency: ''
+          }
+        );                
+      })
+      break;
+    }
     case 'prokurista': {
       vfm.close(modalIdReturnChangeBack)?.then(() => {
         newProkuristaList.value.length = 0;
@@ -1662,7 +1684,25 @@ function returnChangesBackKonatelia(index: number){
 }
 
 function returnChangesBackSpolocnici(index: number){
-  newSpolocnikList.value.splice(index, 1, {});
+  newSpolocnikList.value.splice(index, 1, {
+company_id: null,
+first_name: '',
+last_name: '',
+title_before: '',
+title_after: '',
+gender: '',
+rodne_cislo: '',
+date_of_birth: '',
+street: '',
+street_number: '',
+street_number2: '',
+country: '',
+city: '',
+psc: '',
+nationality: '',
+obchodne_meno: '',
+je_zakladatel: true
+});
   // let fullNameWithTitlesFromOrSr = nameComposerFromOrSr(spolocniciFromOrSr.value[index].name);
   // newSpolocnikList.value[index].title_before = fullNameWithTitlesFromOrSr.title_before
   // newSpolocnikList.value[index].first_name = fullNameWithTitlesFromOrSr.first_name
