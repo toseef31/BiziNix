@@ -414,9 +414,12 @@ async function addUpdatedCompany(orderId: number, userId: number) : Promise<any>
   newCompanyData.updated_company.pravna_forma = `${newCompanyPravForm}`;
   newCompanyData.updated_company.ico = najdiFirmuForm.value.companyFromOrSr.ico
   if(najdiFirmuForm.value.obchodneSidloVirtuOrNormal == 'vlastnePrenajate'){
-    newCompanyData.updated_company.sidlo = najdiFirmuForm.value.newHqAddress
-    newCompanyData.updated_company.sidlo = najdiFirmuForm.value.headquarterInfo
-  } else {
+    newCompanyData.updated_company.sidlo = {
+    ...najdiFirmuForm.value.newHqAddress, // this will spread the properties of newHqAddress into sidlo
+    ...najdiFirmuForm.value.headquarterInfo // this will spread the properties of headquarterInfo into sidlo
+    }
+  }
+  else {
     newCompanyData.updated_company.sidlo = najdiFirmuForm.value.selectedVhqFromStore
   }
   // to do predmet cinnosti

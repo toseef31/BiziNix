@@ -18,11 +18,13 @@
     </template>
   </FormKit>
   <div v-if="companyFromOrSr?.obchodne_meno" class="flex flex-col space-y-4 last:mb-4">
-    {{companyFromOrSr}}
-    Konateliaaa: {{ konateliaFromOrSr }}
-    Konatelia lenght {{ konateliaFromOrSr?.length }}
-    <br><b>New Konatelia {{ newKonateliaList }}</b>
-    <p>Newly added konatel {{ newlyAddedKonatelList }}</p>
+    <!-- <div>
+        {{companyFromOrSr}}
+      Konateliaaa: {{ konateliaFromOrSr }}
+      Konatelia lenght {{ konateliaFromOrSr?.length }}
+      <br><b>New Konatelia {{ newKonateliaList }}</b>
+      <p>Newly added konatel {{ newlyAddedKonatelList }}</p>
+    </div> -->
     <!-- Nazov spolocnosti -->
     <EditItemForCompany title="Obchodné meno">
       <div class="grid grid-cols-2 items-center">
@@ -106,7 +108,7 @@
           </div>
         </div>
         <div class="flex items-center space-x-4 ">
-          <button @click="openEditSidlo" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
+          <button @click.prevent="openEditSidlo" class="bg-bizinix-teal p-2 rounded">Upraviť</button>
           <div>
             <button v-if="newHqAddress.city || selectedVhqFromStore.name">
               <Tippy>
@@ -230,8 +232,8 @@
           </div>  
         </div>
         <div class="flex space-x-4">
-          <button @click="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
-          <button @click="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
+          <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
+          <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
           <button>
             <Tippy>
               <ReceiptRefundIcon @click.prevent="returnChangesBack(index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -248,10 +250,10 @@
           <h4 :index="index" class="text-base">{{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
         <div class="flex space-x-4">
-          <button @click="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
+          <button @click.prevent="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
         </div>
       </div>
-      <button @click="openAddKonatel()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať konateľa</button>
+      <button @click.prevent="openAddKonatel()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať konateľa</button>
       <!-- Edit konatel -->
       <VueFinalModal
           :modal-id="modalIdAddOrEditKonatel"
@@ -720,7 +722,7 @@
         <h4 class="text-base">{{ prokurista?.city }}, {{ prokurista?.street }} {{ prokurista?.street_number }}/{{ prokurista?.street_number2 }}, {{ prokurista?.psc }}</h4>
         <h4 class="text-base">{{ prokurista?.country }} </h4>        
       </div>
-      <button @click="openAddProkurista()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať prokuristu</button>
+      <button @click.prevent="openAddProkurista()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať prokuristu</button>
       <!-- Edit Prokurista -->
       <VueFinalModal
           :modal-id="modalIdAddOrEditProkurista"
