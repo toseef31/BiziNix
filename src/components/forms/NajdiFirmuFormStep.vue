@@ -98,7 +98,7 @@
       <div class="grid grid-cols-2 items-center">
         <div>
           <h3 v-bind:class="{ 'text-cross': newHqAddress.city?.length || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.street + " " + companyFromOrSr?.adresa.number }}</h3>
-          <h3 v-bind:class="{ 'text-cross': newHqAddress.city?.length  || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.city + " " + companyFromOrSr?.adresa.zip }}</h3>
+          <h3 v-bind:class="{ 'text-cross': newHqAddress.city?.length  || selectedVhqFromStore.name != null }" class="text-lg">{{ companyFromOrSr?.adresa.zip + " " + companyFromOrSr?.adresa.city }}</h3>
           <div v-if="newHqAddress.city">
             <h3 class="text-lg font-bold">{{ newHqAddress.country + " " + newHqAddress.city  + " " + newHqAddress.psc + " " + newHqAddress.street + " " + newHqAddress.street_number }}</h3>
           </div>
@@ -225,6 +225,8 @@
       <div v-for="(konatelDiv, index ) in konateliaFromOrSr" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.name }}</h3>
+          <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.street + " " + konatelDiv.number }}</h3>
+          <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.zip }} {{ konatelDiv.city }}</h3>
           <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index]) && !checkCanceled(newKonateliaList[index])">
             <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>            
             <h4 class="text-base">{{ newKonateliaList[index]?.city }}, {{ newKonateliaList[index]?.street }} {{ newKonateliaList[index]?.street_number }}/{{ newKonateliaList[index]?.street_number2 }}, {{ newKonateliaList[index]?.psc }}</h4>
@@ -380,8 +382,8 @@
           <div>
             <span>{{ vyskyVkladovFromOrSr[index].splatene }} {{ vyskyVkladovFromOrSr[index].currency }} {{ calculatePercentageAtIndex(index) }}%</span>
             <ProgressBar :progress="calculatePercentageAtIndex(index)" />
-            <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="flex flex-row border-t border-b border-gray-600 py-1 my-4">
-              {{ newSharesTransfersList[index]?.sharesFrom.name }} <CurrencyEuroIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.amountOfTransfer }} {{ newSharesTransfersList[index]?.currency }} <ArrowRightCircleIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.sharesTo.name }}
+            <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="flex flex-col items-center border-t space-y-2 border-b border-gray-600 py-2 my-4">
+              {{ newSharesTransfersList[index]?.sharesFrom.name }} <CurrencyEuroIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.amountOfTransfer }} {{ newSharesTransfersList[index]?.currency }} <ArrowDownCircleIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.sharesTo.name }}
               <button v-if="newSharesTransfersList[index]">
                 <Tippy>
                   <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('shares', index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -578,13 +580,22 @@
     </EditItemForCompany>
     <EditItemForCompany title="Spôsob konania konateľov">
       <div class="grid grid-cols-2 items-center">
+        <!-- <div>Selected {{sposob_konania_konatelov_selected}} | Come from server and select {{ sposob_konania_konatelov }}</div> -->
         <div>
-          <h3 v-bind:class="{ 'text-cross': [1, 2, 3].includes(sposob_konania_konatelov_selected) }" class="text-lg">{{ companyFromOrSr.konanie_menom_spolocnosti }}</h3>
-          <h3 class="text-lg font-bold">{{ sposoby_konania_konatelov_options[sposob_konania_konatelov -1 ]?.label }}</h3>
+          <h3 v-bind:class="{ 'text-cross': sposob_konania_konatelov_selected > 0 }" class="text-lg">{{ companyFromOrSr.konanie_menom_spolocnosti }}</h3>
+          <h3 v-if="sposob_konania_konatelov_selected > 0" class="text-lg font-bold">{{ sposoby_konania_konatelov_options[sposob_konania_konatelov -1 ]?.label }}</h3>
           <h3 v-if="sposob_konania_konatelov_selected == 3" class="text-lg font-bold">{{ sposob_konania_konatelov_ine }}</h3>
         </div>
-        <div>
+        <div class="flex flex-row items-center">
           <button @click.prevent="openEditSposobKonania" class="bg-bizinix-teal p-2 rounded">Zmeniť</button>
+          <button v-if="sposob_konania_konatelov_selected > 0">
+            <Tippy>
+              <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('konanie')" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+              <template #content>
+                Vrátiť zmeny späť
+              </template>
+            </Tippy>
+          </button>
         </div>
       </div>
       <VueFinalModal
@@ -666,7 +677,7 @@
         <button @click.prevent="openChangeZakladneImanie" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje</button>
       </div>
       <div class="flex flex-row mt-3" v-for="(zakladneImanie, index) in newZakladneImanie" :key="index">
-        <div v-if="zakladneImanie.change_for">{{ zakladneImanie.change_for }} {{ zakladneImanie.operation }} {{ zakladneImanie.value }} €</div> <button v-if="zakladneImanie.change_for" class="ml-4" @click.prevent="() => newZakladneImanie.splice(index, 1)">Zrušiť</button>
+        <div v-if="zakladneImanie.change_for">{{ zakladneImanie.change_for }} {{ zakladneImanie.operation }} {{ zakladneImanie.value }} €</div> <button v-if="zakladneImanie.change_for" class="bg-bizinix-teal px-4 py-1 rounded ml-4" @click.prevent="() => newZakladneImanie.splice(index, 1)">Zrušiť</button>
       </div>
       <VueFinalModal
         :modal-id="modalIdChangeZakladneImanie"
@@ -722,20 +733,22 @@
       </VueFinalModal>   
     </EditItemForCompany>
     <EditItemForCompany title="Prokurista">
-      <button v-if="newProkuristaList.length">
-        <Tippy>
-          <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('prokurista')" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
-          <template #content>
-            Vrátiť zmeny späť
-          </template>
-        </Tippy>
-      </button>
       <div v-for="(prokurista, index ) in newProkuristaList" :key="index" class="">
         <h3 class="text-lg font-bold">{{ prokurista.title_before + " " + prokurista.first_name + " " + prokurista.last_name + " " +  prokurista.title_after }}</h3>            
         <h4 class="text-base">{{ prokurista?.city }}, {{ prokurista?.street }} {{ prokurista?.street_number }}/{{ prokurista?.street_number2 }}, {{ prokurista?.psc }}</h4>
         <h4 class="text-base">{{ prokurista?.country }} </h4>        
       </div>
-      <button @click.prevent="openAddProkurista()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať prokuristu</button>
+      <div class="flex mt-4 space-x-4 items-center align-middle">
+        <button @click.prevent="openAddProkurista()" class="bg-bizinix-teal p-2 rounded">+ Pridať prokuristu</button>
+        <button v-if="newProkuristaList.length > 0">
+          <Tippy>
+            <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('prokurista')" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+            <template #content>
+              Vrátiť zmeny späť
+            </template>
+          </Tippy>
+        </button>
+      </div>
       <!-- Edit Prokurista -->
       <VueFinalModal
           :modal-id="modalIdAddOrEditProkurista"
@@ -859,7 +872,7 @@ import VirtualHqSlider from '@/components/VirtualHqSlider.vue'
 import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import { Tippy } from "vue-tippy";
 import 'tippy.js/dist/tippy.css' // optional for styling
-import { ReceiptRefundIcon, ArrowRightCircleIcon, CurrencyEuroIcon } from '@heroicons/vue/24/outline'
+import { ReceiptRefundIcon, ArrowRightCircleIcon, ArrowDownCircleIcon, CurrencyEuroIcon } from '@heroicons/vue/24/outline'
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 import ProgressBar from '@/components/ProgressBar.vue';
 import type KonatelFromOrSr from '@/types/FromOrSrParser/KonatelFromOrSr';
@@ -916,7 +929,7 @@ let newZakladneImanie = ref([
 ]);
 
 let sposob_konania_konatelov = ref()
-let sposob_konania_konatelov_selected = ref()
+let sposob_konania_konatelov_selected = ref(0)
 let sposob_konania_konatelov_ine = ref()
 let sposoby_konania_konatelov_options  = ref([
   { label: 'V mene spoločnosti koná a podpisuje každý konateľ samostatne', value: '1' },
@@ -1373,6 +1386,16 @@ function submitReturnChangeBack(modalName: string){
       })
       break;
     }
+    case 'konanie': {
+      vfm.close(modalIdReturnChangeBack)?.then(() => {
+        if(companyFromOrSr.value.konanie_menom_spolocnosti.includes("podpis")){
+          sposob_konania_konatelov.value = 3;    
+          sposob_konania_konatelov_ine.value = companyFromOrSr.value.konanie_menom_spolocnosti;    
+        } 
+        sposob_konania_konatelov_selected.value = 0;                
+      })
+      break;
+    }
     case 'prokurista': {
       vfm.close(modalIdReturnChangeBack)?.then(() => {
         newProkuristaList.value.length = 0;
@@ -1566,10 +1589,10 @@ function closeModalSpolocnik(){
 
 //#region sposob konania
 function openEditSposobKonania() {
-  if(sposob_konania_konatelov_selected.value){
+  if(sposob_konania_konatelov_selected.value > 0){
     sposob_konania_konatelov.value = sposob_konania_konatelov_selected.value
   }
-  else if(companyFromOrSr.value.konanie_menom_spolocnosti.includes("podpis")){
+  if(companyFromOrSr.value.konanie_menom_spolocnosti.includes("podpis")){
     sposob_konania_konatelov.value = 3;    
     sposob_konania_konatelov_ine.value = companyFromOrSr.value.konanie_menom_spolocnosti;    
   } else {
@@ -1587,7 +1610,7 @@ function closeModalAndSubmitEditSposobKonania(){
 
 function cancelModalEditSposobKonanie(){
   vfm.closeAll().then(() => {
-    if(sposob_konania_konatelov_selected.value){
+    if(sposob_konania_konatelov_selected.value > 0){
       sposob_konania_konatelov.value = sposob_konania_konatelov_selected.value
     } else {
       sposob_konania_konatelov_selected.value = 0;             
