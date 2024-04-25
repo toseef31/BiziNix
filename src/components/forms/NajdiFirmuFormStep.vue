@@ -664,12 +664,11 @@
         </div>
       </template>
     </FormKit>
-      <div class="grid gap-4 grid-cols-[80%_20%] border border-gray-800" v-for="(subject, index) in sbj">
+      <div class="grid gap-4 grid-cols-[80%_20%] border border-gray-800" v-for="(subject, index) in sbjOld">
         <div :class="{ 'text-cross': checkIfSbjIsRemoved(subject.description) }" class="p-2">{{subject.description}}</div>
         <button v-if="!checkIfSbjIsRemoved(subject.description)" @click.prevent="removeOldSbj(subject.description)" class="bg-bizinix-teal px-3 py-2 rounded max-w-32">Odobrať</button>
         <button v-if="checkIfSbjIsRemoved(subject.description)" @click.prevent="addSbjBack(subject.description)" class="bg-bizinix-teal p-2 rounded max-w-32">Pridať</button>
       </div>
-      <!-- <button @click.prevent="callgetSubjectOfBusinness">Call func</button> -->
     </EditItemForCompany>
     <EditItemForCompany title="Základné imanie">
       <div class="flex items-center space-x-4">
@@ -942,7 +941,7 @@ let newCompanyFullName = reactive({
   newCompanyPravForm: ''
 })
 
-let sbj = ref([]);
+let sbjOld = ref([]);
 let sbj_old_removed = ref<string[]>([]);
   
 let konatelIndex: number;
@@ -1064,12 +1063,6 @@ async function search({ search }: any) {
     toast.error('Error: ' + err);
     return [];
   }
-}
-
-async function callgetSubjectOfBusinness(){
-  let ico = 45633461;
-  const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", ico);
-  console.log(res);
 }
 
 const konateliaFromOrSr = computed<KonatelFromOrSr[]>(() => {
@@ -1854,7 +1847,7 @@ const { calculatePriceForBusinessOfcategories, finalPriceForBusinessCategori }  
 watch(() => companyFromOrSr.value?.ico, async (newValue, oldValue) => {
     if (newValue) {
       const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
-      sbj.value = res;
+      sbjOld.value = res;
       console.log(`New ICO value: ${newValue}`);
     }
   }
@@ -1866,7 +1859,7 @@ function removeOldSbj(subject: string){
 
 function checkIfSbjIsRemoved(sbjName: string){
   if(sbj_old_removed.value.includes(sbjName)){
-    let index = sbj.value.indexOf(sbjName);
+    let index = sbjOld.value.indexOf(sbjName);
     if(index = -1){
       return true;
     } else {
@@ -1889,6 +1882,7 @@ defineExpose({
   newlyAddedKonatelList,
   newlyAddedSpolocnikList,
   obchodneSidloVirtuOrNormal, // if virtual then select from store
+  sbjOld,
   newHqAddress,
   headquarterInfo,
   selectedVhqFromStore,

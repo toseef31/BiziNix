@@ -109,6 +109,7 @@ import { toast } from "vue3-toastify";
 import type CompanyMemberKonatel from "@/types/CompanyMemberKonatel";
 import type CompanyMemberSpolocnik from "@/types/CompanyMemberSpolocnik";
 import type SharesTransfers from "@/types/editCompany/SharesTransfers";
+import type Company from "@/types/Company";
 
 const searchFormDiv = ref();
 const scrollToDiv = () => {
@@ -194,6 +195,7 @@ interface VyskaVkladu {
 let order = ref({
   payment_date: '' as any,
   payment_method: '',
+  company_id: 0,
   order_type: 'cupdate',
   description: '',
   amount: 0, // final cena s dph
@@ -312,6 +314,101 @@ async function registerUserAndReturnUserId(user: User): Promise<any> {
   }
 }
 
+async function registerHqAddress(): Promise<any> {
+
+    let hqAddress: Address = {
+      street: "",
+      street_number: "",
+      street_number2: "",
+      city: "",
+      psc: "",
+      country: ""
+    }
+    hqAddress.street = najdiFirmuForm.value.companyFromOrSr?.adresa.street
+    hqAddress.street_number = najdiFirmuForm.value.companyFromOrSr?.adresa.number
+    hqAddress.city = najdiFirmuForm.value.companyFromOrSr?.adresa.city
+    hqAddress.psc = najdiFirmuForm.value.companyFromOrSr?.adresa.zip
+    hqAddress.country = najdiFirmuForm.value.companyFromOrSr?.adresa.country || 'Slovensko'
+
+  try {
+    const res = await store.dispatch('registerAddress', hqAddress);
+    console.log("Registering HQ address: " + JSON.stringify(res));
+    return res;
+  }
+  catch (err: any) {
+    if (err.response && err.response.data && err.response.data.errors) {
+      errorMsg.value = JSON.stringify(err.response.data.errors);
+    } else {
+      errorMsg.value = 'Nastala chyba pri registrácii HQ adresy.';
+    }
+  }
+}
+
+async function addHeadquarter(hqAddressId: any): Promise<any> {
+
+  let headquarterData = {
+    address_id: hqAddressId,
+    name: "Sidlo pre spoločnosť " + najdiFirmuForm.value.companyFromOrSr?.obchodne_meno + " zmena spoločnosti",
+    description: "Sidlo pre spoločnosť " + najdiFirmuForm.value.companyFromOrSr?.obchodne_meno + " zmena spoločnosti",
+    owner_name: najdiFirmuForm.value.companyFromOrSr?.obchodne_meno,
+    headquarters_type: 1,
+    forwarding: false,
+    registry: false,
+    scanning: false,
+    shredding: false,
+    img: '',
+    is_virtual: false,
+    price: 0
+  } as Headquarters;
+
+  try {
+    const res = await store.dispatch('addHeadquarter', headquarterData);
+    console.log("Adding HQ: " + JSON.stringify(res));
+    return res.headquarters;
+  } catch (err: any) {
+    console.log(err.response?.data?.errors);
+    errorMsg.value = JSON.stringify(err.response?.data?.errors);
+  }
+}
+
+async function addCompany(userId: any, hqId: any): Promise<any> {
+
+  let oldSbj: Company['subjects_of_business'] = [{ id: 0, title:'', price: 0, category_id: 0, description: '' }];
+  najdiFirmuForm.value.sbjOld.forEach((sbj, index: number) => {
+    oldSbj.push({
+      title: sbj.description,
+      id: 0,
+      price: 0,
+      category_id: 0,
+      description: '',
+    })
+  })
+
+  const companyOrZivnostModelData = {
+    name: najdiFirmuForm.value.companyFromOrSr?.obchodne_meno,
+    type: 1,
+    status: 1,
+    sub_status: null,
+    owner: userId,
+    headquarters_id: hqId,
+    doc_sncounter_id: 1,
+    doc_template_id: 1,
+    imanie_vyska: najdiFirmuForm.value.zakladneImanieFromOrSr.imanie,
+    imanie_splatene: najdiFirmuForm.value.zakladneImanieFromOrSr.splatene,
+    konecny_uzivatelia_vyhod: null,
+    sposob_konania_konatelov: null,
+    subjects_of_business: oldSbj,
+    skk_details: najdiFirmuForm.value.companyFromOrSr?.konanie_menom_spolocnosti // sposob konania konatelov
+};
+
+try {
+  const res = await store.dispatch('addCompany', companyOrZivnostModelData);
+  console.log("Adding company: " + JSON.stringify(res));
+  return res;
+} catch (err) {
+  toast.error('Error: ' + err);
+}
+}
 
 async function registerInvoiceAddress(invoiceAddress: Address) {
   try {
@@ -346,10 +443,11 @@ async function addInvoiceProfile(invoiceAddressId, userId) {
     })
 }
 
-async function addOrder(userId: number, invoiceAddressId?: number): Promise<any> {
+async function addOrder(userId: number, invoiceAddressId?: number, companyId: number): Promise<any> {
   order.value.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   order.value.payment_method = invoiceDataForm.value.paymentOptions
   order.value.user_id = userId
+  order.value.company_id = companyId
   order.value.description = 'Úprava firmy.'
 
   if(najdiFirmuForm.value.obchodneSidloVirtuOrNormal === 'virtualne'){
@@ -359,17 +457,19 @@ async function addOrder(userId: number, invoiceAddressId?: number): Promise<any>
       price_vat: 0 * 0.2,
     })
     order.value.items.push({
-        description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name + ' na rok',
+        description: 'Virtual balík: ' + selectedVhqPackageFromStore.value.name,
         price: selectedVhqPackageFromStore.value.price * 12,
         price_vat: (selectedVhqPackageFromStore.value.price * 12) * 0.2,
       })
   }
 
-  order.value.items.push({
-    description: 'Počet predmetov podnikania: ' + najdiFirmuForm.value.subjects_of_business_new.length,
-    price: najdiFirmuForm?.value.finalPriceForBusinessCategori,
-    price_vat: (najdiFirmuForm?.value.finalPriceForBusinessCategori) * 0.2
-  })
+  if(najdiFirmuForm.value.subjects_of_business_new.length > 0){
+    order.value.items.push({
+      description: 'Počet predmetov podnikania: ' + najdiFirmuForm.value.subjects_of_business_new.length,
+      price: najdiFirmuForm?.value.finalPriceForBusinessCategori,
+      price_vat: (najdiFirmuForm?.value.finalPriceForBusinessCategori) * 0.2
+    })
+  }
 
   // najdiFirmuForm.value.subjects_of_business_new.forEach(element => {
   //   order.value.items.push({
@@ -455,6 +555,10 @@ const newSustmiApp = async (formdata: any, node: any) => {
       userId = userIdFromStore.value
     }
 
+    const hqAddressRes = await registerHqAddress();
+    const regHqRes = await addHeadquarter(hqAddressRes.address_id);
+    const companyRes = await addCompany(userId, regHqRes.id);
+
     let invoiceProfileId: number;
     if(invoiceDataForm.value.createNewInvoiceProfile){
       let invoiceAddressRes: any;
@@ -471,8 +575,8 @@ const newSustmiApp = async (formdata: any, node: any) => {
     else {
       invoiceProfileId = invoiceDataForm.value.invoiceProfileId
     }
-    console.log("Invoice profile ID is: ", invoiceProfileId)
-    const orderRes = await addOrder(userId, invoiceProfileId)
+    console.log("Invoice profile ID is: ", invoiceProfileId);
+    const orderRes = await addOrder(userId, invoiceProfileId, companyRes.data.company.id);
     await addUpdatedCompany(orderRes.id, userId);
         
     if(orderRes.id){
