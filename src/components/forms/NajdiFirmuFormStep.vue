@@ -382,17 +382,6 @@
           <div>
             <span>{{ vyskyVkladovFromOrSr[index].splatene }} {{ vyskyVkladovFromOrSr[index].currency }} {{ calculatePercentageAtIndex(index) }}%</span>
             <ProgressBar :progress="calculatePercentageAtIndex(index)" />
-            <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="flex flex-col items-center border-t space-y-2 border-b border-gray-600 py-2 my-4">
-              {{ newSharesTransfersList[index]?.sharesFrom.name }} <CurrencyEuroIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.amountOfTransfer }} {{ newSharesTransfersList[index]?.currency }} <ArrowDownCircleIcon class="w-6 mx-2"/> {{ newSharesTransfersList[index]?.sharesTo.name }}
-              <button v-if="newSharesTransfersList[index]">
-                <Tippy>
-                  <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('shares', index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
-                  <template #content>
-                    Vrátiť zmeny späť
-                  </template>
-                </Tippy>
-              </button>
-            </div>
             <h3 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-lg">{{ spolocnikDiv.name }}</h3>
             <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.street }} {{ spolocnikDiv.number }}</h4>
             <h4 :class="{ 'text-cross': checkHasChange(newSpolocnikList[index]) }" class="text-base">{{ spolocnikDiv.city }}</h4>
@@ -419,7 +408,20 @@
                   </Tippy>
                 </button>
               </div>
-              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>            
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>
+              <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="border-t space-y-2 border-b border-gray-600 py-2 my-4">                
+                {{ newSharesTransfersList[index]?.sharesFrom.name }} prevádza <b>{{ newSharesTransfersList[index]?.amountOfTransfer + ' EUR' }}</b> na <span>{{ newSharesTransfersList[index]?.sharesTo.name }}</span>.
+                Cena za prevod obch. podielu <b>{{ newSharesTransfersList[index]?.priceForTransfer +' ' + newSharesTransfersList[index]?.currency }}.</b>
+                <br>
+                <button v-if="newSharesTransfersList[index]">
+                  <Tippy>
+                    <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('shares', index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
+                    <template #content>
+                      Vrátiť zmeny späť
+                    </template>
+                  </Tippy>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -427,8 +429,8 @@
       <!-- New added spolicnici -->
       <div v-if="newlyAddedSpolocnikList.length" v-for="(newSpolocnik, index ) in newlyAddedSpolocnikList" :key="index" class="grid grid-cols-2 items-center space-y-4 mt-4">
         <div>
-          <span>{{ newSpolocnik.rozsah_splatenia_vkladu }} {{ calculatePercentageAtIndex(index) }}%</span>
-          <ProgressBar :progress="calculatePercentageAtIndex(index)" />
+          <span>{{ newSpolocnik.rozsah_splatenia_vkladu }} {{ calculatePercentageAtIndexForNewlyAddedSpolocnik(index) }}%</span>
+          <ProgressBar :progress="calculatePercentageAtIndexForNewlyAddedSpolocnik(index)" />
           <h3 class="text-lg font-bold">{{ (newSpolocnik.title_before || '') + " " + (newSpolocnik.first_name || '') + " " + (newSpolocnik.last_name || '') + " " +  (newSpolocnik.title_after || '') }} {{ newSpolocnik.obchodne_meno || '' }}</h3>
           <h4 class="text-base">{{ newSpolocnik.city || '' }}, {{ newSpolocnik.street || '' }} {{ newSpolocnik.street_number || '' }}/{{ newSpolocnik.street_number2 || '' }}, {{ newSpolocnik.psc || '' }}</h4>
           <h4 class="text-base">{{ newSpolocnik.country || '' }} </h4>
@@ -480,10 +482,12 @@
               :actions="false"
               v-model="spolocnik"
             >
+            <div class="text-white">{{spolocnik}}</div>
               <!-- Prevod podielu -->
               <div class="text-white" v-if="isPrevodPodielu">
                 Spolocnik index {{ spolocnikIndex }}<br>
                 Selected nabodudatel {{ selectedNadobudatel }}<br>
+                Share transfer list {{ newSharesTransfersList }}<br>
                 <br><div>{{ nadobudatelia }}</div>
                 <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
                   :options="nadobudatelia"                
@@ -492,14 +496,15 @@
               <div v-if="addOperationSpolocnik">
                 <div class="text-white my-4">Nový spoločník preberá vklad do základného imania spoločnosti vo výške</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <FormKit type="number" name="vyska_vkladu" label="Výška vkladu" validation="required|min:750" />
-                  <FormKit type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti" validation="required" />
-                  <FormKit type="number" name="rozsah_splatenia_vkladu" label="Rozsah splatenia vkladu" validation="required|min:750" />
+                  <FormKit type="number" name="vyska_vkladu" @change="calculatePodielSpolocnostiForCurrentSpolocnik" label="Výška vkladu" validation="required|min:750" />
+                  <FormKit readonly type="number" name="podiel_v_spolocnosti" label="Podiel v spoločnosti" validation="required|min:0|max:100" />
+                  <FormKit type="number" name="rozsah_splatenia_vkladu" v-model="spolocnik.vyska_vkladu" label="Rozsah splatenia vkladu" :validation-rules="{ maxVyskaVkladu }" validation="required|min:750|maxVyskaVkladu" :validation-messages="{ maxVyskaVkladu: 'Rozsah splatenia vkladu nemôže byť väčší ako výška vkladu.' }" />
                 </div>
               </div>
               <div v-if="selectedNadobudatel == 'Iná osoba' || !isPrevodPodielu">
                 <FormKit type="select" name="typ_zakladatela"
-                label="Typ zakladateľa"
+                label="Novým spoločníkom v spoločnosti bude"
+                placeholder="Vybrať"
                 :options="[
                   { value: 1, label: 'Fyzická osoba' },
                   { value: 2, label: 'Právnicka osoba' }
@@ -508,7 +513,7 @@
               />
                 <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
                   <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
-                  <FormKit type="text" name="ico" label="IČO" />
+                  <FormKit type="text" name="ico" label="IČO" validation="required" />
                 </div>
                 <div v-if="value.typ_zakladatela != 2" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <FormKit type="text" name="first_name" label="Krstné meno" validation="required|length:2" />
@@ -520,10 +525,7 @@
                   />
                   <FormKit type="text" name="title_before" label="Titul pred menom" />
                   <FormKit type="text" name="title_after" label="Titul za menom" />
-                  <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-                    validation="required|length:9"
-                    validation-visibility="blur"
-                    />
+                  <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo" validation="required|length:9" />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
@@ -546,7 +548,7 @@
                   <FormKit type="text" v-model="prevodPodieluFromTo.amount" label="Čast podielu v EUR" />
                 </div>
                 <div class="flex flex-row space-x-4">
-                  <FormKit type="text" v-model="prevodPodieluFromTo.priceForTransfer" label="Cena za prevod obch. podielu" validation="required" />
+                  <FormKit type="text" v-model="prevodPodieluFromTo.priceForTransfer" name="priceForTransfer" label="Cena za prevod obch. podielu" validation="required" />
                   <FormKit
                     type="select"
                     label="Mena"
@@ -974,7 +976,7 @@ let prokurista = ref(konatelObject);
 let spolocnikIndex: number;
 let spolocnikObject: CompanyMemberSpolocnik = {
   company_id: null,
-  typ_zakladatela: '',
+  typ_zakladatela: 1,
   first_name: '',
   last_name: '',
   title_before: '',
@@ -1151,19 +1153,45 @@ const calculatePercentages = () => {
   });
 };
 
-const calculatePercentageAtIndex = (index: number) => {
+const zakladneImanieFromNewAddedSpolocnik = computed(() => {
+  let totalNewlyAddedImanie = newlyAddedSpolocnikList.value.reduce((total, item) => total + Number(item.rozsah_splatenia_vkladu || 0), 0);
+  return totalNewlyAddedImanie;
+})
+
+const calculatePercentageAtIndex = computed(() => (index: number) => {
   const item = vyskyVkladovFromOrSr.value[index];
   if (item.vklad === zakladneImanieFromOrSr.value.splatene) {
     return 100;
   } else if (zakladneImanieFromOrSr.value.splatene !== 0) {
-    let percentage = (item.vklad / zakladneImanieFromOrSr.value.splatene) * 100;
+    let percentage = (item.vklad / (zakladneImanieFromOrSr.value.splatene + zakladneImanieFromNewAddedSpolocnik.value)) * 100;
     return Math.round(percentage);
   } else {
     // Handle the case when zakladneImanieFromOrSr.value.splatene is zero
     // You can return a specific value or throw an error
     return 0; // or throw new Error("Division by zero");
   }
-};
+});
+
+const calculatePercentageAtIndexForNewlyAddedSpolocnik = computed(() => (index: number) => {
+  const item = newlyAddedSpolocnikList.value[index].vyska_vkladu;
+  if (item === zakladneImanieFromOrSr.value.splatene) {
+    return 100;
+  } else if (zakladneImanieFromOrSr.value.splatene !== 0) {
+    let percentage = (item as number / (zakladneImanieFromOrSr.value.splatene + zakladneImanieFromNewAddedSpolocnik.value)) * 100;
+    return Math.round(percentage);
+  } else {
+    // Handle the case when zakladneImanieFromOrSr.value.splatene is zero
+    // You can return a specific value or throw an error
+    return 0; // or throw new Error("Division by zero");
+  }
+});
+
+function calculatePodielSpolocnostiForCurrentSpolocnik(){
+  console.log("Celkove splatene imanie from OrSr: ", zakladneImanieFromOrSr.value.splatene);
+  console.log("Curret spolocnik vyska vkladu: ", spolocnik.value.vyska_vkladu);
+  console.log("Curret spolocnik podiel: ", spolocnik.value.podiel_v_spolocnosti);
+  spolocnik.value.podiel_v_spolocnosti = Math.round((spolocnik.value.vyska_vkladu as number / (zakladneImanieFromOrSr.value.splatene + Number(spolocnik.value.vyska_vkladu))) * 100);
+}
 
 //#region company name
 function openEditCompanyName() {
@@ -1485,7 +1513,7 @@ function openPreviestPodielSpolocnika(index: number){
       prevodPodieluFromTo.value.amount = '';
       prevodPodieluFromTo.value.priceForTransfer = '';
     }
-    else if(newSharesTransfersList.value.length > 0) {    
+    else if(newSharesTransfersList.value[number]) {    
       mnozstvoPodielu.value = newSharesTransfersList.value[index]?.transferType, // full or partial
       prevodPodieluFromTo.value.amount = newSharesTransfersList.value[index]?.amountOfTransfer
       prevodPodieluFromTo.value.priceForTransfer = newSharesTransfersList.value[index]?.priceForTransfer
@@ -1521,7 +1549,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         value: spolocnik.value.rozsah_splatenia_vkladu as number
       })
     }
-    else if(isPrevodPodielu){
+    else if(isPrevodPodielu){            
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
       newSharesTransfersList.value.length = vyskyVkladovFromOrSr.value.length;
       newSharesTransfersList.value.splice(spolocnikIndex, 1, {
@@ -1534,8 +1562,8 @@ function closeModalAndSubmitOrEditSpolocnik(){
           psc: spolocniciFromOrSr.value[spolocnikIndex].zip as string,
         },
         sharesTo: {
-          typOsoby: spolocnik.value.typ_zakladatela as string,          
-          name: selectedNadobudatel.value.name || ((spolocnik.value.first_name + " " + spolocnik.value.last_name)),
+          typOsoby: spolocnik.value.typ_zakladatela as number | string,          
+          name: selectedNadobudatel.value.name || (spolocnik.value.first_name && spolocnik.value.last_name ? spolocnik.value.first_name + " " + spolocnik.value.last_name : spolocnik.value.obchodne_meno),
           obchodne_meno: spolocnik.value.obchodne_meno,
           ico: spolocnik.value.ico,
           city: spolocnik.value.city || selectedNadobudatel.value.city,
@@ -1872,6 +1900,24 @@ function addSbjBack(sbjName: string){
   let index = sbj_old_removed.value.indexOf(sbjName);
   sbj_old_removed.value.splice(index, 1);
   console.log(sbj_old_removed.value)
+}
+
+function maxVyskaVkladu(node: any){
+  console.log(node.value)
+  if(node.value > Number(spolocnik.value.vyska_vkladu)){
+    return false
+  }
+  else {
+    return true
+  }
+}
+
+function getTypOsoby(name: string){
+  if(name.includes('s. r.')) {
+    return 2
+  } else {
+    return 1
+  }
 }
 
 defineExpose({
