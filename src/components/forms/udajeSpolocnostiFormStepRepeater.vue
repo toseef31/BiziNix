@@ -67,8 +67,8 @@
         <FormKit type="text" name="city" label="Mesto" validation="required" />
         <FormKit type="text" name="psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" label="Ulica" validation="required" />
-        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
       </div>
       <div>
         <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -217,8 +217,8 @@
         <FormKit type="text" name="city" label="Mesto" validation="required" />
         <FormKit type="text" name="psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" label="Ulica" validation="required" />
-        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
       </div>
       <!-- <div class="text-white">Rod. cislo: {{ rodneCislo.cislo }}</div> -->
       <!-- <div v-if="!valid" class="text-red-700 p-1 text-center text-lg rounded font-bold bg-red-50 mb-4">

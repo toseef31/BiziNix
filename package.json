@@ -33,7 +33,7 @@
     "moment": "^2.29.4",
     "pinia": "^2.1.6",
     "vee-validate": "^4.11.7",
-    "vue": "^3.4.21",
+    "vue": "^3.4.26",
     "vue-chart-3": "^3.1.8",
     "vue-final-modal": "^4.5.3",
     "vue-horizontal": "^1.0.2",

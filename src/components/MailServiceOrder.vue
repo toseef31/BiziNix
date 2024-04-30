@@ -13,10 +13,10 @@
                     :value="userAddress.street" />
                 <div class="flex flex-row">
                     <FormKit type="text" name="street_number" label="Súpisne číslo" validation="required"
-                        v-model="userAddress.street_number" :value="userAddress.street_number" />
+                        v-model="userAddress.street_number" :value="userAddress.street_number" help="Číslo pred lomítkom" />
                     <div class="py-6 px-4">/</div>
                     <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="required"
-                        v-model="userAddress.street_number2" :value="userAddress.street_number2" />
+                        v-model="userAddress.street_number2" :value="userAddress.street_number2" help="Číslo za lomítkom" />
                 </div>
                 <FormKit type="text" name="city" label="Mesto" validation="required" v-model="userAddress.city"
                     :value="userAddress.city" />

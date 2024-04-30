@@ -185,13 +185,13 @@
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                   <label for="street-number-1" class="block text-sm font-medium text-gray-700">Súpisné číslo</label>
-                  <Field type="text" rules="required" v-model="userAddress.street_number" name="street-number-1" id="street-number-1" autocomplete="street-number-1" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" rules="required" v-model="userAddress.street_number" help="Číslo pred lomítkom" name="street-number-1" id="street-number-1" autocomplete="street-number-1" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <ErrorMessage name="street-number-1" />
                 </div>
 
                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                   <label for="street-number-2" class="block text-sm font-medium text-gray-700">Orientačné číslo</label>
-                  <Field type="text" rules="required" v-model="userAddress.street_number2" name="street-number-2" id="street-number-2" autocomplete="street-number-2" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  <Field type="text" rules="required" v-model="userAddress.street_number2" help="Číslo za lomítkom" name="street-number-2" id="street-number-2" autocomplete="street-number-2" class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   <ErrorMessage name="street-number-2" />
                 </div>
 

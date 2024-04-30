@@ -228,14 +228,14 @@
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.street + " " + konatelDiv.number }}</h3>
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.zip }} {{ konatelDiv.city }}</h3>
           <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index]) && !checkCanceled(newKonateliaList[index])">
-            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>            
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }}</h3>            
             <h4 class="text-base">{{ newKonateliaList[index]?.city }}, {{ newKonateliaList[index]?.street }} {{ newKonateliaList[index]?.street_number }}/{{ newKonateliaList[index]?.street_number2 }}, {{ newKonateliaList[index]?.psc }}</h4>
             <h4 class="text-base">{{ newKonateliaList[index]?.country }} </h4>
           </div>  
         </div>
         <div class="flex space-x-4">
-          <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
-          <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
+          <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
+          <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
           <button v-if="checkHasChange(newKonateliaList[index])">
             <Tippy>
               <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('konatelia', index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -245,14 +245,15 @@
             </Tippy>
           </button>
         </div> 
-      </div>
+      </div>      
+      <div class="my-2 border border-gray-700"></div>
       <div v-if="newlyAddedKonatelList.length" v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
           <h3 :index="index" class="text-lg">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.first_name }} {{ newlyAddedKonatel.last_name }} {{ newlyAddedKonatel.title_after }}</h3> 
           <h4 :index="index" class="text-base">{{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
         <div class="flex space-x-4">
-          <button @click.prevent="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
+          <button @click.prevent="deleteNewKonatel(index)" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
         </div>
       </div>
       <button @click.prevent="openAddKonatel()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať konateľa</button>
@@ -268,7 +269,7 @@
         >
         <div v-if="!addOperationKonatel">
           <h3 class="text-white text-2xl">Zmeniť osobné údaje konateľa</h3>
-          <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
+          <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra.</p>
           <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
         </div>        
         <div v-else>
@@ -296,16 +297,14 @@
             />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
-            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-              validation="required|length:9"
-              validation-visibility="blur" />
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo" validation="required|length:9" />
             <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
               :options="['Slovenská republika', 'Česká republika']" validation="required" />
             <FormKit type="text" name="city" label="Mesto" validation="required" />
             <FormKit type="text" name="psc" label="PSČ" validation="required" />
             <FormKit type="text" name="street" label="Ulica" validation="required" />
-            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
             <FormKit v-if="addOperationKonatel" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
           </div>
             <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
@@ -398,7 +397,7 @@
             </div>  
             <div class="flex flex-col mt-2 space-y-4">
               <div class="flex flex-row">
-                <button @click.prevent="openEditSpolocnik(index)" class="w-full bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
+                <button @click.prevent="openEditSpolocnik(index)" class="w-full bg-transparent border-bizinix-border border-2 p-2 rounded">Zmeniť údaje {{ index }}</button>
                 <button v-if="checkHasChange(newSpolocnikList[index])">
                   <Tippy>
                     <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -408,7 +407,7 @@
                   </Tippy>
                 </button>
               </div>
-              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="border-bizinix-border border-2 p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>
               <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="border-t space-y-2 border-b border-gray-600 py-2 my-4">                
                 {{ newSharesTransfersList[index]?.sharesFrom.name }} prevádza <b>{{ newSharesTransfersList[index]?.amountOfTransfer + ' EUR' }}</b> na <span>{{ newSharesTransfersList[index]?.sharesTo.name }}</span>.
                 Cena za prevod obch. podielu <b>{{ newSharesTransfersList[index]?.priceForTransfer +' ' + newSharesTransfersList[index]?.currency }}.</b>
@@ -482,13 +481,15 @@
               :actions="false"
               v-model="spolocnik"
             >
-            <div class="text-white">{{spolocnik}}</div>
+            <!-- <div class="text-white">{{spolocnik}}</div> -->
               <!-- Prevod podielu -->
               <div class="text-white" v-if="isPrevodPodielu">
-                Spolocnik index {{ spolocnikIndex }}<br>
-                Selected nabodudatel {{ selectedNadobudatel }}<br>
-                Share transfer list {{ newSharesTransfersList }}<br>
-                <br><div>{{ nadobudatelia }}</div>
+                <!-- <div>
+                  Spolocnik index {{ spolocnikIndex }}<br>
+                  Selected nabodudatel {{ selectedNadobudatel }}<br>
+                 Share transfer list {{ newSharesTransfersList }}<br>
+                </div>
+                <br><div>{{ nadobudatelia }}</div> -->
                 <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
                   :options="nadobudatelia"                
                 />
@@ -533,8 +534,8 @@
                   <FormKit type="text" name="city" label="Mesto" validation="required" />
                   <FormKit type="text" name="psc" label="PSČ" validation="required" />
                   <FormKit type="text" name="street" label="Ulica" validation="required" />
-                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
                 </div>
               </div>
               <div v-if="isPrevodPodielu">
@@ -785,16 +786,14 @@
             />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
-            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-              validation="required|length:9"
-              validation-visibility="blur" />
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo" validation="required|length:9" />
             <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
               :options="['Slovenská republika', 'Česká republika']" validation="required" />
             <FormKit type="text" name="city" label="Mesto" validation="required" />
             <FormKit type="text" name="psc" label="PSČ" validation="required" />
             <FormKit type="text" name="street" label="Ulica" validation="required" />
-            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
           </div>
           <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
             <button
@@ -943,7 +942,11 @@ let newCompanyFullName = reactive({
   newCompanyPravForm: ''
 })
 
-let sbjOld = ref([]);
+let sbjOld = ref([{
+    description: '',
+    effective_from: '',
+    effective_to: '',
+}]);
 let sbj_old_removed = ref<string[]>([]);
   
 let konatelIndex: number;
@@ -1513,7 +1516,7 @@ function openPreviestPodielSpolocnika(index: number){
       prevodPodieluFromTo.value.amount = '';
       prevodPodieluFromTo.value.priceForTransfer = '';
     }
-    else if(newSharesTransfersList.value[number]) {    
+    else if(newSharesTransfersList.value[index]) {    
       mnozstvoPodielu.value = newSharesTransfersList.value[index]?.transferType, // full or partial
       prevodPodieluFromTo.value.amount = newSharesTransfersList.value[index]?.amountOfTransfer
       prevodPodieluFromTo.value.priceForTransfer = newSharesTransfersList.value[index]?.priceForTransfer
@@ -1887,7 +1890,7 @@ function removeOldSbj(subject: string){
 
 function checkIfSbjIsRemoved(sbjName: string){
   if(sbj_old_removed.value.includes(sbjName)){
-    let index = sbjOld.value.indexOf(sbjName);
+    let index = sbjOld.value.findIndex(sbj => sbj.description === sbjName);
     if(index = -1){
       return true;
     } else {
