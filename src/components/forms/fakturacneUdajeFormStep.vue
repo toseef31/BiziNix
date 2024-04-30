@@ -57,7 +57,7 @@
           />
           <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
           <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
-          <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
+          <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica a číslo" validation="required" />
       </div>
     </div>
   </template>
