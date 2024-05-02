@@ -93,11 +93,11 @@ const companyAddress = computed(
 
 let showAddNewCompany = ref(false);
 const existingInactiveCompany = ref(false);
-const finstatCompany = ref({} as any);
+const finstatCompany = ref();
 const finstatCompanyDetails = ref({} as any);
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
-  if (newFinstatCompany.Spoločnosť !== undefined) {
+  if (newFinstatCompany) {
     getCompanyDetails();
   }
 });
@@ -111,9 +111,9 @@ async function getCompanyDetails() {
     ico: ""
   }
 
-  if (finstatCompany.value.Spoločnosť !== undefined) {
+  if (finstatCompany.value !== undefined) {
     ico = {
-      ico: finstatCompany.value.Spoločnosť.Ico
+      ico: finstatCompany.value.Ico
     }
   }
 

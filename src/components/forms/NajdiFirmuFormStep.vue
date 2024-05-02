@@ -390,7 +390,7 @@
               class="flex flex-row items-center"
             >
               <div>
-                <h3 class="text-lg font-bold">{{ (newSpolocnikList[index]?.title_before || '') + " " + (newSpolocnikList[index]?.first_name || '') + " " + (newSpolocnikList[index]?.last_name || '') + " " +  (newSpolocnikList[index]?.title_after || '') }} {{ newSpolocnikList[index]?.obchodne_meno || '' }} {{ newSpolocnikList[index]?.has_change || '' }}</h3>
+                <h3 class="text-lg font-bold">{{ (newSpolocnikList[index]?.title_before || '') + " " + (newSpolocnikList[index]?.first_name || '') + " " + (newSpolocnikList[index]?.last_name || '') + " " +  (newSpolocnikList[index]?.title_after || '') }} {{ newSpolocnikList[index]?.obchodne_meno || '' }}</h3>
                 <h4 class="text-base">{{ newSpolocnikList[index]?.city || '' }}, {{ newSpolocnikList[index]?.street || '' }} {{ newSpolocnikList[index]?.street_number || '' }}/{{ newSpolocnikList[index]?.street_number2 || '' }}, {{ newSpolocnikList[index]?.psc || '' }}</h4>
                 <h4 class="text-base">{{ newSpolocnikList[index]?.country || '' }} </h4>
               </div>
@@ -513,7 +513,11 @@
                 validation="required"
               />
                 <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
-                  <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
+                  <div v-if="addOperationSpolocnik || isPrevodPodielu" class="flex flex-col">
+                    <label class="formkit-label mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                    <Autocomplete v-model="finstatCompany"></Autocomplete>
+                  </div>                  
+                  <FormKit v-if="!addOperationSpolocnik && !isPrevodPodielu" type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
                   <FormKit type="text" name="ico" label="IČO" validation="required" />
                 </div>
                 <div v-if="value.typ_zakladatela != 2" class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -730,7 +734,7 @@
               Uložiť
             </button>
           </div>
-          <pre wrap>{{ value }}</pre>
+          <!-- <pre wrap>{{ value }}</pre> -->
         </FormKit>    
       </VueFinalModal>   
     </EditItemForCompany>
@@ -882,6 +886,7 @@ import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
+import Autocomplete from "@/components/Autocomplete.vue";
 
 // defineProps<{
 //   indexKonatel: number
@@ -976,6 +981,7 @@ let konatelObject: CompanyMemberKonatel = {
 let konatel = ref(konatelObject);
 let prokurista = ref(konatelObject);
 
+const finstatCompany = ref();
 let spolocnikIndex: number;
 let spolocnikObject: CompanyMemberSpolocnik = {
   company_id: null,
@@ -1473,6 +1479,7 @@ function getSpecificSpolocnik(index: number){
 function openEditSpolocnik(index: number){
   addOperationSpolocnik = false; 
   isPrevodPodielu = false; 
+  finstatCompany.value = '';
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
     spolocnikIndex = index;
@@ -1492,6 +1499,7 @@ function openPreviestPodielSpolocnika(index: number){
   addOperationSpolocnik = false; 
   isPrevodPodielu = true;
   spolocnikIndex = index;
+  finstatCompany.value = '';
   nadobudatelia.value.length = 0;
   selectedNadobudatel.value = ''
   if(spolocniciFromOrSr.value.length >= 2){
@@ -1531,6 +1539,7 @@ function openAddSpolocnik(){
   addOperationSpolocnik = true;
   isPrevodPodielu = false;
   isPrevodPodielu = false;  
+  finstatCompany.value = '';
   spolocnik.value = Object.assign({}, spolocnikObject);
   spolocnik.value.typ_zakladatela = 1
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {});
@@ -1551,6 +1560,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         operation: '+',
         value: spolocnik.value.rozsah_splatenia_vkladu as number
       })
+      finstatCompany.value = '';
     }
     else if(isPrevodPodielu){            
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
@@ -1600,14 +1610,50 @@ function closeModalAndSubmitOrEditSpolocnik(){
     isPrevodPodielu = false;
     isPrevodPodielu = false;  
     spolocnik.value = Object.assign({}, spolocnikObject);
+    finstatCompany.value = '';
     //selectedNadobudatel.value = ''
   })
+}
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany) {
+      getCompanyDetails();      
+    }
+},{deep: true});
+
+async function getCompanyDetails() { 
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompany.value.Name) {
+    ico = {
+      ico: finstatCompany.value.Ico
+    }
+  }
+    
+  await store .dispatch("getDetailsOfCompanyFinstat", ico).then((res: any) => {
+        console.log(res.data)
+        spolocnik.value.obchodne_meno = res.data.Name || '';
+        spolocnik.value.ico = res.data.Ico;
+        spolocnik.value.country = res.data.Country || 'Slovensko';
+        spolocnik.value.city = res.data.City;
+        spolocnik.value.psc = res.data.ZipCode;
+        spolocnik.value.street = res.data.Street;
+        spolocnik.value.street_number = res.data.StreetNumber.split("/")[0];
+        spolocnik.value.street_number2 = res.data.StreetNumber.split("/")[1];
+      })
+      .catch((err) => {
+        console.error('Error: ' + err);
+      });
 }
 
 function closeModalSpolocnik(){
   vfm.closeAll();
   isPrevodPodielu = false;
 }
+
+
 
 //#endregion
 
