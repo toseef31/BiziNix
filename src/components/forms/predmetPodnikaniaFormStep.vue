@@ -231,7 +231,7 @@ async function addSubjectOfBusinessToAutoselect(categoryId: number) {
 
 async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   const res = await store.dispatch("getAllSubjectOfBusiness")
-  console.log(res);
+  //console.log(res);
   loading.value = false
   if(res.data.data){
     // Filter out items that already exist in subjects_of_business

@@ -59,7 +59,7 @@
   const handleCheckboxChange = () => {
     const item = props.listItem;
     if (item && item.selected) {
-        console.log("test")
+        //console.log("test")
       secondItemList.value.push(item);
     } else {
       const index = secondItemList.value.findIndex((i) => i.id === item?.id);
@@ -74,10 +74,10 @@
     if (item) {
       const index = itemList.value.findIndex((i) => i.id === itemToRemove.id);
       itemList.value.push({id: 22, name: "Jozko", selected: false})
-      console.log('adddd')
+      //console.log('adddd')
       if (index !== -1) {
         itemList.value.splice(index, 1);
-        console.log('sliceAdd?')
+        //console.log('sliceAdd?')
       }
     }
   };

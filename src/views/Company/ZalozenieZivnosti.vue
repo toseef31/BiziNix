@@ -80,19 +80,21 @@
               <p v-if="businessInfo?.placeOfBusinness == 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
           </div>
-          <details>
+          <!-- <details>
             <pre>{{ value }}</pre>
-          </details>
+          </details> -->
 
 
         </FormKit>
-        <button @click="newLogSubmit">New log Submit</button>
+        <!-- <button @click="newLogSubmit">New log Submit</button> -->
       </div>
 
-      <p>Selected Vhq:</p>
-      <p>{{ selectedVhqFromStore }}</p>
-      <p>Selected VhqPacage:</p>
-      <p>{{ selectedVhqPackageFromStore }}</p>
+      <!-- <div>
+        <p>Selected Vhq:</p>
+        <p>{{ selectedVhqFromStore }}</p>
+        <p>Selected VhqPacage:</p>
+        <p>{{ selectedVhqPackageFromStore }}</p>
+      </div>     -->
 
       <div>
         <div v-if="errorMsg" class="mb-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
@@ -151,7 +153,7 @@ let totalForPay = computed(() => subjects_of_business.value?.finalPriceForBusine
 
 onMounted(() => {
   const form = getNode('miesto');
-  console.log(form?.value);
+  //console.log(form?.value);
 })
 
 const messages = ref([])
@@ -232,7 +234,7 @@ async function registerUserAndReturnUserId(user: User): Promise<any> {
   try {
     const res = await store.dispatch('registerUser', user);
     sucessMsg.value = "E-mail na aktiváciu účtu bol odoslaný. Prosím skontrolujte si svoju schránkú, alebo priečinok nevyžiadanej pošty.";
-    console.log("Registering user: " + JSON.stringify(res));
+    //console.log("Registering user: " + JSON.stringify(res));
     return res.user_id;
   } catch (err: any) {
     if (err.response && err.response.data && err.response.data.errors) {
@@ -269,7 +271,7 @@ async function registerHqAddress(): Promise<any>  {
   
   return store.dispatch('registerAddress', hqAddress)
     .then((res: any) => {
-      console.log("Registering hq address: " + JSON.stringify(res))
+      //console.log("Registering hq address: " + JSON.stringify(res))
       return res
     })
     .catch((err: any) => {
@@ -308,7 +310,7 @@ async function addHeadquarter(user: User, hqAddressId: any) {
 
   return store.dispatch('addHeadquarter', headquarter.value)
   .then((res: any) => {
-    console.log("Adding hq: " + JSON.stringify(res))
+    //console.log("Adding hq: " + JSON.stringify(res))
     return res.headquarters
   })
   .catch((err: any) => {
@@ -338,8 +340,8 @@ async function addCompany(user: User, userId: any, hqId: any) {
 
   return store.dispatch('addCompany', companyOrZivnostModel.value)
   .then((res) => {
-    console.log("Adding company: " + JSON.stringify(res))
-    console.log("Company from Res " + JSON.stringify(res))
+    //console.log("Adding company: " + JSON.stringify(res))
+    //console.log("Company from Res " + JSON.stringify(res))
     return res
   }).catch( err => {
     toast.error('Error: ' + err)
@@ -379,7 +381,7 @@ async function addCompanyMember(companyId: number){
 
   return store.dispatch('addSingleCompanyMember', member)
   .then((res) => {
-    console.log("Adding single company member: " + JSON.stringify(res))
+    //console.log("Adding single company member: " + JSON.stringify(res))
     return res
   }).catch( err => {
     toast.error('Error: ' + err)
@@ -390,7 +392,7 @@ async function addCompanyMember(companyId: number){
 async function registerInvoiceAddress(invoiceAddress: Address) {
   try {
     const res = await store.dispatch('registerAddress', invoiceAddress);
-    console.log("Registering invoice address: " + JSON.stringify(res));
+    //console.log("Registering invoice address: " + JSON.stringify(res));
     return res;
   } catch (err: any) {
     errorMsg.value = JSON.stringify(err.response.data.errors);
@@ -412,7 +414,7 @@ async function addInvoiceProfile(invoiceAddressId, userId) {
 
   return store.dispatch('addInvoiceProfile', faktProfil)
   .then((res) => {
-    console.log("Adding invoice profile: ", JSON.stringify(res))
+    //console.log("Adding invoice profile: ", JSON.stringify(res))
     return res
   })
   .catch((error: any) => {
@@ -462,11 +464,11 @@ async function addOrder(companyId: any, userId: any, invoiceProfileId?: any) {
 
   return store.dispatch('addOrder', order.value)
   .then((res) => {
-    console.log("Adding order: " + JSON.stringify(res))
+    //console.log("Adding order: " + JSON.stringify(res))
     return res.order
   })
   .catch( err => {
-    console.log(err.response.data )
+    //console.log(err.response.data )
   })
   
 }
@@ -499,7 +501,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
       else if (invoiceData.value.orderingAsCompany) {
         invoiceAddressRes = await registerInvoiceAddress(invoiceData.value.invoiceAddress)
       }
-      console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
+      //console.log("Invoice AddressId is: ", invoiceAddressRes.address_id)
       const response = await addInvoiceProfile(invoiceAddressRes.address_id, userId)
       invoiceProfileId = response.id
     }
@@ -510,7 +512,7 @@ const newSustmiApp = async (formdata: any, node: any) => {
     const orderRes = await addOrder(companyRes.data.company.id, userId, invoiceProfileId)
 
     if(orderRes.id){
-      console.log("SUPER! Objednávka bola spracovaná.")
+      //console.log("SUPER! Objednávka bola spracovaná.")
       await router.push({
           name:"Thanks You New Order",
           params: {

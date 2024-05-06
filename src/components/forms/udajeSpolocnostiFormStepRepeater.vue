@@ -193,7 +193,6 @@
         name="rep_konatelia"
         type="repeater"
         :insert-control="true"
-        :remove="{ logValueForKonatelia }"
         add-label="+ Pridať konateľa"
         v-model="konateliaList"
         min="0"
@@ -382,7 +381,7 @@ async function getCompanyDetails() {
   await store
       .dispatch("getDetailsOfCompanyFinstat", ico)
       .then((res: any) => {
-        console.log(res.data)
+        //console.log(res.data)
         zakladateliaSpolocniciList.value[indexOfSpolocnik].obchodne_meno = res.data.Name || '';
         zakladateliaSpolocniciList.value[indexOfSpolocnik].ico = res.data.Ico;
         zakladateliaSpolocniciList.value[indexOfSpolocnik].country = res.data.Country || 'Slovensko';
@@ -585,7 +584,7 @@ effect(() => {
 
 async function closeModal(){
   vfm.closeAll().then( () => {
-    console.log("Closing all modals");
+    //console.log("Closing all modals");
   }) 
 }
 
@@ -691,7 +690,7 @@ function validatePodielVSpolocnosti(node){
       return acc + podiel_v_spolocnosti;
     }, 0);
     
-    console.log(podiel)
+    //console.log(podiel)
     if(podiel > 100){
       return false
     }
@@ -756,12 +755,12 @@ function logValueForKonatelia() {
 function logNewItemVal() {
   console.log(newItemSpolocnik.value)
   console.log(newItemKonatel.value)
-  //const node = getNode('form_spolocnici')
-  //console.log(getNode('form_spolocnici')?.context?.state)
+  const node = getNode('form_spolocnici')
+  console.log(getNode('form_spolocnici')?.context?.state)
 }
 
 function logNodeFromKonatelia() {
-  //console.log(getNode('group_konatelia')?.context?.state)
+  console.log(getNode('group_konatelia')?.context?.state)
 }
 
 function getCurrentIndexFromRepeater(index: number){

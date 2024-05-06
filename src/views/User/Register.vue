@@ -284,9 +284,9 @@ function registerAddress() {
     let address_id: number = 0
     return store.dispatch('registerAddress', userAddress)
         .then((res) => {
-            console.log("Response addressId: " + res.address_id)
+            //console.log("Response addressId: " + res.address_id)
             address_id = res.address_id
-            console.log("Ja som addressId v thene: " + address_id)
+            //console.log("Ja som addressId v thene: " + address_id)
             return address_id
         }).catch(err => {
             errorMsg.value = JSON.stringify(err.response.data.errors) // response data is from store actions

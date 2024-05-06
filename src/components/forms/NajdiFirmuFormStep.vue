@@ -5,7 +5,7 @@
     type="autocomplete"
     label="IČO spoločnosti"
     placeholder="Zadajte IČO spoločnosti"
-    value="45633461"
+    value=""
     :options="search"
     validation="required|length:6"
     empty-message="Subjekt nebol nájdený, zadajte správne ičo."
@@ -1064,7 +1064,7 @@ async function search({ search }: any) {
   
   try {
     const res = await store.dispatch("getCompanyFromOrsrByIco", search);
-    console.log(res);
+    //console.log(res);
     return [{
       label: res.data.obchodne_meno,
       value: res.data,
@@ -1196,9 +1196,9 @@ const calculatePercentageAtIndexForNewlyAddedSpolocnik = computed(() => (index: 
 });
 
 function calculatePodielSpolocnostiForCurrentSpolocnik(){
-  console.log("Celkove splatene imanie from OrSr: ", zakladneImanieFromOrSr.value.splatene);
-  console.log("Curret spolocnik vyska vkladu: ", spolocnik.value.vyska_vkladu);
-  console.log("Curret spolocnik podiel: ", spolocnik.value.podiel_v_spolocnosti);
+  // console.log("Celkove splatene imanie from OrSr: ", zakladneImanieFromOrSr.value.splatene);
+  // console.log("Curret spolocnik vyska vkladu: ", spolocnik.value.vyska_vkladu);
+  // console.log("Curret spolocnik podiel: ", spolocnik.value.podiel_v_spolocnosti);
   spolocnik.value.podiel_v_spolocnosti = Math.round((spolocnik.value.vyska_vkladu as number / (zakladneImanieFromOrSr.value.splatene + Number(spolocnik.value.vyska_vkladu))) * 100);
 }
 
@@ -1209,9 +1209,9 @@ function openEditCompanyName() {
 
 // submit form and close modal
 function closeModalAndSaveOrEditCompanyName() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditCompanyName)?.then(() => {
-    console.log("then");
+    //console.log("then");
   })
 }
 
@@ -1230,9 +1230,9 @@ function openEditSidlo(){
 
 // submit form and close modal
 function closeModalAndSubmitOrEditSidlo() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditSidlo)?.then(() => {
-    console.log("then");
+    //console.log("then");
   })
 }
 
@@ -1278,13 +1278,13 @@ function openEditKonatel(index: number) {
   vfm.open(modalIdAddOrEditKonatel)?.then(() => {  
     newKonateliaList.value.length = konateliaFromOrSr.value.length
     konatelIndex = index
-    console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
+    //console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
     // get current konatel if index exist if no then work with konatel
     if(newKonateliaList.value[index] !== undefined){
       konatel.value = newKonateliaList.value[index];
-      console.log("if");
+      //console.log("if");
     } else {
-      console.log("Start editing konatel orSr at index:", konatelIndex);
+      //console.log("Start editing konatel orSr at index:", konatelIndex);
       getSpecificKonatel(index)
     }
   })
@@ -1292,7 +1292,7 @@ function openEditKonatel(index: number) {
 
 // submit form and close modal
 function closeModalAndSubmitOrEditKonatel() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditKonatel)?.then(() => {
     if(addOperationKonatel){
       addNewKonatelToList();
@@ -1325,7 +1325,7 @@ function openEditCancelKonatel(index: number) {
 
 // submit form and close modal
 function closeModalAndSubmitCanceledKonatel() {
-  console.log("Calling submit function Cancel Konatel!")
+  //console.log("Calling submit function Cancel Konatel!")
   vfm.close(modalIdCancelKonatel)?.then(() => {
     konatel.value.should_be_canceled = true;
     konatel.value.has_change = true;
@@ -1361,7 +1361,7 @@ function openAddProkurista() {
 }
 
 function closeModalAndSubmitOrEditProkurista() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditProkurista)?.then(() => { // to doooooo
     newProkuristaList.value.push(prokurista.value);
   })
@@ -1483,13 +1483,13 @@ function openEditSpolocnik(index: number){
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
     spolocnikIndex = index;
-    console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
+    //console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
     // get current konatel if index exist if no then work with konatel
     if(newSpolocnikList.value[index] && (newSpolocnikList.value[index].first_name?.length >= 1 || newSpolocnikList.value[index].obchodne_meno?.length >= 1)){
       spolocnik.value = newSpolocnikList.value[index];
-      console.log("if");
+      //console.log("if");
     } else {
-      console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
+      //console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
       getSpecificSpolocnik(index)
     }
   })
@@ -1529,7 +1529,7 @@ function openPreviestPodielSpolocnika(index: number){
       prevodPodieluFromTo.value.amount = newSharesTransfersList.value[index]?.amountOfTransfer
       prevodPodieluFromTo.value.priceForTransfer = newSharesTransfersList.value[index]?.priceForTransfer
       prevodPodieluFromTo.value.currency = newSharesTransfersList.value[index]?.currency
-      console.log("Selected nadobudalte in if: ", selectedNadobudatel.value)
+      //console.log("Selected nadobudalte in if: ", selectedNadobudatel.value)
       selectedNadobudatel.value = newSharesTransfersList.value[index]?.sharesFrom
     }  
   })
@@ -1550,7 +1550,7 @@ function addNewSpolocnikTolist(){
 }
 
 function closeModalAndSubmitOrEditSpolocnik(){
-  console.log("Calling submit function Spolocnik!")
+  //console.log("Calling submit function Spolocnik!")
   vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
     if(addOperationSpolocnik){                
       addNewSpolocnikTolist();
@@ -1595,7 +1595,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
         currency: prevodPodieluFromTo.value.currency,
       })
-      console.log("Selected nadobudatel", selectedNadobudatel.value)
+      //console.log("Selected nadobudatel", selectedNadobudatel.value)
     }
     else if(spolocnikIndex >= 0 && spolocnikIndex < newSpolocnikList.value.length){
       spolocnik.value.has_change = true;
@@ -1633,7 +1633,7 @@ async function getCompanyDetails() {
   }
     
   await store .dispatch("getDetailsOfCompanyFinstat", ico).then((res: any) => {
-        console.log(res.data)
+        //console.log(res.data)
         spolocnik.value.obchodne_meno = res.data.Name || '';
         spolocnik.value.ico = res.data.Ico;
         spolocnik.value.country = res.data.Country || 'Slovensko';
@@ -1867,8 +1867,8 @@ function deleteNewSpolocnik(index: number){
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
   if (array1FromOrSr[index] && array2[index]) {
-    console.log("Full name", fullName)
-    console.log("Full lenght", fullName.length)
+    // console.log("Full name", fullName)
+    // console.log("Full lenght", fullName.length)
     if(fullName.length == 3 && fullName[0].includes(".") == true){
       //index 0 title index 3 title after
       return fullName[1] !== array2[index].first_name || fullName[2] !== array2[index].last_name;
@@ -1893,7 +1893,7 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
 
 async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   const res = await store.dispatch("getAllSubjectOfBusiness")
-  console.log(res);
+  //console.log(res);
   loading.value = false
   if(res.data.data){
     // Filter out items that already exist in subjects_of_business
@@ -1925,7 +1925,7 @@ watch(() => companyFromOrSr.value?.ico, async (newValue, oldValue) => {
     if (newValue) {
       const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
       sbjOld.value = res;
-      console.log(`New ICO value: ${newValue}`);
+      //console.log(`New ICO value: ${newValue}`);
     }
   }
 );
@@ -1948,11 +1948,11 @@ function checkIfSbjIsRemoved(sbjName: string){
 function addSbjBack(sbjName: string){
   let index = sbj_old_removed.value.indexOf(sbjName);
   sbj_old_removed.value.splice(index, 1);
-  console.log(sbj_old_removed.value)
+  //console.log(sbj_old_removed.value)
 }
 
 function maxVyskaVkladu(node: any){
-  console.log(node.value)
+  //console.log(node.value)
   if(node.value > Number(spolocnik.value.vyska_vkladu)){
     return false
   }

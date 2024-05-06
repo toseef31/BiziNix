@@ -467,7 +467,7 @@ let user = computed(() => store.state.user);
 const isLoading = ref(true)
 
 onBeforeMount(async () => {
-  console.log("Default Layout with header OnBeforeMount")
+  //console.log("Default Layout with header OnBeforeMount")
   user = computed(() => store.state.user);
   if(user.value.userId){
     await store.dispatch('setUserDataAfterLogin')
@@ -476,8 +476,8 @@ onBeforeMount(async () => {
 })
 
 watch(user.value, (newValue, oldValue) => {
-  console.log("Watch user in default layout")
-  console.log(newValue)
+  //console.log("Watch user in default layout")
+  //console.log(newValue)
   if(newValue.userId){
     isLoading.value = false
   }
