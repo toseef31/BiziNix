@@ -31,5 +31,6 @@ export default interface Company {
   fakturacia_zaplatene_do: string
   doc_template_id: number
   doc_sncounter_id: number
+  custom_sncounter_format: string
   logo: string
 }
