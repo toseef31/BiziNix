@@ -104,7 +104,7 @@ import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 import { toast } from "vue3-toastify";
 
 const companyAddress = ref({} as Address);
-const finstatCompany = ref({} as any);
+const finstatCompany = ref();
 const currentCompany = ref({} as any);
 const companies = ref([] as any[]);
 const newCompany = ref(false);
@@ -150,7 +150,7 @@ const companyToAdd = ref({
 });
 
 watch(finstatCompany, (newFinstatCompany) => {
-  if (newFinstatCompany.Spoločnosť !== undefined) {
+  if (newFinstatCompany) {
     getCompanyDetails();
   }
 });
@@ -230,9 +230,9 @@ async function getCompanyDetails() {
     ico: ""
   }
 
-  if (finstatCompany.value.Spoločnosť.Ico !== undefined) {
+  if (finstatCompany.value) {
     ico = {
-      ico: finstatCompany.value.Spoločnosť.Ico
+      ico: finstatCompany.value.Ico
     }
   }
 

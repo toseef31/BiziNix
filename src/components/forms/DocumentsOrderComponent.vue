@@ -316,7 +316,7 @@ async function continueToPayment(userId, invoiceProfileId) {
                 });
             });
           } else {
-            console.log(res);
+            //console.log(res);
           }
         });
       } catch {

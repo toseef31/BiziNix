@@ -74,7 +74,7 @@ const options = ref([
 ])
 
 function selectedCompanyType(){
-  console.log(compamyType.value)
+  //console.log(compamyType.value)
 }
 
 function submitCompanyType(){

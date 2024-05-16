@@ -81,7 +81,7 @@ const elms = ref()
 
 onBeforeMount(async () => {
   try {
-    console.log('Loading stripe component.')
+    //console.log('Loading stripe component.')
     await loadStripe(stripeKey.value)
     stripeLoaded.value = true
   } catch (error) {
@@ -95,7 +95,7 @@ const payWithStripe = async (order: any) => {
     const cardExpElement = cardExp.value.stripeElement
     const result = await elms.value.instance.createToken(cardNumElement)
     if (result.error) {
-      console.log('Token problem')
+      console.log('Result Error: ')
       console.log(result)
       toast.warning(result.error.message)
       return
@@ -115,8 +115,8 @@ const payWithStripe = async (order: any) => {
     if (paymentIntentResult.error) {
       toast.error('Platba neprešla, skúste znova zaplatiť, ak sa problem zopakuje prosím kontaktujte nás.')
     } else {
-      console.log('Result is')
-      console.log(paymentIntentResult)
+      // console.log('Result is')
+      // console.log(paymentIntentResult)
       if (paymentIntentResult.paymentIntent.status === 'succeeded') {
         order.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ')
         order.payment_method = "stripe"
@@ -149,7 +149,7 @@ async function payForOrder(amount: number, order: any) {
 
   try {
     const res = await store.dispatch('pay', amountForPay)
-    console.log('Payment:', JSON.stringify(res))
+    //console.log('Payment:', JSON.stringify(res))
     clientSecret = (res as PaymentResult).client_secret
     return res
   } catch (err: any) {

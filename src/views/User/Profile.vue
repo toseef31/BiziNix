@@ -152,12 +152,14 @@
                     <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                       <FormKit type="text" v-model="userAddress.street_number" name="street-number-1" id="street-number-1"
                         label="Súpisné číslo" autocomplete="street-number-1" rules="required"
+                        help="Číslo pred lomítkom"
                         class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                     </div>
 
                     <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                       <FormKit type="text" v-model="userAddress.street_number2" name="street-number-2"
                         id="street-number-2" label="Orientačné číslo" autocomplete="street-number-2" rules="required"
+                        help="Číslo za lomítkom"
                         class="mt-1 focus:ring-teal-500 focus:border-teal-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                     </div>
 

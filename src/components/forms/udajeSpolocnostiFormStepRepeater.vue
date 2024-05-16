@@ -38,7 +38,11 @@
         validation="required"
       />
       <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
-        <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
+        <div>
+          <label class="formkit-label block mb-1 font-bold text-sm text-white">Spoločnosť</label>
+          <Autocomplete @change="getCurrentIndexFromRepeater(index as number)" v-model="finstatCompany[index as number]"></Autocomplete>
+        </div>    
+        <!-- <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" /> -->
         <FormKit type="text" name="ico" label="IČO" />
       </div>
       <div v-if="value.typ_zakladatela != 2" class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -67,8 +71,8 @@
         <FormKit type="text" name="city" label="Mesto" validation="required" />
         <FormKit type="text" name="psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" label="Ulica" validation="required" />
-        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
       </div>
       <div>
         <div class="my-4 grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -189,7 +193,6 @@
         name="rep_konatelia"
         type="repeater"
         :insert-control="true"
-        :remove="{ logValueForKonatelia }"
         add-label="+ Pridať konateľa"
         v-model="konateliaList"
         min="0"
@@ -217,8 +220,8 @@
         <FormKit type="text" name="city" label="Mesto" validation="required" />
         <FormKit type="text" name="psc" label="PSČ" validation="required" />
         <FormKit type="text" name="street" label="Ulica" validation="required" />
-        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+        <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+        <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
       </div>
       <!-- <div class="text-white">Rod. cislo: {{ rodneCislo.cislo }}</div> -->
       <!-- <div v-if="!valid" class="text-red-700 p-1 text-center text-lg rounded font-bold bg-red-50 mb-4">
@@ -314,13 +317,15 @@
     </div>
 
   </div>
-  <div class="mb-2">
-    Počet pridaných konatelov {{ countOfKonatelia }}
-    Počet pridaných zakladatelov {{ countOfZakladatelia }}
-    {{ zakladateliaSpolocniciList }}
-    {{ konateliaList }}
-    rozsah_splatenia {{ calculatedRozsahSplatenia }}
-  </div>
+  <!-- <div class="mb-2">
+    <div>
+      Počet pridaných konatelov {{ countOfKonatelia }}
+      Počet pridaných zakladatelov {{ countOfZakladatelia }}
+      {{ zakladateliaSpolocniciList }}
+      {{ konateliaList }}
+      rozsah_splatenia {{ calculatedRozsahSplatenia }}
+    </div>
+  </div> -->
   <div v-if="countOfKonatelFromZakladatelia == 0 && countOfKonatelia == 0"
     class="my-4 flex items-center justify-between py-3 px-4 bg-red-500 text-white rounded">
     <b>Prosím pridajte minimálne jedného zakladateľa a konateľa spoločnosťi.</b>
@@ -336,7 +341,10 @@ import type CompanyMemberKonatel from '@/types/CompanyMemberKonatel';
 import type CompanyMemberSpolocnik from '@/types/CompanyMemberSpolocnik';
 import { computed } from 'vue';
 import { Tippy } from "vue-tippy";
+import Autocomplete from "@/components/Autocomplete.vue";
 import 'tippy.js/dist/tippy.css' // optional for styling
+import store from '@/store';
+import { toast } from "vue3-toastify";
 
 const vfm = useVfm()
 const modalRemoveSpolocnikZakladatel = Symbol('modalRemoveSpolocnikZakladatel')
@@ -345,11 +353,48 @@ const buttonModalText = ref<string>()
 const titleModalText = ref<string>('Modal Title')
 
 let isCheckboxHidden = ref(false);
+const finstatCompany = ref([] as any);
+let indexOfSpolocnik: number = 0;
 
 onMounted(()=> {
   zakladateliaSpolocniciList.value.length = 0  
   konateliaList.value.length = 0
 })
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany) {
+      getCompanyDetails();      
+    }
+},{deep: true});
+
+async function getCompanyDetails() {
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompany.value[indexOfSpolocnik].Name) {
+    ico = {
+      ico: finstatCompany.value[indexOfSpolocnik].Ico
+    }
+  }
+
+  await store
+      .dispatch("getDetailsOfCompanyFinstat", ico)
+      .then((res: any) => {
+        //console.log(res.data)
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].obchodne_meno = res.data.Name || '';
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].ico = res.data.Ico;
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].country = res.data.Country || 'Slovensko';
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].city = res.data.City;
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].psc = res.data.ZipCode;
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].street = res.data.Street;
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].street_number = res.data.StreetNumber.split("/")[0];
+        zakladateliaSpolocniciList.value[indexOfSpolocnik].street_number2 = res.data.StreetNumber.split("/")[1];
+      })
+      .catch((err) => {
+        console.error('Error: ' + err);
+      });
+}
 
 const rodneCislo = ref({
   cislo: ''
@@ -539,7 +584,7 @@ effect(() => {
 
 async function closeModal(){
   vfm.closeAll().then( () => {
-    console.log("Closing all modals");
+    //console.log("Closing all modals");
   }) 
 }
 
@@ -645,7 +690,7 @@ function validatePodielVSpolocnosti(node){
       return acc + podiel_v_spolocnosti;
     }, 0);
     
-    console.log(podiel)
+    //console.log(podiel)
     if(podiel > 100){
       return false
     }
@@ -710,12 +755,16 @@ function logValueForKonatelia() {
 function logNewItemVal() {
   console.log(newItemSpolocnik.value)
   console.log(newItemKonatel.value)
-  //const node = getNode('form_spolocnici')
-  //console.log(getNode('form_spolocnici')?.context?.state)
+  const node = getNode('form_spolocnici')
+  console.log(getNode('form_spolocnici')?.context?.state)
 }
 
 function logNodeFromKonatelia() {
-  //console.log(getNode('group_konatelia')?.context?.state)
+  console.log(getNode('group_konatelia')?.context?.state)
+}
+
+function getCurrentIndexFromRepeater(index: number){
+  indexOfSpolocnik = index as number;
 }
 
 defineExpose({

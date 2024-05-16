@@ -5,7 +5,7 @@
     type="autocomplete"
     label="IČO spoločnosti"
     placeholder="Zadajte IČO spoločnosti"
-    value="45633461"
+    value=""
     :options="search"
     validation="required|length:6"
     empty-message="Subjekt nebol nájdený, zadajte správne ičo."
@@ -228,14 +228,14 @@
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.street + " " + konatelDiv.number }}</h3>
           <h3 class="text-lg" :class="{ 'text-cross': checkHasChange(newKonateliaList[index]) }">{{ konatelDiv.zip }} {{ konatelDiv.city }}</h3>
           <div v-if="newKonateliaList[index] && checkHasChange(newKonateliaList[index]) && !checkCanceled(newKonateliaList[index])">
-            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }} {{ newKonateliaList[index].has_change }}</h3>            
+            <h3 class="text-lg font-bold">{{ newKonateliaList[index]?.title_before + " " + newKonateliaList[index]?.first_name + " " + newKonateliaList[index]?.last_name + " " +  newKonateliaList[index]?.title_after }}</h3>            
             <h4 class="text-base">{{ newKonateliaList[index]?.city }}, {{ newKonateliaList[index]?.street }} {{ newKonateliaList[index]?.street_number }}/{{ newKonateliaList[index]?.street_number2 }}, {{ newKonateliaList[index]?.psc }}</h4>
             <h4 class="text-base">{{ newKonateliaList[index]?.country }} </h4>
           </div>  
         </div>
         <div class="flex space-x-4">
-          <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
-          <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
+          <button @click.prevent="openEditKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Zmeniť údaje {{ index }}</button>
+          <button @click.prevent="openEditCancelKonatel(index)" :disabled="checkCanceled(newKonateliaList[index])" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Odvolať konateľa {{ index }}</button>
           <button v-if="checkHasChange(newKonateliaList[index])">
             <Tippy>
               <ReceiptRefundIcon @click.prevent="openReturnChangeBackModal('konatelia', index)" class="h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -245,14 +245,15 @@
             </Tippy>
           </button>
         </div> 
-      </div>
+      </div>      
+      <div class="my-2 border border-gray-700"></div>
       <div v-if="newlyAddedKonatelList.length" v-for="(newlyAddedKonatel, index) in newlyAddedKonatelList" :key="index" class="grid grid-cols-2 items-center space-y-4">
         <div>
           <h3 :index="index" class="text-lg">{{ newlyAddedKonatel.title_before }} {{ newlyAddedKonatel.first_name }} {{ newlyAddedKonatel.last_name }} {{ newlyAddedKonatel.title_after }}</h3> 
           <h4 :index="index" class="text-base">{{ newlyAddedKonatel.country }} {{ newlyAddedKonatel.city }}  {{ newlyAddedKonatel.street }} {{ newlyAddedKonatel.street_number }} {{ newlyAddedKonatel.street_number2 }}  {{ newlyAddedKonatel.psc }}</h4> 
         </div>
         <div class="flex space-x-4">
-          <button @click.prevent="deleteNewKonatel(index)" class="bg-bizinix-teal p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
+          <button @click.prevent="deleteNewKonatel(index)" class="bg-transparent border-2 border-bizinix-border p-2 rounded disabled:bg-gray-600">Zmazať konateľa {{ index }}</button>          
         </div>
       </div>
       <button @click.prevent="openAddKonatel()" class="bg-bizinix-teal mt-4 p-2 rounded">+ Pridať konateľa</button>
@@ -268,7 +269,7 @@
         >
         <div v-if="!addOperationKonatel">
           <h3 class="text-white text-2xl">Zmeniť osobné údaje konateľa</h3>
-          <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra</p>
+          <p class="text-white mb-4" >Zadajte nové údaje alebo prepíšte existujúce údaje tak, ako chcete, aby sa zapísali do obchodného registra.</p>
           <small class="text-white">Pozor, všetky nové údaje musia byť už zapísané v občianskom preukaze.</small>
         </div>        
         <div v-else>
@@ -296,16 +297,14 @@
             />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
-            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-              validation="required|length:9"
-              validation-visibility="blur" />
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo" validation="required|length:9" />
             <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
               :options="['Slovenská republika', 'Česká republika']" validation="required" />
             <FormKit type="text" name="city" label="Mesto" validation="required" />
             <FormKit type="text" name="psc" label="PSČ" validation="required" />
             <FormKit type="text" name="street" label="Ulica" validation="required" />
-            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
             <FormKit v-if="addOperationKonatel" type="date" style="color-scheme: dark;" name="new_konatel_date_from" label="Vymenovať od" validation="required" />
           </div>
             <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
@@ -391,14 +390,14 @@
               class="flex flex-row items-center"
             >
               <div>
-                <h3 class="text-lg font-bold">{{ (newSpolocnikList[index]?.title_before || '') + " " + (newSpolocnikList[index]?.first_name || '') + " " + (newSpolocnikList[index]?.last_name || '') + " " +  (newSpolocnikList[index]?.title_after || '') }} {{ newSpolocnikList[index]?.obchodne_meno || '' }} {{ newSpolocnikList[index]?.has_change || '' }}</h3>
+                <h3 class="text-lg font-bold">{{ (newSpolocnikList[index]?.title_before || '') + " " + (newSpolocnikList[index]?.first_name || '') + " " + (newSpolocnikList[index]?.last_name || '') + " " +  (newSpolocnikList[index]?.title_after || '') }} {{ newSpolocnikList[index]?.obchodne_meno || '' }}</h3>
                 <h4 class="text-base">{{ newSpolocnikList[index]?.city || '' }}, {{ newSpolocnikList[index]?.street || '' }} {{ newSpolocnikList[index]?.street_number || '' }}/{{ newSpolocnikList[index]?.street_number2 || '' }}, {{ newSpolocnikList[index]?.psc || '' }}</h4>
                 <h4 class="text-base">{{ newSpolocnikList[index]?.country || '' }} </h4>
               </div>
             </div>  
             <div class="flex flex-col mt-2 space-y-4">
               <div class="flex flex-row">
-                <button @click.prevent="openEditSpolocnik(index)" class="w-full bg-bizinix-teal p-2 rounded">Zmeniť údaje {{ index }}</button>
+                <button @click.prevent="openEditSpolocnik(index)" class="w-full bg-transparent border-bizinix-border border-2 p-2 rounded">Zmeniť údaje {{ index }}</button>
                 <button v-if="checkHasChange(newSpolocnikList[index])">
                   <Tippy>
                     <ReceiptRefundIcon @click.prevent="returnChangesBackSpolocnici(index)" class="ml-4 h-7 w-h-7 text-bizinix-teal" aria-hidden="true" />
@@ -408,7 +407,7 @@
                   </Tippy>
                 </button>
               </div>
-              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="bg-bizinix-teal p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>
+              <button @click.prevent="openPreviestPodielSpolocnika(index)" class="border-bizinix-border border-2 p-2 mt-2 rounded">Previesť/zrušiť podiel {{ index }}</button>
               <div v-if="newSharesTransfersList[index]?.sharesFrom.name" class="border-t space-y-2 border-b border-gray-600 py-2 my-4">                
                 {{ newSharesTransfersList[index]?.sharesFrom.name }} prevádza <b>{{ newSharesTransfersList[index]?.amountOfTransfer + ' EUR' }}</b> na <span>{{ newSharesTransfersList[index]?.sharesTo.name }}</span>.
                 Cena za prevod obch. podielu <b>{{ newSharesTransfersList[index]?.priceForTransfer +' ' + newSharesTransfersList[index]?.currency }}.</b>
@@ -482,13 +481,15 @@
               :actions="false"
               v-model="spolocnik"
             >
-            <div class="text-white">{{spolocnik}}</div>
+            <!-- <div class="text-white">{{spolocnik}}</div> -->
               <!-- Prevod podielu -->
               <div class="text-white" v-if="isPrevodPodielu">
-                Spolocnik index {{ spolocnikIndex }}<br>
-                Selected nabodudatel {{ selectedNadobudatel }}<br>
-                Share transfer list {{ newSharesTransfersList }}<br>
-                <br><div>{{ nadobudatelia }}</div>
+                <!-- <div>
+                  Spolocnik index {{ spolocnikIndex }}<br>
+                  Selected nabodudatel {{ selectedNadobudatel }}<br>
+                 Share transfer list {{ newSharesTransfersList }}<br>
+                </div>
+                <br><div>{{ nadobudatelia }}</div> -->
                 <FormKit type="select" v-model="selectedNadobudatel" name="transfer_from" label="Vyberte zo zoznamu nadobúdateľa" validation="required"
                   :options="nadobudatelia"                
                 />
@@ -512,7 +513,11 @@
                 validation="required"
               />
                 <div v-if="value.typ_zakladatela === 2" class="flex flex-col md:flex-row md:space-x-4">
-                  <FormKit type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
+                  <div v-if="addOperationSpolocnik || isPrevodPodielu" class="flex flex-col">
+                    <label class="formkit-label mb-1 font-bold text-sm text-white">Spoločnosť</label>
+                    <Autocomplete v-model="finstatCompany"></Autocomplete>
+                  </div>                  
+                  <FormKit v-if="!addOperationSpolocnik && !isPrevodPodielu" type="text" name="obchodne_meno" label="Obchodné meno" validation="required" />
                   <FormKit type="text" name="ico" label="IČO" validation="required" />
                 </div>
                 <div v-if="value.typ_zakladatela != 2" class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -533,8 +538,8 @@
                   <FormKit type="text" name="city" label="Mesto" validation="required" />
                   <FormKit type="text" name="psc" label="PSČ" validation="required" />
                   <FormKit type="text" name="street" label="Ulica" validation="required" />
-                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+                  <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+                  <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
                 </div>
               </div>
               <div v-if="isPrevodPodielu">
@@ -729,7 +734,7 @@
               Uložiť
             </button>
           </div>
-          <pre wrap>{{ value }}</pre>
+          <!-- <pre wrap>{{ value }}</pre> -->
         </FormKit>    
       </VueFinalModal>   
     </EditItemForCompany>
@@ -785,16 +790,14 @@
             />
             <FormKit type="text" name="title_before" label="Titul pred menom" />
             <FormKit type="text" name="title_after" label="Titul za menom" />
-            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo"
-              validation="required|length:9"
-              validation-visibility="blur" />
+            <FormKit type="text" name="rodne_cislo" label="Rodné číslo" id="rodne_cislo" validation="required|length:9" />
             <FormKit type="select" name="country" label="Štát" placeholder="Vyberte štát"
               :options="['Slovenská republika', 'Česká republika']" validation="required" />
             <FormKit type="text" name="city" label="Mesto" validation="required" />
             <FormKit type="text" name="psc" label="PSČ" validation="required" />
             <FormKit type="text" name="street" label="Ulica" validation="required" />
-            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" />
-            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" />
+            <FormKit type="text" name="street_number" label="Súpisne číslo" validation="require_one:street_number2" help="Číslo pred lomítkom" />
+            <FormKit type="text" name="street_number2" label="Orientačné číslo" validation="require_one:street_number" help="Číslo za lomítkom" />
           </div>
           <div class="flex flex-col gap-4 md:flex-row items-center justify-between">
             <button
@@ -883,6 +886,7 @@ import type VyskaVkladuFromOrSr from '@/types/FromOrSrParser/VyskaVkladuFromOrSr
 import type SharesTransfers from '@/types/editCompany/SharesTransfers';
 import VirtualHqPackage from '@/components/VirtualHqPackage.vue'
 import useCalculatePriceForBusinessCategories from '@/views/Company/Composables/CalculatePriceForBusinessCategories';
+import Autocomplete from "@/components/Autocomplete.vue";
 
 // defineProps<{
 //   indexKonatel: number
@@ -943,7 +947,11 @@ let newCompanyFullName = reactive({
   newCompanyPravForm: ''
 })
 
-let sbjOld = ref([]);
+let sbjOld = ref([{
+    description: '',
+    effective_from: '',
+    effective_to: '',
+}]);
 let sbj_old_removed = ref<string[]>([]);
   
 let konatelIndex: number;
@@ -973,6 +981,7 @@ let konatelObject: CompanyMemberKonatel = {
 let konatel = ref(konatelObject);
 let prokurista = ref(konatelObject);
 
+const finstatCompany = ref();
 let spolocnikIndex: number;
 let spolocnikObject: CompanyMemberSpolocnik = {
   company_id: null,
@@ -1055,7 +1064,7 @@ async function search({ search }: any) {
   
   try {
     const res = await store.dispatch("getCompanyFromOrsrByIco", search);
-    console.log(res);
+    //console.log(res);
     return [{
       label: res.data.obchodne_meno,
       value: res.data,
@@ -1187,9 +1196,9 @@ const calculatePercentageAtIndexForNewlyAddedSpolocnik = computed(() => (index: 
 });
 
 function calculatePodielSpolocnostiForCurrentSpolocnik(){
-  console.log("Celkove splatene imanie from OrSr: ", zakladneImanieFromOrSr.value.splatene);
-  console.log("Curret spolocnik vyska vkladu: ", spolocnik.value.vyska_vkladu);
-  console.log("Curret spolocnik podiel: ", spolocnik.value.podiel_v_spolocnosti);
+  // console.log("Celkove splatene imanie from OrSr: ", zakladneImanieFromOrSr.value.splatene);
+  // console.log("Curret spolocnik vyska vkladu: ", spolocnik.value.vyska_vkladu);
+  // console.log("Curret spolocnik podiel: ", spolocnik.value.podiel_v_spolocnosti);
   spolocnik.value.podiel_v_spolocnosti = Math.round((spolocnik.value.vyska_vkladu as number / (zakladneImanieFromOrSr.value.splatene + Number(spolocnik.value.vyska_vkladu))) * 100);
 }
 
@@ -1200,9 +1209,9 @@ function openEditCompanyName() {
 
 // submit form and close modal
 function closeModalAndSaveOrEditCompanyName() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditCompanyName)?.then(() => {
-    console.log("then");
+    //console.log("then");
   })
 }
 
@@ -1221,9 +1230,9 @@ function openEditSidlo(){
 
 // submit form and close modal
 function closeModalAndSubmitOrEditSidlo() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditSidlo)?.then(() => {
-    console.log("then");
+    //console.log("then");
   })
 }
 
@@ -1269,13 +1278,13 @@ function openEditKonatel(index: number) {
   vfm.open(modalIdAddOrEditKonatel)?.then(() => {  
     newKonateliaList.value.length = konateliaFromOrSr.value.length
     konatelIndex = index
-    console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
+    //console.log("Lenght of newKonateliaList", newKonateliaList.value.length)
     // get current konatel if index exist if no then work with konatel
     if(newKonateliaList.value[index] !== undefined){
       konatel.value = newKonateliaList.value[index];
-      console.log("if");
+      //console.log("if");
     } else {
-      console.log("Start editing konatel orSr at index:", konatelIndex);
+      //console.log("Start editing konatel orSr at index:", konatelIndex);
       getSpecificKonatel(index)
     }
   })
@@ -1283,7 +1292,7 @@ function openEditKonatel(index: number) {
 
 // submit form and close modal
 function closeModalAndSubmitOrEditKonatel() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditKonatel)?.then(() => {
     if(addOperationKonatel){
       addNewKonatelToList();
@@ -1316,7 +1325,7 @@ function openEditCancelKonatel(index: number) {
 
 // submit form and close modal
 function closeModalAndSubmitCanceledKonatel() {
-  console.log("Calling submit function Cancel Konatel!")
+  //console.log("Calling submit function Cancel Konatel!")
   vfm.close(modalIdCancelKonatel)?.then(() => {
     konatel.value.should_be_canceled = true;
     konatel.value.has_change = true;
@@ -1352,7 +1361,7 @@ function openAddProkurista() {
 }
 
 function closeModalAndSubmitOrEditProkurista() {
-  console.log("Calling submit function!")
+  //console.log("Calling submit function!")
   vfm.close(modalIdAddOrEditProkurista)?.then(() => { // to doooooo
     newProkuristaList.value.push(prokurista.value);
   })
@@ -1470,16 +1479,17 @@ function getSpecificSpolocnik(index: number){
 function openEditSpolocnik(index: number){
   addOperationSpolocnik = false; 
   isPrevodPodielu = false; 
+  finstatCompany.value = '';
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {
     newSpolocnikList.value.length = spolocniciFromOrSr.value.length;
     spolocnikIndex = index;
-    console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
+    //console.log("Length of newSpolocnikList", newSpolocnikList.value.length)
     // get current konatel if index exist if no then work with konatel
     if(newSpolocnikList.value[index] && (newSpolocnikList.value[index].first_name?.length >= 1 || newSpolocnikList.value[index].obchodne_meno?.length >= 1)){
       spolocnik.value = newSpolocnikList.value[index];
-      console.log("if");
+      //console.log("if");
     } else {
-      console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
+      //console.log("Start editing spolocnik orSr at index:", spolocnikIndex);
       getSpecificSpolocnik(index)
     }
   })
@@ -1489,6 +1499,7 @@ function openPreviestPodielSpolocnika(index: number){
   addOperationSpolocnik = false; 
   isPrevodPodielu = true;
   spolocnikIndex = index;
+  finstatCompany.value = '';
   nadobudatelia.value.length = 0;
   selectedNadobudatel.value = ''
   if(spolocniciFromOrSr.value.length >= 2){
@@ -1513,12 +1524,12 @@ function openPreviestPodielSpolocnika(index: number){
       prevodPodieluFromTo.value.amount = '';
       prevodPodieluFromTo.value.priceForTransfer = '';
     }
-    else if(newSharesTransfersList.value[number]) {    
+    else if(newSharesTransfersList.value[index]) {    
       mnozstvoPodielu.value = newSharesTransfersList.value[index]?.transferType, // full or partial
       prevodPodieluFromTo.value.amount = newSharesTransfersList.value[index]?.amountOfTransfer
       prevodPodieluFromTo.value.priceForTransfer = newSharesTransfersList.value[index]?.priceForTransfer
       prevodPodieluFromTo.value.currency = newSharesTransfersList.value[index]?.currency
-      console.log("Selected nadobudalte in if: ", selectedNadobudatel.value)
+      //console.log("Selected nadobudalte in if: ", selectedNadobudatel.value)
       selectedNadobudatel.value = newSharesTransfersList.value[index]?.sharesFrom
     }  
   })
@@ -1528,6 +1539,7 @@ function openAddSpolocnik(){
   addOperationSpolocnik = true;
   isPrevodPodielu = false;
   isPrevodPodielu = false;  
+  finstatCompany.value = '';
   spolocnik.value = Object.assign({}, spolocnikObject);
   spolocnik.value.typ_zakladatela = 1
   vfm.open(modalIdAddOrEditSpolocnik)?.then(() => {});
@@ -1538,7 +1550,7 @@ function addNewSpolocnikTolist(){
 }
 
 function closeModalAndSubmitOrEditSpolocnik(){
-  console.log("Calling submit function Spolocnik!")
+  //console.log("Calling submit function Spolocnik!")
   vfm.close(modalIdAddOrEditSpolocnik)?.then(() => {
     if(addOperationSpolocnik){                
       addNewSpolocnikTolist();
@@ -1548,6 +1560,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         operation: '+',
         value: spolocnik.value.rozsah_splatenia_vkladu as number
       })
+      finstatCompany.value = '';
     }
     else if(isPrevodPodielu){            
       let amountFromCurrentSpolocnik = vyskyVkladovFromOrSr.value[spolocnikIndex].splatene;
@@ -1582,7 +1595,7 @@ function closeModalAndSubmitOrEditSpolocnik(){
         priceForTransfer: prevodPodieluFromTo.value.priceForTransfer,
         currency: prevodPodieluFromTo.value.currency,
       })
-      console.log("Selected nadobudatel", selectedNadobudatel.value)
+      //console.log("Selected nadobudatel", selectedNadobudatel.value)
     }
     else if(spolocnikIndex >= 0 && spolocnikIndex < newSpolocnikList.value.length){
       spolocnik.value.has_change = true;
@@ -1597,14 +1610,50 @@ function closeModalAndSubmitOrEditSpolocnik(){
     isPrevodPodielu = false;
     isPrevodPodielu = false;  
     spolocnik.value = Object.assign({}, spolocnikObject);
+    finstatCompany.value = '';
     //selectedNadobudatel.value = ''
   })
+}
+
+watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
+  if(newFinstatCompany) {
+      getCompanyDetails();      
+    }
+},{deep: true});
+
+async function getCompanyDetails() { 
+  let ico = {
+    ico: ""
+  }
+
+  if(finstatCompany.value.Name) {
+    ico = {
+      ico: finstatCompany.value.Ico
+    }
+  }
+    
+  await store .dispatch("getDetailsOfCompanyFinstat", ico).then((res: any) => {
+        //console.log(res.data)
+        spolocnik.value.obchodne_meno = res.data.Name || '';
+        spolocnik.value.ico = res.data.Ico;
+        spolocnik.value.country = res.data.Country || 'Slovensko';
+        spolocnik.value.city = res.data.City;
+        spolocnik.value.psc = res.data.ZipCode;
+        spolocnik.value.street = res.data.Street;
+        spolocnik.value.street_number = res.data.StreetNumber.split("/")[0];
+        spolocnik.value.street_number2 = res.data.StreetNumber.split("/")[1];
+      })
+      .catch((err) => {
+        console.error('Error: ' + err);
+      });
 }
 
 function closeModalSpolocnik(){
   vfm.closeAll();
   isPrevodPodielu = false;
 }
+
+
 
 //#endregion
 
@@ -1818,8 +1867,8 @@ function deleteNewSpolocnik(index: number){
 function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: number): boolean {
   let fullName: string[] = array1FromOrSr[index].name.split(" ");    
   if (array1FromOrSr[index] && array2[index]) {
-    console.log("Full name", fullName)
-    console.log("Full lenght", fullName.length)
+    // console.log("Full name", fullName)
+    // console.log("Full lenght", fullName.length)
     if(fullName.length == 3 && fullName[0].includes(".") == true){
       //index 0 title index 3 title after
       return fullName[1] !== array2[index].first_name || fullName[2] !== array2[index].last_name;
@@ -1844,7 +1893,7 @@ function compareArraysAtIndex(array1FromOrSr: any[], array2: any[], index: numbe
 
 async function loadSubjectOfBusiness({ search, page, hasNextPage }: any) {
   const res = await store.dispatch("getAllSubjectOfBusiness")
-  console.log(res);
+  //console.log(res);
   loading.value = false
   if(res.data.data){
     // Filter out items that already exist in subjects_of_business
@@ -1876,7 +1925,7 @@ watch(() => companyFromOrSr.value?.ico, async (newValue, oldValue) => {
     if (newValue) {
       const res = await store.dispatch("getGroupOfSubjectOfBusinessForEditCompany", newValue);
       sbjOld.value = res;
-      console.log(`New ICO value: ${newValue}`);
+      //console.log(`New ICO value: ${newValue}`);
     }
   }
 );
@@ -1887,7 +1936,7 @@ function removeOldSbj(subject: string){
 
 function checkIfSbjIsRemoved(sbjName: string){
   if(sbj_old_removed.value.includes(sbjName)){
-    let index = sbjOld.value.indexOf(sbjName);
+    let index = sbjOld.value.findIndex(sbj => sbj.description === sbjName);
     if(index = -1){
       return true;
     } else {
@@ -1899,11 +1948,11 @@ function checkIfSbjIsRemoved(sbjName: string){
 function addSbjBack(sbjName: string){
   let index = sbj_old_removed.value.indexOf(sbjName);
   sbj_old_removed.value.splice(index, 1);
-  console.log(sbj_old_removed.value)
+  //console.log(sbj_old_removed.value)
 }
 
 function maxVyskaVkladu(node: any){
-  console.log(node.value)
+  //console.log(node.value)
   if(node.value > Number(spolocnik.value.vyska_vkladu)){
     return false
   }

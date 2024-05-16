@@ -28,23 +28,20 @@ async function search({ search }: any) {
 </script>
 
 <template>
-  <FormKit type="form" :actions="false">
     <FormKit
       name="Spoločnosť"
       type="autocomplete"
       placeholder="Meno alebo IČO spoločnosti"
       :options="search"
-
-      required
+      validation="required"
     >
       <template #option="{ option }">
-        <div class="formkit-option grow p-2">
+        <div class="formkit-option grow p-2 text-white">
             <div class="font-bold">{{ option.label }}, {{ option.city }}</div>
             <p class="option-overview">IČO: {{ option.ico }}</p>
         </div>
       </template>
     </FormKit>
-  </FormKit>
 </template>
 
 <style scoped>

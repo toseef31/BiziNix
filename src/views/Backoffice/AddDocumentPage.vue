@@ -481,7 +481,7 @@ const finstatCompany = ref({} as any);
 const finstatCompanyDetails = ref({} as any);
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
-  if (newFinstatCompany.Spoločnosť !== undefined) {
+  if (newFinstatCompany) {
     getCompanyDetails();
   }
 });
@@ -508,9 +508,9 @@ async function getCompanyDetails() {
     ico: ""
   }
 
-  if (finstatCompany.value.Spoločnosť.Ico !== undefined) {
+  if (finstatCompany.value.Ico !== undefined) {
     ico = {
-      ico: finstatCompany.value.Spoločnosť.Ico
+      ico: finstatCompany.value.Ico
     }
 
     await store
@@ -691,7 +691,7 @@ function cancelAddition() {
 function submitHandler() {
   if (companyBankDetails.value != undefined) {
     submitted.value = true;
-    document.value.odberatel = finstatCompany.value.Spoločnosť.Name;
+    document.value.odberatel = finstatCompany.value.Name;
     document.value.items = items.value;
     document.value.bank_account_id = bankAccountId.value;
 

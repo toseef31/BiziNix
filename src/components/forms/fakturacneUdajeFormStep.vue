@@ -57,7 +57,7 @@
           />
           <FormKit type="text" name="city" v-model="invoiceAddress.city" label="Obec" validation="required" />
           <FormKit type="text" name="psc" v-model="invoiceAddress.psc" label="PSČ" validation="required" />
-          <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica" validation="required" />
+          <FormKit type="text" name="street" v-model="invoiceAddress.street" label="Ulica a číslo" validation="required" />
       </div>
     </div>
   </template>
@@ -99,7 +99,7 @@ const invoiceProfileOptions = computed(() => {
 })
 
 let paymentOptions = ref<string>('');
-const finstatCompany = ref({} as any);
+const finstatCompany = ref();
 
 let fakturacne_udaje = ref({
   first_name: '',
@@ -129,7 +129,7 @@ onMounted( async () => {
 })
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
-  if(newFinstatCompany.Spoločnosť !== undefined) {
+  if(newFinstatCompany) {
     getCompanyDetails();
       
     }
@@ -140,9 +140,9 @@ async function getCompanyDetails() {
     ico: ""
   }
 
-  if(finstatCompany.value.Spoločnosť !== undefined) {
+  if(finstatCompany.value.Name !== undefined) {
     ico = {
-      ico: finstatCompany.value.Spoločnosť.Ico
+      ico: finstatCompany.value.Ico
     }
   }
   
