@@ -182,8 +182,11 @@
             type="text"
             label="Formát čísla"
           />
+          <div class="text-lg text-gray-100">
+            RR(rok), MM(mesiac), DD(deň), CCCC(počítadlo)
+          </div>
           <button type="button"
-                  class="text-white font-medium text-sm px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
+                  class="text-white font-medium text-lg px-5 pt-2.5 mr-2 bg-transparent hover:text-teal-500 focus:outline-none"
                   v-on:click="updateCompany()">
                   Uložiť
           </button>
