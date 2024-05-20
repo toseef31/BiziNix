@@ -17,7 +17,8 @@
                 leave-to="-translate-x-full">
                 <DialogPanel class="relative flex w-full max-w-xs flex-1 flex-col pt-5 pb-4">
                   <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0"
-                    enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
+                    enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100"
+                    leave-to="opacity-0">
                     <div class="absolute top-0 right-0 -mr-12 pt-2">
                       <button type="button"
                         class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -139,51 +140,90 @@
       </div>
       <!--KONIEC MENU-->
       <div v-if="!isLoading" class="flex flex-col w-full items-center">
-        <div v-if="new Date(company.fakturacia_zaplatene_do) < new Date(today) ||
-          company.fakturacia_zaplatene_do == null ||
-          company.fakturacia_zaplatene_do == ''
-          " class="flex flex-col w-full items-center">
-          <div class="flex flex-col w-full items-center h-full py-32">
-            <div class="text-4xl text-gray-900 font-bold">
-              K tejto službe<br />bohužiaľ nemáte<br />prístup...
-            </div>
-            <div class="py-8">
-              <div @click="redirectToOrder()"
-                class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2">
-                <span class="text-center w-full">Kúpiť službu</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
+        <div class="flex flex-col w-full py-8" v-if="!company.ico || company.ico == ''">
+          <div class="flex flex-col items-center">
+            <div class="w-fit flex">
+              <div class="border border-gray-200 bg-gray-200 rounded-lg p-8 flex flex-row justify-between gap-4">
+                <div class="flex flex-col basis-1/3 justify-center">
+                  <img src="@/assets/robot_stop.png" class="max-w-40 self-center" />
+                </div>
+                <div class="flex flex-col basis-2/3 justify-center">
+                  <div class="text-sm">
+                    <p class="font-bold text-3xl pb-8">
+                      Ups, vyzerá to tak,
+                      že táto firma zatiaľ
+                      nie je aktívna.
+                    </p>
+                    <p class="font-bold">
+                      Na využívanie Bizinix služieb je potrebné, aby Vaša firma bola založená, fungujúca a mala
+                      pridelené IČO.<br>
+                      <br>
+                      Pokiaľ si myslíte, že ide o chybu, kontaktujte našu podporu.
+                    </p>
+                    <div class="py-8">
+                      <div @click="redirect()"
+                        class="w-fit shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2">
+                        <span class="w-full">Kontaktovať podporu</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                          stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="text-sm">3 mesiace zadarmo. Potom 5€/mesiac</div>
           </div>
         </div>
-
         <div class="flex flex-col w-full" v-else>
-          <div v-if="tab == 1 || tab == 2">
-            <div class="flex flex-col px-20 py-10">
-              <div class="flex flex-row justify-between">
-                <div class="flex flex-col">
-                  <div class="flex flex-row">
-                    <FormKit type="checkbox" name="vystavene" validation-visibility="dirty" v-model="isIssuedChecked" />
-                    <label for="due-in" class="text-black">Vystavené</label>
-                  </div>
-                  <div class="flex flex-row">
-                    <FormKit type="checkbox" name="prijate" validation-visibility="dirty" v-model="isReceivedChecked" />
-                    <label for="due-in" class="text-black">Prijaté</label>
-                  </div>
-                  <div class="pt-4">
-                    Importujte prijaté doklady <br />
-                    <button class="font-bold" v-on:click="showImportPopup = true">
-                      TU
-                    </button>
-                  </div>
-                  <Dialog :open="showImportPopup" @close="showImportPopup = false" class="relative z-50">
-                    <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
-                    <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
-                      <DialogPanel class="w-full max-w-lg rounded bg-gray-900 shadow text-white">
+          <div v-if="new Date(company.fakturacia_zaplatene_do) < new Date(today) ||
+            company.fakturacia_zaplatene_do == null ||
+            company.fakturacia_zaplatene_do == ''
+          " class="flex flex-col w-full items-center">
+            <div class="flex flex-col w-full items-center h-full py-32">
+              <div class="text-4xl text-gray-900 font-bold">
+                K tejto službe<br />bohužiaľ nemáte<br />prístup...
+              </div>
+              <div class="py-8">
+                <div @click="redirectToOrder()"
+                  class="w-[300px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-gray-900 font-bold hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2">
+                  <span class="text-center w-full">Kúpiť službu</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </div>
+              </div>
+              <div class="text-sm">3 mesiace zadarmo. Potom 5€/mesiac</div>
+            </div>
+          </div>
+
+          <div class="flex flex-col w-full" v-else>
+            <div v-if="tab == 1 || tab == 2">
+              <div class="flex flex-col px-20 py-10">
+                <div class="flex flex-row justify-between">
+                  <div class="flex flex-col">
+                    <div class="flex flex-row">
+                      <FormKit type="checkbox" name="vystavene" validation-visibility="dirty"
+                        v-model="isIssuedChecked" />
+                      <label for="due-in" class="text-black">Vystavené</label>
+                    </div>
+                    <div class="flex flex-row">
+                      <FormKit type="checkbox" name="prijate" validation-visibility="dirty"
+                        v-model="isReceivedChecked" />
+                      <label for="due-in" class="text-black">Prijaté</label>
+                    </div>
+                    <div class="pt-4">
+                      Importujte prijaté doklady <br />
+                      <button class="font-bold" v-on:click="showImportPopup = true">
+                        TU
+                      </button>
+                    </div>
+                    <Dialog :open="showImportPopup" @close="showImportPopup = false" class="relative z-50">
+                      <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                      <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                        <DialogPanel class="w-full max-w-lg rounded bg-gray-900 shadow text-white">
                           <div class="flex justify-between py-8 px-4 text-white font-bold">
                             <span class="text-2xl">Importujte prijatý doklad</span>
                             <button class="bg-red-500 hover:bg-red-700 h-8 px-6 rounded z-10 text-white"
@@ -195,26 +235,30 @@
                             @submit="importDocument()" :actions="false">
                             <div class="flex px-4 py-4 w-full text-white">
                               <div v-if="company.is_dph">
-                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vyplňte nasledujúce údaje podľa potreby:</span><br>
+                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vyplňte nasledujúce údaje
+                                  podľa
+                                  potreby:</span><br>
                                 <ul class="pt-4">
                                   <li>
                                     • Ak je doklad bez DPH, vypíšte iba sumu bez DPH.
                                   </li>
                                   <li>
                                     • Ak je doklad s DPH a chcete mať prehľad o vratkách dane,
-                                      zaškrtnite pole "doklad je s DPH" a doplňte tak čiastku DPH do okna
-                                      "čiastka DPH".
+                                    zaškrtnite pole "doklad je s DPH" a doplňte tak čiastku DPH do okna
+                                    "čiastka DPH".
                                   </li>
-                                </ul>    
+                                </ul>
                               </div>
                               <div v-else>
-                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vypíšte jeho celkovú sumu (vrátane prípadnej DPH).</span>
+                                <span class="font-bold text-lg py-2">Nahrajte prijatý doklad a vypíšte jeho celkovú sumu
+                                  (vrátane prípadnej DPH).</span>
                               </div>
                             </div>
                             <div class="flex px-4 pt-10 text-white z-10 relative">
-                              <FormKit v-model="document.subtype" :value="activeDocTab" type="select" name="Druh dokladu"
-                                placeholder="Vyberte druh dokladu" :options="Constants.IMPORT_DOCUMENT_SUBTYPES"
-                                @change="documentSubtypeChanged()" validation="required" />
+                              <FormKit v-model="document.subtype" :value="activeDocTab" type="select"
+                                name="Druh dokladu" placeholder="Vyberte druh dokladu"
+                                :options="Constants.IMPORT_DOCUMENT_SUBTYPES" @change="documentSubtypeChanged()"
+                                validation="required" />
                             </div>
                             <div class="px-4 text-white w-full py-4">
                               <FormKit type="text" name="Od koho je doklad" label="Od koho je doklad"
@@ -224,7 +268,7 @@
                               <FormKit type="text" name="Číslo dokladu" label="Číslo dokladu"
                                 v-model="document.serial_number" />
                             </div>
-                            <div class="px-4 text-white w-full py-4" v-if="company.is_dph ">
+                            <div class="px-4 text-white w-full py-4" v-if="company.is_dph">
                               <FormKit type="checkbox" label="Doklad s DPH?" name="predvoleny" v-model="is_dph" />
                             </div>
                             <div class="flex flex-row pb-8 gap-4">
@@ -234,12 +278,13 @@
                               </div>
                               <div class="flex text-white basis-2/3 pr-4 gap-2">
                                 <div class="w-full">
-                                  <FormKit type="number" id="total" name="total" :label="company.is_dph? 'Suma bez DPH' : 'Celková suma'" step="any" min="0"
-                                    number v-model="document.total" validation="required" />
+                                  <FormKit type="number" id="total" name="total"
+                                    :label="company.is_dph ? 'Suma bez DPH' : 'Celková suma'" step="any" min="0" number
+                                    v-model="document.total" validation="required" />
                                 </div>
                                 <div class="w-full" v-if="is_dph">
-                                  <FormKit type="number" id="total_vat" name="total_vat" label="Čiastka DPH" step="any" min="0" help="Sem zadajte súčet DPH."
-                                    number v-model="document.total_vat" />
+                                  <FormKit type="number" id="total_vat" name="total_vat" label="Čiastka DPH" step="any"
+                                    min="0" help="Sem zadajte súčet DPH." number v-model="document.total_vat" />
                                 </div>
                               </div>
                             </div>
@@ -256,89 +301,91 @@
                               </div>
                             </div>
                           </FormKit>
-                      </DialogPanel>
-                    </div>
+                        </DialogPanel>
+                      </div>
 
-                  </Dialog>
-                </div>
-                <div class="flex flex-col items-center w-full py-8 px-10">
-                  <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
-                  <div class="flex flex-row w-full justify-center gap-10 py-4">
-                    <div class="flex flex-1/4 flex-row">
-                      <div class="flex relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                          </svg>
+                    </Dialog>
+                  </div>
+                  <div class="flex flex-col items-center w-full py-8 px-10">
+                    <h1 class="text-5xl font-bold pb-8 text-gray-800">{{ title }}</h1>
+                    <div class="flex flex-row w-full justify-center gap-10 py-4">
+                      <div class="flex flex-1/4 flex-row">
+                        <div class="flex relative">
+                          <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-300" fill="none"
+                              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                          </div>
+                          <input id="searchInput" v-model="searchQuery" placeholder="Vyhľadajte doklad"
+                            class="h-12 pl-8 w-full shadow px-1 rounded-xl border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-gray-300 bg-gray-900" />
                         </div>
-                        <input id="searchInput" v-model="searchQuery" placeholder="Vyhľadajte doklad"
-                          class="h-12 pl-8 w-full shadow px-1 rounded-xl border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-gray-300 bg-gray-900" />
                       </div>
-                    </div>
-                    <!---->
+                      <!---->
 
-                    <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
-                      <div class="flex relative">
-                        <div class="self-center font-bold px-2 text-white">Od:</div>
-                        <input id="searchInput" type="date" v-model="dateFrom"
-                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      <div class="flex flex-1/4 flex-row bg-gray-900 rounded-xl px-4">
+                        <div class="flex relative">
+                          <div class="self-center font-bold px-2 text-white">Od:</div>
+                          <input id="searchInput" type="date" v-model="dateFrom"
+                            class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                        </div>
+                        <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
+                        <div class="flex relative">
+                          <div class="self-center font-bold pr-2 text-white">Do:</div>
+                          <input id="searchInput" type="date" v-model="dateTo"
+                            class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                        </div>
                       </div>
-                      <div class="px-2 font-bold self-center text-2xl text-gray-600">|</div>
-                      <div class="flex relative">
-                        <div class="self-center font-bold pr-2 text-white">Do:</div>
-                        <input id="searchInput" type="date" v-model="dateTo"
-                          class="h-12 w-full px-1 border-none focus:ring-0 text-white bg-gray-900" />
+                      <!---->
+                    </div>
+                    <DocumentsListTable ref="documentsListTableRef"></DocumentsListTable>
+                    <div class="flex flex-row w-full py-4 justify-around">
+                      <div v-if="documentsData.next_page_url != null">
+                        <button
+                          class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
+                          v-on:click="getDocuments(documentsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn, activeDocTab)">
+                          <span class="px-4">Načítať viac</span>
+                          <ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
+                        </button>
                       </div>
                     </div>
-                    <!---->
                   </div>
-                  <DocumentsListTable ref="documentsListTableRef"></DocumentsListTable>
-                  <div class="flex flex-row w-full py-4 justify-around">
-                    <div v-if="documentsData.next_page_url != null">
-                      <button
-                        class="bg-teal-500 hover:bg-teal-700 px-4 shadow flex justify-center border items-center py-4 rounded-lg text-white"
-                        v-on:click="getDocuments(documentsData.current_page, searchQuery, dateFrom, dateTo, 'next', selectedColumn, activeDocTab)">
-                        <span class="px-4">Načítať viac</span>
-                        <ChevronDownIcon class="h-6 w-6 text-white" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex flex-col items-center">
-                  <button
-                    class="p-0 w-12 h-12 bg-gray-800 rounded-full hover:bg-gray-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
-                    v-on:click="redirect()">
-                    <svg viewBox="0 0 20 20" enable-background="new 0 0 20 20" class="w-6 h-6 inline-block">
-                      <path fill="#FFFFFF" d="M16,10c0,0.553-0.048,1-0.601,1H11v4.399C11,15.951,10.553,16,10,16c-0.553,0-1-0.049-1-0.601V11H4.601
+                  <div class="flex flex-col items-center">
+                    <button
+                      class="p-0 w-12 h-12 bg-gray-800 rounded-full hover:bg-gray-700 active:shadow-lg mouse shadow transition ease-in duration-200 focus:outline-none"
+                      v-on:click="redirectToAdd()">
+                      <svg viewBox="0 0 20 20" enable-background="new 0 0 20 20" class="w-6 h-6 inline-block">
+                        <path fill="#FFFFFF" d="M16,10c0,0.553-0.048,1-0.601,1H11v4.399C11,15.951,10.553,16,10,16c-0.553,0-1-0.049-1-0.601V11H4.601
                                         C4.049,11,4,10.553,4,10c0-0.553,0.049-1,0.601-1H9V4.601C9,4.048,9.447,4,10,4c0.553,0,1,0.048,1,0.601V9h4.399
                                         C15.952,9,16,9.447,16,10z" />
-                    </svg>
-                  </button>
-                  <label class="font-bold text-center">Nový doklad</label>
+                      </svg>
+                    </button>
+                    <label class="font-bold text-center">Nový doklad</label>
+                  </div>
                 </div>
-              </div>
-              <Dialog :open="showBankPopup" @close="showBankPopup = false" class="relative z-50">
-                <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
-                <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
-                  <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
-                    <DialogTitle class="text-center py-4 text-xl font-bold">Bankový účet</DialogTitle>
+                <Dialog :open="showBankPopup" @close="showBankPopup = false" class="relative z-50">
+                  <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
+                  <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+                    <DialogPanel class="w-full max-w-sm rounded bg-gray-900 shadow text-white">
+                      <DialogTitle class="text-center py-4 text-xl font-bold">Bankový účet</DialogTitle>
 
-                    <p class="p-8">
-                      Predtým ako budte môcť vystavovať doklady si pridajte Bankový účet.
-                    </p>
-                    <div class="flex flex-row justify-between py-2 px-4">
-                      <button class="px-2 py-2 hover:text-teal-500" @click="redirectToBankAccounts()">Pridať účet</button>
-                      <button class="px-2 hover:text-red-500" @click="showBankPopup = false">Zatvoriť</button>
-                    </div>
-                  </DialogPanel>
-                </div>
-              </Dialog>
+                      <p class="p-8">
+                        Predtým ako budte môcť vystavovať doklady si pridajte Bankový účet.
+                      </p>
+                      <div class="flex flex-row justify-between py-2 px-4">
+                        <button class="px-2 py-2 hover:text-teal-500" @click="redirectToBankAccounts()">Pridať
+                          účet</button>
+                        <button class="px-2 hover:text-red-500" @click="showBankPopup = false">Zatvoriť</button>
+                      </div>
+                    </DialogPanel>
+                  </div>
+                </Dialog>
+              </div>
             </div>
-          </div>
-          <div v-else>
-            <DocumentsDesignPage></DocumentsDesignPage>
+            <div v-else>
+              <DocumentsDesignPage></DocumentsDesignPage>
+            </div>
           </div>
         </div>
       </div>
@@ -544,6 +591,12 @@ async function currentDocTab(tabNumber: number, page: number) {
 }
 
 function redirect() {
+  return router.push({
+    name: "Counseling center",
+  });
+}
+
+function redirectToAdd() {
   if (bankAccounts.value.length > 0) {
     return router.push({
       name: "Add document",
@@ -575,7 +628,7 @@ function importDocument() {
   return store
     .dispatch("addDocument", document.value)
     .then(async (res) => {
-      if(uploadImageData.value.body.img){
+      if (uploadImageData.value.body.img) {
         await uploadImg(res.Document.id);
       }
       await refreshData();
