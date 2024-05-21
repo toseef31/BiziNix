@@ -358,23 +358,22 @@
         </div>
         <div class="flex py-10 px-10">
           <vue-horizontal
-            v-if="vhqs.length > 0"
+            v-if="whyUs.length > 0"
             responsive
             class="horizontal"
-            :items="vhqs"
+            :items="whyUs"
             :options="options"
           >
-            <section v-for="vhq in vhqs" :key="vhq.id" class="px-4">
+            <section v-for="item in whyUs" :key="item.id" class="px-4">
               <!---->
               <div
                 class="w-full h-full bg-gray-900 p-14 border rounded-lg border-teal-500"
               >
                 <div class="font-medium px-2 my-2 text-white text-lg">
-                  {{ vhq.name }}
+                  {{ item.name }}
                 </div>
                 <div class="text-white px-2 mb-2 text-sm">
-                  {{ vhq.address.street }} {{ vhq.address.street_number }},
-                  {{ vhq.address.psc }} {{ vhq.address.city }}
+                  {{ item.desc }}
                 </div>
               </div>
               <!---->
@@ -458,7 +457,6 @@
 </template>
 
 <script setup lang="ts">
-import CounselingCenter from "@/components/CounselingCenter.vue";
 import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
@@ -480,9 +478,15 @@ function redirectToSupport() {
   });
 }
 
-const vhqs: any = computed(() => {
-  return store.state.vhqs;
-});
+const whyUs = [
+  {id:1, name: "Jednoduché vytváranie faktúr na pár klikov vďaka Finstat API.", desc: "S vystavením dokladu nestrávite viac ako minútu. Integrácia s Finstat API umožňuje rýchle a presné vyplnenie fakturačných údajov."},
+  {id:2, name: "Prehľadné prostredie aktuálneho hospodárenia.", desc: "Vždy viete na čom ste. Naše riešenie poskytuje prehľadné a intuitívne rozhranie, ktoré uľahčuje sledovanie a správu finančných tokov."},
+  {id:3, name: "Možnosť importovania nákladov a iných prijatých dokladov.", desc: "Ak nejaký fyzicky stratíte, máte ho u nás vždy uložený. Naša platforma umožňuje jednoduché importovanie všetkých dôležitých dokumentov."},
+  {id:4, name: "Vybratie si vlastnej šablóny dokladu.", desc: "Vďaka možnosti vybratia si vlastnej šablóny dokladu sa ľahko odlíšite od konkurencie. Naše šablóny sú prispôsobiteľné vašim potrebám a preferenciám."},
+  {id:5, name: "Posielanie upomienok o neúhradách priamo z rozhrania.", desc: "Neplatia vám klienti a nechcete im volať kvôli pohľadávkam? Posielajte im upomienky o neúhradách priamo z nášho systému."},
+  {id:6, name: "QR kódy v dokladoch pre jednoduchšie platenie faktúr.", desc: "Vďaka QR kódom v našich dokladoch bude platenie faktúr pre vašich klientov oveľa jednoduchšie a rýchlejšie."},
+  {id:7, name: "Bezpečné ukladanie a zálohovanie dát.", desc: "Všetky vaše údaje sú u nás bezpečne uložené a pravidelne zálohované, čo zaručuje ich ochranu a dostupnosť."},
+]
 
 let options: {
   responsive: [

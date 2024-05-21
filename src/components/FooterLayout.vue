@@ -3,8 +3,8 @@
     <div class="text-white w-full bg-gradient-to-b from-gray-bizinix to-gray-800 py-8 md:pt-16">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row">
         <div class="flex-1 p-4 font-bold text-xl">
-            <router-link to="/moj/dashboard" class="block flink">Firmy a ich správa</router-link>
-            <router-link to="/documents" class="block flink">Faktúry, zmluvy a iné dokumenty</router-link>
+            <router-link to="/moj/dashboard" class="block flink">Zakladanie a zmena spoločnosti / živnosti</router-link>
+            <router-link to="/documents" class="block flink">Vytváranie a správa dokladov</router-link>
             <router-link to="/virtualne-sidlo" class="block flink">Najlepšie virtuálne sídlo</router-link>
             <router-link to="/counseling-center" class="block flink">Centrum poradenstva</router-link>
         </div>
