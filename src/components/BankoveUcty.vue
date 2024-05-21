@@ -140,6 +140,7 @@ import type CompanyBankAccount from "@/types/CompanyBankAccount";
 import { Dialog, DialogPanel } from '@headlessui/vue';
 import { PlusCircleIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { getValidationMessages } from '@formkit/validation'
+import { toast } from "vue3-toastify";
 
 let company = ref({} as Company);
 const bankAccounts = computed(() => store.state.bankAccounts as CompanyBankAccount[]);
@@ -179,6 +180,9 @@ async function addBankAccount() {
     .then(async () => {
       await refreshData();
       showAdditionModalDialog.value = false;
+    }).catch((err) => {
+      showLoadingModalDialog.value = false;
+      toast.error('Error: ' + err.response.data.message);
     });
 }
 
@@ -191,6 +195,9 @@ async function updateBankAccounts() {
     .then(async () => {
       await refreshData();
       showLoadingModalDialog.value = false;
+    }).catch((err) => {
+      showLoadingModalDialog.value = false;
+      toast.error('Error: ' + err.response.data.message);
     });
 }
 
