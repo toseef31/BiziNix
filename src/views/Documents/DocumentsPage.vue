@@ -367,9 +367,9 @@
             <section v-for="item in whyUs" :key="item.id" class="px-4">
               <!---->
               <div
-                class="w-full h-full bg-gray-900 p-14 border rounded-lg border-teal-500"
+                class="max-w-xl h-full bg-gray-900 p-14 border rounded-lg border-teal-500"
               >
-                <div class="font-medium px-2 my-2 text-white text-lg">
+                <div class="font-bold px-2 my-2 text-white text-lg">
                   {{ item.name }}
                 </div>
                 <div class="text-white px-2 mb-2 text-sm">
