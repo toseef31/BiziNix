@@ -2,7 +2,7 @@
   <div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(36,36,39,0.9332107843137255) 40%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/zalozenie-fimy-bg.png') ">
     <div class="max-w-7xl flex flex-col md:flex-row min-h-[80vh] items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
       <div class="max-w-full">
-        <h1 class="!leading-tight text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Jednoduché založenie<br>živnosti za 49 €</h1>
+        <h1 class="!leading-tight text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Jednoduché založenie<br>živnosti za 1 €</h1>
         <p class="mt-8 mb-8 text-2xl text-white">Zaregistrujte alebo upravte svoju živnost rýchlo, z domu a za najmenšie ceny na trhu. Cena obsahuje aj štátne poplatky v hodnote 49€.</p>
         <div class="mt-8 text-white">
           <div class="font-bold text-4xl">Čaka nás</div>
@@ -75,7 +75,7 @@
           </FormKit>
 
           <div class="p-4 mb-4  bg-gray-900 text-white border rounded-md border-bizinix-border border-solid">
-              <p>Poplatok za založenie firmy {{ order.items[0].price }} €.</p>
+              <p>Poplatok za založenie živnosti {{ order.items[0].price }} €.</p>
               <p>Poplatok za predmety podnikania {{ subjects_of_business?.finalPriceForBusinessCategori ?? 0 }} €.</p>
               <p v-if="businessInfo?.placeOfBusinness == 'virtualne'">Poplatok za virtuálne sídlo {{ selectedVhqPackageFromStore.price * 12 ?? 0 }} € rok.</p>
               <p>Celkom k platbe <b>{{ totalForPay }} €</b>. Počet vybratých predmetov podnikania <b>{{ subjects_of_business?.subjects_of_business.length }}</b>.</p>
@@ -219,8 +219,8 @@ let order = ref({
   is_advocate_requested: true,
   items: [{
       description: "Založenie živnosti",
-      price: 12, // finalna cena za polozku s dph
-      price_vat: 2 // toto je len dph
+      price: 1, // finalna cena za polozku s dph
+      price_vat: 1 * 0.2 // toto je len dph
     }],
   fakturacne_udaje_id: 0
 })

@@ -351,18 +351,83 @@
                   <PopoverButton
                     class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
                   >
-                    <span class="sr-only">Close menu</span>
+                    <span class="sr-only">Zatvoriť menu</span>
                     <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                   </PopoverButton>
                 </div>
               </div>
               <div class="mt-6">
-                <nav class="grid gap-y-8">
+                <nav class="grid gap-y-2">
+                  <div class="font-medium text-sm">Firma (s.r.o.)</div>
                   <a
                     v-for="item in firmaMenuItems"
                     :key="item.name"
                     :href="item.href"
-                    class="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50"
+                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    <span class="ml-3 text-base font-medium text-gray-900">{{
+                      item.name
+                    }}</span>
+                  </a>
+                  <div class="font-medium text-sm">Živnosť</div>
+                  <a
+                    v-for="item in zivnostMenuItems"
+                    :key="item.name"
+                    :href="item.href"
+                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    <span class="ml-3 text-base font-medium text-gray-900">{{
+                      item.name
+                    }}</span>
+                  </a>
+                  <div class="font-medium text-sm">Fakturačné dokumenty</div>
+                  <a
+                    v-for="item in fakturacneMenuItems"
+                    :key="item.name"
+                    :href="item.href"
+                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    <span class="ml-3 text-base font-medium text-gray-900">{{
+                      item.name
+                    }}</span>
+                  </a>
+                  <div class="font-medium text-sm">Obchodné dokumenty</div>
+                  <a
+                    v-for="item in obchodneMenuItems"
+                    :key="item.name"
+                    :href="item.href"
+                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
+                  >
+                    <component
+                      :is="item.icon"
+                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    <span class="ml-3 text-base font-medium text-gray-900">{{
+                      item.name
+                    }}</span>
+                  </a>
+                  <div class="font-medium text-sm">Virtuálne sídlo</div>
+                  <a
+                    v-for="item in virtualneSidloMenuItems"
+                    :key="item.name"
+                    :href="item.href"
+                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
                   >
                     <component
                       :is="item.icon"
@@ -377,7 +442,7 @@
               </div>
             </div>
             <div class="space-y-6 py-6 px-5">
-              <div class="grid grid-cols-2 gap-y-4 gap-x-8">
+              <!-- <div class="grid grid-cols-2 gap-y-4 gap-x-8">
                 <a
                   href="#"
                   class="text-base font-medium text-gray-900 hover:text-gray-700"
@@ -396,17 +461,17 @@
                   class="text-base font-medium text-gray-900 hover:text-gray-700"
                   >{{ item.name }}</a
                 >
-              </div>
+              </div> -->
               <div>
-                <a
+                <!-- <a
                   href="#"
                   class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >Sign up</a
-                >
+                > -->
                 <p class="mt-6 text-center text-base font-medium text-gray-500">
-                  Existing customer?
+                  Existujúci zákazník?
                   {{ " " }}
-                  <a href="#" class="text-indigo-600 hover:text-indigo-500"
+                  <a href="/login" class="text-indigo-600 hover:text-indigo-500"
                     >Prihlásiť sa</a
                   >
                 </p>
@@ -433,7 +498,7 @@ import {
   Popover,
   PopoverButton,
   PopoverGroup,
-  PopoverPanel,
+  PopoverPanel
 } from "@headlessui/vue";
 import {
   CalendarIcon,
@@ -446,12 +511,12 @@ import {
   DocumentTextIcon,
   DocumentChartBarIcon,
   DocumentCheckIcon,
-DocumentArrowUpIcon,
-DocumentPlusIcon,
-DocumentMinusIcon,
-DocumentIcon
+  DocumentArrowUpIcon,
+  DocumentPlusIcon,
+  DocumentMinusIcon,
+  DocumentIcon,
+  CloudIcon
 } from "@heroicons/vue/24/outline";
-
 
 import { ChevronDownIcon } from "@heroicons/vue/24/outline";
 import CompanySelectorInHeader from "./CompanySelectorInHeader.vue";
@@ -571,7 +636,6 @@ const fakturacneMenuItems = [
   }
 ];
 
-
 const obchodneMenuItems = [
   {
     name: "Objednávky",
@@ -586,6 +650,16 @@ const obchodneMenuItems = [
       "Get a better understanding of where your traffic is coming from.",
     href: "/documents",
     icon: DocumentChartBarIcon,
+  } 
+];
+
+const virtualneSidloMenuItems = [
+  {
+    name: "Založiť virtuálne sídlo",
+    description:
+      "Najlepšie virtuálne sídlo",
+    href: "/virtualne-sidlo",
+    icon: CloudIcon,
   } 
 ];
 

@@ -209,8 +209,8 @@ let order = ref({
   items: [
     {
       description: "Úprava firmy",
-      price: 20, // finalna cena za polozku s dph
-      price_vat: 20 * 0.2 // toto je len dph
+      price: 69, // finalna cena za polozku s dph
+      price_vat: 69 * 0.2 // toto je len dph
     }
   ],
   fakturacne_udaje_id: 0,

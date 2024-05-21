@@ -4,6 +4,7 @@ import App from "./App.vue";
 import "./index.css";
 import router from "./router";
 import store from "./store";
+import VueGtag from "vue-gtag";
 import { defineRule } from "vee-validate";
 import type { DefaultConfigOptions } from '@formkit/vue';
 import { plugin, defaultConfig } from '@formkit/vue';
@@ -75,6 +76,9 @@ app.use(Vue3Toastify, {
   position: "bottom-center",
 } as ToastContainerOptions);
 app.use(vfm)
+app.use(VueGtag, {
+  config: { id: "G-XRVHWRPCR5" }
+});
 
 app.mount("#app");
 

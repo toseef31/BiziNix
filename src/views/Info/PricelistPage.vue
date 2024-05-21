@@ -285,7 +285,7 @@
               >
                 <td class="py-4 pl-4 text-white font-medium">Zmeny v sro</td>
                 <td class="py-4">Vrátane štátneho poplatku a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 pr-8 text-right">79€</td>
+                <td class="py-4 pr-8 text-right">69€</td>
               </tr>
             </tbody>
           </table>
@@ -306,7 +306,7 @@
               <tr class="border-b bg-gray-800 border-gray-700">
                 <td class="py-4 pl-4 text-white font-medium">Založenie živnosti </td>
                 <td class="py-4">Vrátane všetkých poplatkov a neobmedzeného množstva voľných živnost</td>
-                <td class="py-4 pr-8 text-right">10€</td>
+                <td class="py-4 pr-8 text-right">1€</td>
               </tr>
               <tr class="border-b bg-gray-800 border-gray-700">
                 <td class="py-4 pl-4 text-white font-medium">Zmeny v živnosti</td>
