@@ -182,7 +182,7 @@ const selectedCompany = computed(() => store.getters.getSelectedCompany);
 const childRefComponentForPay = ref();
 const order = ref({
     payment_date: "" as any,
-    payment_method: "stripe",
+    payment_method: "Stripe",
     order_type: 'mail',
     description: "Preposlanie",
     amount: 0,

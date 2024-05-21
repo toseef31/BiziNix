@@ -119,7 +119,7 @@ const payWithStripe = async (order: any) => {
       // console.log(paymentIntentResult)
       if (paymentIntentResult.paymentIntent.status === 'succeeded') {
         order.payment_date = new Date().toISOString().slice(0, 19).replace('T', ' ')
-        order.payment_method = "stripe"
+        order.payment_method = "Stripe"
         order.is_paid = true
         store.dispatch('updateOrderById', order)
         toast.success('Platba bola úspešna.')
@@ -127,7 +127,7 @@ const payWithStripe = async (order: any) => {
           name: 'Payment',
           params: {
             orderId: order.id,
-            paymentMethod: 'stripe',
+            paymentMethod: 'Stripe',
           },
         })
         // Show your customer that the payment has succeeded

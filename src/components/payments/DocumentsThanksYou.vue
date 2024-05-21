@@ -66,14 +66,14 @@
                 <fieldset class="mt-4">
                   <div class="space-y-4">
                     <label class="flex items-center mb-4">
-                      <input type="radio" name="paymentMethod" value="iban"
+                      <input type="radio" name="paymentMethod" value="IBAN"
                         v-model="selectedOptionForPay" @change="handleRadioChange"
                         class="w-5 h-5" required >
                       <span class="ml-2 text-lg">Bankovým prevodom</span>
                       <img src="../../assets/logo-small.png" alt="Bankovým prevodom" class="ml-2 h-12">
                     </label>
                     <label class="flex items-center mb-4">
-                      <input type="radio" value="stripe" v-model="selectedOptionForPay"
+                      <input type="radio" value="Stripe" v-model="selectedOptionForPay"
                         @change="handleRadioChange" class="w-5 h-5" 
                         name="paymentMethod" required >
                       <span class="ml-2 text-lg">Platba kartou</span>
@@ -81,7 +81,7 @@
                     </label>
                   </div>
                 </fieldset>
-                <div v-if="selectedOptionForPay == 'stripe'">
+                <div v-if="selectedOptionForPay == 'Stripe'">
                   <stripePaymentComponent class="bg-gray-bizinix my-4 text-white" ref="childRefComponentForPay"></stripePaymentComponent>
                 </div>
                 <div class="text-center mt-4">
