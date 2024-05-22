@@ -21,7 +21,7 @@
             :key="review.id"
             class="relative px-4"
           >
-            <div class="flex items-center justify-center space-x-4">
+            <div class="flex items-center justify-center">
               <svg
                 v-for="j in review.stars"
                 :key="j"
@@ -48,43 +48,7 @@
               {{ review.name }}
             </div>
           </section>
-          <template v-slot:btn-prev>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6 text-teal-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 19.5L8.25 12l7.5-7.5"
-                />
-              </svg>
-            </button>
-          </template>
 
-          <template v-slot:btn-next>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6 text-teal-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </button>
-          </template>
         </vue-horizontal>
       </div>
     </div>
@@ -119,15 +83,4 @@ section {
   width: 100%;
 }
 
-.horizontal:v-deep(.v-hl-btn-next svg) {
-  background: none;
-  color: #38b2ac;
-  box-shadow: none;
-}
-
-.horizontal:v-deep(.v-hl-btn-prev svg) {
-  background: none;
-  color: #38b2ac;
-  box-shadow: none;
-}
 </style>

@@ -378,46 +378,6 @@
               </div>
               <!---->
             </section>
-
-            <template v-slot:btn-prev>
-              <button
-                style="align-self: start; padding-top: 24px; margin-right: 30px"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-12 h-12 text-teal-500"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.75 19.5L8.25 12l7.5-7.5"
-                  />
-                </svg>
-              </button>
-            </template>
-
-            <template v-slot:btn-next>
-              <button style="align-self: start; padding-top: 24px">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-12 h-12 text-teal-500"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              </button>
-            </template>
           </vue-horizontal>
         </div>
         <!---->
