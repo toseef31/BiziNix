@@ -2,25 +2,22 @@
   <div class="w-full justify-center bg-center items-center bg-black bg-opacity-70 bg-cover bg-blend-overlay
     bg-[url('../src/assets/pozadie.png')]"
   >
-    <div class="text-white max-w-7xl mx-auto flex flex-col md:flex-row py-28">
-      <div class="flex-1 flex p-4 items-center justify-center">
-        <p class="text-3xl md:text-5xl font-extrabold leading-snug">
-          Čo hovoria naši zákazníci?
-        </p>
-      </div>
+    <h3 class="pt-12 text-center text-3xl md:text-5xl font-extrabold leading-snug">
+      Čo hovoria naši zákazníci?
+    </h3>
+    <div class="text-white max-w-7xl mx-auto flex flex-col md:flex-row py-16">      
       <div class="flex-1 p-4 items-center justify-center">
         <vue-horizontal
           v-if="reviews.length > 0"
           responsive
-          class="horizontal"
           :items="reviews"
-          :options="options"
         >
           <section
             v-for="review in reviews"
             :key="review.id"
-            class="relative px-4"
+            class="relative px-8 max-w-[100%] md:max-w-[50%]"
           >
+          <div>
             <div class="flex items-center justify-center">
               <svg
                 v-for="j in review.stars"
@@ -47,8 +44,8 @@
             <div class="font-medium text-center mt-4">
               {{ review.name }}
             </div>
+          </div>
           </section>
-
         </vue-horizontal>
       </div>
     </div>
@@ -77,10 +74,3 @@ onBeforeMount(async () => {
   await store.dispatch("reviews");
 });
 </script>
-
-<style scoped>
-section {
-  width: 100%;
-}
-
-</style>
