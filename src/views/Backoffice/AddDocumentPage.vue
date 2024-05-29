@@ -477,8 +477,8 @@ watch(bankAccountId, async () => {
   }
 })
 
-const finstatCompany = ref({} as any);
-const finstatCompanyDetails = ref({} as any);
+const finstatCompany = ref();
+const finstatCompanyDetails = ref();
 
 watch(finstatCompany, (newFinstatCompany, prevFinstatCompany) => {
   if (newFinstatCompany) {
