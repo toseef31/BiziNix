@@ -12,9 +12,9 @@
           <div class="flex items-center justify-center md:justify-start">
             <div
               @click="redirect()"
-              class="w-[200px] shadow flex justify-between border items-center py-4 px-6 rounded-lg bg-teal-500 font-bold border-teal-500 text-gray-700 hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
+              class="w-[200px] shadow flex justify-between border items-center py-4 px-6 rounded-lg bg-teal-500 font-bold border-teal-500 text-white hover:cursor-pointer hover:bg-gray-800 space-x-2"
             >
-              <span class="text-center w-full">Mám otázku</span>
+              <span class="text-center w-full text-white">Mám otázku</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
