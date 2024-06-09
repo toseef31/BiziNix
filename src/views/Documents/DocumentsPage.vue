@@ -1,68 +1,18 @@
 <template>
-  <!-- PRVA SEKCIA -->
-  <div
-    class="relative z-0 h-fit w-full max-h-full bg-cover bg-local bg-no-repeat bg-center"
-    style="
-      height: calc(100vh - 200px);
-      background-image: url('../src/assets/2.png');
-    "
-  >
-    <div
-      class="w-full flex h-full"
-      style="
-        background-image: linear-gradient(to top,rgba(17, 24, 39, 0.75) 0%,rgba(17, 24, 39, 0.95) 100%);
-      "
-    >
-      <div class="container flex-col justify-center mx-auto flex h-full py-8">
-        <div class="flex flex-row justify-between">
-          <div class="flex flex-col">
-            <div class="text-5xl text-white leading-normal font-bold">
-              Vytvárajte a<br />
-              spravujte
-            </div>
-            <div class="text-base text-white my-4">
-              <div class="flex items-center space-x-2">
-                <div>
-                  Faktúry, ponuky, zmluvy a všetky<br />
-                  dokumenty, ktoré vaša firma<br />
-                  potrebujte
-                </div>
-              </div>
-            </div>
-            <div class="mt-5">
-              <div
-                @click="redirect()"
-                class="w-[400px] shadow flex justify-between border items-center py-2 px-4 rounded-lg bg-teal-500 border-teal-500 text-white hover:text-teal-500 hover:cursor-pointer hover:bg-gray-800 space-x-2"
-              >
-                <span class="text-center w-full"
-                  >Vyskúšať zadarmo na 3 mesiace</span
-                >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              </div>
-            </div>
-
-          </div>
-          <div class="flex flex-col">
-            <div>
-              <img src="@/assets/robot_stripes.png" class="max-w-xs lg:max-w-md" />
-            </div>
-          </div>
-
+<div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(17, 24, 39) 17%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/6.png')">
+    <div class="max-w-7xl flex h-[50vh] md:h-[80vh] items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
+      <div class="max-w-full">
+        <h2 class="!leading-tight text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Vytvárajte a spravujte</h2>
+        <p class="mt-8 mb-8 text-2xl text-white">Faktúry, ponuky, zmluvy a všetky<br>dokumenty, ktoré vaša firma potrebujte</p>
+        <div class="mt-8 text-white">
+          <button @click.prevent="redirect()" type="button" class="inline-flex items-center gap-x-2 rounded-md bg-bizinix-teal px-3 md:px-7 py-3 text-xl font-semibold text-white shadow-sm hover:hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">
+            Vyskúšať zadarmo na 3 mesiace
+            <ChevronDoubleRightIcon class="-mr-0.5 w-6 h-6 text-white stroke-current stroke-[3px]" aria-hidden="true" />
+          </button>       
         </div>
-
+      </div>
+      <div class="hidden md:block md:max-w-xs lg:max-w-md">
+        <img src="@/assets/robot.png">
       </div>
     </div>
   </div>
@@ -417,7 +367,7 @@
 </template>
 
 <script setup lang="ts">
-import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { ChevronDoubleRightIcon, CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Reviews from "@/components/Reviews.vue";
 import { useRouter } from "vue-router";
 import VueHorizontal from "vue-horizontal";

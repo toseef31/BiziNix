@@ -10,43 +10,21 @@
                   Vyhľadajte odpoveď podľa kľúčových slov
                 </div>
             </div>
-          <div class="flex w-full flex-row">
-            <div class="flex grow relative">
-              <div
-                class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-              </div>
-              <input
-                id="searchInput"
-                v-model="searchQuery"
-                placeholder="napr. Ako funguje DPH ?"
-                class="h-12 pl-8 w-full shadow px-1 rounded-l border focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-black"
+            <div>
+          <div class="mt-1 flex rounded-md shadow-sm">
+            <div class="relative flex flex-grow items-stretch focus-within:z-10">
+              <input type="text" id="searchInput" v-model="searchQuery"
+                class="text-gray-800 font-medium block w-full rounded-none rounded-l-md border-gray-300 pl-2 py-4 focus:border-teal-500 focus:ring-teal-500"
+                placeholder="Ako funguje DPH?"
               />
             </div>
-            <div class="flex">
-              <button
-                class="bg-teal-500 hover:bg-teal-700 h-12 px-8 rounded-r z-10"
-                v-on:click="search()"
-              >
-                Hľadať
-              </button>
-            </div>
+            <button type="button" v-on:click="search()" class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 font-medium text-gray-700 hover:bg-gray-100 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500">
+              <MagnifyingGlassIcon class="h-6 w-6" aria-hidden="true" />
+              <span>Hľadať</span>
+            </button>
           </div>
         </div>
+      </div>
     </div>
     <div class="bg-gray-900 py-20">
       <div class="container mx-auto">
@@ -199,6 +177,7 @@
 </template>
 
 <script setup lang="ts">
+import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline";
 import store from "@/store";
 import { onMounted, ref, computed } from "vue";
 import Reviews from "@/components/Reviews.vue";
