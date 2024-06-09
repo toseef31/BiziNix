@@ -63,7 +63,7 @@
     </div>
   </div>
   <div class="bg-gray-800 bg-[url('../src/assets/3mesiacebizinixvlna.png')] bg-center bg-no-repeat bg-cover">
-    <div class="flex flex-row gap-4 md:gap-14 items-center justify-center max-w-7xl mx-auto py-40 px-2 sm:px-6 lg:px-8">
+    <div class="flex flex-row gap-4 md:gap-14 items-center justify-center max-w-7xl mx-auto py-28 md:py-40 px-2 sm:px-6 lg:px-8">
       <div class="w-1/2 flex justify-end">
         <img class="w-56" src="@/assets/3mesbizinix.png" alt="3 mesiace zadarmo" />
       </div>
