@@ -68,8 +68,8 @@
         <img class="w-56" src="@/assets/3mesbizinix.png" alt="3 mesiace zadarmo" />
       </div>
       <div class="w-1/2">
-        <h3 class="text-4xl md:text-6xl text-white font-bold">Vyskúšajte nás na 3 mesiace zadarmo</h3>
-        <div class="h-5"></div>        
+        <h3 class="text-4xl md:text-6xl text-white font-bold">Vyskúšajte nás na <span class="text-bizinix-teal">3 mesiace zadarmo</span></h3>
+        <div class="my-4 text-white">Vystavujte a spravujte svoje faktúry, objednávky alebo cenové ponuky <b>pohodlne na pár klikov</b>. S nami budete mať vždy aktuálny <b>prehľad</b> o Vašom hospodárení.</div>
         <router-link to="/documents">
           <button type="button" class="inline-flex items-center gap-x-2 rounded-md bg-bizinix-teal px-3 md:px-7 py-3 text-xl font-semibold text-white shadow-sm hover:hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">
             Poďme na to
