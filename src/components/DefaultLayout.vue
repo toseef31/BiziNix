@@ -160,7 +160,7 @@
                             </div>
                           </div>
                           <div class="mt-4 text-white font-semibold">
-                            Vďaka prepojeniu so slovenskými databázami máte dokumenty hotové za pár sekúnd. Vyskúšajte na 3 mesiace zadarmo, bez zadania karty, a ušetrite čas aj peniaze!
+                            Vďaka prepojeniu so slovenskými databázami máte dokumenty hotové za pár sekúnd. <a href="/documents/order">Vyskúšajte na 3 mesiace zadarmo, bez zadania karty</a>, a ušetrite čas aj peniaze!
                           </div>
                         </div>
                       </div>
@@ -240,7 +240,7 @@
                       <div class="flex items-center gap-x-3">
                         <h3 class="text-sm font-semibold leading-6 ">Nové občianske združenie?</h3>
                       </div>
-                      <p class="mt-2 text-sm leading-6 text-white font-semibold">V prípade záujmu o založenie občianskeho združenia nás prosím <router-link to="/contact"><b>kontaktujte</b></router-link>.</p>
+                      <p class="mt-2 text-sm leading-6 text-white font-semibold">V prípade záujmu o založenie občianskeho združenia nás prosím <a href="/contact"><b>kontaktujte</b></a>.</p>
                     </div>
                   </div>
                 </PopoverPanel>
@@ -444,7 +444,7 @@
                       }}</span>
                     </a>
                   <div class="text-sm text-gray-900">
-                    Vystavujte faktúry, dobropisy, objednávky a cenové ponuky rýchlo a jednoducho. <router-link to="/documents/order"><b>Vyskúšajte teraz na 3 mesiace zadarmo</b></router-link>, bez zadania karty!                    
+                    Vystavujte faktúry, dobropisy, objednávky a cenové ponuky rýchlo a jednoducho. <a href="/documents/order"><b>Vyskúšajte teraz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
                   </div>
                   <div class="font-medium text-sm">Virtuálne sídlo</div>
                   <a
@@ -463,7 +463,7 @@
                     }}</span>
                   </a>
                   <div class="font-medium text-sm">Občianske združenie</div>
-                  <p class="text-sm text-gray-900">V prípade záujmu o založenie občianskeho združenia nás prosím <router-link to="/contact"><b>kontaktujte</b></router-link>.</p>                  
+                  <p class="text-sm text-gray-900">V prípade záujmu o založenie občianskeho združenia nás prosím <a href='/contact'><b>kontaktujte</b></a>.</p>                  
                 </nav>
               </div>
             </div>
