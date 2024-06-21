@@ -79,12 +79,12 @@
 
               <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
                 <PopoverPanel
-                  class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
+                  class="absolute left-[100%] z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
                   @mouseover.prevent="popoverHover = true"
                   @mouseleave.prevent="closePopover(close)"
                 >
-                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
-                    <div class="grid grid-cols-2 gap-x-6 sm:gap-x-8">
+                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-4xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
+                    <div class="grid grid-cols-3 gap-x-6 sm:gap-x-8">
                       <div>
                         <h3 class="text-lg text-white font-medium leading-6">Firma (s.r.o.)</h3>
                         <div class="mt-6 flow-root">
@@ -103,6 +103,17 @@
                             <a v-for="item in zivnostMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
                               <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
                               {{ item.name }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-medium leading-6 text-white">Občianske združenie</h3>
+                        <div class="mt-6 flow-root">
+                          <div class="-my-2">
+                            <a href="/contact" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                              <InformationCircleIcon class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                              V prípade záujmu o založenie občianskeho združenia nás prosím kontaktujte.
                             </a>
                           </div>
                         </div>
@@ -209,43 +220,6 @@
             >
               Virtuálne sídlo
             </router-link>
-
-            <Popover class="relative" v-slot="{ open, close }">
-              <PopoverButton
-                :class="[
-                  open ? 'text-gray-400' : 'text-white',
-                  'group inline-flex items-center rounded-md bg-gray-800 text-base font-medium hover:text-gray-400 focus:outline-none',
-                ]"
-                @mouseover="(e) => hoverPopover(e, open)"
-                @mouseleave="closePopover(close)"
-              >
-                <span>Občianske združenie</span>
-                <ChevronDownIcon
-                  :class="[
-                    open ? 'text-gray-400' : 'text-white',
-                    'ml-2 h-5 w-5 group-hover:text-gray-400',
-                  ]"
-                  aria-hidden="true"
-                />
-              </PopoverButton>
-
-              <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                <PopoverPanel
-                  class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
-                  @mouseover.prevent="popoverHover = true"
-                  @mouseleave.prevent="closePopover(close)"
-                >
-                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
-                    <div class="bg-gray-900 py-6 rounded text-white">
-                      <div class="flex items-center gap-x-3">
-                        <h3 class="text-sm font-semibold leading-6 ">Nové občianske združenie?</h3>
-                      </div>
-                      <p class="mt-2 text-sm leading-6 text-white font-semibold">V prípade záujmu o založenie občianskeho združenia nás prosím <a href="/contact"><b>kontaktujte</b></a>.</p>
-                    </div>
-                  </div>
-                </PopoverPanel>
-              </transition>
-            </Popover>
 
           </PopoverGroup>
           <div class="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
@@ -411,7 +385,7 @@
                       item.name
                     }}</span>
                   </a>
-                  <div class="font-medium text-sm">Fakturačné dokumenty</div>
+                  <div class="font-medium text-sm">Vytváranie firemných dokumentov</div>
                     <a
                       v-for="item in fakturacneMenuItemsMobile"
                       :key="item.name"
@@ -426,25 +400,9 @@
                       <span class="ml-3 text-base font-medium text-gray-900">{{
                         item.name
                       }}</span>
-                    </a>
-                  <div class="font-medium text-sm">Obchodné dokumenty</div>
-                    <a
-                      v-for="item in obchodneMenuItems"
-                      :key="item.name"
-                      :href="item.href"
-                      class="flex items-center rounded-md p-1 hover:bg-gray-50"
-                    >
-                      <component
-                        :is="item.icon"
-                        class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                        aria-hidden="true"
-                      />
-                      <span class="ml-3 text-base font-medium text-gray-900">{{
-                        item.name
-                      }}</span>
-                    </a>
+                    </a>                  
                   <div class="text-sm text-gray-900">
-                    Vystavujte faktúry, dobropisy, objednávky a cenové ponuky rýchlo a jednoducho. <a href="/documents/order"><b>Vyskúšajte teraz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
+                    Vystavujte firemné dokumenty <a href="/documents/order"><b>teraz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
                   </div>
                   <div class="font-medium text-sm">Virtuálne sídlo</div>
                   <a
@@ -542,7 +500,8 @@ import {
   DocumentMinusIcon,
   DocumentIcon,
   CloudIcon,
-  CheckIcon
+  CheckIcon,
+  InformationCircleIcon
 } from "@heroicons/vue/24/outline";
 
 import { ChevronDownIcon } from "@heroicons/vue/24/outline";
@@ -685,6 +644,20 @@ const fakturacneMenuItemsMobile = [
       "Get a better understanding of where your traffic is coming from.",
     href: "/documents",
     icon: DocumentMinusIcon,
+  },
+  {
+    name: "Objednávky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentArrowUpIcon,
+  },
+  {
+    name: "Cenové ponuky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentChartBarIcon,
   }
 ];
 

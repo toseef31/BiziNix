@@ -4,7 +4,7 @@
   >
     <div class="max-w-7xl px-4 mx-auto flex flex-col md:flex-row items-center justify-center">
       <div class="md:w-1/2">
-        <h3 class="mb-8 md:mb-0 text-3xl md:text-6xl font-extrabold">
+        <h3 class="text-white mb-8 md:mb-0 text-3xl md:text-6xl font-extrabold">
           Čo hovoria naši zákazníci?
         </h3>
       </div>

@@ -42,7 +42,7 @@
           <h2 class="font-bold text-3xl">Zakladanie a zmeny vo firmách</h2>
           <div class="mt-4">Kompletné založenie alebo úprava <b>s.r.o.</b> či <b>živnosti</b>. Okrem minimálnych cien Vám vďaka partnerom garantujeme <b>najrýchlejšie vybavenie</b> žiadostí na úradoch.</div>
           <router-link to="/zalozenie-firmy">
-            <button class="text-white mt-4 bg-bizinix-teal hover:bg-teal-700 px-6 py-2 rounded">Zaloťiť s.r.o.</button>
+            <button class="text-white mt-4 bg-bizinix-teal hover:bg-teal-700 px-6 py-2 rounded">Založiť s.r.o.</button>
           </router-link>
         </div>
         <div class="border-2 rounded-tr-[80px] border-teal-600 hover:border-teal-700 hover:backdrop-brightness-110 p-8">

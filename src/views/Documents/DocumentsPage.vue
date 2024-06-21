@@ -306,7 +306,7 @@
           Prečo vytvárať <br />
           dokumenty u nás?
         </div>
-        <div class="flex py-10 px-10">
+        <div class="max-w-7xl py-10 px-10">
           <vue-horizontal
             v-if="whyUs.length > 0"
             responsive
