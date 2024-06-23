@@ -1,10 +1,12 @@
 <template>
-  <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold text-gray-900">{{ post.title }}</h1>
-  </div>
-  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- <div class="px-4 py-6 sm:px-0"><img src="{{ post.image }}" /></div> -->
-    <div class="px-4 py-6 sm:px-0">{{ post.content }}</div>
+  <div class="w-full h-full bg-white">    
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900">{{ post.title }}</h1>
+    </div>
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <!-- <div class="px-4 py-6 sm:px-0"><img src="{{ post.image }}" /></div> -->
+      <div class="px-4 py-6 sm:px-0" v-html="post.content"></div>
+    </div>
   </div>
   <div class="bg-gray-800 text-white">
     <CounselingCenter></CounselingCenter>
@@ -39,7 +41,7 @@ onMounted(() => {
   const postId = route.params.id;
 
   return axios
-    .get(`${import.meta.env.VITE_API_ENDPOINT}/api/posts/${postId}/get`)
+    .get(`${import.meta.env.VITE_API_ENDPOINT}/posts/${postId}/get`)
     .then((response) => {
       post.value = response.data.data;
       return response;
