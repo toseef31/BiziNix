@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(36,36,39,0.9332107843137255) 40%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/pozadie.png')">
+  <div class="bg-no-repeat bg-cover" style="background-image:linear-gradient(0deg, rgba(31, 41, 55) 17%, rgba(0,0,0,0.29735644257703087) 100%), url('../src/assets/pozadie.png')">
     <div class="max-w-7xl flex h-[50vh] md:h-[80vh] items-center mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
       <div class="max-w-full">
         <h2 class="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Založenie s.r.o.<br>za 199 € (komplet)</h2>
@@ -38,18 +38,44 @@
     <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 bg-gray-800">
         <h1 class="text-center text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Všetko, čo potrebuje vaše podnikanie</h1>
         <div class="flex gap-14 mt-14 flex-col md:flex-row">
-        <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
+        <div class="border-2 rounded-tr-[80px] border-teal-600 hover:border-teal-700 hover:backdrop-brightness-110 p-8">
           <h2 class="font-bold text-3xl">Zakladanie a zmeny vo firmách</h2>
-          <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+          <div class="mt-4">Kompletné založenie alebo úprava <b>s.r.o.</b> či <b>živnosti</b>. Okrem minimálnych cien Vám vďaka partnerom garantujeme <b>najrýchlejšie vybavenie</b> žiadostí na úradoch.</div>
+          <router-link to="/zalozenie-firmy">
+            <button class="text-white mt-4 bg-bizinix-teal hover:bg-teal-700 px-6 py-2 rounded">Založiť s.r.o.</button>
+          </router-link>
         </div>
-        <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
-          <h2 class="font-bold text-3xl">Vytváranie a správa Vašich dokumentov</h2>
-          <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+        <div class="border-2 rounded-tr-[80px] border-teal-600 hover:border-teal-700 hover:backdrop-brightness-110 p-8">
+          <h2 class="font-bold text-3xl">Vytváranie a správa dokumentov</h2>
+          <div class="mt-4">Vystavujte a spravujte svoje faktúry, objednávky alebo cenové ponuky <b>pohodlne na pár klikov</b>. S nami budete mať vždy aktuálny <b>prehľad</b> o Vašom hospodárení.</div>
+          <router-link to="/documents">
+            <button class="text-white mt-4 bg-bizinix-teal hover:bg-teal-700 px-6 py-2 rounded">Viac informácii</button>
+          </router-link>
         </div>
-        <div class="border-2 rounded-tr-[80px] border-teal-600 p-8">
-          <h2 class="font-bold text-3xl">Odborné rady a konzultácie</h2>
-          <div class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+        <div class="border-2 rounded-tr-[80px] border-teal-600 hover:border-teal-700 hover:backdrop-brightness-110 p-8">
+          <h2 class="font-bold text-3xl">Najlepšie virtuálne sídlo</h2>
+          <div class="mt-4">Zriaďte si sídlo spoločnosti v <b>lukratívnych</b> častiach Bratislavy. Po poštu chodiť nemusíte. Obsah Vašej poštovej schránky môžete sledovať, prezerať a spravovať <b>online.</b></div>
+          <router-link to="/virtualne-sidlo">
+            <button class="text-white mt-4 bg-bizinix-teal hover:bg-teal-700 px-6 py-2 rounded">Založiť Virtuálne sídlo</button>
+          </router-link>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="bg-gray-800 bg-[url('../src/assets/3mesiacebizinixvlna.png')] bg-center bg-no-repeat bg-cover">
+    <div class="flex flex-row gap-4 md:gap-14 items-center justify-center max-w-7xl mx-auto py-28 md:py-40 px-2 sm:px-6 lg:px-8">
+      <div class="w-1/2 flex justify-end">
+        <img class="w-56" src="@/assets/3mesbizinix.png" alt="3 mesiace zadarmo" />
+      </div>
+      <div class="w-1/2">
+        <h3 class="text-4xl md:text-6xl text-white font-bold">Vyskúšajte nás na <span class="text-bizinix-teal">3 mesiace zadarmo</span></h3>
+        <div class="my-4 text-white">Vystavujte a spravujte svoje faktúry, objednávky alebo cenové ponuky <b>pohodlne na pár klikov</b>. S nami budete mať vždy aktuálny <b>prehľad</b> o Vašom hospodárení.</div>
+        <router-link to="/documents">
+          <button type="button" class="inline-flex items-center gap-x-2 rounded-md bg-bizinix-teal px-3 md:px-7 py-3 text-xl font-semibold text-white shadow-sm hover:hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">
+            Poďme na to
+            <ChevronDoubleRightIcon class="-mr-0.5 w-6 h-6 text-white stroke-current stroke-[3px]" aria-hidden="true" />
+          </button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -62,7 +88,7 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { ChevronDownIcon, ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
+import { ChevronDownIcon, ChevronDoubleRightIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { ref } from 'vue';
 import CounselingCenter from "@/components/CounselingCenter.vue";
 import Reviews from "@/components/Reviews.vue";

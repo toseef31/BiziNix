@@ -3,7 +3,7 @@
         <div v-if="order">
           <div class="flex p-4 justify-between">
             <div>
-                <h1 class="text-6xl my-6 font-bold">Ďakujeme</h1>
+                <h1 class="text-6xl my-6 font-bold">Vyberte si spôsob platby</h1>
                 <div class="text-2xl text-gray-300">
                     Za Vašu objednávku č. <b>{{ order.id }}</b>
                 </div>
@@ -54,6 +54,7 @@
               </div>
           </div>
           <div class="flex-1 p-4">
+            <div class="my-5 text-2xl">Spôsob platby</div>
             <div class="p-4 rounded-md border border-bizinix-border">
               <FormKit
                 type="form"

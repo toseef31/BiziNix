@@ -79,12 +79,12 @@
 
               <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
                 <PopoverPanel
-                  class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
+                  class="absolute left-[100%] z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4"
                   @mouseover.prevent="popoverHover = true"
                   @mouseleave.prevent="closePopover(close)"
                 >
-                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
-                    <div class="grid grid-cols-2 gap-x-6 sm:gap-x-8">
+                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-4xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">                  
+                    <div class="grid grid-cols-3 gap-x-6 sm:gap-x-8">
                       <div>
                         <h3 class="text-lg text-white font-medium leading-6">Firma (s.r.o.)</h3>
                         <div class="mt-6 flow-root">
@@ -103,6 +103,17 @@
                             <a v-for="item in zivnostMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
                               <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
                               {{ item.name }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-medium leading-6 text-white">Občianske združenie</h3>
+                        <div class="mt-6 flow-root">
+                          <div class="-my-2">
+                            <a href="/contact" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                              <InformationCircleIcon class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                              V prípade záujmu o založenie občianskeho združenia nás prosím kontaktujte.
                             </a>
                           </div>
                         </div>
@@ -145,47 +156,30 @@
                   @mouseover.prevent="popoverHover = true"
                   @mouseleave.prevent="closePopover(close)"
                 >
-                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">
+                  <div class="bg-gray-bizinix rounded mx-auto grid max-w-4xl grid-cols-1 gap-x-8 gap-y-10 px-6 py-10 ">
                     <div>
                       <h3 class="text-white text-2xl font-bold">Vytvarajte a spravujte, fakturačné, obchodné a právne dokumenty</h3>
                     </div>
                     <div class="grid grid-cols-3 gap-x-6 sm:gap-x-8">
-                      <div>
-                        <h3 class="text-sm text-white font-medium leading-6">Fakturačné</h3>
+                      <div class="col-span-2">
+                        <h3 class="flex gap-x-4 text-sm text-white font-medium leading-6"><DocumentTextIcon class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />Faktúry, Dobropisy, Cenové ponuky, Objednávky</h3>
                         <div class="mt-6 flow-root">
                           <div class="-my-2">
-                          <a v-for="item in fakturacneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
-                            <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
-                            {{ item.name }}
-                          </a>
-                        </div>
-                        </div>
-                      </div>
-                      <div>
-                        <h3 class="text-sm font-medium leading-6 text-white">Obchodné</h3>
-                        <div class="mt-6 flow-root">
-                          <div class="-my-2">
-                            <a v-for="item in obchodneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
-                              <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
+                            <div v-for="item in fakturacneMenuItems" :key="item.name" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
+                              <component :is="item.icon" class="h-6 w-6 flex-none text-bizinix-teal" aria-hidden="true" />
                               {{ item.name }}
-                            </a>
+                            </div>
+                          </div>
+                          <div class="mt-4 text-white font-semibold">
+                            Vďaka prepojeniu so slovenskými databázami máte dokumenty hotové za pár sekúnd. <a href="/documents/order">Vyskúšajte na 3 mesiace zadarmo, bez zadania karty</a>, a ušetrite čas aj peniaze!
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div class="flex justify-end">
                         <img class="w-56" src="../assets/header/mesiace3zdarma.png" alt="3 mesiace zadarmo" />
-                        <!-- <h3 class="text-sm font-medium leading-6 text-white">Právne dokumenty</h3>
-                        <div class="mt-6 flow-root">
-                          <div class="-my-2">
-                            <a v-for="item in pravneMenuItems" :key="item.name" :href="item.href" class="flex gap-x-4 py-2 text-sm font-semibold leading-6 text-white">
-                              <component :is="item.icon" class="h-6 w-6 flex-none text-gray-400" aria-hidden="true" />
-                              {{ item.name }}
-                            </a>
-                          </div>
-                        </div> -->
                       </div>
                     </div>
-                    <div class="bg-gray-900 py-6 rounded text-white">
+                    <div class="bg-gray-900 py-2 rounded text-white">
                       <div class="flex items-center gap-x-3">
                         <h3 class="text-sm font-semibold leading-6 ">Výhody</h3>
                         <span class="rounded-full bg-indigo-400/10 px-2.5 py-1.5 text-xs font-semibold text-teal-600">Vlastný dizajn</span>
@@ -207,7 +201,7 @@
               :class="[
                 $router.currentRoute.value.name === 'Counseling center'
                   ? ''
-                  : 'text-gray-300 hover:text-gray-400',
+                  : 'text-white hover:text-gray-400',
                 'text-base font-medium',
               ]"
             >
@@ -220,12 +214,13 @@
               :class="[
                 $router.currentRoute.value.name === 'Virtual hq'
                   ? ''
-                  : 'text-gray-300 hover:text-gray-400',
+                  : 'text-white hover:text-gray-400',
                 'text-base font-medium',
               ]"
             >
               Virtuálne sídlo
             </router-link>
+
           </PopoverGroup>
           <div class="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
             <router-link
@@ -390,38 +385,25 @@
                       item.name
                     }}</span>
                   </a>
-                  <div class="font-medium text-sm">Fakturačné dokumenty</div>
-                  <a
-                    v-for="item in fakturacneMenuItems"
-                    :key="item.name"
-                    :href="item.href"
-                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
-                  >
-                    <component
-                      :is="item.icon"
-                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                      aria-hidden="true"
-                    />
-                    <span class="ml-3 text-base font-medium text-gray-900">{{
-                      item.name
-                    }}</span>
-                  </a>
-                  <div class="font-medium text-sm">Obchodné dokumenty</div>
-                  <a
-                    v-for="item in obchodneMenuItems"
-                    :key="item.name"
-                    :href="item.href"
-                    class="flex items-center rounded-md p-1 hover:bg-gray-50"
-                  >
-                    <component
-                      :is="item.icon"
-                      class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                      aria-hidden="true"
-                    />
-                    <span class="ml-3 text-base font-medium text-gray-900">{{
-                      item.name
-                    }}</span>
-                  </a>
+                  <div class="font-medium text-sm">Vytváranie firemných dokumentov</div>
+                    <a
+                      v-for="item in fakturacneMenuItemsMobile"
+                      :key="item.name"
+                      :href="item.href"
+                      class="flex items-center rounded-md p-1 hover:bg-gray-50"
+                    >
+                      <component
+                        :is="item.icon"
+                        class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                        aria-hidden="true"
+                      />
+                      <span class="ml-3 text-base font-medium text-gray-900">{{
+                        item.name
+                      }}</span>
+                    </a>                  
+                  <div class="text-sm text-gray-900">
+                    Vystavujte firemné dokumenty <a href="/documents/order"><b>teraz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
+                  </div>
                   <div class="font-medium text-sm">Virtuálne sídlo</div>
                   <a
                     v-for="item in virtualneSidloMenuItems"
@@ -438,6 +420,8 @@
                       item.name
                     }}</span>
                   </a>
+                  <div class="font-medium text-sm">Občianske združenie</div>
+                  <p class="text-sm text-gray-900">V prípade záujmu o založenie občianskeho združenia nás prosím <a href='/contact'><b>kontaktujte</b></a>.</p>                  
                 </nav>
               </div>
             </div>
@@ -515,7 +499,9 @@ import {
   DocumentPlusIcon,
   DocumentMinusIcon,
   DocumentIcon,
-  CloudIcon
+  CloudIcon,
+  CheckIcon,
+  InformationCircleIcon
 } from "@heroicons/vue/24/outline";
 
 import { ChevronDownIcon } from "@heroicons/vue/24/outline";
@@ -614,6 +600,31 @@ const zivnostMenuItems = [
 
 const fakturacneMenuItems = [
   {
+    name: "Prehľad hospodárstva",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: CheckIcon,
+  },
+  {
+    name: "Posielanie upomienok",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: CheckIcon,
+  },
+  {
+    name: "Vlastná šablóna dokladu",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: CheckIcon,
+  }
+];
+
+
+const fakturacneMenuItemsMobile = [
+  {
     name: "Faktúry",
     description:
       "Get a better understanding of where your traffic is coming from.",
@@ -633,6 +644,20 @@ const fakturacneMenuItems = [
       "Get a better understanding of where your traffic is coming from.",
     href: "/documents",
     icon: DocumentMinusIcon,
+  },
+  {
+    name: "Objednávky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentArrowUpIcon,
+  },
+  {
+    name: "Cenové ponuky",
+    description:
+      "Get a better understanding of where your traffic is coming from.",
+    href: "/documents",
+    icon: DocumentChartBarIcon,
   }
 ];
 

@@ -4,7 +4,7 @@
             <div class="flex p-4">
                 <div>
                     <CurrencyEuroIcon class="text-teal-500 w-24 h-24 stroke-1 inline" />
-                    <h1 class="text-6xl my-6 font-bold">Ďakujeme Vám.</h1>
+                    <h1 class="text-6xl my-6 font-bold">Vyberte si spôsob platby</h1>
                     <div class="text-xl">
                         Vaša objednávka <b>#{{ order.id }}</b> bola prijatá na spracovanie o ďalšom postupe Vás budeme informovať.
                     </div>
@@ -32,14 +32,14 @@
                     </div>
                     <div class="my-6 flex items-baseline">
                         <span class="flex items-center justify-center w-8 h-8 rounded-full font-bold bg-bizinix-teal">2</span>
-                        <span class="ml-2 text-2xl">Podpis dokumentov.</span>
+                        <span class="ml-2 text-2xl">Podpis dokumentov</span>
                     </div>
                     <div class="mt-2">
                         <p>Pre vybavenie Vašej objednávky potrebujeme, aby ste podpísali, naskenovali a zaslali nám e-mailom dokumenty, ktoré sme Vám odoslali na vašu e-mailovú adresu.</p>
                     </div>
                     <div class="my-6 flex items-baseline">
                         <span class="flex items-center justify-center w-8 h-8 rounded-full font-bold bg-bizinix-teal">3</span>
-                        <span class="ml-2 text-2xl">Počkajte na hotové.</span>
+                        <span class="ml-2 text-2xl">Počkajte na hotové</span>
                     </div>
                     <div class="mt-2">
                         <p class="font-bold">O všetko ostatné sa postarajú odborníci z Bizinixu.</p>
@@ -47,6 +47,7 @@
                     </div>
                 </div>
                 <div class="flex-1 p-4">
+                    <div class="my-5 text-2xl">Spôsob platby</div>
                     <div class="p-4 rounded-md border border-bizinix-border">
                     <FormKit
                         type="form"
@@ -75,10 +76,10 @@
                         </div>
                         </fieldset>
                         <div v-if="selectedOptionForPay == 'Stripe'">
-                        <stripePaymentComponent class="bg-gray-bizinix my-4 text-white" ref="childRefComponentForPay"></stripePaymentComponent>
+                            <stripePaymentComponent class="bg-gray-bizinix my-4 text-white" ref="childRefComponentForPay"></stripePaymentComponent>
                         </div>
                         <div class="text-center mt-4">
-                        <FormKit class="!w-full font-bold" type="submit" label="Zaplatiť" />
+                            <FormKit class="!w-full font-bold" type="submit" label="Zaplatiť" />
                         </div>
                     </FormKit>
                     </div>
