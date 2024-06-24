@@ -40,12 +40,12 @@
           </button>
         </div>
       </div>
-      <div class="px-4 py-6 sm:px-0">
-        <div class="flex flex-wrap mt-6">
+      <div class="py-6">
+        <div class="grid grid-cols-3 mt-6">
           <div
             v-for="post in searchedPosts"
             :key="post.id"
-            class="bg-gray-800 mx-2 hover:cursor-pointer mb-5 rounded-lg group group-hover:bg-teal-500 shadow"
+            class="bg-gray-800 mx-2 hover:cursor-pointer mb-5 rounded-lg group group-hover:bg-teal-500 shadow h-auto"
             v-on:click="redirectToPost(post.id)"
           >
             <img
@@ -56,9 +56,6 @@
               class="p-4 group group-hover:bg-teal-500 rounded-b-lg text-white group-hover-text-gray-800"
             >
               <div class="text-lg">{{ post.title }}</div>
-              <div class="opacity-75">
-                {{ post.content.substring(0, 30) + "..." }}
-              </div>
             </div>
           </div>
         </div>
