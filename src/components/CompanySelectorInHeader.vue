@@ -1,7 +1,7 @@
 <template>
-  <div class="relative w-64">
+  <div class="relative w-[13rem] md:w-64">
     <select id="companies" name="companies"
-      class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-md pl-3 py-2 text-teal-500 focus:outline-none"
+      class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-full pl-3 py-2 text-white focus:outline-none"
       @change="switchSelect($event)">
       <option v-for="company in companies" :value="company.id" :key="company.id"
         :selected="company.id == currentCompany.id">
@@ -9,7 +9,7 @@
       </option>
     </select>
     <div class="pointer-events-none absolute inset-y-0 right-0 px-2 flex items-center">
-      <ChevronDownIcon class="w-5 text-teal-500" aria-hidden="true" />
+      <ChevronDownIcon class="w-5 text-white" aria-hidden="true" />
     </div>
   </div>
 </template>
