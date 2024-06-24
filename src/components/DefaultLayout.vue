@@ -402,7 +402,7 @@
                       }}</span>
                     </a>                  
                   <div class="text-sm text-gray-900">
-                    Vystavujte firemné dokumenty <a href="/documents/order"><b>teraz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
+                    Vystavujte firemné dokumenty <a href="/documents/order"><b>terazz na 3 mesiace zadarmo</b></a>, bez zadania karty!                    
                   </div>
                   <div class="font-medium text-sm">Virtuálne sídlo</div>
                   <a
