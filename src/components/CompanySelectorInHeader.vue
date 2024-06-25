@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-[13rem] md:w-64">
+  <div class="relative w-[16rem] md:w-64">
     <select id="companies" name="companies"
       class="text-sm lg:text-lg font-medium w-full appearance-none bg-none bg-gray-700 border border-transparent rounded-full pl-3 py-2 text-white focus:outline-none"
       @change="switchSelect($event)">

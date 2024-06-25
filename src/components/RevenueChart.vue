@@ -16,13 +16,70 @@
       <div></div>
      
     </div>
-    <!-- <LineChart /> -->
+    <LineChart :chartData="chartData" :chartOptions="chartOptions" />
   </div>
   
 </template>
 
-<script setup>
-import { defineAsyncComponent } from 'vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { LineChart } from 'vue-chart-3';
+import { Chart, registerables } from 'chart.js';
 
-const LineChart = defineAsyncComponent(() => import('@/components/LineChart.vue'));
+Chart.register(...registerables);
+
+export default defineComponent({
+  name: 'RevenueChart',
+  components: { LineChart },
+  setup() {
+    const chartData = {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+      datasets: [
+        {
+          label: '', // Hide the label by setting it to an empty string
+          data: [10000, 12000, 18000, 22000, 20000],
+          borderColor: '#ffffff', // White border line
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBorderColor: '#ffffff', // Customize the point border color
+          pointBackgroundColor: '#ffffff', // Customize the point background color
+          pointHoverBackgroundColor: '#ffffff', // Customize the point hover background color
+          pointRadius: 6,
+          pointHoverRadius: 8,
+        },
+      ],
+    };
+
+    const chartOptions = {
+      responsive: true,
+      scales: {
+        x: {
+          grid: {
+            display: false,
+            color: '#ffffff',
+          },
+          ticks: {
+            color: '#ffffff', // White x-axis labels
+          },
+        },
+        y: {
+          grid: {
+            color: '#ffffff',
+          },
+          ticks: {
+            color: '#ffffff', // White y-axis labels
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false, // This hides the legend
+        },
+      },
+    };
+
+    return { chartData, chartOptions };
+  },
+});
 </script>

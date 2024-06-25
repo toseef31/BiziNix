@@ -1,72 +1,29 @@
 <template>
-    <line-chart :chart-data="chartData" :chart-options="chartOptions"></line-chart>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import { LineChart } from 'vue-chart-3';
-  import {
-    Chart as ChartJS,
-    Title,
-    Tooltip,
-    Legend,
-    LineElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-  } from 'chart.js';
-  
-  ChartJS.register(
-    Title,
-    Tooltip,
-    Legend,
-    LineElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-  );
-  
-  const chartData = ref({
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-    datasets: [
-      {
-        label: 'Revenue',
-        data: [10000, 11000, 13000, 14000, 13000],
-        borderColor: '#ffffff',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        fill: true,
-        tension: 0.4,
-        display: false,
-      },
-    ],
-  });
-  
-  const chartOptions = ref({
-    responsive: true,
-    scales: {
-      x: {
-        grid: {
-          display: false,
-          color: '#ffffff',
+  <DoughnutChart :chartData="testData" />
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { DoughnutChart } from 'vue-chart-3';
+import { Chart, registerables } from "chart.js";
+
+Chart.register(...registerables);
+
+export default defineComponent({
+  name: 'Home',
+  components: { DoughnutChart },
+  setup() {
+    const testData = {
+      labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
+      datasets: [
+        {
+          data: [30, 40, 60, 70, 5],
+          backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
         },
-        ticks: {
-          color: '#ffffff',
-        },
-      },
-      y: {
-        grid: {
-          color: '#ffffff',
-        },
-        ticks: {
-          color: '#ffffff',
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-  });
-  </script>
-  
+      ],
+    };
+
+    return { testData };
+  },
+});
+</script>

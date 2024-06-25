@@ -3,11 +3,11 @@
       <div class="mx-auto max-w-7xl">
         <div class="bg-gray-800 py-3">
           <div class="px-4 sm:px-6 lg:px-8">
-            <div class="sm:flex sm:items-center">
+            <div class="flex justify-between items-center">
               <div class="sm:flex-auto">
                 <h1 class="text-base text-xl font-semibold leading-6 text-white">Pošta</h1>
               </div>
-              <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+              <div class="md:mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                 <svg width="34" height="32" viewBox="0 0 34 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16.5661 18.6654C18.0829 18.6654 19.3125 17.4715 19.3125 15.9987C19.3125 14.5259 18.0829 13.332 16.5661 13.332C15.0494 13.332 13.8198 14.5259 13.8198 15.9987C13.8198 17.4715 15.0494 18.6654 16.5661 18.6654Z" fill="#9BABC5"/>
                 <path d="M5.58079 18.6654C7.09755 18.6654 8.32712 17.4715 8.32712 15.9987C8.32712 14.5259 7.09755 13.332 5.58079 13.332C4.06404 13.332 2.83447 14.5259 2.83447 15.9987C2.83447 17.4715 4.06404 18.6654 5.58079 18.6654Z" fill="#9BABC5"/>
