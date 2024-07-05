@@ -57,3 +57,10 @@ npm run test:e2e # or `npm run test:e2e:ci` for headless testing
 ```sh
 npm run lint
 ```
+
+## Screenshots
+
+### Dashboard Screenshot
+![Dashboard](https://github.com/toseef31/BiziNix/blob/RedesignUserDashboard/public/Screenshot%202024-07-01%20120701.png)
+![Dashboard](https://github.com/toseef31/BiziNix/blob/RedesignUserDashboard/public/dashboard.png)
+![Dashboard](https://github.com/toseef31/BiziNix/blob/RedesignUserDashboard/public/Screenshot%202024-07-01%20120726.png)
