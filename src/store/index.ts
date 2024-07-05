@@ -36,6 +36,7 @@ export const store = createStore({
     documentTab: 1,
     mySubmenuActive: 0,
     myCompanyDetailsTab: 1,
+    chartApi: '',
     bankAccounts: [] as any,
     documents: [] as any[],
   },
@@ -122,7 +123,7 @@ export const store = createStore({
         return data;
       });
     },
-    async getUserDataByUserId( { commit }, userId){
+    async getUserDataByUserId({ commit }, userId) {
       const { data } = await axiosClient.get(`/users/${userId}/get`);
       commit("setUserDataFromUserId", data);
       return data;
@@ -206,9 +207,9 @@ export const store = createStore({
     },
     async updateInvoiceProfile({ commit, dispatch }, invoiceProfile) {
       if (invoiceProfile.id) {
-          await axiosClient.put(`/users/fakturacneUdaje/${invoiceProfile.id}/update`, invoiceProfile).then((res) => {
-            return res;
-          });
+        await axiosClient.put(`/users/fakturacneUdaje/${invoiceProfile.id}/update`, invoiceProfile).then((res) => {
+          return res;
+        });
       }
     },
     async getFakturacneUdajeByUserId({ commit }, id) {
@@ -260,24 +261,24 @@ export const store = createStore({
       const { data } = await axiosClient.get(`/headquarters/${hqId}/get`);
       return data;
     },
-    async getCompanyFromOrsrByIco({commit}, ico: number | string){
+    async getCompanyFromOrsrByIco({ commit }, ico: number | string) {
       const { data } = await axiosClient.get('/companies/findCompanyOrsr', {
         headers: {
           'Content-Type': 'application/json'
         },
         params: {
           ico: ico // replace with your parameters
-        }                                            
+        }
       });
       return data;
     },
     async addCompany({ commit, dispatch }, company) {
-        return axiosClient
-          .post('/companies/add', company)
-          .then((res) => {
-            commit("setCompany", res.data);
-            return res;
-          });
+      return axiosClient
+        .post('/companies/add', company)
+        .then((res) => {
+          commit("setCompany", res.data);
+          return res;
+        });
     },
     async updateCompany({ commit, dispatch }, company) {
       if (company.id) {
@@ -432,12 +433,12 @@ export const store = createStore({
           return res.data;
         });
     },
-    async getCompanySubstatuses({commit, dispatch}) {
+    async getCompanySubstatuses({ commit, dispatch }) {
       return axiosClient
-      .get("/companies/getCompanySubStatuses")
-      .then((res) => {
-        return res.data.data;
-      });
+        .get("/companies/getCompanySubStatuses")
+        .then((res) => {
+          return res.data.data;
+        });
     },
     async addBankAccount({ commit }, bankAccount) {
       const { data } = await axiosClient.post(
@@ -602,7 +603,7 @@ export const store = createStore({
       return data;
     },
     async getAllMailsForCompany({ commit }, inputs) {
-      const { data } = await axiosClient.post(`/mails/${inputs.companyId}/getAll?page=${inputs.page}`, inputs.body);
+      const { data } = await axiosClient.post(`/mails/${inputs.companyId}/getAll?page=page=1&orderBy=created_at%20desc`, inputs.body);
       commit("setMails", data);
       return data;
     },

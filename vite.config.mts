@@ -16,16 +16,15 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    vueJsx(), 
+    vueJsx(),
     sentryVitePlugin({
-    authToken: process.env.SENTRY_AUTH_TOKEN,
-    org: "bizinix",
-    project: "fe-vue",
-  }),],
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: "bizinix",
+      project: "fe-vue",
+    }),],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
 });
-  

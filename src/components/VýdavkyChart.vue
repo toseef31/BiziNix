@@ -17,69 +17,119 @@
             </div>
           
           </div>
-          <LineChart :chartData="chartData" :chartOptions="chartOptions" />
+          <LineChart :chartData="profitActualYearData" :chartOptions="chartOptions" style="height: 60%;"/>
         </div>
    </template>
    
-   <script lang="ts">
-   import { defineComponent } from 'vue';
-   import { LineChart } from 'vue-chart-3';
+   <script setup lang="ts">
+   import { ref, computed, onMounted, watch } from 'vue';
    import { Chart, registerables } from 'chart.js';
+   import { LineChart } from 'vue-chart-3';
+   import store from '@/store';
+   import { toast } from 'vue3-toastify';
    
    Chart.register(...registerables);
+   const company = computed(() => store.state.selectedCompany);
+   const actualYearData = ref({
+     total: 0,
+     totalVat: 0,
+     totalToPay: 0,
+     profit: 0,
+     monthlySalesData: [] as any[],
+     monthlyProfitData: [] as any[]
+   });
+   const profitActualYearData = ref({
+     labels: [] as any[],
+     datasets: [
+       {
+          label: '', // Hide the label by setting it to an empty string
+          data: [] as any[],
+          borderColor: '#FF5C5C', // Red line color
+          backgroundColor: 'rgba(255, 92, 92, 0.2)', // Light red fill color
+          fill: true,
+          tension: 0.4,
+          pointBorderColor: '#ffffff', // White point border color
+          pointBackgroundColor: '#FF5C5C', // Red point background color
+          pointHoverBackgroundColor: '#ffffff', // White point hover background color
+          pointRadius: 6,
+          pointHoverRadius: 8,
+
+       },
+     ],
+   });
    
-   export default defineComponent({
-     name: 'PríjmyChart',
-     components: { LineChart },
-     setup() {
-       const chartData = {
-        labels: ['2020', '2021', '2022', '2023', '2024'],
-         datasets: [
-                {
-                label: '', // Hide the label by setting it to an empty string
-                data: [18000, 16500, 17500, 16500, 16000],
-                borderColor: '#FF5C5C', // Red line color
-                backgroundColor: 'rgba(255, 92, 92, 0.2)', // Light red fill color
-                fill: true,
-                tension: 0.4,
-                pointBorderColor: '#ffffff', // White point border color
-                pointBackgroundColor: '#FF5C5C', // Red point background color
-                pointHoverBackgroundColor: '#ffffff', // White point hover background color
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                },
-            ],
-       };
-   
-       const chartOptions = {
-         responsive: true,
-         scales: {
-           x: {
-             grid: {
-               display: false,
-               color: '#ffffff',
-             },
-             ticks: {
-               color: '#ffffff', // White x-axis labels
-             },
-           },
-           y: {
-             grid: {
-               color: '#ffffff',
-             },
-             ticks: {
-               color: '#ffffff', // White y-axis labels
-             },
-           },
+   const chartOptions = ref({
+     responsive: true,
+     scales: {
+       x: {
+         grid: {
+           display: false,
+           color: '#ffffff',
          },
-         plugins: {
-           legend: {
-             display: false, // This hides the legend
-           },
+         ticks: {
+           color: '#ffffff', // White x-axis labels
          },
-       };
-   
-       return { chartData, chartOptions };
+       },
+       y: {
+         grid: {
+           color: '#ffffff',
+         },
+         ticks: {
+           color: '#ffffff', // White y-axis labels
+         },
+       },
+     },
+     plugins: {
+       legend: {
+         display: false, // This hides the legend
+       },
      },
    });
+   async function getChartData(val: any) {
+       let ico = {
+           ico: ""
+       }
+   
+       if (company.value !== undefined) {
+           ico = {
+               ico: company.value.ico
+           }
+       }
+   console.log(company.value);
+       if(company.value.fakturacia_zaplatene_do && company.value.fakturacia_deaktivovane == 0) {
+     
+   
+           await store
+           .dispatch("getFinDataForCompany", company.value.id)
+           .then((response) => {
+            //  console.log(response.data);
+               actualYearData.value = response.data;
+            //  console.log(actualYearData.value.total);
+   
+               // actualYearData.value.monthlySalesData.forEach(element => {
+               //     salesActualYearData.value.labels.push(element.month);
+               //     salesActualYearData.value.datasets[0].data.push(element.total);
+               // });
+   
+               actualYearData.value.monthlyProfitData.forEach(element => {
+                   profitActualYearData.value.labels.push(element.month);
+                   profitActualYearData.value.datasets[0].data.push(element.total);
+               });
+           })
+         }
+       
+       
+   }
+   
+   watch(
+       () => store.getters.getSelectedCompany,
+       function () {
+           getChartData(company.value.ico);
+       }
+   );
+   
+   onMounted(async () => {
+       await getChartData(company.value.ico);
+   });
+   
    </script>

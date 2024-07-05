@@ -1,4 +1,82 @@
 <template>
+   <div>
+   <!-- Sidebar -->
+   <Sidebar />
+
+   <!-- Main Content -->
+   <div class="flex-1 flex flex-col md:ml-[18.5rem]">
+     <Navbar />
+     <main class="md:p-10 p-3 flex-1 overflow-y-auto md:pt-16">
+      <div class="flex items-center md:mt-0 mt-[2rem] mb-[3rem]">
+        <h1 class="text-2xl font-bold text-white mr-[4rem]">Vytvoriť doklad </h1>
+        <!-- <Dropdown @update-charts="handleUpdateCharts" /> -->
+      </div>
+      <div class="">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Left side form -->
+      <div class="bg-gray-800 p-4 rounded-[1rem]">
+        <h2 class="text-white mb-4">Vystavujete cenovú ponuku č.</h2>
+        <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white mb-4" placeholder="INV-001-123">
+        <div class="mb-5">
+          <label class="block text-gray-400">Dátum vyhotovenia (povinné)</label>
+          <input type="date" class="w-full p-2 rounded-md bg-gray-700 text-white">
+        </div>
+        <div class="mb-5">
+          <label class="block text-gray-400">Názov zakázky (povinné)</label>
+          <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="Zakazka1">
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="mb-4">
+          <label class="block text-gray-400">Predmet zakázky (povinné)</label>
+          <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="Zakazka1">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-400">Odberateľ (povinné)</label>
+          <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="IČO alebo názov firmy">
+        </div>
+       </div>
+        <div class="grid grid-cols-3 gap-4 mb-5">
+          <div>
+            <label class="block text-gray-400">IČO</label>
+            <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="001-123">
+          </div>
+          <div>
+            <label class="block text-gray-400">IČ DPH</label>
+            <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="001-123">
+          </div>
+          <div>
+            <label class="block text-gray-400">DIČ</label>
+            <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="001-123">
+          </div>
+        </div>
+        <div class="mb-5">
+          <label class="block text-gray-400">Sídlo odberateľa</label>
+          <input type="text" class="w-full p-2 rounded-md bg-gray-700 text-white" placeholder="Lucna 333/14, 05687 Bratislava, Slovensko">
+        </div>
+        <button class="text-[#00A6A6]">Zobraziť viac údajov</button>
+      </div>
+      
+      <!-- Right side actions -->
+      <div class="bg-gray-900 p-4 rounded-lg">
+        <button class="w-full bg-[#00A6A6] text-white py-2 rounded-md mb-4">Vytvoriť a uložiť</button>
+        <button class="w-full bg-gray-700 text-white py-2 rounded-md mb-4">Vybrať šablónu</button>
+        <button class="w-full bg-gray-700 text-white py-2 rounded-md mb-4">Náhľad</button>
+        <button class="w-full bg-red-600 text-white py-2 rounded-md">Zrušiť</button>
+        <div class="mt-8">
+          <h3 class="text-gray-400 mb-2">Moja firma</h3>
+          <p class="text-white">Michal Slovák - UX UI Dizajnér</p>
+          <p class="text-white">Tehelná 2931/15 / Sered</p>
+          <p class="text-white">Bankový účet</p>
+          <select class="w-full p-2 rounded-md bg-gray-800 text-white">
+            <option>Tatra SONGOKU</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+     </main>
+   </div>
+   </div>
   <div class="min-h-screen bg-gray-900">
     <div class="w-full min-h-screen flex justify-center">
       <FormKit
@@ -555,6 +633,8 @@ import { useRouter } from "vue-router";
 import Constants from "@/helpers/constants";
 import { toast } from "vue3-toastify";
 import moment from "moment";
+import Sidebar from '@/components/Sidebar.vue'
+import Navbar from '@/components/Navbar.vue'
 
 const document: any = computed(() => {
   return store.state.document;
